@@ -29,9 +29,7 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
-        binding = ActivityEditorsChoiceAddBinding.inflate(
-            layoutInflater
-        )
+        binding = ActivityEditorsChoiceAddBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
 
@@ -39,15 +37,17 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
         editorsChoiceId = intent.getStringExtra(DATA.EDITORS_CHOICE_ID)
         oldId = intent.getStringExtra(DATA.OLD_ID)
         val id = editorsChoiceId!!.toInt()
+
         binding!!.toolbar.nameSpace.setText(R.string.editors_choice)
-        binding!!.toolbar.back.setOnClickListener { v: View? -> onBackPressed() }
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         type = DATA.TIMESTAMP
-        binding!!.toolbar.search.setOnClickListener { v: View? ->
+        binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
             binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
             DATA.searchStatus = true
         }
-        binding!!.toolbar.close.setOnClickListener { v: View? -> onBackPressed() }
+        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
+
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -64,27 +64,27 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
         list = ArrayList()
         adapter = EditorsChoiceMovieAdapter(activity, oldId, list!!, id)
         binding!!.recyclerView.adapter = adapter
-        binding!!.all.setOnClickListener { v: View? ->
+        binding!!.all.setOnClickListener {
             type = DATA.TIMESTAMP
             getData(type)
         }
-        binding!!.name.setOnClickListener { v: View? ->
+        binding!!.name.setOnClickListener {
             type = DATA.NAME
             getData(type)
         }
-        binding!!.mostViews.setOnClickListener { v: View? ->
+        binding!!.mostViews.setOnClickListener {
             type = DATA.VIEWS_COUNT
             getData(type)
         }
-        binding!!.mostLoves.setOnClickListener { v: View? ->
+        binding!!.mostLoves.setOnClickListener {
             type = DATA.LOVES_COUNT
             getData(type)
         }
-        binding!!.favorites.setOnClickListener { v: View? ->
+        binding!!.favorites.setOnClickListener {
             type = DATA.NAME
             getFavorites(type)
         }
-        binding!!.toolbar.back.setOnClickListener { v: View? -> onBackPressed() }
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         getData(type)
     }
 
@@ -95,9 +95,7 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
                 list!!.clear()
                 var i = 0
                 for (data in dataSnapshot.children) {
-                    val item = data.getValue(
-                        Movie::class.java
-                    )!!
+                    val item = data.getValue(Movie::class.java)!!
                     if (item.id != null) if (item.editorsChoice == 0) {
                         list!!.add(item)
                         i++
@@ -126,9 +124,8 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 (item as ArrayList<String?>).clear()
-                for (snapshot in dataSnapshot.children) {
+                for (snapshot in dataSnapshot.children)
                     (item as ArrayList<String?>).add(snapshot.key)
-                }
                 getItems(orderBy)
             }
 
@@ -142,9 +139,7 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 list!!.clear()
                 for (snapshot in dataSnapshot.children) {
-                    val song = snapshot.getValue(
-                        Movie::class.java
-                    )
+                    val song = snapshot.getValue(Movie::class.java)
                     for (id in item!!) {
                         assert(song != null)
                         if (song!!.id != null) if (song.id == id) if (song.editorsChoice == 0) list!!.add(
@@ -153,7 +148,7 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
                     }
                 }
                 binding!!.progress.visibility = View.GONE
-                if (!list!!.isEmpty()) {
+                if (list!!.isNotEmpty()) {
                     binding!!.recyclerView.visibility = View.VISIBLE
                     binding!!.emptyText.visibility = View.GONE
                 } else {

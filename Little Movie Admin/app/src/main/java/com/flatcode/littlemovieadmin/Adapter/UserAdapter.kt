@@ -33,6 +33,7 @@ class UserAdapter(private val context: Context, var list: ArrayList<User?>) :
         val item = list[position]
         val id = item!!.id
         val image = item.profileImage
+
         VOID.GlideImage(true, context, image, holder.image)
         if (item.username == DATA.EMPTY) {
             holder.username.visibility = View.GONE
@@ -40,7 +41,8 @@ class UserAdapter(private val context: Context, var list: ArrayList<User?>) :
             holder.username.visibility = View.VISIBLE
             holder.username.text = item.username
         }
-        holder.item.setOnClickListener { view: View? ->
+
+        holder.item.setOnClickListener {
             VOID.IntentExtra(
                 context, CLASS.PROFILE, DATA.PROFILE_ID, id
             )
@@ -58,9 +60,7 @@ class UserAdapter(private val context: Context, var list: ArrayList<User?>) :
         return filter!!
     }
 
-    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(
-        view!!
-    ) {
+    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
         var image: ImageView
         var username: TextView
         var item: LinearLayout

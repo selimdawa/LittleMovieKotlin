@@ -32,9 +32,7 @@ class CastDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
-        binding = ActivityCastDetailsBinding.inflate(
-            layoutInflater
-        )
+        binding = ActivityCastDetailsBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
 
@@ -42,19 +40,21 @@ class CastDetailsActivity : AppCompatActivity() {
         castName = intent.getStringExtra(DATA.CAST_NAME)
         castImage = intent.getStringExtra(DATA.CAST_IMAGE)
         castAbout = intent.getStringExtra(DATA.CAST_ABOUT)
+
         type = DATA.TIMESTAMP
         VOID.GlideImage(true, activity, castImage, binding!!.image)
         VOID.GlideBlur(true, activity, castImage, binding!!.imageBlur, 50)
         binding!!.toolbar.nameSpace.setText(R.string.cast_details)
         binding!!.name.text = castName
-        binding!!.toolbar.back.setOnClickListener { v: View? -> onBackPressed() }
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         type = DATA.TIMESTAMP
-        binding!!.toolbar.search.setOnClickListener { v: View? ->
+        binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
             binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
             DATA.searchStatus = true
         }
-        binding!!.toolbar.close.setOnClickListener { v: View? -> onBackPressed() }
+        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
+
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -67,7 +67,7 @@ class CastDetailsActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable) {}
         })
-        binding!!.go.setOnClickListener { v: View? ->
+        binding!!.go.setOnClickListener {
             VOID.dialogAboutArtist(
                 activity,
                 castImage,
@@ -80,19 +80,19 @@ class CastDetailsActivity : AppCompatActivity() {
         list = ArrayList()
         adapter = MovieAdapter(activity, list!!)
         binding!!.recyclerView.adapter = adapter
-        binding!!.switchBar.all.setOnClickListener { v: View? ->
+        binding!!.switchBar.all.setOnClickListener {
             type = DATA.TIMESTAMP
             getData(type)
         }
-        binding!!.switchBar.mostViews.setOnClickListener { v: View? ->
+        binding!!.switchBar.mostViews.setOnClickListener {
             type = DATA.VIEWS_COUNT
             getData(type)
         }
-        binding!!.switchBar.mostLoves.setOnClickListener { v: View? ->
+        binding!!.switchBar.mostLoves.setOnClickListener {
             type = DATA.LOVES_COUNT
             getData(type)
         }
-        binding!!.switchBar.name.setOnClickListener { v: View? ->
+        binding!!.switchBar.name.setOnClickListener {
             type = DATA.NAME
             getData(type)
         }
@@ -123,9 +123,7 @@ class CastDetailsActivity : AppCompatActivity() {
                 list!!.clear()
                 var i = 0
                 for (snapshot in dataSnapshot.children) {
-                    val movie = snapshot.getValue(
-                        Movie::class.java
-                    )
+                    val movie = snapshot.getValue(Movie::class.java)
                     for (id in item!!) {
                         assert(movie != null)
                         if (movie!!.id != null) if (movie.id == id) {

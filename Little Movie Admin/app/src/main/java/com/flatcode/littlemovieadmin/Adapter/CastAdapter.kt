@@ -38,6 +38,7 @@ class CastAdapter(private val activity: Activity, var list: ArrayList<Cast?>) :
         val aboutMy = DATA.EMPTY + item.aboutMy
         val interestedCount = DATA.EMPTY + item.interestedCount
         val moviesCount = DATA.EMPTY + item.moviesCount
+
         VOID.GlideImage(true, activity, image, holder.image)
         if (item.name == DATA.EMPTY) {
             holder.name.visibility = View.GONE
@@ -55,22 +56,11 @@ class CastAdapter(private val activity: Activity, var list: ArrayList<Cast?>) :
             DATA.EMPTY,
             DATA.ZERO
         ) else holder.numberMovies.text = moviesCount
-        holder.more.setOnClickListener { v: View? ->
-            VOID.moreDeleteCast(
-                activity,
-                item,
-                DATA.NULL,
-                DATA.NULL,
-                DATA.NULL,
-                DATA.NULL,
-                DATA.NULL,
-                DATA.NULL,
-                DATA.NULL,
-                DATA.NULL,
-                DATA.NULL
-            )
+
+        holder.more.setOnClickListener {
+            VOID.moreDeleteCast(activity, item, DATA.NULL, DATA.NULL, DATA.NULL, true, false)
         }
-        holder.item.setOnClickListener { view: View? ->
+        holder.item.setOnClickListener {
             VOID.IntentExtra4(
                 activity, CLASS.CAST_DETAILS, DATA.CAST_ID, id, DATA.CAST_NAME,
                 name, DATA.CAST_IMAGE, image, DATA.CAST_ABOUT, aboutMy

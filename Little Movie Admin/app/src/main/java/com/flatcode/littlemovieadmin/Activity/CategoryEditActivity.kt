@@ -7,7 +7,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemovieadmin.Modelimport.Category
@@ -35,9 +34,7 @@ class CategoryEditActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
-        binding = ActivityCategoryAddBinding.inflate(
-            layoutInflater
-        )
+        binding = ActivityCategoryAddBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
 
@@ -47,9 +44,9 @@ class CategoryEditActivity : AppCompatActivity() {
         dialog!!.setCanceledOnTouchOutside(false)
         loadCategoryInfo()
         binding!!.toolbar.nameSpace.setText(R.string.edit_category)
-        binding!!.toolbar.back.setOnClickListener { v: View? -> onBackPressed() }
-        binding!!.image.setOnClickListener { v: View? -> VOID.CropImageSquare(activity) }
-        binding!!.toolbar.ok.setOnClickListener { v: View? -> validateData() }
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+        binding!!.image.setOnClickListener { VOID.CropImageSquare(activity) }
+        binding!!.toolbar.ok.setOnClickListener { validateData() }
     }
 
     private var name = DATA.EMPTY
@@ -67,7 +64,7 @@ class CategoryEditActivity : AppCompatActivity() {
     }
 
     private fun uploadImage() {
-        dialog!!.setMessage("Updating Category...")
+        dialog!!.setMessage("Updating Category Image...")
         dialog!!.show()
         val filePathAndName = "Images/Category/$categoryId"
         val reference = FirebaseStorage.getInstance().getReference(
@@ -91,16 +88,15 @@ class CategoryEditActivity : AppCompatActivity() {
     }
 
     private fun updateCategory(imageUrl: String?) {
-        dialog!!.setMessage("Updating category image...")
+        dialog!!.setMessage("Updating Category DB...")
         dialog!!.show()
         val hashMap = HashMap<String?, Any>()
         hashMap[DATA.NAME] = DATA.EMPTY + name
-        if (imageUri != null) {
+        if (imageUri != null)
             hashMap[DATA.IMAGE] = DATA.EMPTY + imageUrl
-        }
         val reference = FirebaseDatabase.getInstance().getReference(DATA.CATEGORIES)
         reference.child(categoryId!!).updateChildren(hashMap)
-            .addOnSuccessListener { unused: Void? ->
+            .addOnSuccessListener {
                 dialog!!.dismiss()
                 Toast.makeText(activity, "Category updated...", Toast.LENGTH_SHORT).show()
             }.addOnFailureListener { e: Exception ->
@@ -117,9 +113,7 @@ class CategoryEditActivity : AppCompatActivity() {
         val reference = FirebaseDatabase.getInstance().getReference(DATA.CATEGORIES)
         reference.child(categoryId!!).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val item = snapshot.getValue(
-                    Category::class.java
-                )!!
+                val item = snapshot.getValue(Category::class.java)!!
                 val name = item.name
                 val image = item.image
                 VOID.GlideImage(true, activity, image, binding!!.image)

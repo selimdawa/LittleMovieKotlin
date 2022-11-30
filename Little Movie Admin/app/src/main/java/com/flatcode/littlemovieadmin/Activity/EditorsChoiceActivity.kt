@@ -2,7 +2,6 @@ package com.flatcode.littlemovieadmin.Activityimport
 
 import android.app.Activity
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemovieadmin.Adapter.EditorsChoiceAdapter
 import com.flatcode.littlemovieadmin.Model.EditorsChoice
@@ -24,8 +23,9 @@ class EditorsChoiceActivity : AppCompatActivity() {
         binding = ActivityEditorsChoiceBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
+
         binding!!.toolbar.nameSpace.setText(R.string.editors_choice)
-        binding!!.toolbar.back.setOnClickListener { v: View? -> onBackPressed() }
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
 
         //binding.recyclerView.setHasFixedSize(true);
         list = ArrayList()

@@ -9,14 +9,15 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.Unit.CLASS
 import com.flatcode.littlemovieadmin.Unit.DATA
+import com.flatcode.littlemovieadmin.Unit.DATA.castMovie
 import com.flatcode.littlemovieadmin.Unit.VOID
+import com.flatcode.littlemovieadmin.Unit.VOID.incrementItemCount
 import com.flatcode.littlemovieadmin.Unitimport.THEME
 import com.flatcode.littlemovieadmin.databinding.ActivityMovieAddBinding
 import com.google.firebase.database.*
@@ -42,9 +43,7 @@ class MovieAddActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
-        binding = ActivityMovieAddBinding.inflate(
-            layoutInflater
-        )
+        binding = ActivityMovieAddBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
 
@@ -53,18 +52,18 @@ class MovieAddActivity : AppCompatActivity() {
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
         binding!!.toolbar.nameSpace.setText(R.string.add_new_movie)
-        binding!!.toolbar.back.setOnClickListener { v: View? -> onBackPressed() }
-        binding!!.category.setOnClickListener { v: View? -> categoryPickDialog() }
-        binding!!.image.setOnClickListener { v: View? -> VOID.CropVideoSquare(activity) }
-        binding!!.chooseMovie.setOnClickListener { v: View? -> openVideoFiles() }
-        binding!!.toolbar.ok.setOnClickListener { v: View? -> validateData() }
-        binding!!.cast.setOnClickListener { v: View? -> VOID.Intent1(activity, CLASS.CAST_MOVIE) }
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+        binding!!.category.setOnClickListener { categoryPickDialog() }
+        binding!!.image.setOnClickListener { VOID.CropVideoSquare(activity) }
+        binding!!.chooseMovie.setOnClickListener { openVideoFiles() }
+        binding!!.toolbar.ok.setOnClickListener { validateData() }
         metadataRetriever = MediaMetadataRetriever()
     }
 
     private var name = DATA.EMPTY
     private var description = DATA.EMPTY
     private var yearText = DATA.EMPTY
+
     private fun validateData() {
         //get data
         name = binding!!.nameEt.text.toString().trim { it <= ' ' }
@@ -73,36 +72,21 @@ class MovieAddActivity : AppCompatActivity() {
 
         //validate data
         if (TextUtils.isEmpty(name)) Toast.makeText(activity, "Enter Name...", Toast.LENGTH_SHORT)
-            .show() else if (TextUtils.isEmpty(description)) Toast.makeText(
-            activity,
-            "Enter Description...",
-            Toast.LENGTH_SHORT
-        ).show() else if (TextUtils.isEmpty(yearText)) Toast.makeText(
-            activity,
-            "Enter Date...",
-            Toast.LENGTH_SHORT
-        )
-            .show() else if (yearText!!.toInt() < DATA.MIN_YEAR || yearText!!.toInt() > DATA.MAX_YEAR) Toast.makeText(
-            activity,
-            "Invalid Date...",
-            Toast.LENGTH_SHORT
-        ).show() else if (TextUtils.isEmpty(selectedCategoryTitle)) Toast.makeText(
-            activity,
+            .show() else if (TextUtils.isEmpty(description)) Toast.makeText(activity,
+            "Enter Description...", Toast.LENGTH_SHORT)
+            .show() else if (TextUtils.isEmpty(yearText)) Toast.makeText(activity,
+            "Enter Date...", Toast.LENGTH_SHORT)
+            .show() else if (yearText.toInt() < DATA.MIN_YEAR || yearText.toInt() > DATA.MAX_YEAR) Toast.makeText(
+            activity, "Invalid Date...", Toast.LENGTH_SHORT)
+            .show() else if (TextUtils.isEmpty(selectedCategoryTitle)) Toast.makeText(activity,
             "Pick Category...",
-            Toast.LENGTH_SHORT
-        ).show() else if (DATA.castMovie.size <= 0) Toast.makeText(
-            activity,
+            Toast.LENGTH_SHORT).show() else if (castMovie.size <= 0) Toast.makeText(activity,
             "Enter Cast...",
-            Toast.LENGTH_SHORT
-        ).show() else if (imageUri == null) Toast.makeText(
-            activity,
+            Toast.LENGTH_SHORT).show() else if (imageUri == null) Toast.makeText(activity,
             "Pick Image...",
-            Toast.LENGTH_SHORT
-        ).show() else if (videoUri == null) Toast.makeText(
-            activity,
+            Toast.LENGTH_SHORT).show() else if (videoUri == null) Toast.makeText(activity,
             "Pick Movie...",
-            Toast.LENGTH_SHORT
-        ).show() else uploadFileToDB()
+            Toast.LENGTH_SHORT).show() else uploadFileToDB()
     }
 
     fun uploadFileToDB() {
@@ -123,6 +107,7 @@ class MovieAddActivity : AppCompatActivity() {
         Toast.makeText(this, "Uploads please wait!", Toast.LENGTH_SHORT).show()
         dialog!!.setMessage("Uploads Movie...")
         dialog!!.show()
+
         val ref = FirebaseDatabase.getInstance().getReference(DATA.MOVIES)
         val id = ref.push().key
         val filePathAndName = "Movies/$id"
@@ -161,8 +146,7 @@ class MovieAddActivity : AppCompatActivity() {
                     activity,
                     "Cast upload failed due to : " + e.message,
                     Toast.LENGTH_SHORT
-                )
-                    .show()
+                ).show()
             }.addOnProgressListener { taskSnapshot: UploadTask.TaskSnapshot ->
                 val progress = 100.0 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount
                 dialog!!.setMessage("uploaded " + progress.toInt() + "%.....")
@@ -173,7 +157,7 @@ class MovieAddActivity : AppCompatActivity() {
         uploadedMovieUrl: String,
         uploadedImageUrl: String,
         id: String?,
-        ref: DatabaseReference
+        ref: DatabaseReference,
     ) {
         dialog!!.setMessage("Uploading movie info...")
         dialog!!.show()
@@ -187,20 +171,20 @@ class MovieAddActivity : AppCompatActivity() {
         hashMap[DATA.DESCRIPTION] = DATA.EMPTY + description
         hashMap[DATA.CATEGORY_ID] = DATA.EMPTY + selectedCategoryId
         hashMap[DATA.DURATION] = DATA.EMPTY + durations
-        hashMap[DATA.YEAR] = yearText!!.toInt()
+        hashMap[DATA.YEAR] = yearText.toInt()
         hashMap[DATA.MOVIE_LINK] = DATA.EMPTY + uploadedMovieUrl
         hashMap[DATA.IMAGE] = DATA.EMPTY + uploadedImageUrl
         hashMap[DATA.EDITORS_CHOICE] = DATA.ZERO
         hashMap[DATA.LOVES_COUNT] = DATA.ZERO
         hashMap[DATA.VIEWS_COUNT] = DATA.ZERO
-        hashMap[DATA.CAST_COUNT] = DATA.castMovie.size
+        hashMap[DATA.CAST_COUNT] = castMovie.size
+
         assert(id != null)
-        ref.child(id!!).setValue(hashMap).addOnSuccessListener { unused: Void? ->
-            if (selectedCategoryId != null) VOID.incrementItemCount(
+        ref.child(id!!).setValue(hashMap).addOnSuccessListener {
+            if (selectedCategoryId != null) incrementItemCount(
                 DATA.CATEGORIES,
                 selectedCategoryId,
-                DATA.MOVIES_COUNT
-            )
+                DATA.MOVIES_COUNT)
             uploadCastToDB(id)
             dialog!!.dismiss()
         }.addOnFailureListener { e: Exception ->
@@ -220,11 +204,13 @@ class MovieAddActivity : AppCompatActivity() {
 
         //setup data to upload
         val hashMap = HashMap<String?, Any>()
-        for (i in DATA.castMovie.indices) {
-            hashMap[DATA.castMovie[i]] = true
+        for (i in castMovie.indices) {
+            hashMap[castMovie[i]] = true
+            incrementItemCount(DATA.CAST, castMovie[i], DATA.MOVIES_COUNT)
         }
+
         assert(id != null)
-        ref.child(id!!).setValue(hashMap).addOnSuccessListener { unused: Void? ->
+        ref.child(id!!).setValue(hashMap).addOnSuccessListener {
             dialog!!.dismiss()
             Toast.makeText(activity, "Successfully uploaded...", Toast.LENGTH_SHORT).show()
         }.addOnFailureListener { e: Exception ->
@@ -282,6 +268,7 @@ class MovieAddActivity : AppCompatActivity() {
     private fun loadCategories() {
         categoryList = ArrayList()
         categoryId = ArrayList()
+
         val ref = FirebaseDatabase.getInstance().getReference(DATA.CATEGORIES)
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -290,9 +277,11 @@ class MovieAddActivity : AppCompatActivity() {
                 for (data in snapshot.children) {
                     val id = DATA.EMPTY + data.child(DATA.ID).value
                     val name = DATA.EMPTY + data.child(DATA.NAME).value
+
                     categoryList!!.add(name)
                     categoryId!!.add(id)
                 }
+                binding!!.cast.setOnClickListener { VOID.Intent1(activity, CLASS.CAST_MOVIE) }
             }
 
             override fun onCancelled(error: DatabaseError) {}
@@ -303,9 +292,8 @@ class MovieAddActivity : AppCompatActivity() {
     private var selectedCategoryTitle: String? = null
     private fun categoryPickDialog() {
         val categories = arrayOfNulls<String>(categoryList!!.size)
-        for (i in categoryList!!.indices) {
+        for (i in categoryList!!.indices)
             categories[i] = categoryList!![i]
-        }
         val builder = AlertDialog.Builder(activity)
         builder.setTitle("Pick Category")
             .setItems(categories) { dialog: DialogInterface?, which: Int ->
@@ -318,16 +306,16 @@ class MovieAddActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         binding!!.cast.text =
-            MessageFormat.format("{0}{1}", DATA.EMPTY, DATA.castMovie.size)
+            MessageFormat.format("{0}{1}", DATA.EMPTY, castMovie.size)
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
-        DATA.castMovie.clear()
+        castMovie.clear()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        DATA.castMovie.clear()
+        castMovie.clear()
     }
 }

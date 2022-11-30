@@ -41,10 +41,12 @@ class CommentAdapter(private val context: Context, var list: ArrayList<Comment?>
         val publisher = DATA.EMPTY + item.publisher
         val timestamp = DATA.EMPTY + item.timestamp
         val date: String = MyApplication.formatTimestamp(timestamp.toLong())
+
         holder.date.text = date
         holder.comment.text = comment
         loadUserDetails(publisher, holder.name, holder.image)
-        holder.item.setOnClickListener { v: View? ->
+
+        holder.item.setOnClickListener {
             if (publisher == DATA.FirebaseUserUid) deleteComment(
                 commentId,
                 movieId

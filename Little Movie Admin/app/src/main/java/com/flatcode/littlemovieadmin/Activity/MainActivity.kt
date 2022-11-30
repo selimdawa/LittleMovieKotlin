@@ -36,9 +36,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
             .registerOnSharedPreferenceChangeListener(this)
         THEME.setThemeOfApp(context)
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(
-            layoutInflater
-        )
+        binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
 
@@ -55,7 +53,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
         } else if (sharedPreferences.getString(DATA.COLOR_OPTION, "NIGHT_ONE") == "NIGHT_ONE") {
             binding!!.toolbar.mode.setBackgroundResource(R.drawable.moon)
         }
-        binding!!.toolbar.image.setOnClickListener { v: View? ->
+        binding!!.toolbar.image.setOnClickListener {
             VOID.IntentExtra(
                 context,
                 CLASS.PROFILE,
@@ -83,9 +81,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 U = 0
                 for (data in dataSnapshot.children) {
-                    val item = data.getValue(
-                        User::class.java
-                    )!!
+                    val item = data.getValue(User::class.java)!!
                     if (item.id != null && item.id != DATA.FirebaseUserUid) U++
                 }
                 nrMovies()
@@ -98,9 +94,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
                         MO = 0
                         EC = 0
                         for (data in dataSnapshot.children) {
-                            val item = data.getValue(
-                                Movie::class.java
-                            )!!
+                            val item = data.getValue(Movie::class.java)!!
                             if (item.id != null) {
                                 MO++
                                 if (item.editorsChoice != 0) if (item.publisher == DATA.FirebaseUserUid) EC++
@@ -119,9 +113,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         CA = 0
                         for (data in dataSnapshot.children) {
-                            val item = data.getValue(
-                                Movie::class.java
-                            )!!
+                            val item = data.getValue(Movie::class.java)!!
                             if (item.id != null) if (item.publisher == DATA.FirebaseUserUid) CA++
                         }
                         nrSliderShow()
@@ -176,8 +168,8 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
     }
 
     private fun userInfo() {
-        val reference = FirebaseDatabase.getInstance().getReference(DATA.USERS)
-            .child(DATA.FirebaseUserUid)
+        val reference =
+            FirebaseDatabase.getInstance().getReference(DATA.USERS).child(DATA.FirebaseUserUid)
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val user = dataSnapshot.getValue(
@@ -192,7 +184,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
 
     private fun IdeaPosts(
         users: Int, movies: Int, editorsChoice: Int, categories: Int, sliderShow: Int,
-        cast: Int, favorites: Int
+        cast: Int, favorites: Int,
     ) {
         list!!.clear()
         val item1 = Main(R.drawable.ic_person, "Users", users, CLASS.USERS)

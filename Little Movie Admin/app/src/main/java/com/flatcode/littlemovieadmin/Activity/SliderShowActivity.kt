@@ -42,87 +42,88 @@ class SliderShowActivity : AppCompatActivity() {
         setContentView(view)
 
         binding!!.toolbar.nameSpace.setText(R.string.slider_show)
-        binding!!.toolbar.back.setOnClickListener { v: View? -> onBackPressed() }
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         dialog = ProgressDialog(context)
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
-        binding!!.addOne.setOnClickListener { v: View? ->
+
+        binding!!.addOne.setOnClickListener {
             VOID.CropImageSlider(activity)
             IMAGE_NUMBER = 1
         }
-        binding!!.addTwo.setOnClickListener { v: View? ->
+        binding!!.addTwo.setOnClickListener {
             VOID.CropImageSlider(activity)
             IMAGE_NUMBER = 2
         }
-        binding!!.addThree.setOnClickListener { v: View? ->
+        binding!!.addThree.setOnClickListener {
             VOID.CropImageSlider(activity)
             IMAGE_NUMBER = 3
         }
-        binding!!.addFour.setOnClickListener { v: View? ->
+        binding!!.addFour.setOnClickListener {
             VOID.CropImageSlider(activity)
             IMAGE_NUMBER = 4
         }
-        binding!!.addFive.setOnClickListener { v: View? ->
+        binding!!.addFive.setOnClickListener {
             VOID.CropImageSlider(activity)
             IMAGE_NUMBER = 5
         }
-        binding!!.addSix.setOnClickListener { v: View? ->
+        binding!!.addSix.setOnClickListener {
             VOID.CropImageSlider(activity)
             IMAGE_NUMBER = 6
         }
-        binding!!.addSeven.setOnClickListener { v: View? ->
+        binding!!.addSeven.setOnClickListener {
             VOID.CropImageSlider(activity)
             IMAGE_NUMBER = 7
         }
-        binding!!.addEight.setOnClickListener { v: View? ->
+        binding!!.addEight.setOnClickListener {
             VOID.CropImageSlider(activity)
             IMAGE_NUMBER = 8
         }
-        binding!!.addNine.setOnClickListener { v: View? ->
+        binding!!.addNine.setOnClickListener {
             VOID.CropImageSlider(activity)
             IMAGE_NUMBER = 9
         }
-        binding!!.addTeen.setOnClickListener { v: View? ->
+        binding!!.addTeen.setOnClickListener {
             VOID.CropImageSlider(activity)
             IMAGE_NUMBER = 10
         }
-        binding!!.addEleven.setOnClickListener { v: View? ->
+        binding!!.addEleven.setOnClickListener {
             VOID.CropImageSlider(activity)
             IMAGE_NUMBER = 11
         }
-        binding!!.addTwelfth.setOnClickListener { v: View? ->
+        binding!!.addTwelfth.setOnClickListener {
             VOID.CropImageSlider(activity)
             IMAGE_NUMBER = 12
         }
-        binding!!.addThirteen.setOnClickListener { v: View? ->
+        binding!!.addThirteen.setOnClickListener {
             VOID.CropImageSlider(activity)
             IMAGE_NUMBER = 13
         }
-        binding!!.addFourteenth.setOnClickListener { v: View? ->
+        binding!!.addFourteenth.setOnClickListener {
             VOID.CropImageSlider(activity)
             IMAGE_NUMBER = 14
         }
-        binding!!.addFifteenth.setOnClickListener { v: View? ->
+        binding!!.addFifteenth.setOnClickListener {
             VOID.CropImageSlider(activity)
             IMAGE_NUMBER = 15
         }
-        binding!!.addSixteen.setOnClickListener { v: View? ->
+        binding!!.addSixteen.setOnClickListener {
             VOID.CropImageSlider(activity)
             IMAGE_NUMBER = 16
         }
-        binding!!.addSeventeen.setOnClickListener { v: View? ->
+        binding!!.addSeventeen.setOnClickListener {
             VOID.CropImageSlider(activity)
             IMAGE_NUMBER = 17
         }
-        binding!!.addEighteen.setOnClickListener { v: View? ->
+        binding!!.addEighteen.setOnClickListener {
             VOID.CropImageSlider(activity)
             IMAGE_NUMBER = 18
         }
-        binding!!.addNineteen.setOnClickListener { v: View? ->
+        binding!!.addNineteen.setOnClickListener {
             VOID.CropImageSlider(activity)
             IMAGE_NUMBER = 19
         }
-        binding!!.addTwenty.setOnClickListener { v: View? ->
+        binding!!.addTwenty.setOnClickListener {
             VOID.CropImageSlider(activity)
             IMAGE_NUMBER = 20
         }
@@ -131,7 +132,7 @@ class SliderShowActivity : AppCompatActivity() {
     }
 
     private val nrSliderShow: Unit
-        private get() {
+        get() {
             val reference = FirebaseDatabase.getInstance().getReference(DATA.SLIDER_SHOW)
             reference.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -321,7 +322,7 @@ class SliderShowActivity : AppCompatActivity() {
             hashMap[DATA.EMPTY + name] = DATA.EMPTY + imageUrl
         }
         val reference = FirebaseDatabase.getInstance().getReference(DATA.SLIDER_SHOW)
-        reference.updateChildren(hashMap).addOnSuccessListener { unused: Void? ->
+        reference.updateChildren(hashMap).addOnSuccessListener {
             dialog!!.dismiss()
             Toast.makeText(context, "The photo has been posted", Toast.LENGTH_SHORT).show()
         }.addOnFailureListener { e: Exception ->

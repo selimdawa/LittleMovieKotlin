@@ -14,7 +14,6 @@ import com.flatcode.littlemovieadmin.Unitimport.THEME
 import com.flatcode.littlemovieadmin.databinding.ActivityUsersBinding
 import com.google.firebase.database.*
 import java.text.MessageFormat
-import java.util.*
 
 class UsersActivity : AppCompatActivity() {
 
@@ -32,14 +31,16 @@ class UsersActivity : AppCompatActivity() {
         setContentView(view)
 
         binding!!.toolbar.nameSpace.setText(R.string.users)
-        binding!!.toolbar.back.setOnClickListener { v: View? -> onBackPressed() }
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         type = DATA.TIMESTAMP
-        binding!!.toolbar.search.setOnClickListener { v: View? ->
+
+        binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
             binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
             DATA.searchStatus = true
         }
-        binding!!.toolbar.close.setOnClickListener { v: View? -> onBackPressed() }
+        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
+
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -57,11 +58,11 @@ class UsersActivity : AppCompatActivity() {
         list = ArrayList()
         adapter = UserAdapter(context, list!!)
         binding!!.recyclerView.adapter = adapter
-        binding!!.switchBar.all.setOnClickListener { v: View? ->
+        binding!!.switchBar.all.setOnClickListener {
             type = DATA.TIMESTAMP
             getData(type)
         }
-        binding!!.switchBar.name.setOnClickListener { v: View? ->
+        binding!!.switchBar.name.setOnClickListener {
             type = DATA.NAME
             getData(type)
         }
@@ -83,11 +84,11 @@ class UsersActivity : AppCompatActivity() {
                         i++
                     }
                 }
-                Collections.reverse(list)
+                list!!.reverse()
                 binding!!.toolbar.number.text = MessageFormat.format("( {0} )", i)
                 adapter!!.notifyDataSetChanged()
                 binding!!.progress.visibility = View.GONE
-                if (!list!!.isEmpty()) {
+                if (list!!.isNotEmpty()) {
                     binding!!.recyclerView.visibility = View.VISIBLE
                     binding!!.emptyText.visibility = View.GONE
                 } else {

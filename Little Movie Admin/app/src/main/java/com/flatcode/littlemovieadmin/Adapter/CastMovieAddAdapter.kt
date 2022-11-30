@@ -10,28 +10,26 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.Model.Cast
 import com.flatcode.littlemovieadmin.Unit.DATA
+import com.flatcode.littlemovieadmin.Unit.DATA.castMovie
 import com.flatcode.littlemovieadmin.Unit.VOID
 import com.flatcode.littlemovieadmin.databinding.ItemCastMovieAddBinding
 
-class CastMovieAddAdapter(private val activity: Activity, var list: ArrayList<Cast?>) :
+class CastMovieAddAdapter(private val activity: Activity, var list: ArrayList<Cast?>?) :
     RecyclerView.Adapter<CastMovieAddAdapter.ViewHolder>() {
 
     private var binding: ItemCastMovieAddBinding? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ItemCastMovieAddBinding.inflate(
-            LayoutInflater.from(
-                activity
-            ), parent, false
-        )
+        binding = ItemCastMovieAddBinding.inflate(LayoutInflater.from(activity), parent, false)
         return ViewHolder(binding!!.root)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = list[position]
+        val item = list!![position]
         val id = DATA.EMPTY + item!!.id
         val name = DATA.EMPTY + item.name
         val image = DATA.EMPTY + item.image
+
         VOID.GlideImage(true, activity, image, holder.image)
         if (name == DATA.EMPTY) {
             holder.name.visibility = View.GONE
@@ -39,37 +37,30 @@ class CastMovieAddAdapter(private val activity: Activity, var list: ArrayList<Ca
             holder.name.visibility = View.VISIBLE
             holder.name.text = name
         }
+
+        castAddRemove = castMovie
+
         checkRemove(id, holder.add, holder.remove)
         checkAdd(id, holder.add, holder.remove)
-        holder.add.setOnClickListener { v: View? ->
-            DATA.castMovie.add(id)
+
+        holder.add.setOnClickListener {
+            castAddRemove = castAddRemove as ArrayList<String?> + id
             checkRemove(id, holder.add, holder.remove)
             checkAdd(id, holder.add, holder.remove)
         }
-        holder.remove.setOnClickListener { v: View? ->
-            if (DATA.castMovie.size == 1) {
-                DATA.castMovie.clear()
-                holder.add.visibility = View.VISIBLE
-                holder.remove.visibility = View.GONE
-            } else {
-                for (i in DATA.castMovie.indices) {
-                    if (DATA.castMovie[i] != id) {
-                        DATA.castMovie.remove(id)
-                        checkRemove(id, holder.add, holder.remove)
-                        checkAdd(id, holder.add, holder.remove)
-                    }
-                }
-            }
+
+        holder.remove.setOnClickListener {
+            castAddRemove = castAddRemove as ArrayList<String?> - id
+            checkRemove(id, holder.add, holder.remove)
+            checkAdd(id, holder.add, holder.remove)
         }
     }
 
     override fun getItemCount(): Int {
-        return list.size
+        return list!!.size
     }
 
-    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(
-        view!!
-    ) {
+    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
         var image: ImageView
         var add: ImageView
         var remove: ImageView
@@ -86,8 +77,8 @@ class CastMovieAddAdapter(private val activity: Activity, var list: ArrayList<Ca
     }
 
     private fun checkAdd(id: String, add: ImageView, remove: ImageView) {
-        for (i in DATA.castMovie.indices) {
-            if (DATA.castMovie[i] == id) {
+        for (i in castAddRemove!!.indices) {
+            if (castAddRemove!![i] == id) {
                 add.visibility = View.GONE
                 remove.visibility = View.VISIBLE
             }
@@ -95,11 +86,15 @@ class CastMovieAddAdapter(private val activity: Activity, var list: ArrayList<Ca
     }
 
     private fun checkRemove(id: String, add: ImageView, remove: ImageView) {
-        for (i in DATA.castMovie.indices) {
-            if (DATA.castMovie[i] != id) {
+        for (i in castAddRemove!!.indices) {
+            if (castAddRemove!![i] != id) {
                 add.visibility = View.VISIBLE
                 remove.visibility = View.GONE
             }
         }
+    }
+
+    companion object {
+        var castAddRemove: List<String?>? = null
     }
 }

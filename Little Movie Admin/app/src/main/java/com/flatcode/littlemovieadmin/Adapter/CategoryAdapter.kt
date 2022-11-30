@@ -37,6 +37,7 @@ class CategoryAdapter(private val activity: Activity, var list: ArrayList<Catego
         val image = DATA.EMPTY + item.image
         val interestedCount = DATA.EMPTY + item.interestedCount
         val moviesCount = DATA.EMPTY + item.moviesCount
+
         VOID.GlideImage(false, activity, image, holder.image)
         if (item.name == DATA.EMPTY) {
             holder.name.visibility = View.GONE
@@ -54,22 +55,11 @@ class CategoryAdapter(private val activity: Activity, var list: ArrayList<Catego
             DATA.EMPTY,
             DATA.ZERO
         ) else holder.numberMovies.text = moviesCount
-        holder.more.setOnClickListener { v: View? ->
-            VOID.moreDeleteCategory(
-                activity,
-                item,
-                DATA.NULL,
-                DATA.NULL,
-                DATA.NULL,
-                DATA.NULL,
-                DATA.NULL,
-                DATA.NULL,
-                DATA.NULL,
-                DATA.NULL,
-                DATA.NULL
-            )
+
+        holder.more.setOnClickListener {
+            VOID.moreDeleteCategory(activity, item, DATA.NULL, DATA.NULL, DATA.NULL, false, false)
         }
-        holder.item.setOnClickListener { view: View? ->
+        holder.item.setOnClickListener {
             VOID.IntentExtra2(
                 activity,
                 CLASS.CATEGORY_DETAILS,

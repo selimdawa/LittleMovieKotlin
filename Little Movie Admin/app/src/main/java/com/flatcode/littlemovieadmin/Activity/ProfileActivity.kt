@@ -38,7 +38,7 @@ class ProfileActivity : AppCompatActivity() {
         if (profileId == DATA.FirebaseUserUid) {
             binding!!.edit.visibility = View.VISIBLE
             binding!!.edit.setImageResource(R.drawable.ic_edit_white)
-            binding!!.edit.setOnClickListener { v: View? ->
+            binding!!.edit.setOnClickListener {
                 VOID.Intent1(
                     context,
                     CLASS.PROFILE_EDIT
@@ -50,7 +50,7 @@ class ProfileActivity : AppCompatActivity() {
             nrInterested(DATA.CAST, binding!!.numbercast)
             nrInterested(DATA.CATEGORIES, binding!!.numberCategories)
         }
-        binding!!.back.setOnClickListener { v: View? -> onBackPressed() }
+        binding!!.back.setOnClickListener { onBackPressed() }
     }
 
     private fun loadUserInfo() {
@@ -72,9 +72,9 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun nrInterested(database: String?, text: TextView) {
-        val reference = FirebaseDatabase.getInstance().getReference(DATA.INTERESTED).child(
-            profileId!!
-        ).child(database!!)
+        val reference =
+            FirebaseDatabase.getInstance().getReference(DATA.INTERESTED).child(profileId!!)
+                .child(database!!)
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 text.text = MessageFormat.format("{0}", dataSnapshot.childrenCount)
@@ -90,9 +90,7 @@ class ProfileActivity : AppCompatActivity() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 var i = 0
                 for (data in dataSnapshot.children) {
-                    val item = data.getValue(
-                        Category::class.java
-                    )!!
+                    val item = data.getValue(Category::class.java)!!
                     if (item.publisher == profileId) i++
                 }
                 text.text = MessageFormat.format("{0}{1}", DATA.EMPTY, i)
@@ -103,10 +101,9 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private val nrFavorites: Unit
-        private get() {
-            val reference = FirebaseDatabase.getInstance().getReference(DATA.FAVORITES).child(
-                profileId!!
-            )
+        get() {
+            val reference =
+                FirebaseDatabase.getInstance().getReference(DATA.FAVORITES).child(profileId!!)
             reference.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     binding!!.numberFavorites.text =

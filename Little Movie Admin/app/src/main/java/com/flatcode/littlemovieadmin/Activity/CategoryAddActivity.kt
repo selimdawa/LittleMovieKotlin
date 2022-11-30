@@ -8,7 +8,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemovieadmin.R
@@ -33,9 +32,7 @@ class CategoryAddActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         THEME.setThemeOfApp(context)
         super.onCreate(savedInstanceState)
-        binding = ActivityCategoryAddBinding.inflate(
-            layoutInflater
-        )
+        binding = ActivityCategoryAddBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
 
@@ -43,9 +40,9 @@ class CategoryAddActivity : AppCompatActivity() {
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
         binding!!.toolbar.nameSpace.setText(R.string.add_new_category)
-        binding!!.toolbar.back.setOnClickListener { v: View? -> onBackPressed() }
-        binding!!.image.setOnClickListener { v: View? -> VOID.CropImageSquare(activity) }
-        binding!!.toolbar.ok.setOnClickListener { v: View? -> validateData() }
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+        binding!!.image.setOnClickListener { VOID.CropImageSquare(activity) }
+        binding!!.toolbar.ok.setOnClickListener { validateData() }
     }
 
     private var name = DATA.EMPTY
@@ -101,7 +98,7 @@ class CategoryAddActivity : AppCompatActivity() {
         hashMap[DATA.INTERESTED_COUNT] = DATA.ZERO
         hashMap[DATA.MOVIES_COUNT] = DATA.ZERO
         assert(id != null)
-        ref.child(id!!).setValue(hashMap).addOnSuccessListener { unused: Void? ->
+        ref.child(id!!).setValue(hashMap).addOnSuccessListener {
             dialog!!.dismiss()
             Toast.makeText(context, "Successfully uploaded...", Toast.LENGTH_SHORT).show()
         }.addOnFailureListener { e: Exception ->

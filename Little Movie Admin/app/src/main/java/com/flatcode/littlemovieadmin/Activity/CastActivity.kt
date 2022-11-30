@@ -23,7 +23,7 @@ class CastActivity : AppCompatActivity() {
     var adapter: CastAdapter? = null
     var type: String? = null
 
-    protected override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
         binding = ActivityCastBinding.inflate(layoutInflater)
@@ -31,14 +31,15 @@ class CastActivity : AppCompatActivity() {
         setContentView(view)
 
         binding!!.toolbar.nameSpace.setText(R.string.cast)
-        binding!!.toolbar.back.setOnClickListener { v: View? -> onBackPressed() }
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         type = DATA.TIMESTAMP
-        binding!!.toolbar.search.setOnClickListener { v: View? ->
+        binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
             binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
             DATA.searchStatus = true
         }
-        binding!!.toolbar.close.setOnClickListener { v: View? -> onBackPressed() }
+        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
+
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -56,19 +57,19 @@ class CastActivity : AppCompatActivity() {
         list = ArrayList()
         adapter = CastAdapter(activity, list!!)
         binding!!.recyclerView.adapter = adapter
-        binding!!.switchBar.all.setOnClickListener { v: View? ->
+        binding!!.switchBar.all.setOnClickListener {
             type = DATA.TIMESTAMP
             getData(type)
         }
-        binding!!.switchBar.mostMovies.setOnClickListener { v: View? ->
+        binding!!.switchBar.mostMovies.setOnClickListener {
             type = DATA.MOVIES_COUNT
             getData(type)
         }
-        binding!!.switchBar.mostInterested.setOnClickListener { v: View? ->
+        binding!!.switchBar.mostInterested.setOnClickListener {
             type = DATA.INTERESTED_COUNT
             getData(type)
         }
-        binding!!.switchBar.name.setOnClickListener { v: View? ->
+        binding!!.switchBar.name.setOnClickListener {
             type = DATA.NAME
             getData(type)
         }
@@ -115,12 +116,12 @@ class CastActivity : AppCompatActivity() {
         } else super.onBackPressed()
     }
 
-    protected override fun onRestart() {
+    override fun onRestart() {
         getData(type)
         super.onRestart()
     }
 
-    protected override fun onResume() {
+    override fun onResume() {
         getData(type)
         super.onResume()
     }

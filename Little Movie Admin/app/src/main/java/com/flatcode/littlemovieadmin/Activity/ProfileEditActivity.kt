@@ -8,7 +8,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemovieadmin.R
@@ -44,10 +43,11 @@ class ProfileEditActivity : AppCompatActivity() {
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
         loadUserInfo()
+
         binding!!.toolbar.nameSpace.setText(R.string.edit_profile)
-        binding!!.toolbar.back.setOnClickListener { v: View? -> onBackPressed() }
-        binding!!.image.setOnClickListener { v: View? -> VOID.CropImageSquare(activity) }
-        binding!!.go.setOnClickListener { v: View? -> validateData() }
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+        binding!!.image.setOnClickListener { VOID.CropImageSquare(activity) }
+        binding!!.go.setOnClickListener { validateData() }
     }
 
     private var username = DATA.EMPTY
@@ -96,7 +96,7 @@ class ProfileEditActivity : AppCompatActivity() {
         }
         val reference = FirebaseDatabase.getInstance().getReference(DATA.USERS)
         reference.child(Objects.requireNonNull(DATA.FirebaseUserUid)).updateChildren(hashMap)
-            .addOnSuccessListener { unused: Void? ->
+            .addOnSuccessListener {
                 dialog!!.dismiss()
                 Toast.makeText(context, "Profile updated...", Toast.LENGTH_SHORT).show()
             }.addOnFailureListener { e: Exception ->
@@ -105,8 +105,7 @@ class ProfileEditActivity : AppCompatActivity() {
                     context,
                     "Failed to update db duo to " + e.message,
                     Toast.LENGTH_SHORT
-                )
-                    .show()
+                ).show()
             }
     }
 

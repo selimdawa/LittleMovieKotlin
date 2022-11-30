@@ -32,6 +32,7 @@ class CastMovieAdapter(private val activity: Activity, var list: ArrayList<Cast?
         val name = DATA.EMPTY + item.name
         val image = DATA.EMPTY + item.image
         val aboutMy = DATA.EMPTY + item.aboutMy
+
         VOID.GlideImage(true, activity, image, holder.image)
         if (item.name == DATA.EMPTY) {
             holder.name.visibility = View.GONE
@@ -39,7 +40,8 @@ class CastMovieAdapter(private val activity: Activity, var list: ArrayList<Cast?
             holder.name.visibility = View.VISIBLE
             holder.name.text = name
         }
-        holder.item.setOnClickListener { view: View? ->
+
+        holder.item.setOnClickListener {
             VOID.IntentExtra4(
                 activity, CLASS.CAST_DETAILS, DATA.CAST_ID, id, DATA.CAST_NAME,
                 name, DATA.CAST_IMAGE, image, DATA.CAST_ABOUT, aboutMy
@@ -51,9 +53,7 @@ class CastMovieAdapter(private val activity: Activity, var list: ArrayList<Cast?
         return list.size
     }
 
-    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(
-        view!!
-    ) {
+    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
         var image: ImageView
         var name: TextView
         var item: LinearLayout

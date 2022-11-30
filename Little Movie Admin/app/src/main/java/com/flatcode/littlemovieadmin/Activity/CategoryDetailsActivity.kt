@@ -27,23 +27,23 @@ class CategoryDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
-        binding = ActivityCategoryDetailsBinding.inflate(
-            layoutInflater
-        )
+        binding = ActivityCategoryDetailsBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
 
         categoryId = intent.getStringExtra(DATA.CATEGORY_ID)
         categoryName = intent.getStringExtra(DATA.CATEGORY_NAME)
+
         binding!!.toolbar.nameSpace.text = categoryName
-        binding!!.toolbar.back.setOnClickListener { v: View? -> onBackPressed() }
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         type = DATA.TIMESTAMP
-        binding!!.toolbar.search.setOnClickListener { v: View? ->
+        binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
             binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
             DATA.searchStatus = true
         }
-        binding!!.toolbar.close.setOnClickListener { v: View? -> onBackPressed() }
+        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
+
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -62,19 +62,19 @@ class CategoryDetailsActivity : AppCompatActivity() {
         list = ArrayList()
         adapter = MovieAdapter(activity, list!!)
         binding!!.recyclerView.adapter = adapter
-        binding!!.switchBar.all.setOnClickListener { v: View? ->
+        binding!!.switchBar.all.setOnClickListener {
             type = DATA.TIMESTAMP
             getData(type)
         }
-        binding!!.switchBar.mostViews.setOnClickListener { v: View? ->
+        binding!!.switchBar.mostViews.setOnClickListener {
             type = DATA.VIEWS_COUNT
             getData(type)
         }
-        binding!!.switchBar.mostLoves.setOnClickListener { v: View? ->
+        binding!!.switchBar.mostLoves.setOnClickListener {
             type = DATA.LOVES_COUNT
             getData(type)
         }
-        binding!!.switchBar.name.setOnClickListener { v: View? ->
+        binding!!.switchBar.name.setOnClickListener {
             type = DATA.NAME
             getData(type)
         }
@@ -87,9 +87,7 @@ class CategoryDetailsActivity : AppCompatActivity() {
                 list!!.clear()
                 var i = 0
                 for (data in dataSnapshot.children) {
-                    val item = data.getValue(
-                        Movie::class.java
-                    )!!
+                    val item = data.getValue(Movie::class.java)!!
                     if (item.categoryId == categoryId) {
                         list!!.add(item)
                         i++

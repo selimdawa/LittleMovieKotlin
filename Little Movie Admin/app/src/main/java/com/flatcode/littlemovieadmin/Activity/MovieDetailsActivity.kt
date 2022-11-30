@@ -5,7 +5,6 @@ import android.app.ProgressDialog
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -42,9 +41,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
-        binding = ActivityMovieDetailsBinding.inflate(
-            layoutInflater
-        )
+        binding = ActivityMovieDetailsBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
 
@@ -56,13 +53,13 @@ class MovieDetailsActivity : AppCompatActivity() {
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
         VOID.nrLoves(binding!!.loves, movieId)
-        binding!!.favorite.setOnClickListener { v: View? ->
+        binding!!.favorite.setOnClickListener {
             VOID.checkFavorite(
                 binding!!.favorite, movieId
             )
         }
-        binding!!.toolbar.back.setOnClickListener { v: View? -> onBackPressed() }
-        binding!!.view.setOnClickListener { v: View? ->
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+        binding!!.view.setOnClickListener {
             VOID.IntentExtra(
                 activity,
                 CLASS.MOVIE_VIEW,
@@ -70,7 +67,7 @@ class MovieDetailsActivity : AppCompatActivity() {
                 movieLink
             )
         }
-        binding!!.addComment.setOnClickListener { v: View? ->
+        binding!!.addComment.setOnClickListener {
             if (DATA.FIREBASE_USER == null) {
                 Toast.makeText(activity, "You're not logged in...", Toast.LENGTH_SHORT).show()
             } else {
@@ -159,8 +156,8 @@ class MovieDetailsActivity : AppCompatActivity() {
         builder.setView(commentAddBinding.root)
         val alertDialog = builder.create()
         alertDialog.show()
-        commentAddBinding.back.setOnClickListener { v: View? -> alertDialog.dismiss() }
-        commentAddBinding.submit.setOnClickListener { v: View? ->
+        commentAddBinding.back.setOnClickListener { alertDialog.dismiss() }
+        commentAddBinding.submit.setOnClickListener {
             comment = commentAddBinding.comment.text.toString().trim { it <= ' ' }
             if (TextUtils.isEmpty(comment)) {
                 Toast.makeText(activity, "Enter your comment...", Toast.LENGTH_SHORT).show()
@@ -185,7 +182,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         hashMap[DATA.PUBLISHER] = DATA.EMPTY + DATA.FirebaseUserUid
         assert(id != null)
         ref.child(movieId!!).child(DATA.COMMENTS).child(id!!).setValue(hashMap)
-            .addOnSuccessListener { unused: Void? ->
+            .addOnSuccessListener {
                 Toast.makeText(activity, "Comment Added...", Toast.LENGTH_SHORT).show()
                 dialog!!.dismiss()
                 loadComments()

@@ -3,7 +3,6 @@ package com.flatcode.littlemovieadmin.Activityimport
 import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemovieadmin.R
@@ -29,8 +28,8 @@ class PrivacyPolicyEditActivity : AppCompatActivity() {
         setContentView(view)
 
         binding!!.toolbar.nameSpace.setText(R.string.privacy_policy)
-        binding!!.toolbar.back.setOnClickListener { v: View? -> onBackPressed() }
-        binding!!.go.setOnClickListener { v: View? -> validateData() }
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+        binding!!.go.setOnClickListener { validateData() }
         VOID.Logo(context, binding!!.logo)
         privacyPolicy()
     }
@@ -49,7 +48,7 @@ class PrivacyPolicyEditActivity : AppCompatActivity() {
         val hashMap = HashMap<String?, Any>()
         hashMap[DATA.PRIVACY_POLICY] = DATA.EMPTY + description
         val ref = FirebaseDatabase.getInstance().getReference(DATA.TOOLS)
-        ref.updateChildren(hashMap).addOnSuccessListener { unused: Void? ->
+        ref.updateChildren(hashMap).addOnSuccessListener {
             Toast.makeText(
                 context,
                 "Privacy Policy updated...",

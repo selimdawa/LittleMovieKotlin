@@ -24,6 +24,8 @@ import com.flatcode.littlemovieadmin.Model.Cast
 import com.flatcode.littlemovieadmin.Model.Movie
 import com.flatcode.littlemovieadmin.Modelimport.Category
 import com.flatcode.littlemovieadmin.R
+import com.flatcode.littlemovieadmin.Unit.DATA.castList
+import com.flatcode.littlemovieadmin.Unit.DATA.movieList
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -57,7 +59,7 @@ object VOID {
         key: String?,
         value: String?,
         key2: String?,
-        value2: String?
+        value2: String?,
     ) {
         val intent = Intent(context, c)
         intent.putExtra(key, value)
@@ -75,7 +77,7 @@ object VOID {
         key3: String?,
         value3: String?,
         key4: String?,
-        value4: String?
+        value4: String?,
     ) {
         val intent = Intent(context, c)
         intent.putExtra(key, value)
@@ -141,14 +143,17 @@ object VOID {
             override fun onDataChange(snapshot: DataSnapshot) {
                 //get views count
                 var lovesCount = DATA.EMPTY + snapshot.child(childDB!!).value
-                if (lovesCount == DATA.EMPTY || lovesCount == DATA.NULL) {
+                if (lovesCount == DATA.EMPTY || lovesCount == DATA.NULL)
                     lovesCount = DATA.EMPTY + DATA.ZERO
+
+                val i = lovesCount.toInt()
+                if (i > 0) {
+                    val removeLovesCount = lovesCount.toInt() - 1
+                    val hashMap = HashMap<String?, Any>()
+                    hashMap[childDB] = removeLovesCount
+                    val reference = FirebaseDatabase.getInstance().getReference(database)
+                    reference.child(id).updateChildren(hashMap)
                 }
-                val removeLovesCount = lovesCount.toLong() - 1
-                val hashMap = HashMap<String?, Any>()
-                hashMap[childDB] = removeLovesCount
-                val reference = FirebaseDatabase.getInstance().getReference(database)
-                reference.child(id).updateChildren(hashMap)
             }
 
             override fun onCancelled(error: DatabaseError) {}
@@ -257,12 +262,8 @@ object VOID {
         DB: String?,
         idDB: String?,
         childDB: String?,
-        DB2: String?,
-        idDB2: String?,
-        childDB2: String?,
-        DB3: String?,
-        idDB3: String?,
-        childDB3: String?
+        cast: Boolean?,
+        movie: Boolean?,
     ) {
         val id = DATA.EMPTY + item!!.id
         val name = DATA.EMPTY + item.name
@@ -283,12 +284,8 @@ object VOID {
                         DB,
                         idDB,
                         childDB,
-                        DB2,
-                        idDB2,
-                        childDB2,
-                        DB3,
-                        idDB3,
-                        childDB3
+                        cast,
+                        movie,
                     )
                 }
             }.show()
@@ -300,12 +297,8 @@ object VOID {
         DB: String?,
         idDB: String?,
         childDB: String?,
-        DB2: String?,
-        idDB2: String?,
-        childDB2: String?,
-        DB3: String?,
-        idDB3: String?,
-        childDB3: String?
+        cast: Boolean?,
+        movie: Boolean?,
     ) {
         val id = DATA.EMPTY + item!!.id
         val name = DATA.EMPTY + item.name
@@ -326,12 +319,8 @@ object VOID {
                         DB,
                         idDB,
                         childDB,
-                        DB2,
-                        idDB2,
-                        childDB2,
-                        DB3,
-                        idDB3,
-                        childDB3
+                        cast,
+                        movie,
                     )
                 }
             }.show()
@@ -343,12 +332,8 @@ object VOID {
         DB: String?,
         idDB: String?,
         childDB: String?,
-        DB2: String?,
-        idDB2: String?,
-        childDB2: String?,
-        DB3: String?,
-        idDB3: String?,
-        childDB3: String?
+        cast: Boolean?,
+        movie: Boolean?,
     ) {
         val id = DATA.EMPTY + item!!.id
         val name = DATA.EMPTY + item.name
@@ -377,12 +362,8 @@ object VOID {
                         DB,
                         idDB,
                         childDB,
-                        DB2,
-                        idDB2,
-                        childDB2,
-                        DB3,
-                        idDB3,
-                        childDB3
+                        cast,
+                        movie,
                     )
                 }
             }.show()
@@ -398,49 +379,80 @@ object VOID {
         DB: String?,
         idDB: String?,
         childDB: String?,
-        DB2: String?,
-        idDB2: String?,
-        childDB2: String?,
-        DB3: String?,
-        idDB3: String?,
-        childDB3: String?
+        cast: Boolean?,
+        movie: Boolean?,
     ) {
         val dialog = Dialog(activity)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.dialog_logout)
         dialog.setCancelable(true)
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
         val lp = WindowManager.LayoutParams()
         lp.copyFrom(dialog.window!!.attributes)
         lp.width = WindowManager.LayoutParams.WRAP_CONTENT
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT
         val title = dialog.findViewById<TextView>(R.id.title)
         title.text = "Do you want to delete $name ( $type ) ?"
-        dialog.findViewById<View>(R.id.yes).setOnClickListener { view: View? ->
-            if (isEditorsChoice) {
-                dialogUpdateEditorsChoice(dialog, activity, id)
-            } else {
-                deleteDB(
-                    dialog,
-                    activity,
-                    id,
-                    name,
-                    nameDB,
-                    DB,
-                    idDB,
-                    childDB,
-                    DB2,
-                    idDB2,
-                    childDB2,
-                    DB3,
-                    idDB3,
-                    childDB3
-                )
-            }
+
+        dialog.findViewById<View>(R.id.yes).setOnClickListener {
+            if (isEditorsChoice) dialogUpdateEditorsChoice(dialog, activity, id) else deleteDB(
+                dialog,
+                activity,
+                id,
+                name,
+                nameDB,
+                DB,
+                idDB,
+                childDB)
+            if (cast!!) deleteCastInfo(id!!) else if (movie!!) deleteMovieInfo(id!!)
         }
-        dialog.findViewById<View>(R.id.no).setOnClickListener { view2: View? -> dialog.dismiss() }
+
+        dialog.findViewById<View>(R.id.no).setOnClickListener { dialog.dismiss() }
         dialog.show()
         dialog.window!!.attributes = lp
+    }
+
+    private fun deleteMovieInfo(id: String) {
+        castList = ArrayList()
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.CAST_MOVIE).child(id)
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                castList!!.clear()
+                for (snapshot in dataSnapshot.children)
+                    castList!!.add(snapshot.key!!)
+
+                var i = 0
+                while (castList!!.size > i) {
+                    incrementItemRemoveCount(DATA.CAST, castList!![i], DATA.MOVIES_COUNT)
+                    i++
+                }
+                ref.removeValue()
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {}
+        })
+    }
+
+    private fun deleteCastInfo(id: String) {
+        movieList = ArrayList()
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.CAST_MOVIE)
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                movieList!!.clear()
+                for (snapshot in dataSnapshot.children)
+                    if (snapshot.child(id).exists()) movieList!!.add(snapshot.key!!)
+
+                var i = 0
+                while (movieList!!.size > i) {
+                    ref.child(movieList!![i]).child(id).removeValue()
+                    incrementItemRemoveCount(DATA.MOVIES, movieList!![i], DATA.CAST_COUNT)
+                    i++
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {}
+        })
     }
 
     fun dialogUpdateEditorsChoice(dialogDelete: Dialog, context: Context?, id: String?) {
@@ -449,8 +461,9 @@ object VOID {
         dialog.show()
         val hashMap = HashMap<String?, Any>()
         hashMap[DATA.EDITORS_CHOICE] = 0
+
         val reference = FirebaseDatabase.getInstance().getReference(DATA.MOVIES)
-        reference.child(id!!).updateChildren(hashMap).addOnSuccessListener { unused: Void? ->
+        reference.child(id!!).updateChildren(hashMap).addOnSuccessListener {
             dialog.dismiss()
             Toast.makeText(context, "Editors Choice updated...", Toast.LENGTH_SHORT).show()
             dialogDelete.dismiss()
@@ -471,22 +484,15 @@ object VOID {
         DB: String?,
         idDB: String?,
         childDB: String?,
-        DB2: String?,
-        idDB2: String?,
-        childDB2: String?,
-        DB3: String?,
-        idDB3: String?,
-        childDB3: String?
     ) {
         val dialog = ProgressDialog(activity)
         dialog.setTitle("Please wait")
         dialog.setMessage("Deleting $name ...")
         dialog.show()
         val reference = FirebaseDatabase.getInstance().getReference(nameDB!!)
-        reference.child(id!!).removeValue().addOnSuccessListener { unused1: Void? ->
-            incrementItemRemoveCount(DB, idDB, childDB)
-            incrementItemRemoveCount(DB2, idDB2, childDB2)
-            incrementItemRemoveCount(DB3, idDB3, childDB3)
+        reference.child(id!!).removeValue().addOnSuccessListener {
+            if ((DB != null) and (idDB != null) and (childDB != null))
+                incrementItemRemoveCount(DB, idDB, childDB)
             DATA.isChange = true
             activity.onBackPressed()
             dialog.dismiss()
@@ -500,7 +506,7 @@ object VOID {
 
     fun addToEditorsChoice(
         context: Context?, activity: Activity, id: String?,
-        number: Int
+        number: Int,
     ) {
         val dialog = ProgressDialog(context)
         dialog.setMessage("Updating Editors Choice...")
@@ -508,7 +514,7 @@ object VOID {
         val hashMap = HashMap<String?, Any>()
         hashMap[DATA.EDITORS_CHOICE] = number
         val reference = FirebaseDatabase.getInstance().getReference(DATA.MOVIES)
-        reference.child(id!!).updateChildren(hashMap).addOnSuccessListener { unused: Void? ->
+        reference.child(id!!).updateChildren(hashMap).addOnSuccessListener {
             dialog.dismiss()
             Toast.makeText(context, "Editors Choice updated...", Toast.LENGTH_SHORT).show()
             activity.finish()
@@ -529,6 +535,7 @@ object VOID {
         lp.copyFrom(dialog.window!!.attributes)
         lp.width = WindowManager.LayoutParams.WRAP_CONTENT
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT
+
         val image = dialog.findViewById<ImageView>(R.id.image)
         val name = dialog.findViewById<TextView>(R.id.name)
         val aboutTheArtist = dialog.findViewById<TextView>(R.id.aboutTheArtist)

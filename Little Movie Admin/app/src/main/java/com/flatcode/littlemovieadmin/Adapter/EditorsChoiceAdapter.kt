@@ -38,6 +38,7 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val id = position + 1
         val editorsChoiceId = DATA.EMPTY + id
+
         loadMovieDetails(
             id,
             editorsChoiceId,
@@ -51,7 +52,8 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
             holder.detailsCard
         )
         holder.numberEditorsChoice.text = MessageFormat.format("{0}{1}", DATA.EMPTY, id)
-        holder.add.setOnClickListener { v: View? ->
+
+        holder.add.setOnClickListener {
             VOID.IntentExtra2(
                 activity,
                 CLASS.EDITORS_CHOICE_ADD,
@@ -109,15 +111,13 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
         remove: ImageView,
         change: ImageView,
         addCard: CardView,
-        detailsCard: CardView
+        detailsCard: CardView,
     ) {
         val ref = FirebaseDatabase.getInstance().getReference(DATA.MOVIES)
         ref.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (snapshot in dataSnapshot.children) {
-                    val item = snapshot.getValue(
-                        Movie::class.java
-                    )!!
+                    val item = snapshot.getValue(Movie::class.java)!!
                     if (item.editorsChoice == i) {
                         val id = DATA.EMPTY + item.id
                         val name = DATA.EMPTY + item.name
@@ -126,7 +126,7 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
                         detailsCard.visibility = View.VISIBLE
                         remove.visibility = View.VISIBLE
                         change.visibility = View.VISIBLE
-                        remove.setOnClickListener { v: View? ->
+                        remove.setOnClickListener {
                             VOID.dialogOptionDelete(
                                 activity,
                                 id,
@@ -137,15 +137,11 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
                                 DATA.NULL,
                                 DATA.NULL,
                                 DATA.NULL,
-                                DATA.NULL,
-                                DATA.NULL,
-                                DATA.NULL,
-                                DATA.NULL,
-                                DATA.NULL,
-                                DATA.NULL
+                                false,
+                                false,
                             )
                         }
-                        change.setOnClickListener { v: View? ->
+                        change.setOnClickListener {
                             VOID.IntentExtra2(
                                 activity, CLASS.EDITORS_CHOICE_ADD,
                                 DATA.EDITORS_CHOICE_ID, position, DATA.OLD_ID, id
@@ -165,13 +161,12 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
                 ref.child(id).addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         //get data
-                        val item = dataSnapshot.getValue(
-                            Movie::class.java
-                        )!!
+                        val item = dataSnapshot.getValue(Movie::class.java)!!
                         val name = DATA.EMPTY + item.name
                         val imageLink = DATA.EMPTY + item.image
                         val ViewsCount = DATA.EMPTY + item.viewsCount
                         val LovesCount = DATA.EMPTY + item.lovesCount
+
                         VOID.GlideImage(false, activity, imageLink, image)
                         title.text = name
                         viewsCount.text = ViewsCount

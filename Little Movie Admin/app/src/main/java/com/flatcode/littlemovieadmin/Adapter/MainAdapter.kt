@@ -1,8 +1,13 @@
 package com.flatcode.littlemovieadmin.Adapter
 
-import android.content.*
-import android.view.*
-import android.widget.*
+import android.content.Context
+import android.content.Intent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.Model.Main
 import com.flatcode.littlemovieadmin.R
@@ -31,6 +36,7 @@ class MainAdapter(private val context: Context, var list: List<Main>) :
         val name = model.title
         //String id = list.getId();
         val c = model.c
+
         if (image != 0) {
             holder.image.setImageResource(image)
         } else {
@@ -43,7 +49,8 @@ class MainAdapter(private val context: Context, var list: List<Main>) :
             holder.number.visibility = View.GONE
         }
         holder.name.text = name
-        holder.itemView.setOnClickListener { v: View? ->
+
+        holder.itemView.setOnClickListener {
             val intent = Intent(context, c)
             context.startActivity(intent)
         }

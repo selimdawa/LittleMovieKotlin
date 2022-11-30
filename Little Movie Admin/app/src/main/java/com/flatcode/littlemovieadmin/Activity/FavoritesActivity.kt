@@ -34,14 +34,15 @@ class FavoritesActivity : AppCompatActivity() {
         setContentView(view)
 
         binding!!.toolbar.nameSpace.setText(R.string.favorites)
-        binding!!.toolbar.back.setOnClickListener { v: View? -> onBackPressed() }
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         type = DATA.TIMESTAMP
-        binding!!.toolbar.search.setOnClickListener { v: View? ->
+        binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
             binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
             DATA.searchStatus = true
         }
-        binding!!.toolbar.close.setOnClickListener { v: View? -> onBackPressed() }
+        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
+
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -59,19 +60,19 @@ class FavoritesActivity : AppCompatActivity() {
         list = ArrayList()
         binding!!.recyclerView.adapter = adapter
         adapter = MovieAdapter(activity, list!!)
-        binding!!.switchBar.all.setOnClickListener { v: View? ->
+        binding!!.switchBar.all.setOnClickListener {
             type = DATA.TIMESTAMP
             getData(type)
         }
-        binding!!.switchBar.mostViews.setOnClickListener { v: View? ->
+        binding!!.switchBar.mostViews.setOnClickListener {
             type = DATA.VIEWS_COUNT
             getData(type)
         }
-        binding!!.switchBar.mostLoves.setOnClickListener { v: View? ->
+        binding!!.switchBar.mostLoves.setOnClickListener {
             type = DATA.LOVES_COUNT
             getData(type)
         }
-        binding!!.switchBar.name.setOnClickListener { v: View? ->
+        binding!!.switchBar.name.setOnClickListener {
             type = DATA.NAME
             getData(type)
         }
@@ -84,9 +85,8 @@ class FavoritesActivity : AppCompatActivity() {
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 (item as ArrayList<String?>).clear()
-                for (snapshot in dataSnapshot.children) {
+                for (snapshot in dataSnapshot.children)
                     (item as ArrayList<String?>).add(snapshot.key)
-                }
                 getItems(orderBy)
             }
 
@@ -101,9 +101,7 @@ class FavoritesActivity : AppCompatActivity() {
                 list!!.clear()
                 var i = 0
                 for (snapshot in dataSnapshot.children) {
-                    val song = snapshot.getValue(
-                        Movie::class.java
-                    )
+                    val song = snapshot.getValue(Movie::class.java)
                     for (id in item!!) {
                         assert(song != null)
                         if (song!!.id != null) if (song.id == id) {

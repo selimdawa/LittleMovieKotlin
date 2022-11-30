@@ -67,6 +67,8 @@ object DATA {
     var MOVIE_ID = "movieId"
     var COMMENT = "comment"
     var MOVIE = "Movie"
+    var castList: ArrayList<String>? = null
+    var movieList: ArrayList<String>? = null
 
     //Other
     val AUTH = FirebaseAuth.getInstance()

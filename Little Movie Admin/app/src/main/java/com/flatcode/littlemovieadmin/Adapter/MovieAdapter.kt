@@ -41,6 +41,7 @@ class MovieAdapter(private val activity: Activity, var list: ArrayList<Movie?>) 
         val lovesCount = DATA.EMPTY + item.lovesCount
         val movieLink = DATA.EMPTY + item.movieLink
         val categoryId = DATA.EMPTY + item.categoryId
+
         VOID.GlideImage(false, activity, image, holder.image)
         if (item.name == DATA.EMPTY) {
             holder.name.visibility = View.GONE
@@ -54,30 +55,27 @@ class MovieAdapter(private val activity: Activity, var list: ArrayList<Movie?>) 
         if (lovesCount == DATA.EMPTY) holder.numberLoves.text =
             MessageFormat.format("{0}{1}", DATA.EMPTY, DATA.ZERO) else holder.numberLoves.text =
             lovesCount
+
         VOID.isFavorite(holder.add, item.id, DATA.FirebaseUserUid)
-        holder.add.setOnClickListener { view: View? -> VOID.checkFavorite(holder.add, id) }
+        holder.add.setOnClickListener { VOID.checkFavorite(holder.add, id) }
         holder.item.animation =
             AnimationUtils.loadAnimation(activity, R.anim.fade_transition_animation)
-        holder.more.setOnClickListener { v: View? ->
-            VOID.moreDeleteMovie(
-                activity,
+        holder.more.setOnClickListener {
+            VOID.moreDeleteMovie(activity,
                 item,
                 DATA.CATEGORIES,
                 categoryId,
                 DATA.MOVIES_COUNT,
-                DATA.NULL,
-                DATA.NULL,
-                DATA.NULL,
-                DATA.NULL,
-                DATA.NULL,
-                DATA.NULL
-            )
+                false,
+                true)
         }
-        holder.item.setOnClickListener { view: View? ->
-            VOID.IntentExtra2(
-                activity, CLASS.MOVIE_DETAILS,
-                DATA.MOVIE_ID, id, DATA.MOVIE_LINK, movieLink
-            )
+        holder.item.setOnClickListener {
+            VOID.IntentExtra2(activity,
+                CLASS.MOVIE_DETAILS,
+                DATA.MOVIE_ID,
+                id,
+                DATA.MOVIE_LINK,
+                movieLink)
         }
     }
 
@@ -92,9 +90,7 @@ class MovieAdapter(private val activity: Activity, var list: ArrayList<Movie?>) 
         return filter!!
     }
 
-    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(
-        view!!
-    ) {
+    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
         var image: ImageView
         var add: ImageView
         var more: ImageButton

@@ -7,7 +7,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemovieadmin.Model.Cast
@@ -35,9 +34,7 @@ class CastEditActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
-        binding = ActivityCastAddBinding.inflate(
-            layoutInflater
-        )
+        binding = ActivityCastAddBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
 
@@ -47,9 +44,9 @@ class CastEditActivity : AppCompatActivity() {
         dialog!!.setCanceledOnTouchOutside(false)
         loadInfo()
         binding!!.toolbar.nameSpace.setText(R.string.edit_cast)
-        binding!!.toolbar.back.setOnClickListener { v: View? -> onBackPressed() }
-        binding!!.image.setOnClickListener { v: View? -> VOID.CropImageSquare(activity) }
-        binding!!.toolbar.ok.setOnClickListener { v: View? -> validateData() }
+        binding!!.toolbar.back.setOnClickListener { v -> onBackPressed() }
+        binding!!.image.setOnClickListener { VOID.CropImageSquare(activity) }
+        binding!!.toolbar.ok.setOnClickListener { validateData() }
     }
 
     private var name = DATA.EMPTY
@@ -98,11 +95,10 @@ class CastEditActivity : AppCompatActivity() {
         val hashMap = HashMap<String?, Any>()
         hashMap[DATA.NAME] = DATA.EMPTY + name
         hashMap[DATA.ABOUT_MY] = DATA.EMPTY + aboutMy
-        if (imageUri != null) {
+        if (imageUri != null)
             hashMap[DATA.IMAGE] = DATA.EMPTY + imageUrl
-        }
         val reference = FirebaseDatabase.getInstance().getReference(DATA.CAST)
-        reference.child(castId!!).updateChildren(hashMap).addOnSuccessListener { unused: Void? ->
+        reference.child(castId!!).updateChildren(hashMap).addOnSuccessListener {
             dialog!!.dismiss()
             Toast.makeText(activity, "Cast updated...", Toast.LENGTH_SHORT).show()
         }.addOnFailureListener { e: Exception ->

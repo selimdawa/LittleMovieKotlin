@@ -40,6 +40,7 @@ class EditorsChoiceMovieAdapter(
         val image = DATA.EMPTY + item.image
         val nrViews = DATA.EMPTY + item.viewsCount
         val nrLoves = DATA.EMPTY + item.lovesCount
+
         VOID.GlideImage(false, activity, image, holder.image)
         if (name == DATA.EMPTY) {
             holder.name.visibility = View.GONE
@@ -49,7 +50,8 @@ class EditorsChoiceMovieAdapter(
         }
         holder.nrViews.text = nrViews
         holder.nrLoves.text = nrLoves
-        holder.add.setOnClickListener { view: View? ->
+
+        holder.add.setOnClickListener {
             if (oldId != null) {
                 VOID.addToEditorsChoice(activity, activity, id, number)
                 VOID.addToEditorsChoice(activity, activity, oldId, 0)
