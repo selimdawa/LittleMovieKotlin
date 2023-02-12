@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.flatcode.littlemovie">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -19,7 +18,6 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:supportsRtl"
         tools:targetApi="33">
-        <service android:name=".Service.FloatingWidgetService"></service>
         <activity
             android:name=".Activity.SplashActivity"
             android:exported="true">
@@ -47,7 +45,7 @@
         <activity android:name=".Activity.MyCastActivity" />
         <activity android:name=".Activity.MovieDetailsActivity" />
         <activity android:name=".Activity.MovieViewActivity" />
-
+        <service android:name=".Service.FloatingWidgetService"/>
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
