@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.view.View
 import android.view.Window
+import com.google.firebase.database.*
 import android.view.WindowManager
 import android.webkit.MimeTypeMap
 import android.widget.ImageView
@@ -15,9 +16,11 @@ import android.widget.TextView
 import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.flatcode.littlemovie.BuildConfig
 import com.flatcode.littlemovie.R
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import jp.wasabeef.glide.transformations.BlurTransformation
@@ -47,7 +50,7 @@ object VOID {
         key: String?,
         value: String?,
         key2: String?,
-        value2: String?
+        value2: String?,
     ) {
         val intent = Intent(context, c)
         intent.putExtra(key, value)
@@ -63,7 +66,7 @@ object VOID {
         key2: String?,
         value2: String?,
         key3: String?,
-        value3: String?
+        value3: String?,
     ) {
         val intent = Intent(context, c)
         intent.putExtra(key, value)
@@ -82,7 +85,7 @@ object VOID {
         key3: String?,
         value3: String?,
         key4: String?,
-        value4: String?
+        value4: String?,
     ) {
         val intent = Intent(context, c)
         intent.putExtra(key, value)

@@ -11,8 +11,7 @@ class MyApplication : Application() {
 
     companion object {
         fun formatTimestamp(timestamp: Long): String {
-            val calendar =
-                Calendar.getInstance(Locale.ENGLISH)
+            val calendar = Calendar.getInstance(Locale.ENGLISH)
             calendar.timeInMillis = timestamp
             return DateFormat.format("dd/MM/yyyy", calendar).toString()
         }
