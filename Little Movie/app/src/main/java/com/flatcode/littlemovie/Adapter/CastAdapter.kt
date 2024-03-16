@@ -4,7 +4,11 @@ import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Filter
+import android.widget.Filterable
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovie.Filter.CastFilter
 import com.flatcode.littlemovie.Model.Cast
@@ -22,11 +26,7 @@ class CastAdapter(private val activity: Activity, var list: ArrayList<Cast?>) :
     private var filter: CastFilter? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ItemCastBinding.inflate(
-            LayoutInflater.from(
-                activity
-            ), parent, false
-        )
+        binding = ItemCastBinding.inflate(LayoutInflater.from(activity), parent, false)
         return ViewHolder(binding!!.root)
     }
 
@@ -40,31 +40,25 @@ class CastAdapter(private val activity: Activity, var list: ArrayList<Cast?>) :
         val moviesCount = DATA.EMPTY + item.moviesCount
 
         VOID.GlideImage(true, activity, image, holder.image)
+
         if (item.name == DATA.EMPTY) {
             holder.name.visibility = View.GONE
         } else {
             holder.name.visibility = View.VISIBLE
             holder.name.text = name
         }
+
         if (interestedCount == DATA.EMPTY) holder.numberInterested.text = MessageFormat.format(
-            "{0}{1}",
-            DATA.EMPTY,
-            DATA.ZERO
+            "{0}{1}", DATA.EMPTY, DATA.ZERO
         ) else holder.numberInterested.text = interestedCount
+
         if (moviesCount == DATA.EMPTY) holder.numberMovies.text = MessageFormat.format(
-            "{0}{1}",
-            DATA.EMPTY,
-            DATA.ZERO
+            "{0}{1}", DATA.EMPTY, DATA.ZERO
         ) else holder.numberMovies.text = moviesCount
 
         VOID.isInterested(holder.add, id, DATA.CAST)
-        holder.add.setOnClickListener {
-            VOID.checkInterested(
-                holder.add,
-                DATA.CAST,
-                id
-            )
-        }
+        holder.add.setOnClickListener { VOID.checkInterested(holder.add, DATA.CAST, id) }
+
         holder.item.setOnClickListener {
             VOID.IntentExtra4(
                 activity, CLASS.CAST_DETAILS, DATA.CAST_ID, id, DATA.CAST_NAME,
@@ -84,9 +78,7 @@ class CastAdapter(private val activity: Activity, var list: ArrayList<Cast?>) :
         return filter!!
     }
 
-    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(
-        view!!
-    ) {
+    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
         var image: ImageView
         var add: ImageView
         var name: TextView

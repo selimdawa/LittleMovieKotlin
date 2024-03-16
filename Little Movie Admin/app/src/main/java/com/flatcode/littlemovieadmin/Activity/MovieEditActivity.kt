@@ -51,6 +51,7 @@ class MovieEditActivity : AppCompatActivity() {
 
         movieId = intent.getStringExtra(DATA.MOVIE_ID)
         category = intent.getStringExtra(DATA.CATEGORY_ID)
+
         dialog = ProgressDialog(activity)
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
@@ -79,26 +80,16 @@ class MovieEditActivity : AppCompatActivity() {
         //validate data
         if (TextUtils.isEmpty(name)) Toast.makeText(activity, "Enter Name...", Toast.LENGTH_SHORT)
             .show() else if (TextUtils.isEmpty(description)) Toast.makeText(
-            activity,
-            "Enter Description...",
-            Toast.LENGTH_SHORT
+            activity, "Enter Description...", Toast.LENGTH_SHORT
         ).show() else if (TextUtils.isEmpty(yearText)) Toast.makeText(
-            activity,
-            "Enter Date...",
-            Toast.LENGTH_SHORT
-        )
-            .show() else if (yearText.toInt() < DATA.MIN_YEAR || yearText.toInt() > DATA.MAX_YEAR) Toast.makeText(
-            activity,
-            "Invalid Date...",
-            Toast.LENGTH_SHORT
-        ).show() else if (category!!.isEmpty()) Toast.makeText(
-            activity,
-            "Pick Category...",
-            Toast.LENGTH_SHORT
+            activity, "Enter Date...", Toast.LENGTH_SHORT
+        ).show() else if (yearText.toInt() < DATA.MIN_YEAR || yearText.toInt() > DATA.MAX_YEAR)
+            Toast.makeText(
+                activity, "Invalid Date...", Toast.LENGTH_SHORT
+            ).show() else if (category!!.isEmpty()) Toast.makeText(
+            activity, "Pick Category...", Toast.LENGTH_SHORT
         ).show() else if (castMovie.size <= 0) Toast.makeText(
-            activity,
-            "Enter Cast...",
-            Toast.LENGTH_SHORT
+            activity, "Enter Cast...", Toast.LENGTH_SHORT
         ).show() else {
             if (imageUri == null) {
                 update(DATA.EMPTY)
@@ -128,9 +119,7 @@ class MovieEditActivity : AppCompatActivity() {
             if (selectedCategoryId != category) {
                 incrementItemCount(DATA.CATEGORIES, selectedCategoryId, DATA.MOVIES_COUNT)
                 if (category != null) incrementItemRemoveCount(
-                    DATA.CATEGORIES,
-                    category,
-                    DATA.MOVIES_COUNT
+                    DATA.CATEGORIES, category, DATA.MOVIES_COUNT
                 )
             }
             updateCast()
@@ -153,7 +142,8 @@ class MovieEditActivity : AppCompatActivity() {
         val filePathAndName = "Images/Movie/$movieId"
         val reference = FirebaseStorage.getInstance().getReference(
             filePathAndName
-                    + DATA.DOT + VOID.getFileExtension(imageUri, activity))
+                    + DATA.DOT + VOID.getFileExtension(imageUri, activity)
+        )
         reference.putFile(imageUri!!)
             .addOnSuccessListener { taskSnapshot: UploadTask.TaskSnapshot ->
                 val uriTask = taskSnapshot.storage.downloadUrl
@@ -164,9 +154,8 @@ class MovieEditActivity : AppCompatActivity() {
             }.addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
                 Toast.makeText(
-                    activity,
-                    "Failed to upload image due to : " + e.message,
-                    Toast.LENGTH_SHORT).show()
+                    activity, "Failed to upload image due to : " + e.message, Toast.LENGTH_SHORT
+                ).show()
             }
     }
 
@@ -200,17 +189,13 @@ class MovieEditActivity : AppCompatActivity() {
             if (selectedCategoryId != category) {
                 incrementItemCount(DATA.CATEGORIES, selectedCategoryId, DATA.MOVIES_COUNT)
                 if (category != null) incrementItemRemoveCount(
-                    DATA.CATEGORIES,
-                    category,
-                    DATA.MOVIES_COUNT
+                    DATA.CATEGORIES, category, DATA.MOVIES_COUNT
                 )
             }
         }.addOnFailureListener { e: Exception ->
             dialog!!.dismiss()
             Toast.makeText(
-                activity,
-                "Failed to update db duo to : " + e.message,
-                Toast.LENGTH_SHORT
+                activity, "Failed to update db duo to : " + e.message, Toast.LENGTH_SHORT
             ).show()
         }
     }

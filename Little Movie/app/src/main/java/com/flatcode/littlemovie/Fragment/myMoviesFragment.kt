@@ -9,7 +9,11 @@ import com.flatcode.littlemovie.Adapter.MovieAdapter
 import com.flatcode.littlemovie.Model.Movie
 import com.flatcode.littlemovie.Unit.DATA
 import com.flatcode.littlemovie.databinding.FragmentMyMoviesBinding
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 
 class myMoviesFragment : Fragment() {
 
@@ -20,32 +24,30 @@ class myMoviesFragment : Fragment() {
     private var type: String? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        binding = FragmentMyMoviesBinding.inflate(
-            LayoutInflater.from(
-                context
-            ), container, false
-        )
+        binding = FragmentMyMoviesBinding.inflate(LayoutInflater.from(context), container, false)
+
         type = DATA.TIMESTAMP
+        //binding.recyclerCategory.setHasFixedSize(true);
         list = ArrayList()
         binding!!.recyclerView.adapter = adapter
         adapter = MovieAdapter(context, list!!, true)
-        binding!!.switchBar.all.setOnClickListener { v: View? ->
+
+        binding!!.switchBar.all.setOnClickListener {
             type = DATA.TIMESTAMP
             getData(type)
         }
-        binding!!.switchBar.mostViews.setOnClickListener { v: View? ->
+        binding!!.switchBar.mostViews.setOnClickListener {
             type = DATA.VIEWS_COUNT
             getData(type)
         }
-        binding!!.switchBar.mostLoves.setOnClickListener { v: View? ->
+        binding!!.switchBar.mostLoves.setOnClickListener {
             type = DATA.LOVES_COUNT
             getData(type)
         }
-        binding!!.switchBar.name.setOnClickListener { v: View? ->
+        binding!!.switchBar.name.setOnClickListener {
             type = DATA.NAME
             getData(type)
         }
@@ -74,9 +76,7 @@ class myMoviesFragment : Fragment() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 list!!.clear()
                 for (snapshot in dataSnapshot.children) {
-                    val song = snapshot.getValue(
-                        Movie::class.java
-                    )
+                    val song = snapshot.getValue(Movie::class.java)
                     for (id in check!!) {
                         assert(song != null)
                         if (song!!.id != null) if (song.categoryId == id) list!!.add(song)

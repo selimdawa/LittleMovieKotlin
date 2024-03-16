@@ -27,7 +27,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import java.util.*
+import java.util.Objects
 
 class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
 
@@ -71,14 +71,17 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
                     binding!!.toolbar.card.visibility = View.GONE
                     fragment = SettingsFragment()
                 }
+
                 2 -> {
                     binding!!.toolbar.card.visibility = View.VISIBLE
                     fragment = HomeFragment()
                 }
+
                 3 -> {
                     binding!!.toolbar.card.visibility = View.GONE
                     fragment = myMoviesFragment()
                 }
+
                 4 -> {
                     binding!!.toolbar.card.visibility = View.GONE
                     fragment = CategoriesFragment()
@@ -94,9 +97,11 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
                 1 -> Toast.makeText(
                     applicationContext, R.string.settings, Toast.LENGTH_SHORT
                 ).show()
+
                 2 -> Toast.makeText(applicationContext, R.string.home, Toast.LENGTH_SHORT).show()
                 3 -> Toast.makeText(applicationContext, R.string.my_movies, Toast.LENGTH_SHORT)
                     .show()
+
                 4 -> Toast.makeText(applicationContext, R.string.categories, Toast.LENGTH_SHORT)
                     .show()
             }
@@ -106,28 +111,24 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
                 1 -> Toast.makeText(
                     applicationContext, R.string.settings, Toast.LENGTH_SHORT
                 ).show()
+
                 2 -> Toast.makeText(applicationContext, R.string.home, Toast.LENGTH_SHORT).show()
                 3 -> Toast.makeText(applicationContext, R.string.my_movies, Toast.LENGTH_SHORT)
                     .show()
+
                 4 -> Toast.makeText(applicationContext, R.string.categories, Toast.LENGTH_SHORT)
                     .show()
             }
         }
-        binding!!.toolbar.image.setOnClickListener { v: View? ->
-            VOID.IntentExtra(
-                context,
-                CLASS.PROFILE,
-                DATA.PROFILE_ID,
-                DATA.FirebaseUserUid
-            )
+        binding!!.toolbar.image.setOnClickListener {
+            VOID.IntentExtra(context, CLASS.PROFILE, DATA.PROFILE_ID, DATA.FirebaseUserUid)
         }
         loadUserInfo()
     }
 
     private fun loadFragment(fragment: Fragment?) {
         supportFragmentManager.beginTransaction().replace(
-            R.id.fragmentContainer,
-            fragment!!
+            R.id.fragmentContainer, fragment!!
         ).commit()
     }
 

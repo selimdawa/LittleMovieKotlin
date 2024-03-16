@@ -7,13 +7,10 @@ class Comment {
     var publisher: String? = null
     var timestamp: Long = 0
 
-    constructor() {}
+    constructor()
+
     constructor(
-        id: String?,
-        movieId: String?,
-        timestamp: Long,
-        comment: String?,
-        publisher: String?
+        id: String?, movieId: String?, timestamp: Long, comment: String?, publisher: String?
     ) {
         this.id = id
         this.movieId = movieId

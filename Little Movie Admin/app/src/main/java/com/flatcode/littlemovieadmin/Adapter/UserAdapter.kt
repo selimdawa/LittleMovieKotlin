@@ -4,7 +4,11 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Filter
+import android.widget.Filterable
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.Filter.UserFilter
 import com.flatcode.littlemovieadmin.Model.User
@@ -21,11 +25,7 @@ class UserAdapter(private val context: Context, var list: ArrayList<User?>) :
     private var filter: UserFilter? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ItemUserBinding.inflate(
-            LayoutInflater.from(
-                context
-            ), parent, false
-        )
+        binding = ItemUserBinding.inflate(LayoutInflater.from(context), parent, false)
         return ViewHolder(binding!!.root)
     }
 
@@ -35,6 +35,7 @@ class UserAdapter(private val context: Context, var list: ArrayList<User?>) :
         val image = item.profileImage
 
         VOID.GlideImage(true, context, image, holder.image)
+
         if (item.username == DATA.EMPTY) {
             holder.username.visibility = View.GONE
         } else {
@@ -43,9 +44,7 @@ class UserAdapter(private val context: Context, var list: ArrayList<User?>) :
         }
 
         holder.item.setOnClickListener {
-            VOID.IntentExtra(
-                context, CLASS.PROFILE, DATA.PROFILE_ID, id
-            )
+            VOID.IntentExtra(context, CLASS.PROFILE, DATA.PROFILE_ID, id)
         }
     }
 

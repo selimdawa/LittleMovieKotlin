@@ -4,7 +4,11 @@ import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Filter
+import android.widget.Filterable
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.Filter.EditorsChoiceFilter
 import com.flatcode.littlemovieadmin.Model.Movie
@@ -13,10 +17,7 @@ import com.flatcode.littlemovieadmin.Unit.VOID
 import com.flatcode.littlemovieadmin.databinding.ItemEditorsChoiceBinding
 
 class EditorsChoiceMovieAdapter(
-    private val activity: Activity,
-    var oldId: String?,
-    var list: ArrayList<Movie?>,
-    number: Int
+    private val activity: Activity, var oldId: String?, var list: ArrayList<Movie?>, number: Int
 ) : RecyclerView.Adapter<EditorsChoiceMovieAdapter.ViewHolder>(), Filterable {
 
     private var binding: ItemEditorsChoiceBinding? = null
@@ -25,11 +26,7 @@ class EditorsChoiceMovieAdapter(
     var number: Int
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ItemEditorsChoiceBinding.inflate(
-            LayoutInflater.from(
-                activity
-            ), parent, false
-        )
+        binding = ItemEditorsChoiceBinding.inflate(LayoutInflater.from(activity), parent, false)
         return ViewHolder(binding!!.root)
     }
 
@@ -42,12 +39,14 @@ class EditorsChoiceMovieAdapter(
         val nrLoves = DATA.EMPTY + item.lovesCount
 
         VOID.GlideImage(false, activity, image, holder.image)
+
         if (name == DATA.EMPTY) {
             holder.name.visibility = View.GONE
         } else {
             holder.name.visibility = View.VISIBLE
             holder.name.text = name
         }
+
         holder.nrViews.text = nrViews
         holder.nrLoves.text = nrLoves
 
@@ -72,9 +71,7 @@ class EditorsChoiceMovieAdapter(
         return filter!!
     }
 
-    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(
-        view!!
-    ) {
+    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
         var add: ImageView
         var image: ImageView
         var name: TextView

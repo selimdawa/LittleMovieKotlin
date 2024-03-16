@@ -24,12 +24,14 @@
             android:id="@+id/bottomNavigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?colorOnBackground"
+            app:mbn_circleColor="?trackColor"
             app:mbn_backgroundBottomColor="?trackColor"
-            app:mbn_circleColor="@color/white"
-            app:mbn_defaultIconColor="@color/white"
-            app:mbn_selectedIconColor="?trackColor"
-            app:mbn_shadowColor="?colorOnBackground" />
+            app:mbn_countBackgroundColor="?colorOnBackground"
+            app:mbn_countTextColor="?colorError"
+            app:mbn_defaultIconColor="?colorOnBackground"
+            app:mbn_rippleColor="?colorOnBackground"
+            app:mbn_selectedIconColor="@color/white"
+            app:mbn_shadowColor="#1f212121" />
 
     </LinearLayout>
 

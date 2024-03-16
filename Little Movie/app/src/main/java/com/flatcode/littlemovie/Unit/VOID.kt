@@ -2,13 +2,16 @@ package com.flatcode.littlemovie.Unit
 
 import android.app.Activity
 import android.app.Dialog
-import android.content.*
+import android.content.ActivityNotFoundException
+import android.content.ContentResolver
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.view.View
 import android.view.Window
-import com.google.firebase.database.*
 import android.view.WindowManager
 import android.webkit.MimeTypeMap
 import android.widget.ImageView
@@ -16,11 +19,13 @@ import android.widget.TextView
 import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.flatcode.littlemovie.BuildConfig
 import com.flatcode.littlemovie.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import jp.wasabeef.glide.transformations.BlurTransformation
@@ -45,12 +50,8 @@ object VOID {
     }
 
     fun IntentExtra2(
-        context: Context?,
-        c: Class<*>?,
-        key: String?,
-        value: String?,
-        key2: String?,
-        value2: String?,
+        context: Context?, c: Class<*>?, key: String?, value: String?,
+        key2: String?, value2: String?,
     ) {
         val intent = Intent(context, c)
         intent.putExtra(key, value)
@@ -59,14 +60,8 @@ object VOID {
     }
 
     fun IntentExtra3(
-        context: Context?,
-        c: Class<*>?,
-        key: String?,
-        value: String?,
-        key2: String?,
-        value2: String?,
-        key3: String?,
-        value3: String?,
+        context: Context?, c: Class<*>?, key: String?, value: String?,
+        key2: String?, value2: String?, key3: String?, value3: String?,
     ) {
         val intent = Intent(context, c)
         intent.putExtra(key, value)
@@ -76,16 +71,8 @@ object VOID {
     }
 
     fun IntentExtra4(
-        context: Context,
-        c: Class<*>?,
-        key: String?,
-        value: String?,
-        key2: String?,
-        value2: String?,
-        key3: String?,
-        value3: String?,
-        key4: String?,
-        value4: String?,
+        context: Context, c: Class<*>?, key: String?, value: String?, key2: String?,
+        value2: String?, key3: String?, value3: String?, key4: String?, value4: String?,
     ) {
         val intent = Intent(context, c)
         intent.putExtra(key, value)
@@ -138,8 +125,8 @@ object VOID {
         lp.copyFrom(dialog.window!!.attributes)
         lp.width = WindowManager.LayoutParams.WRAP_CONTENT
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT
-        dialog.findViewById<View>(R.id.yes).setOnClickListener { v: View? -> a!!.finish() }
-        dialog.findViewById<View>(R.id.no).setOnClickListener { v: View? -> dialog.cancel() }
+        dialog.findViewById<View>(R.id.yes).setOnClickListener { a!!.finish() }
+        dialog.findViewById<View>(R.id.no).setOnClickListener { dialog.cancel() }
         dialog.show()
         dialog.window!!.attributes = lp
     }
@@ -154,11 +141,11 @@ object VOID {
         lp.copyFrom(dialog.window!!.attributes)
         lp.width = WindowManager.LayoutParams.WRAP_CONTENT
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT
-        dialog.findViewById<View>(R.id.yes).setOnClickListener { v: View? ->
+        dialog.findViewById<View>(R.id.yes).setOnClickListener {
             FirebaseAuth.getInstance().signOut()
             IntentClear(context, CLASS.AUTH)
         }
-        dialog.findViewById<View>(R.id.no).setOnClickListener { v: View? -> dialog.cancel() }
+        dialog.findViewById<View>(R.id.no).setOnClickListener { dialog.cancel() }
         dialog.show()
         dialog.window!!.attributes = lp
     }
@@ -169,9 +156,9 @@ object VOID {
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, "share app")
         shareIntent.putExtra(
             Intent.EXTRA_TEXT,
-            " Download the app now from Google Play " + " https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID
+            " Download the app now from Google Play " + " https://play.google.com/store/apps/details?id=" + context!!.packageName
         )
-        context!!.startActivity(Intent.createChooser(shareIntent, "Choose how to share"))
+        context.startActivity(Intent.createChooser(shareIntent, "Choose how to share"))
     }
 
     fun rateApp(context: Context?) {
@@ -204,8 +191,7 @@ object VOID {
                 context.startActivity(websiteIntent)
             }
 
-            val websiteIntent: Intent
-                get() = Intent(Intent.ACTION_VIEW, Uri.parse(DATA.WEB_SITE))
+            val websiteIntent: Intent get() = Intent(Intent.ACTION_VIEW, Uri.parse(DATA.WEB_SITE))
         })
         dialog.findViewById<View>(R.id.facebook).setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View) {
@@ -277,7 +263,7 @@ object VOID {
         ref.child(id!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 //get views count
-                var lovesCount = DATA.EMPTY + snapshot.child(DATA.LOVES_COUNT).getValue()
+                var lovesCount = DATA.EMPTY + snapshot.child(DATA.LOVES_COUNT).value
                 if (lovesCount == DATA.EMPTY || lovesCount == DATA.NULL) {
                     lovesCount = "0"
                 }
@@ -299,7 +285,7 @@ object VOID {
         ref.child(id!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 //get views count
-                var lovesCount = DATA.EMPTY + snapshot.child("lovesCount").getValue()
+                var lovesCount = DATA.EMPTY + snapshot.child("lovesCount").value
                 if (lovesCount == DATA.EMPTY || lovesCount == DATA.NULL) {
                     lovesCount = "0"
                 }
@@ -320,7 +306,7 @@ object VOID {
         ref.child(id!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 //get views count
-                var itemsCount = DATA.EMPTY + snapshot.child(childDB).getValue()
+                var itemsCount = DATA.EMPTY + snapshot.child(childDB).value
                 if (itemsCount == DATA.EMPTY || itemsCount == DATA.NULL) {
                     itemsCount = DATA.EMPTY + DATA.ZERO
                 }
@@ -341,7 +327,7 @@ object VOID {
         ref.child(id!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 //get views count
-                var lovesCount = DATA.EMPTY + snapshot.child(childDB).getValue()
+                var lovesCount = DATA.EMPTY + snapshot.child(childDB).value
                 if (lovesCount == DATA.EMPTY || lovesCount == DATA.NULL) {
                     lovesCount = DATA.EMPTY + DATA.ZERO
                 }
@@ -418,7 +404,7 @@ object VOID {
             FirebaseDatabase.getInstance().getReference().child(DATA.LOVES).child(id!!)
         reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                number.setText(MessageFormat.format(" {0} ", dataSnapshot.getChildrenCount()))
+                number.text = MessageFormat.format(" {0} ", dataSnapshot.childrenCount)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {}
@@ -544,8 +530,8 @@ object VOID {
         val ref: DatabaseReference = FirebaseDatabase.getInstance().getReference(DATA.CATEGORIES)
         ref.child(categoryId!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val Category = DATA.EMPTY + snapshot.child(DATA.NAME).getValue()
-                category.setText(Category)
+                val Category = DATA.EMPTY + snapshot.child(DATA.NAME).value
+                category.text = Category
             }
 
             override fun onCancelled(error: DatabaseError) {}

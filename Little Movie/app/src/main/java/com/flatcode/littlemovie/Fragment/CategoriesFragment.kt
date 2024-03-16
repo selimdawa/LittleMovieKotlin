@@ -9,7 +9,11 @@ import com.flatcode.littlemovie.Adapter.CategoryMainAdapter
 import com.flatcode.littlemovie.Model.Category
 import com.flatcode.littlemovie.Unit.DATA
 import com.flatcode.littlemovie.databinding.FragmentCategoriesBinding
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 
 class CategoriesFragment : Fragment() {
 
@@ -18,15 +22,10 @@ class CategoriesFragment : Fragment() {
     private var adapter: CategoryMainAdapter? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        binding = FragmentCategoriesBinding.inflate(
-            LayoutInflater.from(
-                context
-            ), container, false
-        )
+        binding = FragmentCategoriesBinding.inflate(LayoutInflater.from(context), container, false)
 
         //binding.recyclerCategory.setHasFixedSize(true);
         list = ArrayList()
@@ -41,13 +40,11 @@ class CategoriesFragment : Fragment() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 list!!.clear()
                 for (snapshot in dataSnapshot.children) {
-                    val item = snapshot.getValue(
-                        Category::class.java
-                    )!!
+                    val item = snapshot.getValue(Category::class.java)!!
                     if (item.publisher == DATA.FirebaseUserUid) list!!.add(item)
                 }
                 binding!!.bar.visibility = View.GONE
-                if (!list!!.isEmpty()) {
+                if (list!!.isNotEmpty()) {
                     binding!!.recyclerView.visibility = View.VISIBLE
                     binding!!.emptyText.visibility = View.GONE
                 } else {

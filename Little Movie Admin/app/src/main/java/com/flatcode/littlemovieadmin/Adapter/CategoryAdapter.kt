@@ -4,7 +4,11 @@ import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Filter
+import android.widget.Filterable
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.Filter.CategoryFilter
 import com.flatcode.littlemovieadmin.Modelimport.Category
@@ -22,11 +26,7 @@ class CategoryAdapter(private val activity: Activity, var list: ArrayList<Catego
     private var filter: CategoryFilter? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ItemCategoryBinding.inflate(
-            LayoutInflater.from(
-                activity
-            ), parent, false
-        )
+        binding = ItemCategoryBinding.inflate(LayoutInflater.from(activity), parent, false)
         return ViewHolder(binding!!.root)
     }
 
@@ -39,34 +39,29 @@ class CategoryAdapter(private val activity: Activity, var list: ArrayList<Catego
         val moviesCount = DATA.EMPTY + item.moviesCount
 
         VOID.GlideImage(false, activity, image, holder.image)
+
         if (item.name == DATA.EMPTY) {
             holder.name.visibility = View.GONE
         } else {
             holder.name.visibility = View.VISIBLE
             holder.name.text = name
         }
+
         if (interestedCount == DATA.EMPTY) holder.numberInterested.text = MessageFormat.format(
-            "{0}{1}",
-            DATA.EMPTY,
-            DATA.ZERO
+            "{0}{1}", DATA.EMPTY, DATA.ZERO
         ) else holder.numberInterested.text = interestedCount
+
         if (moviesCount == DATA.EMPTY) holder.numberMovies.text = MessageFormat.format(
-            "{0}{1}",
-            DATA.EMPTY,
-            DATA.ZERO
+            "{0}{1}", DATA.EMPTY, DATA.ZERO
         ) else holder.numberMovies.text = moviesCount
 
         holder.more.setOnClickListener {
             VOID.moreDeleteCategory(activity, item, DATA.NULL, DATA.NULL, DATA.NULL, false, false)
         }
+
         holder.item.setOnClickListener {
             VOID.IntentExtra2(
-                activity,
-                CLASS.CATEGORY_DETAILS,
-                DATA.CATEGORY_ID,
-                id,
-                DATA.CATEGORY_NAME,
-                name
+                activity, CLASS.CATEGORY_DETAILS, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
             )
         }
     }
@@ -82,9 +77,7 @@ class CategoryAdapter(private val activity: Activity, var list: ArrayList<Catego
         return filter!!
     }
 
-    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(
-        view!!
-    ) {
+    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
         var image: ImageView
         var more: ImageView
         var name: TextView

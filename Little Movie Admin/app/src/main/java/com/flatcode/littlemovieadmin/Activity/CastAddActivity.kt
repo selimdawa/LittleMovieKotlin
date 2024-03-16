@@ -37,6 +37,7 @@ class CastAddActivity : AppCompatActivity() {
         dialog = ProgressDialog(activity)
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
+
         binding!!.toolbar.nameSpace.setText(R.string.add_new_cast)
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         binding!!.image.setOnClickListener { VOID.CropImageSquare(activity) }
@@ -79,11 +80,8 @@ class CastAddActivity : AppCompatActivity() {
             }.addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
                 Toast.makeText(
-                    activity,
-                    "Cast upload failed due to : " + e.message,
-                    Toast.LENGTH_SHORT
-                )
-                    .show()
+                    activity, "Cast upload failed due to : " + e.message, Toast.LENGTH_SHORT
+                ).show()
             }
     }
 
@@ -108,9 +106,7 @@ class CastAddActivity : AppCompatActivity() {
         }.addOnFailureListener { e: Exception ->
             dialog!!.dismiss()
             Toast.makeText(
-                activity,
-                "Failure to upload to db due to : " + e.message,
-                Toast.LENGTH_SHORT
+                activity, "Failure to upload to db due to : " + e.message, Toast.LENGTH_SHORT
             ).show()
         }
     }

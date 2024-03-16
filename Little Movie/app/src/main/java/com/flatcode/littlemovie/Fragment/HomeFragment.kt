@@ -17,8 +17,11 @@ import com.flatcode.littlemovie.Unit.CLASS
 import com.flatcode.littlemovie.Unit.DATA
 import com.flatcode.littlemovie.Unit.VOID
 import com.flatcode.littlemovie.databinding.FragmentHomeBinding
-import com.google.firebase.database.*
-import java.util.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 
 class HomeFragment : Fragment() {
 
@@ -40,41 +43,37 @@ class HomeFragment : Fragment() {
     private var categoryAdapter: CategoryHomeAdapter? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        binding = FragmentHomeBinding.inflate(
-            LayoutInflater.from(
-                context
-            ), container, false
-        )
-        binding!!.showMore.setOnClickListener { v: View? ->
+        binding = FragmentHomeBinding.inflate(LayoutInflater.from(context), container, false)
+
+        binding!!.showMore.setOnClickListener {
             VOID.IntentExtra3(
-                context, CLASS.SHOW_MORE,
-                DATA.SHOW_MORE_TYPE, DATA.EDITORS_CHOICE, DATA.SHOW_MORE_NAME,
-                binding!!.name.text.toString(), DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + B_one
+                context, CLASS.SHOW_MORE, DATA.SHOW_MORE_TYPE,
+                DATA.EDITORS_CHOICE, DATA.SHOW_MORE_NAME, binding!!.name.text.toString(),
+                DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + B_one
             )
         }
-        binding!!.showMore2.setOnClickListener { v: View? ->
+        binding!!.showMore2.setOnClickListener {
             VOID.IntentExtra3(
-                context, CLASS.SHOW_MORE,
-                DATA.SHOW_MORE_TYPE, DATA.VIEWS_COUNT, DATA.SHOW_MORE_NAME,
-                binding!!.mostViews.text.toString(), DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + B_two
+                context, CLASS.SHOW_MORE, DATA.SHOW_MORE_TYPE,
+                DATA.VIEWS_COUNT, DATA.SHOW_MORE_NAME, binding!!.mostViews.text.toString(),
+                DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + B_two
             )
         }
-        binding!!.showMore3.setOnClickListener { v: View? ->
+        binding!!.showMore3.setOnClickListener {
             VOID.IntentExtra3(
-                context, CLASS.SHOW_MORE,
-                DATA.SHOW_MORE_TYPE, DATA.LOVES_COUNT, DATA.SHOW_MORE_NAME,
-                binding!!.name3.text.toString(), DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + B_three
+                context, CLASS.SHOW_MORE, DATA.SHOW_MORE_TYPE,
+                DATA.LOVES_COUNT, DATA.SHOW_MORE_NAME, binding!!.name3.text.toString(),
+                DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + B_three
             )
         }
-        binding!!.showMore4.setOnClickListener { v: View? ->
+        binding!!.showMore4.setOnClickListener {
             VOID.IntentExtra3(
-                context, CLASS.SHOW_MORE,
-                DATA.SHOW_MORE_TYPE, DATA.TIMESTAMP, DATA.SHOW_MORE_NAME,
-                binding!!.name4.text.toString(), DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + B_four
+                context, CLASS.SHOW_MORE, DATA.SHOW_MORE_TYPE,
+                DATA.TIMESTAMP, DATA.SHOW_MORE_NAME, binding!!.name4.text.toString(),
+                DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + B_four
             )
         }
 
@@ -107,8 +106,9 @@ class HomeFragment : Fragment() {
         list4 = ArrayList()
         adapter4 = MovieAdapter(context, list4!!, false)
         binding!!.recyclerView4.adapter = adapter4
+
         FirebaseDatabase.getInstance().getReference(DATA.SLIDER_SHOW)
-            .addValueEventListener(object : ValueEventListener {
+            .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val counts = snapshot.childrenCount
                     TotalCounts = counts.toInt()
@@ -120,39 +120,23 @@ class HomeFragment : Fragment() {
         return binding!!.root
     }
 
-    private fun open() {
+    private fun init() {
         loadCategories()
         loadPostEditorsChoice(
-            DATA.EDITORS_CHOICE,
-            list,
-            adapter,
-            binding!!.bar,
-            binding!!.recyclerView,
-            binding!!.empty
+            DATA.EDITORS_CHOICE, list, adapter, binding!!.bar,
+            binding!!.recyclerView, binding!!.empty
         )
         loadPostBy(
-            DATA.VIEWS_COUNT,
-            list2,
-            adapter2,
-            binding!!.bar2,
-            binding!!.recyclerView2,
-            binding!!.empty2
+            DATA.VIEWS_COUNT, list2, adapter2, binding!!.bar2,
+            binding!!.recyclerView2, binding!!.empty2
         )
         loadPostBy(
-            DATA.LOVES_COUNT,
-            list3,
-            adapter3,
-            binding!!.bar3,
-            binding!!.recyclerView3,
-            binding!!.empty3
+            DATA.LOVES_COUNT, list3, adapter3, binding!!.bar3,
+            binding!!.recyclerView3, binding!!.empty3
         )
         loadPostBy(
-            DATA.TIMESTAMP,
-            list4,
-            adapter4,
-            binding!!.bar4,
-            binding!!.recyclerView4,
-            binding!!.empty4
+            DATA.TIMESTAMP, list4, adapter4, binding!!.bar4,
+            binding!!.recyclerView4, binding!!.empty4
         )
     }
 
@@ -162,9 +146,7 @@ class HomeFragment : Fragment() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 categoryList!!.clear()
                 for (data in snapshot.children) {
-                    val category = data.getValue(
-                        Category::class.java
-                    )
+                    val category = data.getValue(Category::class.java)
                     categoryList!!.add(category)
                 }
                 categoryAdapter!!.notifyDataSetChanged()
@@ -184,17 +166,15 @@ class HomeFragment : Fragment() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     list!!.clear()
                     for (data in snapshot.children) {
-                        val item = data.getValue(
-                            Movie::class.java
-                        )!!
+                        val item = data.getValue(Movie::class.java)!!
                         if (orderBy != DATA.EDITORS_CHOICE) list.add(item)
                     }
                     adapter!!.notifyDataSetChanged()
                     bar.visibility = View.GONE
-                    if (!list.isEmpty()) {
+                    if (list.isNotEmpty()) {
                         recyclerView.visibility = View.VISIBLE
                         empty.visibility = View.GONE
-                        if (orderBy != DATA.EDITORS_CHOICE) Collections.reverse(list)
+                        if (orderBy != DATA.EDITORS_CHOICE) list.reverse()
                     } else {
                         recyclerView.visibility = View.GONE
                         empty.visibility = View.VISIBLE
@@ -214,19 +194,17 @@ class HomeFragment : Fragment() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 list!!.clear()
                 for (data in snapshot.children) {
-                    val item = data.getValue(
-                        Movie::class.java
-                    )!!
+                    val item = data.getValue(Movie::class.java)!!
                     if (orderBy == DATA.EDITORS_CHOICE) {
                         if (item.editorsChoice <= 2 && item.editorsChoice > 0) list.add(item)
                     }
                 }
                 adapter!!.notifyDataSetChanged()
                 bar.visibility = View.GONE
-                if (!list.isEmpty()) {
+                if (list.isNotEmpty()) {
                     recyclerView.visibility = View.VISIBLE
                     empty.visibility = View.GONE
-                    if (orderBy != DATA.EDITORS_CHOICE) Collections.reverse(list)
+                    if (orderBy != DATA.EDITORS_CHOICE) list.reverse()
                 } else {
                     recyclerView.visibility = View.GONE
                     empty.visibility = View.VISIBLE
@@ -238,39 +216,7 @@ class HomeFragment : Fragment() {
     }
 
     override fun onStart() {
-        loadCategories()
-        loadPostEditorsChoice(
-            DATA.EDITORS_CHOICE,
-            list,
-            adapter,
-            binding!!.bar,
-            binding!!.recyclerView,
-            binding!!.empty
-        )
-        loadPostBy(
-            DATA.VIEWS_COUNT,
-            list2,
-            adapter2,
-            binding!!.bar2,
-            binding!!.recyclerView2,
-            binding!!.empty2
-        )
-        loadPostBy(
-            DATA.LOVES_COUNT,
-            list3,
-            adapter3,
-            binding!!.bar3,
-            binding!!.recyclerView3,
-            binding!!.empty3
-        )
-        loadPostBy(
-            DATA.TIMESTAMP,
-            list4,
-            adapter4,
-            binding!!.bar4,
-            binding!!.recyclerView4,
-            binding!!.empty4
-        )
+        init()
         super.onStart()
     }
 }

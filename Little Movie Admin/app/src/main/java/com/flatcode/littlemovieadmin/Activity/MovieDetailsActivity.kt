@@ -22,7 +22,11 @@ import com.flatcode.littlemovieadmin.Unitimport.THEME
 import com.flatcode.littlemovieadmin.databinding.ActivityMovieDetailsBinding
 import com.flatcode.littlemovieadmin.databinding.DialogCommentAddBinding
 import com.flatcode.littlemovieadminimport.MyApplication
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 
 class MovieDetailsActivity : AppCompatActivity() {
 
@@ -48,25 +52,20 @@ class MovieDetailsActivity : AppCompatActivity() {
         val intent = intent
         movieId = intent.getStringExtra(DATA.MOVIE_ID)
         movieLink = intent.getStringExtra(DATA.MOVIE_LINK)
+
         binding!!.toolbar.nameSpace.setText(R.string.details_movie)
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+        VOID.nrLoves(binding!!.loves, movieId)
+        binding!!.favorite.setOnClickListener { VOID.checkFavorite(binding!!.favorite, movieId) }
+
         dialog = ProgressDialog(activity)
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
-        VOID.nrLoves(binding!!.loves, movieId)
-        binding!!.favorite.setOnClickListener {
-            VOID.checkFavorite(
-                binding!!.favorite, movieId
-            )
-        }
-        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+
         binding!!.view.setOnClickListener {
-            VOID.IntentExtra(
-                activity,
-                CLASS.MOVIE_VIEW,
-                DATA.MOVIE_LINK,
-                movieLink
-            )
+            VOID.IntentExtra(activity, CLASS.MOVIE_VIEW, DATA.MOVIE_LINK, movieLink)
         }
+
         binding!!.addComment.setOnClickListener {
             if (DATA.FIREBASE_USER == null) {
                 Toast.makeText(activity, "You're not logged in...", Toast.LENGTH_SHORT).show()
@@ -96,9 +95,7 @@ class MovieDetailsActivity : AppCompatActivity() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     listComment!!.clear()
                     for (data in snapshot.children) {
-                        val comment = data.getValue(
-                            Comment::class.java
-                        )
+                        val comment = data.getValue(Comment::class.java)
                         listComment!!.add(comment)
                     }
                     adapterComment = CommentAdapter(activity, listComment!!)
@@ -189,9 +186,7 @@ class MovieDetailsActivity : AppCompatActivity() {
             }.addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
                 Toast.makeText(
-                    activity,
-                    "Failed to add comment duo to  " + e.message,
-                    Toast.LENGTH_SHORT
+                    activity, "Failed to add comment duo to  " + e.message, Toast.LENGTH_SHORT
                 ).show()
             }
     }
@@ -238,9 +233,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 //get data
-                val item = snapshot.getValue(
-                    User::class.java
-                )!!
+                val item = snapshot.getValue(User::class.java)!!
                 //String userId = DATA.EMPTY + item.getId();
                 val imageProfile = DATA.EMPTY + item.profileImage
                 val username = DATA.EMPTY + item.username

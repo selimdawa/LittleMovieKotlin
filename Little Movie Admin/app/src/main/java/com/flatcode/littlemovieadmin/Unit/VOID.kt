@@ -54,12 +54,8 @@ object VOID {
     }
 
     fun IntentExtra2(
-        context: Context,
-        c: Class<*>?,
-        key: String?,
-        value: String?,
-        key2: String?,
-        value2: String?,
+        context: Context, c: Class<*>?, key: String?, value: String?,
+        key2: String?, value2: String?,
     ) {
         val intent = Intent(context, c)
         intent.putExtra(key, value)
@@ -69,15 +65,8 @@ object VOID {
 
     fun IntentExtra4(
         context: Context,
-        c: Class<*>?,
-        key: String?,
-        value: String?,
-        key2: String?,
-        value2: String?,
-        key3: String?,
-        value3: String?,
-        key4: String?,
-        value4: String?,
+        c: Class<*>?, key: String?, value: String?, key2: String?, value2: String?,
+        key3: String?, value3: String?, key4: String?, value4: String?,
     ) {
         val intent = Intent(context, c)
         intent.putExtra(key, value)
@@ -275,30 +264,16 @@ object VOID {
                     IntentExtra(activity, CLASS.CATEGORY_EDIT, DATA.CATEGORY_ID, id)
                 } else if (which == 1) {
                     dialogOptionDelete(
-                        activity,
-                        id,
-                        name,
-                        DATA.CATEGORY,
-                        DATA.CATEGORIES,
-                        false,
-                        DB,
-                        idDB,
-                        childDB,
-                        cast,
-                        movie,
+                        activity, id, name, DATA.CATEGORY, DATA.CATEGORIES,
+                        false, DB, idDB, childDB, cast, movie,
                     )
                 }
             }.show()
     }
 
     fun moreDeleteCast(
-        activity: Activity,
-        item: Cast?,
-        DB: String?,
-        idDB: String?,
-        childDB: String?,
-        cast: Boolean?,
-        movie: Boolean?,
+        activity: Activity, item: Cast?, DB: String?, idDB: String?, childDB: String?,
+        cast: Boolean?, movie: Boolean?,
     ) {
         val id = DATA.EMPTY + item!!.id
         val name = DATA.EMPTY + item.name
@@ -310,30 +285,16 @@ object VOID {
                     IntentExtra(activity, CLASS.CAST_EDIT, DATA.CAST_ID, id)
                 } else if (which == 1) {
                     dialogOptionDelete(
-                        activity,
-                        id,
-                        name,
-                        DATA.CAST,
-                        DATA.CAST,
-                        false,
-                        DB,
-                        idDB,
-                        childDB,
-                        cast,
-                        movie,
+                        activity, id, name, DATA.CAST, DATA.CAST,
+                        false, DB, idDB, childDB, cast, movie,
                     )
                 }
             }.show()
     }
 
     fun moreDeleteMovie(
-        activity: Activity,
-        item: Movie?,
-        DB: String?,
-        idDB: String?,
-        childDB: String?,
-        cast: Boolean?,
-        movie: Boolean?,
+        activity: Activity, item: Movie?, DB: String?, idDB: String?, childDB: String?,
+        cast: Boolean?, movie: Boolean?,
     ) {
         val id = DATA.EMPTY + item!!.id
         val name = DATA.EMPTY + item.name
@@ -344,43 +305,21 @@ object VOID {
             .setItems(options) { dialog: DialogInterface?, which: Int ->
                 if (which == 0) {
                     IntentExtra2(
-                        activity,
-                        CLASS.MOVIE_EDIT,
-                        DATA.MOVIE_ID,
-                        id,
-                        DATA.CATEGORY_ID,
-                        categoryId
+                        activity, CLASS.MOVIE_EDIT, DATA.MOVIE_ID, id, DATA.CATEGORY_ID, categoryId
                     )
                 } else if (which == 1) {
                     dialogOptionDelete(
-                        activity,
-                        id,
-                        name,
-                        DATA.MOVIE,
-                        DATA.MOVIES,
-                        false,
-                        DB,
-                        idDB,
-                        childDB,
-                        cast,
-                        movie,
+                        activity, id, name, DATA.MOVIE, DATA.MOVIES,
+                        false, DB, idDB, childDB, cast, movie,
                     )
                 }
             }.show()
     }
 
     fun dialogOptionDelete(
-        activity: Activity,
-        id: String?,
-        name: String,
-        type: String?,
-        nameDB: String?,
-        isEditorsChoice: Boolean,
-        DB: String?,
-        idDB: String?,
-        childDB: String?,
-        cast: Boolean?,
-        movie: Boolean?,
+        activity: Activity, id: String?, name: String, type: String?, nameDB: String?,
+        isEditorsChoice: Boolean, DB: String?, idDB: String?, childDB: String?,
+        cast: Boolean?, movie: Boolean?,
     ) {
         val dialog = Dialog(activity)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -397,14 +336,8 @@ object VOID {
 
         dialog.findViewById<View>(R.id.yes).setOnClickListener {
             if (isEditorsChoice) dialogUpdateEditorsChoice(dialog, activity, id) else deleteDB(
-                dialog,
-                activity,
-                id,
-                name,
-                nameDB,
-                DB,
-                idDB,
-                childDB)
+                dialog, activity, id, name, nameDB, DB, idDB, childDB
+            )
             if (cast!!) deleteCastInfo(id!!) else if (movie!!) deleteMovieInfo(id!!)
         }
 
@@ -476,14 +409,8 @@ object VOID {
     }
 
     fun deleteDB(
-        dialogDelete: Dialog,
-        activity: Activity,
-        id: String?,
-        name: String,
-        nameDB: String?,
-        DB: String?,
-        idDB: String?,
-        childDB: String?,
+        dialogDelete: Dialog, activity: Activity, id: String?, name: String, nameDB: String?,
+        DB: String?, idDB: String?, childDB: String?,
     ) {
         val dialog = ProgressDialog(activity)
         dialog.setTitle("Please wait")
@@ -504,10 +431,7 @@ object VOID {
         }
     }
 
-    fun addToEditorsChoice(
-        context: Context?, activity: Activity, id: String?,
-        number: Int,
-    ) {
+    fun addToEditorsChoice(context: Context?, activity: Activity, id: String?, number: Int) {
         val dialog = ProgressDialog(context)
         dialog.setMessage("Updating Editors Choice...")
         dialog.show()
@@ -539,6 +463,7 @@ object VOID {
         val image = dialog.findViewById<ImageView>(R.id.image)
         val name = dialog.findViewById<TextView>(R.id.name)
         val aboutTheArtist = dialog.findViewById<TextView>(R.id.aboutTheArtist)
+
         GlideImage(false, context, imageDB, image)
         name.text = MessageFormat.format("{0}{1}", DATA.EMPTY, nameDB)
         aboutTheArtist.text = MessageFormat.format("{0}{1}", DATA.EMPTY, aboutDB)

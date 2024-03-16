@@ -4,7 +4,6 @@ import android.app.ProgressDialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Patterns
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemovieadmin.Unit.VOID
@@ -23,20 +22,20 @@ class ForgetPasswordActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         THEME.setThemeOfApp(context)
         super.onCreate(savedInstanceState)
-        binding = ActivityForgetPasswordBinding.inflate(
-            layoutInflater
-        )
+        binding = ActivityForgetPasswordBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
 
         VOID.Logo(baseContext, binding!!.logo)
         VOID.Intro(baseContext, binding!!.background, binding!!.backWhite, binding!!.backBlack)
+
         auth = FirebaseAuth.getInstance()
         dialog = ProgressDialog(this)
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
-        binding!!.go.setOnClickListener { v: View? -> validateDate() }
-        binding!!.login.setOnClickListener { v: View? -> onBackPressed() }
+
+        binding!!.go.setOnClickListener { validateDate() }
+        binding!!.login.setOnClickListener { onBackPressed() }
     }
 
     private var email = ""
@@ -57,9 +56,7 @@ class ForgetPasswordActivity : AppCompatActivity() {
         auth!!.sendPasswordResetEmail(email).addOnCompleteListener { task: Task<Void?>? ->
             dialog!!.dismiss()
             Toast.makeText(
-                context,
-                "Instructions to reset password sent to $email",
-                Toast.LENGTH_SHORT
+                context, "Instructions to reset password sent to $email", Toast.LENGTH_SHORT
             ).show()
         }.addOnFailureListener { e: Exception ->
             dialog!!.dismiss()

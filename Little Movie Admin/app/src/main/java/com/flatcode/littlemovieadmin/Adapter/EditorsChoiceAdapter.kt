@@ -27,11 +27,8 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
     private var binding: ItemMovieEditorsChoiceBinding? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ItemMovieEditorsChoiceBinding.inflate(
-            LayoutInflater.from(
-                activity
-            ), parent, false
-        )
+        binding =
+            ItemMovieEditorsChoiceBinding.inflate(LayoutInflater.from(activity), parent, false)
         return ViewHolder(binding!!.root)
     }
 
@@ -40,27 +37,15 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
         val editorsChoiceId = DATA.EMPTY + id
 
         loadMovieDetails(
-            id,
-            editorsChoiceId,
-            holder.name,
-            holder.image,
-            holder.nrViews,
-            holder.nrLoves,
-            holder.remove,
-            holder.change,
-            holder.addCard,
-            holder.detailsCard
+            id, editorsChoiceId, holder.name, holder.image, holder.nrViews,
+            holder.nrLoves, holder.remove, holder.change, holder.addCard, holder.detailsCard
         )
         holder.numberEditorsChoice.text = MessageFormat.format("{0}{1}", DATA.EMPTY, id)
 
         holder.add.setOnClickListener {
             VOID.IntentExtra2(
-                activity,
-                CLASS.EDITORS_CHOICE_ADD,
-                DATA.EDITORS_CHOICE_ID,
-                editorsChoiceId,
-                DATA.OLD_ID,
-                null
+                activity, CLASS.EDITORS_CHOICE_ADD,
+                DATA.EDITORS_CHOICE_ID, editorsChoiceId, DATA.OLD_ID, null
             )
         }
     }
@@ -69,9 +54,7 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
         return list.size
     }
 
-    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(
-        view!!
-    ) {
+    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
         var add: ImageView
         var remove: ImageView
         var change: ImageView
@@ -128,17 +111,8 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
                         change.visibility = View.VISIBLE
                         remove.setOnClickListener {
                             VOID.dialogOptionDelete(
-                                activity,
-                                id,
-                                name,
-                                DATA.EDITORS_CHOICE,
-                                DATA.EDITORS_CHOICE,
-                                true,
-                                DATA.NULL,
-                                DATA.NULL,
-                                DATA.NULL,
-                                false,
-                                false,
+                                activity, id, name, DATA.EDITORS_CHOICE, DATA.EDITORS_CHOICE,
+                                true, DATA.NULL, DATA.NULL, DATA.NULL, false, false,
                             )
                         }
                         change.setOnClickListener {

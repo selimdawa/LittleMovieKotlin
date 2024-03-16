@@ -18,11 +18,7 @@ class CastMovieAdapter(private val activity: Activity, var list: ArrayList<Cast?
     RecyclerView.Adapter<CastMovieAdapter.ViewHolder>() {
     private var binding: ItemCastMovieBinding? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ItemCastMovieBinding.inflate(
-            LayoutInflater.from(
-                activity
-            ), parent, false
-        )
+        binding = ItemCastMovieBinding.inflate(LayoutInflater.from(activity), parent, false)
         return ViewHolder(binding!!.root)
     }
 
@@ -34,6 +30,7 @@ class CastMovieAdapter(private val activity: Activity, var list: ArrayList<Cast?
         val aboutMy = DATA.EMPTY + item.aboutMy
 
         VOID.GlideImage(true, activity, image, holder.image)
+
         if (item.name == DATA.EMPTY) {
             holder.name.visibility = View.GONE
         } else {

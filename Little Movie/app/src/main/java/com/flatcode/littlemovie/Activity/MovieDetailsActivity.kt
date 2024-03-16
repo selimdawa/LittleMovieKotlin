@@ -23,7 +23,11 @@ import com.flatcode.littlemovie.Unit.THEME
 import com.flatcode.littlemovie.Unit.VOID
 import com.flatcode.littlemovie.databinding.ActivityMovieDetailsBinding
 import com.flatcode.littlemovie.databinding.DialogCommentAddBinding
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 
 class MovieDetailsActivity : AppCompatActivity() {
 
@@ -42,41 +46,28 @@ class MovieDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
-        binding = ActivityMovieDetailsBinding.inflate(
-            layoutInflater
-        )
+        binding = ActivityMovieDetailsBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
 
         val intent = intent
         movieId = intent.getStringExtra(DATA.MOVIE_ID)
         movieLink = intent.getStringExtra(DATA.MOVIE_LINK)
+
         binding!!.toolbar.nameSpace.setText(R.string.details_movie)
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         dialog = ProgressDialog(activity)
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
-        binding!!.love.setOnClickListener { v: View? ->
-            VOID.checkLove(
-                binding!!.love, movieId
-            )
-        }
-        binding!!.favorite.setOnClickListener { v: View? ->
-            VOID.checkFavorite(
-                binding!!.favorite, movieId
-            )
-        }
-        binding!!.toolbar.back.setOnClickListener { v: View? -> onBackPressed() }
-        binding!!.view.setOnClickListener { v: View? ->
+
+        binding!!.love.setOnClickListener { VOID.checkLove(binding!!.love, movieId) }
+        binding!!.favorite.setOnClickListener { VOID.checkFavorite(binding!!.favorite, movieId) }
+        binding!!.view.setOnClickListener {
             VOID.IntentExtra2(
-                activity,
-                CLASS.MOVIE_VIEW,
-                DATA.MOVIE_LINK,
-                movieLink,
-                DATA.MOVIE_ID,
-                movieId
+                activity, CLASS.MOVIE_VIEW, DATA.MOVIE_LINK, movieLink, DATA.MOVIE_ID, movieId
             )
         }
-        binding!!.addComment.setOnClickListener { v: View? ->
+        binding!!.addComment.setOnClickListener {
             if (DATA.FIREBASE_USER == null) {
                 Toast.makeText(activity, "You're not logged in...", Toast.LENGTH_SHORT).show()
             } else {
@@ -107,9 +98,7 @@ class MovieDetailsActivity : AppCompatActivity() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     listComment!!.clear()
                     for (data in snapshot.children) {
-                        val comment = data.getValue(
-                            Comment::class.java
-                        )
+                        val comment = data.getValue(Comment::class.java)
                         listComment!!.add(comment)
                     }
                     adapterComment = CommentAdapter(activity, listComment!!)
@@ -121,11 +110,10 @@ class MovieDetailsActivity : AppCompatActivity() {
     }
 
     private val cast: Unit
-        private get() {
+        get() {
             itemCast = ArrayList()
-            val reference = FirebaseDatabase.getInstance().getReference(DATA.CAST_MOVIE)
-                .child(movieId!!)
-            reference.addListenerForSingleValueEvent(object : ValueEventListener {
+            val ref = FirebaseDatabase.getInstance().getReference(DATA.CAST_MOVIE).child(movieId!!)
+            ref.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     itemCast!!.clear()
                     for (snapshot in dataSnapshot.children) {
@@ -193,16 +181,14 @@ class MovieDetailsActivity : AppCompatActivity() {
         hashMap[DATA.PUBLISHER] = DATA.EMPTY + DATA.FirebaseUserUid
         assert(id != null)
         ref.child(movieId!!).child(DATA.COMMENTS).child(id!!).setValue(hashMap)
-            .addOnSuccessListener { unused: Void? ->
+            .addOnSuccessListener {
                 Toast.makeText(activity, "Comment Added...", Toast.LENGTH_SHORT).show()
                 dialog!!.dismiss()
                 loadComments()
             }.addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
                 Toast.makeText(
-                    activity,
-                    "Failed to add comment duo to  " + e.message,
-                    Toast.LENGTH_SHORT
+                    activity, "Failed to add comment duo to  " + e.message, Toast.LENGTH_SHORT
                 ).show()
             }
     }
@@ -212,9 +198,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         ref.child(movieId!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 //get data
-                val item = snapshot.getValue(
-                    Movie::class.java
-                )!!
+                val item = snapshot.getValue(Movie::class.java)!!
                 title = DATA.EMPTY + item.name
                 val description = DATA.EMPTY + item.description
                 val categoryId = DATA.EMPTY + item.categoryId
@@ -249,12 +233,11 @@ class MovieDetailsActivity : AppCompatActivity() {
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 //get data
-                val item = snapshot.getValue(
-                    User::class.java
-                )!!
+                val item = snapshot.getValue(User::class.java)!!
                 val userId = DATA.EMPTY + item.id
                 val imageProfile = DATA.EMPTY + item.profileImage
                 val username = DATA.EMPTY + item.username
+
                 binding!!.publisherName.text = username
                 VOID.GlideImage(true, activity, imageProfile, binding!!.publisherImage)
             }

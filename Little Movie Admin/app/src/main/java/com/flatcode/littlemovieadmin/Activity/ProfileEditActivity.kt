@@ -22,7 +22,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import com.theartofdev.edmodo.cropper.CropImage
-import java.util.*
+import java.util.Objects
 
 class ProfileEditActivity : AppCompatActivity() {
 
@@ -79,9 +79,7 @@ class ProfileEditActivity : AppCompatActivity() {
             }.addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
                 Toast.makeText(
-                    context,
-                    "Failed to upload image due to " + e.message,
-                    Toast.LENGTH_SHORT
+                    context, "Failed to upload image due to " + e.message, Toast.LENGTH_SHORT
                 ).show()
             }
     }
@@ -102,9 +100,7 @@ class ProfileEditActivity : AppCompatActivity() {
             }.addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
                 Toast.makeText(
-                    context,
-                    "Failed to update db duo to " + e.message,
-                    Toast.LENGTH_SHORT
+                    context, "Failed to update db duo to " + e.message, Toast.LENGTH_SHORT
                 ).show()
             }
     }

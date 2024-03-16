@@ -23,13 +23,11 @@ import com.google.firebase.database.ValueEventListener
 
 class CommentAdapter(private val context: Context, var list: ArrayList<Comment?>) :
     RecyclerView.Adapter<CommentAdapter.ViewHolder>() {
+
     private var binding: ItemCommentBinding? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ItemCommentBinding.inflate(
-            LayoutInflater.from(
-                context
-            ), parent, false
-        )
+        binding = ItemCommentBinding.inflate(LayoutInflater.from(context), parent, false)
         return ViewHolder(binding!!.root)
     }
 
@@ -47,10 +45,7 @@ class CommentAdapter(private val context: Context, var list: ArrayList<Comment?>
         loadUserDetails(publisher, holder.name, holder.image)
 
         holder.item.setOnClickListener {
-            if (publisher == DATA.FirebaseUserUid) deleteComment(
-                commentId,
-                movieId
-            )
+            if (publisher == DATA.FirebaseUserUid) deleteComment(commentId, movieId)
         }
     }
 
@@ -61,11 +56,8 @@ class CommentAdapter(private val context: Context, var list: ArrayList<Comment?>
             .setPositiveButton("DELETE") { dialog: DialogInterface?, which: Int ->
                 val ref = FirebaseDatabase.getInstance().getReference(DATA.MOVIES)
                 ref.child(movieId).child(DATA.COMMENTS).child(commentId).removeValue()
-                    .addOnSuccessListener { unused: Void? ->
-                        Toast.makeText(
-                            context,
-                            "Deleted...", Toast.LENGTH_SHORT
-                        ).show()
+                    .addOnSuccessListener {
+                        Toast.makeText(context, "Deleted...", Toast.LENGTH_SHORT).show()
                     }.addOnFailureListener { e: Exception ->
                         Toast.makeText(
                             context, "Failed to delete duo to " + e.message, Toast.LENGTH_SHORT
@@ -80,9 +72,7 @@ class CommentAdapter(private val context: Context, var list: ArrayList<Comment?>
         return list.size
     }
 
-    inner class ViewHolder(itemView: View?) : RecyclerView.ViewHolder(
-        itemView!!
-    ) {
+    inner class ViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!) {
         var image: ImageView
         var name: TextView
         var comment: TextView
@@ -104,6 +94,7 @@ class CommentAdapter(private val context: Context, var list: ArrayList<Comment?>
             override fun onDataChange(snapshot: DataSnapshot) {
                 val username = DATA.EMPTY + snapshot.child(DATA.USER_NAME).value
                 val profileImage = DATA.EMPTY + snapshot.child(DATA.PROFILE_IMAGE).value
+
                 VOID.GlideImage(true, context, profileImage, image)
                 name.text = username
             }

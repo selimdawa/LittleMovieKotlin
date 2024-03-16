@@ -2,7 +2,6 @@ package com.flatcode.littlemovie.Activity
 
 import android.content.Context
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.Unit.DATA
@@ -22,14 +21,13 @@ class PrivacyPolicyActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         THEME.setThemeOfApp(context)
         super.onCreate(savedInstanceState)
-        binding = ActivityPrivacyPolicyBinding.inflate(
-            layoutInflater
-        )
+        binding = ActivityPrivacyPolicyBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
 
         binding!!.toolbar.nameSpace.setText(R.string.privacy_policy)
-        binding!!.toolbar.back.setOnClickListener { v: View? -> onBackPressed() }
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+
         VOID.Logo(context, binding!!.logo)
         privacyPolicy()
     }

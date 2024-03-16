@@ -5,7 +5,6 @@ import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Patterns
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemovie.Unit.CLASS
@@ -13,7 +12,6 @@ import com.flatcode.littlemovie.Unit.DATA
 import com.flatcode.littlemovie.Unit.THEME
 import com.flatcode.littlemovie.Unit.VOID
 import com.flatcode.littlemovie.databinding.ActivityRegisterBinding
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
@@ -27,34 +25,30 @@ class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         THEME.setThemeOfApp(context)
         super.onCreate(savedInstanceState)
-        binding = ActivityRegisterBinding.inflate(
-            layoutInflater
-        )
+        binding = ActivityRegisterBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
 
         VOID.Logo(baseContext, binding!!.logo)
         VOID.Intro(baseContext, binding!!.background, binding!!.backWhite, binding!!.backBlack)
+
         auth = FirebaseAuth.getInstance()
         dialog = ProgressDialog(this)
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
-        binding!!.forget.setOnClickListener { v: View? ->
-            VOID.Intent1(
-                context,
-                CLASS.FORGET_PASSWORD
-            )
-        }
-        binding!!.login.setOnClickListener { v: View? ->
+
+        binding!!.forget.setOnClickListener { VOID.Intent1(context, CLASS.FORGET_PASSWORD) }
+        binding!!.login.setOnClickListener {
             VOID.Intent1(context, CLASS.LOGIN)
             finish()
         }
-        binding!!.go.setOnClickListener { v: View? -> validateData() }
+        binding!!.go.setOnClickListener { validateData() }
     }
 
     private var name = ""
     private var email = ""
     private var password = ""
+
     private fun validateData() {
         //get data
         name = binding!!.nameEt.text.toString().trim { it <= ' ' }
@@ -85,7 +79,7 @@ class RegisterActivity : AppCompatActivity() {
 
         //create user in firebase auth
         auth!!.createUserWithEmailAndPassword(email, password)
-            .addOnSuccessListener { authResult: AuthResult? -> updateUserinfo() }
+            .addOnSuccessListener { updateUserinfo() }
             .addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
                 Toast.makeText(context, DATA.EMPTY + e.message, Toast.LENGTH_SHORT).show()
@@ -109,7 +103,7 @@ class RegisterActivity : AppCompatActivity() {
         //set data to db
         val ref = FirebaseDatabase.getInstance().getReference(DATA.USERS)
         assert(id != null)
-        ref.child(id!!).setValue(hashMap).addOnSuccessListener { unused: Void? ->
+        ref.child(id!!).setValue(hashMap).addOnSuccessListener {
             //data added to db
             dialog!!.dismiss()
             Toast.makeText(context, "Account created...", Toast.LENGTH_SHORT).show()

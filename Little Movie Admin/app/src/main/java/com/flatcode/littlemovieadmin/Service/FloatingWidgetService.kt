@@ -6,8 +6,13 @@ import android.graphics.PixelFormat
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
 import android.view.View.OnTouchListener
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ImageView
 import com.flatcode.littlemovieadmin.Activity.MovieViewActivity
 import com.flatcode.littlemovieadmin.R
@@ -82,7 +87,8 @@ class FloatingWidgetService : Service() {
             playerView = FloatingWidget!!.findViewById(R.id.playerView)
             val close = FloatingWidget!!.findViewById<ImageView>(R.id.close)
             val maximize = FloatingWidget!!.findViewById<ImageView>(R.id.maximize)
-            maximize.setOnClickListener { view: View? ->
+
+            maximize.setOnClickListener {
                 if (windowManager != null && FloatingWidget!!.isShown() && exoPlayer != null) {
                     windowManager!!.removeView(FloatingWidget)
                     FloatingWidget = null
@@ -92,15 +98,14 @@ class FloatingWidgetService : Service() {
                     exoPlayer = null
                     stopSelf()
                     val intent1 = Intent(
-                        this@FloatingWidgetService,
-                        MovieViewActivity::class.java
+                        this@FloatingWidgetService, MovieViewActivity::class.java
                     )
                     intent1.putExtra(DATA.MOVIE_LINK, videoUri.toString())
                     intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent1)
                 }
             }
-            close.setOnClickListener { view: View? ->
+            close.setOnClickListener {
                 if (windowManager != null && FloatingWidget!!.isShown() && exoPlayer != null) {
                     windowManager!!.removeView(FloatingWidget)
                     FloatingWidget = null
@@ -127,6 +132,7 @@ class FloatingWidgetService : Service() {
                                 initialTouchY = event.rawY
                                 return true
                             }
+
                             MotionEvent.ACTION_UP -> return true
                             MotionEvent.ACTION_MOVE -> {
                                 params.x = initialX + (event.rawX - initialTouchX).toInt()

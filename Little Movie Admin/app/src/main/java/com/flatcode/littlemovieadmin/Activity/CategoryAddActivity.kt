@@ -39,6 +39,7 @@ class CategoryAddActivity : AppCompatActivity() {
         dialog = ProgressDialog(context)
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
+
         binding!!.toolbar.nameSpace.setText(R.string.add_new_category)
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         binding!!.image.setOnClickListener { VOID.CropImageSquare(activity) }
@@ -77,9 +78,7 @@ class CategoryAddActivity : AppCompatActivity() {
             }.addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
                 Toast.makeText(
-                    context,
-                    "Category upload failed due to : " + e.message,
-                    Toast.LENGTH_SHORT
+                    context, "Category upload failed due to : " + e.message, Toast.LENGTH_SHORT
                 ).show()
             }
     }
@@ -104,9 +103,7 @@ class CategoryAddActivity : AppCompatActivity() {
         }.addOnFailureListener { e: Exception ->
             dialog!!.dismiss()
             Toast.makeText(
-                context,
-                "Failure to upload to db due to : " + e.message,
-                Toast.LENGTH_SHORT
+                context, "Failure to upload to db due to : " + e.message, Toast.LENGTH_SHORT
             ).show()
         }
     }

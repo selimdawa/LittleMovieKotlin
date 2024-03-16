@@ -54,12 +54,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
             binding!!.toolbar.mode.setBackgroundResource(R.drawable.moon)
         }
         binding!!.toolbar.image.setOnClickListener {
-            VOID.IntentExtra(
-                context,
-                CLASS.PROFILE,
-                DATA.PROFILE_ID,
-                DATA.FirebaseUserUid
-            )
+            VOID.IntentExtra(context, CLASS.PROFILE, DATA.PROFILE_ID, DATA.FirebaseUserUid)
         }
 
         //binding.recyclerView.setHasFixedSize(true);
@@ -172,9 +167,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
             FirebaseDatabase.getInstance().getReference(DATA.USERS).child(DATA.FirebaseUserUid)
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val user = dataSnapshot.getValue(
-                    User::class.java
-                )!!
+                val user = dataSnapshot.getValue(User::class.java)!!
                 VOID.GlideImage(true, context, user.profileImage, binding!!.toolbar.image)
             }
 

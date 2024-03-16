@@ -17,7 +17,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import java.util.*
+import java.util.Objects
 
 class SettingsFragment : Fragment() {
 
@@ -26,23 +26,18 @@ class SettingsFragment : Fragment() {
     private var adapter: SettingAdapter? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        binding = FragmentSettingsBinding.inflate(
-            LayoutInflater.from(
-                context
-            ), container, false
-        )
-        binding!!.recyclerView.setHasFixedSize(true)
+        binding = FragmentSettingsBinding.inflate(LayoutInflater.from(context), container, false)
+
+        //binding!!.recyclerView.setHasFixedSize(true)
         list = ArrayList()
         adapter = SettingAdapter(context, list!!)
         binding!!.recyclerView.adapter = adapter
-        binding!!.toolbar.item.setOnClickListener { v: View? ->
-            VOID.IntentExtra(
-                context, CLASS.PROFILE, DATA.PROFILE_ID, DATA.FirebaseUserUid
-            )
+
+        binding!!.toolbar.item.setOnClickListener {
+            VOID.IntentExtra(context, CLASS.PROFILE, DATA.PROFILE_ID, DATA.FirebaseUserUid)
         }
         return binding!!.root
     }
@@ -94,12 +89,11 @@ class SettingsFragment : Fragment() {
         reference.child(Objects.requireNonNull(DATA.FirebaseUserUid))
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val item = snapshot.getValue(
-                        User::class.java
-                    )!!
+                    val item = snapshot.getValue(User::class.java)!!
                     val ProfileImage = item.profileImage
                     val Username = item.username
                     val Contact = item.email
+
                     VOID.GlideImage(true, context, ProfileImage, binding!!.toolbar.imageProfile)
                     binding!!.toolbar.username.text = Username
                     binding!!.toolbar.email.text = Contact
@@ -114,11 +108,8 @@ class SettingsFragment : Fragment() {
         val item = Setting("1", "Edit Profile", R.drawable.ic_edit_white, 0, CLASS.PROFILE_EDIT)
         val item2 = Setting("2", "My Cast", R.drawable.ic_cast, myCast, CLASS.MY_CAST)
         val item3 = Setting(
-            "3",
-            "My Categories",
-            R.drawable.ic_category_gray,
-            myCategories,
-            CLASS.MY_CATEGORIES
+            "3", "My Categories", R.drawable.ic_category_gray,
+            myCategories, CLASS.MY_CATEGORIES
         )
         val item4 =
             Setting("4", "Favorites", R.drawable.ic_star_selected, favorites, CLASS.FAVORITES)

@@ -1,7 +1,6 @@
 package com.flatcode.littlemovieadmin.Adapter
 
 import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.Model.Main
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.Unit.DATA
+import com.flatcode.littlemovieadmin.Unit.VOID
 import com.flatcode.littlemovieadmin.databinding.ItemMainBinding
 import java.text.MessageFormat
 
@@ -21,11 +21,7 @@ class MainAdapter(private val context: Context, var list: List<Main>) :
     private var binding: ItemMainBinding? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ItemMainBinding.inflate(
-            LayoutInflater.from(
-                context
-            ), parent, false
-        )
+        binding = ItemMainBinding.inflate(LayoutInflater.from(context), parent, false)
         return ViewHolder(binding!!.root)
     }
 
@@ -42,18 +38,17 @@ class MainAdapter(private val context: Context, var list: List<Main>) :
         } else {
             holder.image.setImageResource(R.drawable.ic_load)
         }
+
         if (number != 0) {
             holder.number.visibility = View.VISIBLE
             holder.number.text = MessageFormat.format("{0}{1}", DATA.EMPTY, number)
         } else {
             holder.number.visibility = View.GONE
         }
+
         holder.name.text = name
 
-        holder.itemView.setOnClickListener {
-            val intent = Intent(context, c)
-            context.startActivity(intent)
-        }
+        holder.itemView.setOnClickListener { VOID.Intent1(context, c) }
     }
 
     override fun getItemCount(): Int {

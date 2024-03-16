@@ -13,7 +13,11 @@ import com.flatcode.littlemovie.Unit.DATA
 import com.flatcode.littlemovie.Unit.THEME
 import com.flatcode.littlemovie.Unit.VOID
 import com.flatcode.littlemovie.databinding.ActivityCastDetailsBinding
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 import java.text.MessageFormat
 
 class CastDetailsActivity : AppCompatActivity() {
@@ -45,21 +49,18 @@ class CastDetailsActivity : AppCompatActivity() {
         VOID.GlideImage(true, activity, castImage, binding!!.image)
         VOID.GlideBlur(true, activity, castImage, binding!!.imageBlur, 50)
         VOID.isInterested(binding!!.add, castId, DATA.CAST)
-        binding!!.add.setOnClickListener {
-            VOID.checkInterested(
-                binding!!.add, DATA.CAST, castId
-            )
-        }
+
         binding!!.toolbar.nameSpace.setText(R.string.cast_details)
         binding!!.name.text = castName
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
-        type = DATA.TIMESTAMP
+        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
+        binding!!.add.setOnClickListener { VOID.checkInterested(binding!!.add, DATA.CAST, castId) }
+
         binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
             binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
             DATA.searchStatus = true
         }
-        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
 
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -74,18 +75,14 @@ class CastDetailsActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
         binding!!.go.setOnClickListener {
-            VOID.dialogAboutArtist(
-                activity,
-                castImage,
-                castName,
-                castAbout
-            )
+            VOID.dialogAboutArtist(activity, castImage, castName, castAbout)
         }
 
         //binding.recyclerView.setHasFixedSize(true);
         list = ArrayList()
         adapter = MovieAdapter(activity, list!!, true)
         binding!!.recyclerView.adapter = adapter
+
         binding!!.switchBar.all.setOnClickListener {
             type = DATA.TIMESTAMP
             getData(type)

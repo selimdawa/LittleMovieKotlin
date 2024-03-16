@@ -43,8 +43,9 @@ class CastEditActivity : AppCompatActivity() {
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
         loadInfo()
+
         binding!!.toolbar.nameSpace.setText(R.string.edit_cast)
-        binding!!.toolbar.back.setOnClickListener { v -> onBackPressed() }
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         binding!!.image.setOnClickListener { VOID.CropImageSquare(activity) }
         binding!!.toolbar.ok.setOnClickListener { validateData() }
     }
@@ -82,9 +83,7 @@ class CastEditActivity : AppCompatActivity() {
             }.addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
                 Toast.makeText(
-                    activity,
-                    "Failed to upload image due to " + e.message,
-                    Toast.LENGTH_SHORT
+                    activity, "Failed to upload image due to " + e.message, Toast.LENGTH_SHORT
                 ).show()
             }
     }
@@ -116,6 +115,7 @@ class CastEditActivity : AppCompatActivity() {
                 val name = item.name
                 val aboutMy = item.aboutMy
                 val image = item.image
+
                 VOID.GlideImage(true, activity, image, binding!!.image)
                 binding!!.nameEt.setText(name)
                 binding!!.aboutMyEt.setText(aboutMy)

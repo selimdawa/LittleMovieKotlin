@@ -5,7 +5,6 @@ import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Patterns
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemovie.Unit.CLASS
@@ -13,7 +12,6 @@ import com.flatcode.littlemovie.Unit.DATA
 import com.flatcode.littlemovie.Unit.THEME
 import com.flatcode.littlemovie.Unit.VOID
 import com.flatcode.littlemovie.databinding.ActivityLoginBinding
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {
@@ -32,23 +30,15 @@ class LoginActivity : AppCompatActivity() {
 
         VOID.Logo(baseContext, binding!!.logo)
         VOID.Intro(baseContext, binding!!.background, binding!!.backWhite, binding!!.backBlack)
+
         auth = FirebaseAuth.getInstance()
         dialog = ProgressDialog(this)
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
-        binding!!.forget.setOnClickListener { v: View? ->
-            VOID.Intent1(
-                context,
-                CLASS.FORGET_PASSWORD
-            )
-        }
-        binding!!.noAccount.setOnClickListener { v: View? ->
-            VOID.Intent1(
-                context,
-                CLASS.REGISTER
-            )
-        }
-        binding!!.loginBtn.setOnClickListener { v: View? -> validateDate() }
+
+        binding!!.forget.setOnClickListener { VOID.Intent1(context, CLASS.FORGET_PASSWORD) }
+        binding!!.noAccount.setOnClickListener { VOID.Intent1(context, CLASS.REGISTER) }
+        binding!!.loginBtn.setOnClickListener { validateDate() }
     }
 
     private var email = ""
@@ -73,12 +63,7 @@ class LoginActivity : AppCompatActivity() {
         dialog!!.setMessage("Logging In...")
         dialog!!.show()
         auth!!.signInWithEmailAndPassword(email, password)
-            .addOnSuccessListener { authResult: AuthResult? ->
-                VOID.IntentClear(
-                    context,
-                    CLASS.MAIN
-                )
-            }
+            .addOnSuccessListener { VOID.IntentClear(context, CLASS.MAIN) }
             .addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
                 Toast.makeText(context, DATA.EMPTY + e.message, Toast.LENGTH_SHORT).show()

@@ -42,9 +42,7 @@ class MovieViewActivity : AppCompatActivity() {
         setFullScreen()
         THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
-        binding = ActivityMovieViewBinding.inflate(
-            layoutInflater
-        )
+        binding = ActivityMovieViewBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
 

@@ -31,6 +31,7 @@ class EditorsChoiceActivity : AppCompatActivity() {
         list = ArrayList()
         adapter = EditorsChoiceAdapter(activity, list!!)
         binding!!.recyclerView.adapter = adapter
+
         IdeaPosts()
     }
 

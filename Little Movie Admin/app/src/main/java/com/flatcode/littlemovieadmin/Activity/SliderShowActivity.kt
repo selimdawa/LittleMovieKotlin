@@ -270,6 +270,7 @@ class SliderShowActivity : AppCompatActivity() {
                 val eighteen = DATA.EMPTY + dataSnapshot.child("18").value
                 val nineteen = DATA.EMPTY + dataSnapshot.child("19").value
                 val twenty = DATA.EMPTY + dataSnapshot.child("20").value
+
                 VOID.GlideImage(false, context, one, binding!!.imageOne)
                 VOID.GlideImage(false, context, two, binding!!.imageTwo)
                 VOID.GlideImage(false, context, three, binding!!.imageThree)

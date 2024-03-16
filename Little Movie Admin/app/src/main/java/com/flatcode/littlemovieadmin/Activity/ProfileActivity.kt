@@ -33,17 +33,13 @@ class ProfileActivity : AppCompatActivity() {
 
         val intent = intent
         profileId = intent.getStringExtra(DATA.PROFILE_ID)
+
         loadUserInfo()
         nrFavorites
         if (profileId == DATA.FirebaseUserUid) {
             binding!!.edit.visibility = View.VISIBLE
             binding!!.edit.setImageResource(R.drawable.ic_edit_white)
-            binding!!.edit.setOnClickListener {
-                VOID.Intent1(
-                    context,
-                    CLASS.PROFILE_EDIT
-                )
-            }
+            binding!!.edit.setOnClickListener { VOID.Intent1(context, CLASS.PROFILE_EDIT) }
             getNrItems(DATA.CAST, binding!!.numbercast)
             getNrItems(DATA.CATEGORIES, binding!!.numberCategories)
         } else {

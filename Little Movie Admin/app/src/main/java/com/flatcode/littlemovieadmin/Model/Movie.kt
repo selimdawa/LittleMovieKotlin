@@ -18,21 +18,12 @@ class Movie {
     var year = 0
     var timestamp: Long = 0
 
+    constructor()
+
     constructor(
-        id: String?,
-        publisher: String?,
-        timestamp: Long,
-        categoryId: String?,
-        name: String,
-        description: String?,
-        duration: String?,
-        image: String?,
-        movieLink: String?,
-        viewsCount: Int,
-        lovesCount: Int,
-        castCount: Int,
-        editorsChoice: Int,
-        year: Int
+        id: String?, publisher: String?, timestamp: Long, categoryId: String?, name: String,
+        description: String?, duration: String?, image: String?, movieLink: String?,
+        viewsCount: Int, lovesCount: Int, castCount: Int, editorsChoice: Int, year: Int
     ) {
         var name = name
         if (name.trim { it <= ' ' } == DATA.EMPTY) {
@@ -53,6 +44,4 @@ class Movie {
         this.editorsChoice = editorsChoice
         this.year = year
     }
-
-    constructor() {}
 }

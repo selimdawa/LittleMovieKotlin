@@ -14,7 +14,11 @@ import com.flatcode.littlemovie.Unit.DATA
 import com.flatcode.littlemovie.Unit.THEME
 import com.flatcode.littlemovie.Unit.VOID
 import com.flatcode.littlemovie.databinding.ActivityMyCategoriesBinding
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 import java.text.MessageFormat
 
 class MyCategoriesActivity : AppCompatActivity() {
@@ -29,21 +33,20 @@ class MyCategoriesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
-        binding = ActivityMyCategoriesBinding.inflate(
-            layoutInflater
-        )
+        binding = ActivityMyCategoriesBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
 
         binding!!.toolbar.nameSpace.setText(R.string.my_categories)
-        binding!!.toolbar.back.setOnClickListener { v: View? -> onBackPressed() }
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
         type = DATA.TIMESTAMP
-        binding!!.toolbar.search.setOnClickListener { v: View? ->
+
+        binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
             binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
             DATA.searchStatus = true
         }
-        binding!!.toolbar.close.setOnClickListener { v: View? -> onBackPressed() }
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -61,25 +64,21 @@ class MyCategoriesActivity : AppCompatActivity() {
         list = ArrayList()
         adapter = CategoryAdapter(activity, list!!)
         binding!!.recyclerView.adapter = adapter
-        binding!!.switchBar.explore.setOnClickListener { v: View? ->
-            VOID.Intent1(
-                activity,
-                CLASS.CATEGORIES
-            )
-        }
-        binding!!.switchBar.all.setOnClickListener { v: View? ->
+
+        binding!!.switchBar.explore.setOnClickListener { VOID.Intent1(activity, CLASS.CATEGORIES) }
+        binding!!.switchBar.all.setOnClickListener {
             type = DATA.TIMESTAMP
             getData(type)
         }
-        binding!!.switchBar.mostMovies.setOnClickListener { v: View? ->
+        binding!!.switchBar.mostMovies.setOnClickListener {
             type = DATA.MOVIES_COUNT
             getData(type)
         }
-        binding!!.switchBar.mostInterested.setOnClickListener { v: View? ->
+        binding!!.switchBar.mostInterested.setOnClickListener {
             type = DATA.INTERESTED_COUNT
             getData(type)
         }
-        binding!!.switchBar.name.setOnClickListener { v: View? ->
+        binding!!.switchBar.name.setOnClickListener {
             type = DATA.NAME
             getData(type)
         }
@@ -109,9 +108,7 @@ class MyCategoriesActivity : AppCompatActivity() {
                 list!!.clear()
                 var i = 0
                 for (data in dataSnapshot.children) {
-                    val category = data.getValue(
-                        Category::class.java
-                    )
+                    val category = data.getValue(Category::class.java)
                     for (id in item!!) {
                         assert(category != null)
                         if (category!!.id != null) if (category.id == id) {

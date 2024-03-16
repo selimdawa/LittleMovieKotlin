@@ -11,7 +11,11 @@ import com.flatcode.littlemovieadmin.Model.Movie
 import com.flatcode.littlemovieadmin.Unit.DATA
 import com.flatcode.littlemovieadmin.Unitimport.THEME
 import com.flatcode.littlemovieadmin.databinding.ActivityCategoryDetailsBinding
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 import java.text.MessageFormat
 
 class CategoryDetailsActivity : AppCompatActivity() {
@@ -36,13 +40,14 @@ class CategoryDetailsActivity : AppCompatActivity() {
 
         binding!!.toolbar.nameSpace.text = categoryName
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
         type = DATA.TIMESTAMP
+
         binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
             binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
             DATA.searchStatus = true
         }
-        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
 
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -62,6 +67,7 @@ class CategoryDetailsActivity : AppCompatActivity() {
         list = ArrayList()
         adapter = MovieAdapter(activity, list!!)
         binding!!.recyclerView.adapter = adapter
+
         binding!!.switchBar.all.setOnClickListener {
             type = DATA.TIMESTAMP
             getData(type)

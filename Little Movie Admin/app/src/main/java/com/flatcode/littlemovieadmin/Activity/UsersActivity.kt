@@ -12,7 +12,11 @@ import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.Unit.DATA
 import com.flatcode.littlemovieadmin.Unitimport.THEME
 import com.flatcode.littlemovieadmin.databinding.ActivityUsersBinding
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 import java.text.MessageFormat
 
 class UsersActivity : AppCompatActivity() {
@@ -32,6 +36,7 @@ class UsersActivity : AppCompatActivity() {
 
         binding!!.toolbar.nameSpace.setText(R.string.users)
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
         type = DATA.TIMESTAMP
 
         binding!!.toolbar.search.setOnClickListener {
@@ -39,7 +44,6 @@ class UsersActivity : AppCompatActivity() {
             binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
             DATA.searchStatus = true
         }
-        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
 
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -58,6 +62,7 @@ class UsersActivity : AppCompatActivity() {
         list = ArrayList()
         adapter = UserAdapter(context, list!!)
         binding!!.recyclerView.adapter = adapter
+
         binding!!.switchBar.all.setOnClickListener {
             type = DATA.TIMESTAMP
             getData(type)
@@ -66,6 +71,7 @@ class UsersActivity : AppCompatActivity() {
             type = DATA.NAME
             getData(type)
         }
+
         getData(type)
     }
 
@@ -76,9 +82,7 @@ class UsersActivity : AppCompatActivity() {
                 list!!.clear()
                 var i = 0
                 for (data in dataSnapshot.children) {
-                    val item = data.getValue(
-                        User::class.java
-                    )!!
+                    val item = data.getValue(User::class.java)!!
                     if (item.id != DATA.FirebaseUserUid) {
                         list!!.add(item)
                         i++

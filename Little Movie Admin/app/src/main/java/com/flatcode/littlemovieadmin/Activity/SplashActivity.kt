@@ -27,6 +27,7 @@ class SplashActivity : AppCompatActivity() {
 
         VOID.Logo(baseContext, binding!!.logo)
         VOID.Intro(baseContext, binding!!.background, binding!!.backWhite, binding!!.backBlack)
+
         auth = FirebaseAuth.getInstance()
         Handler().postDelayed({ checkUser() }, time_final.toLong())
     }

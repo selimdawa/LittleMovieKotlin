@@ -9,7 +9,8 @@ class Category {
     var moviesCount = 0
     var timestamp: Long = 0
 
-    constructor() {}
+    constructor()
+
     constructor(
         id: String?, name: String?, image: String?, publisher: String?, timestamp: Long,
         interestedCount: Int, moviesCount: Int

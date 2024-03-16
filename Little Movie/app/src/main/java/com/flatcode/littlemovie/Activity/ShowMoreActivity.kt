@@ -11,9 +11,12 @@ import com.flatcode.littlemovie.Model.Movie
 import com.flatcode.littlemovie.Unit.DATA
 import com.flatcode.littlemovie.Unit.THEME
 import com.flatcode.littlemovie.databinding.ActivityShowMoreBinding
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 import java.text.MessageFormat
-import java.util.*
 
 class ShowMoreActivity : AppCompatActivity() {
 
@@ -28,9 +31,7 @@ class ShowMoreActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
-        binding = ActivityShowMoreBinding.inflate(
-            layoutInflater
-        )
+        binding = ActivityShowMoreBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
 
@@ -38,13 +39,16 @@ class ShowMoreActivity : AppCompatActivity() {
         type = intent.getStringExtra(DATA.SHOW_MORE_TYPE)
         name = intent.getStringExtra(DATA.SHOW_MORE_NAME)
         isReverse = intent.getStringExtra(DATA.SHOW_MORE_BOOLEAN)
+
         binding!!.toolbar.nameSpace.text = name
-        binding!!.toolbar.search.setOnClickListener { v: View? ->
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
+
+        binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
             binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
             DATA.searchStatus = true
         }
-        binding!!.toolbar.close.setOnClickListener { v: View? -> onBackPressed() }
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -57,7 +61,6 @@ class ShowMoreActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable) {}
         })
-        binding!!.toolbar.back.setOnClickListener { v: View? -> onBackPressed() }
 
         //binding.recyclerView.setHasFixedSize(true);
         list = ArrayList()
@@ -72,9 +75,7 @@ class ShowMoreActivity : AppCompatActivity() {
                 list!!.clear()
                 var i = 0
                 for (data in dataSnapshot.children) {
-                    val item = data.getValue(
-                        Movie::class.java
-                    )!!
+                    val item = data.getValue(Movie::class.java)!!
                     if (orderBy == DATA.EDITORS_CHOICE) {
                         if (item.editorsChoice > 0) {
                             list!!.add(item)
@@ -84,13 +85,13 @@ class ShowMoreActivity : AppCompatActivity() {
                         list!!.add(item)
                         i++
                     }
-                    if (isReverse == "true") Collections.reverse(list)
+                    if (isReverse == "true") list!!.reverse()
                     binding!!.toolbar.number.text = MessageFormat.format("( {0} )", i)
                     binding!!.recyclerView.adapter = adapter
                 }
                 adapter!!.notifyDataSetChanged()
                 binding!!.progress.visibility = View.GONE
-                if (!list!!.isEmpty()) {
+                if (list!!.isNotEmpty()) {
                     binding!!.recyclerView.visibility = View.VISIBLE
                     binding!!.emptyText.visibility = View.GONE
                 } else {

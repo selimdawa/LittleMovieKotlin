@@ -20,7 +20,11 @@ import com.flatcode.littlemovieadmin.Unit.VOID
 import com.flatcode.littlemovieadmin.Unit.VOID.incrementItemCount
 import com.flatcode.littlemovieadmin.Unitimport.THEME
 import com.flatcode.littlemovieadmin.databinding.ActivityMovieAddBinding
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask
@@ -47,16 +51,19 @@ class MovieAddActivity : AppCompatActivity() {
         val view = binding!!.root
         setContentView(view)
 
-        loadCategories()
         dialog = ProgressDialog(this)
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
+        loadCategories()
+
         binding!!.toolbar.nameSpace.setText(R.string.add_new_movie)
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+
         binding!!.category.setOnClickListener { categoryPickDialog() }
         binding!!.image.setOnClickListener { VOID.CropVideoSquare(activity) }
         binding!!.chooseMovie.setOnClickListener { openVideoFiles() }
         binding!!.toolbar.ok.setOnClickListener { validateData() }
+
         metadataRetriever = MediaMetadataRetriever()
     }
 
@@ -72,21 +79,34 @@ class MovieAddActivity : AppCompatActivity() {
 
         //validate data
         if (TextUtils.isEmpty(name)) Toast.makeText(activity, "Enter Name...", Toast.LENGTH_SHORT)
-            .show() else if (TextUtils.isEmpty(description)) Toast.makeText(activity,
-            "Enter Description...", Toast.LENGTH_SHORT)
-            .show() else if (TextUtils.isEmpty(yearText)) Toast.makeText(activity,
-            "Enter Date...", Toast.LENGTH_SHORT)
+            .show() else if (TextUtils.isEmpty(description)) Toast.makeText(
+            activity,
+            "Enter Description...", Toast.LENGTH_SHORT
+        )
+            .show() else if (TextUtils.isEmpty(yearText)) Toast.makeText(
+            activity,
+            "Enter Date...", Toast.LENGTH_SHORT
+        )
             .show() else if (yearText.toInt() < DATA.MIN_YEAR || yearText.toInt() > DATA.MAX_YEAR) Toast.makeText(
-            activity, "Invalid Date...", Toast.LENGTH_SHORT)
-            .show() else if (TextUtils.isEmpty(selectedCategoryTitle)) Toast.makeText(activity,
+            activity, "Invalid Date...", Toast.LENGTH_SHORT
+        )
+            .show() else if (TextUtils.isEmpty(selectedCategoryTitle)) Toast.makeText(
+            activity,
             "Pick Category...",
-            Toast.LENGTH_SHORT).show() else if (castMovie.size <= 0) Toast.makeText(activity,
+            Toast.LENGTH_SHORT
+        ).show() else if (castMovie.size <= 0) Toast.makeText(
+            activity,
             "Enter Cast...",
-            Toast.LENGTH_SHORT).show() else if (imageUri == null) Toast.makeText(activity,
+            Toast.LENGTH_SHORT
+        ).show() else if (imageUri == null) Toast.makeText(
+            activity,
             "Pick Image...",
-            Toast.LENGTH_SHORT).show() else if (videoUri == null) Toast.makeText(activity,
+            Toast.LENGTH_SHORT
+        ).show() else if (videoUri == null) Toast.makeText(
+            activity,
             "Pick Movie...",
-            Toast.LENGTH_SHORT).show() else uploadFileToDB()
+            Toast.LENGTH_SHORT
+        ).show() else uploadFileToDB()
     }
 
     fun uploadFileToDB() {
@@ -154,10 +174,7 @@ class MovieAddActivity : AppCompatActivity() {
     }
 
     private fun uploadInfoToDB(
-        uploadedMovieUrl: String,
-        uploadedImageUrl: String,
-        id: String?,
-        ref: DatabaseReference,
+        uploadedMovieUrl: String, uploadedImageUrl: String, id: String?, ref: DatabaseReference,
     ) {
         dialog!!.setMessage("Uploading movie info...")
         dialog!!.show()
@@ -178,21 +195,17 @@ class MovieAddActivity : AppCompatActivity() {
         hashMap[DATA.LOVES_COUNT] = DATA.ZERO
         hashMap[DATA.VIEWS_COUNT] = DATA.ZERO
         hashMap[DATA.CAST_COUNT] = castMovie.size
-
         assert(id != null)
         ref.child(id!!).setValue(hashMap).addOnSuccessListener {
             if (selectedCategoryId != null) incrementItemCount(
-                DATA.CATEGORIES,
-                selectedCategoryId,
-                DATA.MOVIES_COUNT)
+                DATA.CATEGORIES, selectedCategoryId, DATA.MOVIES_COUNT
+            )
             uploadCastToDB(id)
             dialog!!.dismiss()
         }.addOnFailureListener { e: Exception ->
             dialog!!.dismiss()
             Toast.makeText(
-                activity,
-                "Failure to upload to db due to :" + e.message,
-                Toast.LENGTH_SHORT
+                activity, "Failure to upload to db due to :" + e.message, Toast.LENGTH_SHORT
             ).show()
         }
     }
@@ -216,9 +229,7 @@ class MovieAddActivity : AppCompatActivity() {
         }.addOnFailureListener { e: Exception ->
             dialog!!.dismiss()
             Toast.makeText(
-                activity,
-                "Failure to upload to db due to :" + e.message,
-                Toast.LENGTH_SHORT
+                activity, "Failure to upload to db due to :" + e.message, Toast.LENGTH_SHORT
             ).show()
         }
     }

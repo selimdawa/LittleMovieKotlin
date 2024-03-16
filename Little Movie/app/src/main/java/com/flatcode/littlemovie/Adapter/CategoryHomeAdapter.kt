@@ -17,11 +17,7 @@ class CategoryHomeAdapter(private val context: Context?, var list: ArrayList<Cat
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
-        binding = ItemCategoryHomeBinding.inflate(
-            LayoutInflater.from(
-                context
-            ), parent, false
-        )
+        binding = ItemCategoryHomeBinding.inflate(LayoutInflater.from(context), parent, false)
         return ViewHolder(binding!!.root)
     }
 
@@ -30,15 +26,12 @@ class CategoryHomeAdapter(private val context: Context?, var list: ArrayList<Cat
         val id = item!!.id
         val name = item.name
         val image = item.image
+
         VOID.GlideImage(false, context, image, binding!!.image)
-        holder.image.setOnClickListener { view: View? ->
+
+        holder.image.setOnClickListener {
             VOID.IntentExtra2(
-                context,
-                CLASS.CATEGORY_DETAILS,
-                DATA.CATEGORY_ID,
-                id,
-                DATA.CATEGORY_NAME,
-                name
+                context, CLASS.CATEGORY_DETAILS, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
             )
         }
     }

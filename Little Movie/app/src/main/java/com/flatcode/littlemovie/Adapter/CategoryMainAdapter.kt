@@ -20,11 +20,7 @@ class CategoryMainAdapter(private val context: Context?, var list: ArrayList<Cat
     private var binding: ItemCategoryMainBinding? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ItemCategoryMainBinding.inflate(
-            LayoutInflater.from(
-                context
-            ), parent, false
-        )
+        binding = ItemCategoryMainBinding.inflate(LayoutInflater.from(context), parent, false)
         return ViewHolder(binding!!.root)
     }
 
@@ -33,22 +29,20 @@ class CategoryMainAdapter(private val context: Context?, var list: ArrayList<Cat
         val id = DATA.EMPTY + item!!.id
         val name = DATA.EMPTY + item.name
         val image = DATA.EMPTY + item.image
+
         VOID.GlideImage(false, context, image, holder.image)
         VOID.GlideBlur(false, context, image, holder.imageBlur, 50)
+
         if (name == DATA.EMPTY) {
             holder.name.visibility = View.GONE
         } else {
             holder.name.visibility = View.VISIBLE
             holder.name.text = name
         }
-        holder.card.setOnClickListener { view: View? ->
+
+        holder.card.setOnClickListener {
             VOID.IntentExtra2(
-                context,
-                CLASS.CATEGORY_DETAILS,
-                DATA.CATEGORY_ID,
-                id,
-                DATA.CATEGORY_NAME,
-                name
+                context, CLASS.CATEGORY_DETAILS, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
             )
         }
     }
@@ -57,9 +51,7 @@ class CategoryMainAdapter(private val context: Context?, var list: ArrayList<Cat
         return list.size
     }
 
-    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(
-        view!!
-    ) {
+    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
         var image: ImageView
         var imageBlur: ImageView
         var name: TextView

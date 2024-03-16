@@ -7,7 +7,6 @@ import java.util.*
 
 class UserFilter(var list: ArrayList<User?>, var adapter: UserAdapter) : Filter() {
     override fun performFiltering(constraint: CharSequence): FilterResults {
-
         var constraint: CharSequence? = constraint
         val results = FilterResults()
         if (constraint != null && constraint.length > 0) {

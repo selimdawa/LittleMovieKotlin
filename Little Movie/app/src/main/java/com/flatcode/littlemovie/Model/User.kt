@@ -8,7 +8,8 @@ class User {
     var timestamp: Long = 0
     var version = 0
 
-    constructor() {}
+    constructor()
+
     constructor(
         id: String?, username: String?, profileImage: String?, email: String?, timestamp: Long,
         version: Int

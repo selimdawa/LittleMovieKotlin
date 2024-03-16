@@ -12,6 +12,8 @@ class Cast {
     var moviesCount = 0
     var timestamp: Long = 0
 
+    constructor()
+
     constructor(
         id: String?, publisher: String?, name: String, image: String?, aboutMy: String?,
         timestamp: Long, interestedCount: Int, moviesCount: Int
@@ -39,6 +41,4 @@ class Cast {
         this.name = name
         this.image = image
     }
-
-    constructor() {}
 }

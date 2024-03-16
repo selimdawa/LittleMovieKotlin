@@ -43,6 +43,7 @@ class CategoryEditActivity : AppCompatActivity() {
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
         loadCategoryInfo()
+
         binding!!.toolbar.nameSpace.setText(R.string.edit_category)
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         binding!!.image.setOnClickListener { VOID.CropImageSquare(activity) }
@@ -68,8 +69,7 @@ class CategoryEditActivity : AppCompatActivity() {
         dialog!!.show()
         val filePathAndName = "Images/Category/$categoryId"
         val reference = FirebaseStorage.getInstance().getReference(
-            filePathAndName
-                    + DATA.DOT + VOID.getFileExtension(imageUri, activity)
+            filePathAndName + DATA.DOT + VOID.getFileExtension(imageUri, activity)
         )
         reference.putFile(imageUri!!)
             .addOnSuccessListener { taskSnapshot: UploadTask.TaskSnapshot ->
@@ -80,9 +80,7 @@ class CategoryEditActivity : AppCompatActivity() {
             }.addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
                 Toast.makeText(
-                    activity,
-                    "Failed to upload image due to : " + e.message,
-                    Toast.LENGTH_SHORT
+                    activity, "Failed to upload image due to : " + e.message, Toast.LENGTH_SHORT
                 ).show()
             }
     }
@@ -102,9 +100,7 @@ class CategoryEditActivity : AppCompatActivity() {
             }.addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
                 Toast.makeText(
-                    activity,
-                    "Failed to update db duo to : " + e.message,
-                    Toast.LENGTH_SHORT
+                    activity, "Failed to update db duo to : " + e.message, Toast.LENGTH_SHORT
                 ).show()
             }
     }
@@ -116,6 +112,7 @@ class CategoryEditActivity : AppCompatActivity() {
                 val item = snapshot.getValue(Category::class.java)!!
                 val name = item.name
                 val image = item.image
+
                 VOID.GlideImage(true, activity, image, binding!!.image)
                 binding!!.nameEt.setText(name)
             }

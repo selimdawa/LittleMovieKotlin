@@ -31,6 +31,7 @@ class CastMovieAddAdapter(private val activity: Activity, var list: ArrayList<Ca
         val image = DATA.EMPTY + item.image
 
         VOID.GlideImage(true, activity, image, holder.image)
+
         if (name == DATA.EMPTY) {
             holder.name.visibility = View.GONE
         } else {
@@ -39,7 +40,6 @@ class CastMovieAddAdapter(private val activity: Activity, var list: ArrayList<Ca
         }
 
         castAddRemove = castMovie
-
         checkRemove(id, holder.add, holder.remove)
         checkAdd(id, holder.add, holder.remove)
 

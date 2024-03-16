@@ -12,9 +12,12 @@ import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.Unit.DATA
 import com.flatcode.littlemovie.Unit.THEME
 import com.flatcode.littlemovie.databinding.ActivityCastBinding
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 import java.text.MessageFormat
-import java.util.*
 
 class CastActivity : AppCompatActivity() {
 
@@ -32,14 +35,15 @@ class CastActivity : AppCompatActivity() {
         setContentView(view)
 
         binding!!.toolbar.nameSpace.setText(R.string.cast)
-        binding!!.toolbar.back.setOnClickListener { v: View? -> onBackPressed() }
+        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         type = DATA.TIMESTAMP
-        binding!!.toolbar.search.setOnClickListener { v: View? ->
+
+        binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
             binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
             DATA.searchStatus = true
         }
-        binding!!.toolbar.close.setOnClickListener { v: View? -> onBackPressed() }
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -57,19 +61,20 @@ class CastActivity : AppCompatActivity() {
         list = ArrayList()
         adapter = CastAdapter(activity, list!!)
         binding!!.recyclerView.adapter = adapter
-        binding!!.switchBar.all.setOnClickListener { v: View? ->
+
+        binding!!.switchBar.all.setOnClickListener {
             type = DATA.TIMESTAMP
             getData(type)
         }
-        binding!!.switchBar.mostMovies.setOnClickListener { v: View? ->
+        binding!!.switchBar.mostMovies.setOnClickListener {
             type = DATA.MOVIES_COUNT
             getData(type)
         }
-        binding!!.switchBar.mostInterested.setOnClickListener { v: View? ->
+        binding!!.switchBar.mostInterested.setOnClickListener {
             type = DATA.INTERESTED_COUNT
             getData(type)
         }
-        binding!!.switchBar.name.setOnClickListener { v: View? ->
+        binding!!.switchBar.name.setOnClickListener {
             type = DATA.NAME
             getData(type)
         }
@@ -86,11 +91,11 @@ class CastActivity : AppCompatActivity() {
                     list!!.add(item)
                     i++
                 }
-                Collections.reverse(list)
+                list!!.reverse()
                 binding!!.toolbar.number.text = MessageFormat.format("( {0} )", i)
                 adapter!!.notifyDataSetChanged()
                 binding!!.progress.visibility = View.GONE
-                if (!list!!.isEmpty()) {
+                if (list!!.isNotEmpty()) {
                     binding!!.recyclerView.visibility = View.VISIBLE
                     binding!!.emptyText.visibility = View.GONE
                 } else {

@@ -12,7 +12,11 @@ import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.Unit.DATA
 import com.flatcode.littlemovieadmin.Unitimport.THEME
 import com.flatcode.littlemovieadmin.databinding.ActivityEditorsChoiceAddBinding
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 import java.text.MessageFormat
 
 class EditorsChoiceAddActivity : AppCompatActivity() {
@@ -40,13 +44,14 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
 
         binding!!.toolbar.nameSpace.setText(R.string.editors_choice)
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
         type = DATA.TIMESTAMP
+
         binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
             binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
             DATA.searchStatus = true
         }
-        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
 
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -60,10 +65,12 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable) {}
         })
-        binding!!.recyclerView.setHasFixedSize(true)
+
+        //binding!!.recyclerView.setHasFixedSize(true)
         list = ArrayList()
         adapter = EditorsChoiceMovieAdapter(activity, oldId, list!!, id)
         binding!!.recyclerView.adapter = adapter
+
         binding!!.all.setOnClickListener {
             type = DATA.TIMESTAMP
             getData(type)

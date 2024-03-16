@@ -7,7 +7,6 @@ import java.util.*
 
 class MovieFilter(var list: ArrayList<Movie?>, var adapter: MovieAdapter) : Filter() {
     override fun performFiltering(constraint: CharSequence): FilterResults {
-
         var constraint: CharSequence? = constraint
         val results = FilterResults()
         if (constraint != null && constraint.length > 0) {
