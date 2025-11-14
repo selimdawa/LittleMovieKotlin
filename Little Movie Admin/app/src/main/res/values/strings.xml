@@ -1,0 +1,104 @@
+<resources>
+    <string name="app_name">Little Movie Admin</string>
+
+    //Theme
+    <string name="basic_theme">Basic Theme</string>
+    <string name="sec_theme">Sec Theme</string>
+
+    //Theme New
+    <string name="one_theme">Basic</string>
+    <string name="two_theme">Blue</string>
+    <string name="three_theme">Orange 1</string>
+    <string name="four_theme">Orange 2</string>
+    <string name="five_theme">Fuchsia</string>
+    <string name="six_theme">Pink</string>
+    <string name="seven_theme">Brown</string>
+    <string name="eight_theme">Red</string>
+    <string name="nine_theme">Green</string>
+
+    //Night Mode
+    <string name="night_theme">Grey</string>
+    <string name="corner_one">Gradual 1</string>
+    <string name="corner_two">Gradual 2</string>
+    <string name="corner_three">Gradual 3</string>
+    <string name="corner_four">Gradual 4</string>
+    <string name="corner_five">Gradual 5</string>
+    <string name="corner_six">Gradual 6</string>
+    <string name="corner_seven">Gradual 7</string>
+
+    //Needed
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="forget_password">Forget Password?</string>
+    <string name="email_example">abc@example.com</string>
+    <string name="do_you_want_to_logout">Do you want to logout?</string>
+    <string name="no">NO</string>
+    <string name="yes">YES</string>
+    <string name="none_display">There are no items to display</string>
+    <string name="slider_show">Slider Show</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="all">All</string>
+    <string name="users">Users</string>
+    <string name="username">Username</string>
+    <string name="search">Search</string>
+    <string name="name">Name</string>
+    <string name="category">Category</string>
+    <string name="editors_choice">Editors Choice</string>
+    <string name="most_views">Most Views</string>
+    <string name="movies">Movies</string>
+    <string name="most_loves">Most Loves</string>
+    <string name="favorites">Favorites</string>
+    <string name="ok">Ok</string>
+    <string name="choose_movie">Choose Movie</string>
+    <string name="year">Year</string>
+    <string name="duration">Duration</string>
+    <string name="add_new_cast">Add New Cast</string>
+    <string name="add_cast">Add Cast</string>
+    <string name="add_new_movie">Add New Movie</string>
+    <string name="add_new_category">Add New Category</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="edit_category">Edit Category</string>
+    <string name="edit_cast">Edit Cast</string>
+    <string name="about_my">About My</string>
+    <string name="edit_movie">Edit Movie</string>
+    <string name="categories">Categories</string>
+    <string name="description">Description</string>
+    <string name="cast">Cast</string>
+    <string name="cast_details">Cast Details</string>
+
+    //Movie Details
+    <string name="date">Date</string>
+    <string name="views">Views</string>
+    <string name="the_description">The Description</string>
+    <string name="Comments">Comments</string>
+    <string name="loves">Loves</string>
+    <string name="comment">Comment</string>
+    <string name="details_movie">Details Movie</string>
+    <string name="add_comment">Add Comment</string>
+    <string name="submit">Submit</string>
+
+    //Slider_Show
+    <string name="plus_slider">+</string>
+    <string name="one">1</string>
+    <string name="two">2</string>
+    <string name="three">3</string>
+    <string name="four">4</string>
+    <string name="five">5</string>
+    <string name="six">6</string>
+    <string name="seven">7</string>
+    <string name="eight">8</string>
+    <string name="nine">9</string>
+    <string name="teen">10</string>
+    <string name="eleven">11</string>
+    <string name="twelfth">12</string>
+    <string name="thirteen">13</string>
+    <string name="fourteenth">14</string>
+    <string name="fifteenth">15</string>
+    <string name="sixteen">16</string>
+    <string name="seventeen">17</string>
+    <string name="eighteen">18</string>
+    <string name="nineteen">19</string>
+    <string name="twenty">20</string>
+    <string name="edit">Edit</string>
+</resources>
