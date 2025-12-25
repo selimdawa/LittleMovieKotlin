@@ -13,8 +13,8 @@ android {
         applicationId = "com.flatcode.littlemovieadmin"
         minSdk = 24
         targetSdk = 36
-        versionCode = 3
-        versionName = "1.2"
+        versionCode = 4
+        versionName = "1.21"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -28,11 +28,13 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
     }
     buildFeatures {
         dataBinding = true
@@ -43,7 +45,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.preference:preference-ktx:1.2.1")          //Shared Preference
-    implementation(libs.androidx.activity)
+    implementation("androidx.activity:activity:1.12.2")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
@@ -67,7 +69,7 @@ dependencies {
     implementation("com.balysv:material-ripple:1.0.2")                  //Ripple Effect
     implementation("jp.wasabeef:glide-transformations:4.3.0")           //Image Blur
     api("com.theartofdev.edmodo:android-image-cropper:2.8.0")           //Image Crop
-
     //Video Player
+    //noinspection GradleDependency
     implementation ("com.google.android.exoplayer:exoplayer:2.9.6")      //EXO Player
 }

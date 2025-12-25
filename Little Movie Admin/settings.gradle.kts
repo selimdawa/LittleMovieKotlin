@@ -1,5 +1,6 @@
 pluginManagement {
     repositories {
+        //jcenter()
         google {
             content {
                 includeGroupByRegex("com\\.android.*")
@@ -9,19 +10,18 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
-        //New
-        maven { url = uri("https://www.jitpack.io" ) }
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        //jcenter()
         google()
         mavenCentral()
-        //New
-        jcenter()
-        maven { url = uri("https://www.jitpack.io" ) }
-        maven { url = uri("https://maven.google.com" ) }
+        maven(url = "https://jitpack.io")
+        maven(url = "https://maven.aliyun.com/repository/jcenter")
+
     }
 }
 
