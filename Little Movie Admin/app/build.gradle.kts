@@ -1,7 +1,7 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("com.google.gms.google-services")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.google.services)
     id("kotlin-kapt")
 }
 
@@ -13,8 +13,8 @@ android {
         applicationId = "com.flatcode.littlemovieadmin"
         minSdk = 24
         targetSdk = 36
-        versionCode = 4
-        versionName = "1.21"
+        versionCode = 5
+        versionName = "1.25"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -42,34 +42,34 @@ android {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.17.0")
-    implementation("androidx.appcompat:appcompat:1.7.1")
-    implementation("androidx.preference:preference-ktx:1.2.1")          //Shared Preference
-    implementation("androidx.activity:activity:1.12.2")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.3.0")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.preference.ktx)           //Shared Preference
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
     //Layout
-    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
-    implementation("com.google.android.material:material:1.13.0")
-    implementation("androidx.legacy:legacy-support-v4:1.0.0")
-    implementation("androidx.cardview:cardview:1.0.0")
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.material)
+    implementation(libs.androidx.legacy.support.v4)
+    implementation(libs.androidx.cardview)
     //Firebase
-    implementation(platform("com.google.firebase:firebase-bom:34.7.0")) //Firebase BOM
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-database")
-    implementation("com.google.firebase:firebase-storage")
-    implementation("com.google.firebase:firebase-analytics")
-    //implementation("com.google.firebase:firebase-crashlytics")
+    implementation(platform(libs.firebase.bom)) //Firebase BOM
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.database)
+    implementation(libs.firebase.storage)
+    implementation(libs.firebase.analytics)
+    //implementation(libs.firebase.crashlytics)
     //Image
-    implementation("de.hdodenhof:circleimageview:3.1.0")                //Circle Image
-    implementation("com.github.bumptech.glide:glide:5.0.5")            //Glide Image
+    implementation(libs.circleimageview)                //Circle Image
+    implementation(libs.glide)                          //Glide Image
     //noinspection KaptUsageInsteadOfKsp
-    kapt("com.github.bumptech.glide:compiler:5.0.5")                   //Glide Compiler
-    implementation("com.balysv:material-ripple:1.0.2")                  //Ripple Effect
-    implementation("jp.wasabeef:glide-transformations:4.3.0")           //Image Blur
-    api("com.theartofdev.edmodo:android-image-cropper:2.8.0")           //Image Crop
+    kapt(libs.compiler)                                 //Glide Compiler
+    implementation(libs.material.ripple)                //Ripple Effect
+    api(libs.android.image.cropper)                     //Image Crop
+    implementation(libs.glide.transformations)          //Image Blur
     //Video Player
     //noinspection GradleDependency
-    implementation ("com.google.android.exoplayer:exoplayer:2.9.6")      //EXO Player
+    implementation (libs.exoplayer)                     //EXO Player
 }
