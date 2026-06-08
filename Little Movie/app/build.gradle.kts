@@ -8,15 +8,13 @@ plugins {
 android {
     namespace = "com.flatcode.littlemovie"
     compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
+        version = release(37)
     }
 
     defaultConfig {
         applicationId = "com.flatcode.littlemovie"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 9
         versionName = "1.35"
 
