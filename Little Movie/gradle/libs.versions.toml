@@ -5,7 +5,7 @@ androidImageCropper = "2.8.0"
 autoimageslider = "1.3.2-appcompat"
 cardview = "1.0.0"
 circleimageview = "3.1.0"
-compiler = "5.0.7"
+glideKsp = "5.0.7"
 #noinspection GradleDependency
 exoplayer = "2.9.6"
 firebaseBom = "34.13.0"
@@ -25,6 +25,7 @@ materialRipple = "1.0.2"
 nafisbottomnav = "5.0"
 preferenceKtx = "1.2.1"
 googleServices = "4.4.4"
+ksp = "2.3.7"
 
 [libraries]
 android-image-cropper = { module = "com.theartofdev.edmodo:android-image-cropper", version.ref = "androidImageCropper" }
@@ -33,7 +34,7 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-legacy-support-v4 = { module = "androidx.legacy:legacy-support-v4", version.ref = "legacySupportV4" }
 androidx-preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }
 autoimageslider = { module = "com.github.smarteist:autoimageslider", version.ref = "autoimageslider" }
-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compiler" }
+glide-ksp = { module = "com.github.bumptech.glide:ksp", version.ref = "glideKsp" }
 circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
 exoplayer = { module = "com.google.android.exoplayer:exoplayer", version.ref = "exoplayer" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
@@ -58,3 +59,4 @@ nafisbottomnav = { module = "com.github.Foysalofficial:NafisBottomNav", version.
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+google-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
