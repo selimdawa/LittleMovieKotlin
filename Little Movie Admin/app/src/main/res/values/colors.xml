@@ -15,7 +15,6 @@
     <color name="blue">#448AFF</color>
     <color name="night_corner">#9C27B0</color>
     <color name="night_corner_2">#0E0D0D</color>
-    <color name="transparent">#00000000</color>
     <color name="overlay_dark_20">#33000000</color>
     <color name="overlay_dark_50">#80000000</color>
 </resources>

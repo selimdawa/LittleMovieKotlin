@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Little Movie</string>
     //Theme
-    <string name="one_theme">Day Mode</string>
-    <string name="night_theme">Night Mode</string>
+    <string name="basic_theme">Basic Theme</string>
+    <string name="sec_theme">Sec Theme</string>
     //Needed
     <string name="new_user_signup">SignUp</string>
     <string name="email">Email</string>
