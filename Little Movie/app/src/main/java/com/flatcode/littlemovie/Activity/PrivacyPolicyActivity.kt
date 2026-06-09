@@ -28,7 +28,6 @@ class PrivacyPolicyActivity : AppCompatActivity() {
         binding!!.toolbar.nameSpace.setText(R.string.privacy_policy)
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
 
-        VOID.Logo(context, binding!!.logo)
         privacyPolicy()
     }
 

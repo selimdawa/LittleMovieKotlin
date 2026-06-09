@@ -213,30 +213,6 @@ object VOID {
         dialog.window!!.attributes = lp
     }
 
-    fun Intro(context: Context?, background: ImageView, backWhite: ImageView, backDark: ImageView) {
-        val sharedPreferences: SharedPreferences = PreferenceManager
-            .getDefaultSharedPreferences(context!!)
-        if (sharedPreferences.getString("color_option", "ONE") == "ONE") {
-            background.setImageResource(R.drawable.background_day)
-            backWhite.visibility = View.VISIBLE
-            backDark.visibility = View.GONE
-        } else if (sharedPreferences.getString("color_option", "NIGHT_ONE") == "NIGHT_ONE") {
-            background.setImageResource(R.drawable.background_night)
-            backWhite.visibility = View.GONE
-            backDark.visibility = View.VISIBLE
-        }
-    }
-
-    fun Logo(context: Context?, background: ImageView) {
-        val sharedPreferences: SharedPreferences = PreferenceManager
-            .getDefaultSharedPreferences(context!!)
-        if (sharedPreferences.getString("color_option", "ONE") == "ONE") {
-            background.setImageResource(R.drawable.logo)
-        } else if (sharedPreferences.getString("color_option", "NIGHT_ONE") == "NIGHT_ONE") {
-            background.setImageResource(R.drawable.logo_night)
-        }
-    }
-
     fun incrementViewCount(id: String?) {
         val ref: DatabaseReference = FirebaseDatabase.getInstance().getReference(DATA.MOVIES)
         ref.child(id!!).addListenerForSingleValueEvent(object : ValueEventListener {
