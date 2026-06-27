@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.services)
-    alias(libs.plugins.google.ksp)
 }
 
 android {
@@ -32,11 +31,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlin {
-        compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
-        }
-    }
     buildFeatures {
         dataBinding = true
     }
@@ -63,11 +57,9 @@ dependencies {
     //Image
     implementation(libs.circleimageview)                //Circle Image
     implementation(libs.glide)                          //Glide Image
-    ksp(libs.glide.ksp)                                 //Glide Compiler
-    implementation(libs.material.ripple)                //Ripple Effect
     api(libs.android.image.cropper)                     //Image Crop
-    implementation(libs.glide.transformations)          //Image Blur
+    implementation(libs.glide.transformations)          //Glide Image Blur
     //Other's
+    implementation(libs.material.ripple)                //Ripple Effect
     implementation (libs.exoplayer)                     //Video Player Player
-    ksp(libs.kotlin.metadata.jvm)                       //Kotlin
 }
