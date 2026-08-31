@@ -2,12 +2,15 @@ package com.flatcode.littlemovie
 
 import android.app.Application
 import android.text.format.DateFormat
+import io.selimdawa.multicolors.MultiColorManager
 import java.util.Calendar
 import java.util.Locale
 
-class MyApplication : Application() {
+class Application : Application() {
+
     override fun onCreate() {
         super.onCreate()
+        MultiColorManager.init(this)
     }
 
     companion object {

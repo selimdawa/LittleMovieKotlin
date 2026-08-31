@@ -19,7 +19,6 @@ import com.flatcode.littlemovie.MyApplication
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.Unit.CLASS
 import com.flatcode.littlemovie.Unit.DATA
-import com.flatcode.littlemovie.Unit.THEME
 import com.flatcode.littlemovie.Unit.VOID
 import com.flatcode.littlemovie.databinding.ActivityMovieDetailsBinding
 import com.flatcode.littlemovie.databinding.DialogCommentAddBinding
@@ -44,7 +43,6 @@ class MovieDetailsActivity : AppCompatActivity() {
     private var adapterCast: CastMovieAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
         binding = ActivityMovieDetailsBinding.inflate(layoutInflater)
         val view = binding!!.root

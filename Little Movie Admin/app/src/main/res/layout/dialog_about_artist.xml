@@ -11,7 +11,7 @@
     <LinearLayout
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:background="?background"
+        android:background="?mc_bg"
         android:orientation="vertical">
 
         <LinearLayout
@@ -22,7 +22,7 @@
             <LinearLayout
                 android:layout_width="300dp"
                 android:layout_height="300dp"
-                android:background="?background"
+                android:background="?mc_bg"
                 android:focusableInTouchMode="true"
                 android:gravity="center"
                 android:orientation="vertical">
@@ -51,7 +51,7 @@
                 android:layout_gravity="center"
                 android:layout_margin="10sp"
                 android:textAlignment="center"
-                android:textColor="?trackColor"
+                android:textColor="?mc_track"
                 android:textSize="21sp"
                 android:textStyle="bold" />
 
@@ -65,7 +65,7 @@
                 style="@style/RippleStyleWhite"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?background">
+                android:background="?mc_bg">
 
                 <TextView
                     android:id="@+id/aboutTheArtist"

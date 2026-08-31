@@ -18,7 +18,6 @@ import com.flatcode.littlemovieadmin.Unit.DATA
 import com.flatcode.littlemovieadmin.Unit.DATA.castMovie
 import com.flatcode.littlemovieadmin.Unit.VOID
 import com.flatcode.littlemovieadmin.Unit.VOID.incrementItemCount
-import com.flatcode.littlemovieadmin.Unitimport.THEME
 import com.flatcode.littlemovieadmin.databinding.ActivityMovieAddBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -49,7 +48,6 @@ class MovieAddActivity : AppCompatActivity() {
     var metadataRetriever: MediaMetadataRetriever? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
         binding = ActivityMovieAddBinding.inflate(layoutInflater)
         val view = binding!!.root

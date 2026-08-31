@@ -64,6 +64,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     //Layout
     implementation(libs.material)
+    implementation(libs.multicolors)
     //Image
     implementation(libs.circleimageview)                //Circle Image
     implementation(libs.glide)                          //Glide Image
