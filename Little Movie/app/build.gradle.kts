@@ -67,10 +67,9 @@ dependencies {
     implementation(libs.multicolors)
     //Image
     implementation(libs.circleimageview)                //Circle Image
-    implementation(libs.glide)                          //Glide Image
+    implementation(libs.coil)                           //Coil Image
     api(libs.android.image.cropper)                     //Image Crop
     implementation(libs.autoimageslider)                //Slider Show
-    implementation(libs.glide.transformations)          //Image Blur
     //Firebase
     implementation(platform(libs.firebase.bom)) //Firebase BOM
     implementation(libs.firebase.auth)

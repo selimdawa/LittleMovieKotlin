@@ -56,9 +56,8 @@ dependencies {
     //implementation(libs.firebase.crashlytics)
     //Image
     implementation(libs.circleimageview)                //Circle Image
-    implementation(libs.glide)                          //Glide Image
+    implementation(libs.coil)                           //Coil Image
     api(libs.android.image.cropper)                     //Image Crop
-    implementation(libs.glide.transformations)          //Glide Image Blur
     //Other's
     implementation(libs.material.ripple)                //Ripple Effect
     implementation (libs.exoplayer)                     //Video Player Player
