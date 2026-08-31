@@ -3,9 +3,9 @@ agp = "9.3.2"
 androidImageCropper = "2.8.0"
 circleimageview = "3.1.0"
 #noinspection GradleDependency
-exoplayer = "2.9.6"
-firebaseBom = "34.15.0"
-glide = "5.0.7"
+exoplayer = "2.19.1"
+firebaseBom = "34.18.0"
+glide = "5.0.9"
 glideTransformations = "4.3.0"
 coreKtx = "1.19.0"
 junit = "4.13.2"
@@ -14,7 +14,7 @@ espressoCore = "3.7.0"
 appcompat = "1.8.0"
 material = "1.14.0"
 activity = "1.13.0"
-constraintlayout = "2.2.1"
+constraintlayout = "2.2.2"
 materialRipple = "1.0.2"
 preferenceKtx = "1.2.1"
 googleServices = "4.5.0"
@@ -39,7 +39,6 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
-androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 material-ripple = { module = "com.balysv:material-ripple", version.ref = "materialRipple" }
 
 [plugins]

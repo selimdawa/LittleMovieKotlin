@@ -45,7 +45,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     //Layout
-    implementation(libs.androidx.constraintlayout)
     implementation(libs.material)
     //Firebase
     implementation(platform(libs.firebase.bom)) //Firebase BOM
