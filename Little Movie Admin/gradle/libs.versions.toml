@@ -1,7 +1,6 @@
 [versions]
 agp = "9.3.2"
 androidImageCropper = "2.8.0"
-circleimageview = "3.1.0"
 #noinspection GradleDependency
 exoplayer = "2.19.1"
 firebaseBom = "34.18.0"
@@ -23,7 +22,6 @@ multicolors = "1.0.8-beta3"
 android-image-cropper = { module = "com.theartofdev.edmodo:android-image-cropper", version.ref = "androidImageCropper" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }
-circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
 exoplayer = { module = "com.google.android.exoplayer:exoplayer", version.ref = "exoplayer" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }

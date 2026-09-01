@@ -3,7 +3,6 @@ agp = "9.3.2"
 androidImageCropper = "2.8.0"
 #noinspection GradleDependency
 autoimageslider = "1.4.0-appcompat"
-circleimageview = "3.1.0"
 #noinspection GradleDependency
 exoplayer = "2.19.1"
 firebaseBom = "34.18.0"
@@ -27,7 +26,6 @@ android-image-cropper = { module = "com.theartofdev.edmodo:android-image-cropper
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }
 autoimageslider = { module = "com.github.smarteist:autoimageslider", version.ref = "autoimageslider" }
-circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
 exoplayer = { module = "com.google.android.exoplayer:exoplayer", version.ref = "exoplayer" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }

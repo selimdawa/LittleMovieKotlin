@@ -55,7 +55,6 @@ dependencies {
     implementation(libs.firebase.analytics)
     //implementation(libs.firebase.crashlytics)
     //Image
-    implementation(libs.circleimageview)                //Circle Image
     implementation(libs.coil)                           //Coil Image
     api(libs.android.image.cropper)                     //Image Crop
     //Other's
