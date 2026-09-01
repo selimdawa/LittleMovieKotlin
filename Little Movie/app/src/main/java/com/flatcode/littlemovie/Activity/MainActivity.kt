@@ -127,14 +127,7 @@ class MainActivity : AppCompatActivity() {
         VOID.closeApp(context, activity)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == SETTINGS_CODE) {
-            recreate()
-        }
-    }
 
     companion object {
-        private const val SETTINGS_CODE = 234
     }
 }

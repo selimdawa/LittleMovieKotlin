@@ -10,7 +10,6 @@ import com.flatcode.littlemovieadmin.Adapter.CastAdapter
 import com.flatcode.littlemovieadmin.Model.Cast
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.Unit.DATA
-import com.flatcode.littlemovieadmin.Unitimport.THEME
 import com.flatcode.littlemovieadmin.databinding.ActivityCastBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -28,7 +27,6 @@ class CastActivity : AppCompatActivity() {
     var type: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
         binding = ActivityCastBinding.inflate(layoutInflater)
         val view = binding!!.root

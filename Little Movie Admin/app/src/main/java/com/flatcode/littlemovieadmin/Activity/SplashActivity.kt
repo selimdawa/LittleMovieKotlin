@@ -6,7 +6,6 @@ import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemovieadmin.Unit.CLASS
 import com.flatcode.littlemovieadmin.Unit.VOID
-import com.flatcode.littlemovieadmin.Unitimport.THEME
 import com.flatcode.littlemovieadmin.databinding.ActivitySplashBinding
 import com.google.firebase.auth.FirebaseAuth
 
@@ -19,7 +18,6 @@ class SplashActivity : AppCompatActivity() {
     var time_final = time_per_millis * time_per_second
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(context)
         super.onCreate(savedInstanceState)
         binding = ActivitySplashBinding.inflate(layoutInflater)
         val view = binding!!.root

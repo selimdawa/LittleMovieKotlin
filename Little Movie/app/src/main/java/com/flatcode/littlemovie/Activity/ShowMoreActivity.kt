@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemovie.Adapter.MovieAdapter
 import com.flatcode.littlemovie.Model.Movie
 import com.flatcode.littlemovie.Unit.DATA
-import com.flatcode.littlemovie.Unit.THEME
 import com.flatcode.littlemovie.databinding.ActivityShowMoreBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -29,7 +28,6 @@ class ShowMoreActivity : AppCompatActivity() {
     var isReverse: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
         binding = ActivityShowMoreBinding.inflate(layoutInflater)
         val view = binding!!.root

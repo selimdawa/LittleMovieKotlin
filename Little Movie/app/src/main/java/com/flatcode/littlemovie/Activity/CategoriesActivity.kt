@@ -10,7 +10,6 @@ import com.flatcode.littlemovie.Adapter.CategoryAdapter
 import com.flatcode.littlemovie.Model.Category
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.Unit.DATA
-import com.flatcode.littlemovie.Unit.THEME
 import com.flatcode.littlemovie.databinding.ActivityCategoriesBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -30,7 +29,6 @@ class CategoriesActivity : AppCompatActivity() {
     var type: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
         binding = ActivityCategoriesBinding.inflate(layoutInflater)
         val view = binding!!.root

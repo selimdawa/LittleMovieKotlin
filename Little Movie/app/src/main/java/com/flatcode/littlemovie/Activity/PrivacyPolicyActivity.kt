@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.Unit.DATA
-import com.flatcode.littlemovie.Unit.THEME
 import com.flatcode.littlemovie.Unit.VOID
 import com.flatcode.littlemovie.databinding.ActivityPrivacyPolicyBinding
 import com.google.firebase.database.DataSnapshot
@@ -19,7 +18,6 @@ class PrivacyPolicyActivity : AppCompatActivity() {
     var context: Context = this@PrivacyPolicyActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(context)
         super.onCreate(savedInstanceState)
         binding = ActivityPrivacyPolicyBinding.inflate(layoutInflater)
         val view = binding!!.root

@@ -7,7 +7,6 @@ import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.Unit.CLASS
 import com.flatcode.littlemovieadmin.Unit.DATA
 import com.flatcode.littlemovieadmin.Unit.VOID
-import com.flatcode.littlemovieadmin.Unitimport.THEME
 import com.flatcode.littlemovieadmin.databinding.ActivityPrivacyPolicyBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -20,7 +19,6 @@ class PrivacyPolicyActivity : AppCompatActivity() {
     var activity: Activity = this@PrivacyPolicyActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
         binding = ActivityPrivacyPolicyBinding.inflate(layoutInflater)
         val view = binding!!.root

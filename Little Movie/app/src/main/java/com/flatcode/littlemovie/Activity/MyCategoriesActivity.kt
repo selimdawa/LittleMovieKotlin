@@ -11,7 +11,6 @@ import com.flatcode.littlemovie.Model.Category
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.Unit.CLASS
 import com.flatcode.littlemovie.Unit.DATA
-import com.flatcode.littlemovie.Unit.THEME
 import com.flatcode.littlemovie.Unit.VOID
 import com.flatcode.littlemovie.databinding.ActivityMyCategoriesBinding
 import com.google.firebase.database.DataSnapshot
@@ -31,7 +30,6 @@ class MyCategoriesActivity : AppCompatActivity() {
     var type: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
         binding = ActivityMyCategoriesBinding.inflate(layoutInflater)
         val view = binding!!.root

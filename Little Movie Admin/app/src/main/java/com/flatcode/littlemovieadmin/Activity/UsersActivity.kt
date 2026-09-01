@@ -10,7 +10,6 @@ import com.flatcode.littlemovieadmin.Adapter.UserAdapter
 import com.flatcode.littlemovieadmin.Model.User
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.Unit.DATA
-import com.flatcode.littlemovieadmin.Unitimport.THEME
 import com.flatcode.littlemovieadmin.databinding.ActivityUsersBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -28,7 +27,6 @@ class UsersActivity : AppCompatActivity() {
     var type: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(context)
         super.onCreate(savedInstanceState)
         binding = ActivityUsersBinding.inflate(layoutInflater)
         val view = binding!!.root

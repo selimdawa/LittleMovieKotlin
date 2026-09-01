@@ -17,7 +17,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.preference.PreferenceManager
 import coil.load
 import com.flatcode.littlemovieadmin.Model.Cast
 import com.flatcode.littlemovieadmin.Model.Movie

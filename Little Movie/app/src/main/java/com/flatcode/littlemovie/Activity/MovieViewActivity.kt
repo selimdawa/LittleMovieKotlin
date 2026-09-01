@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.Unit.CLASS
 import com.flatcode.littlemovie.Unit.DATA
-import com.flatcode.littlemovie.Unit.THEME
 import com.flatcode.littlemovie.Unit.VOID
 import com.flatcode.littlemovie.databinding.ActivityMovieViewBinding
 import com.google.android.exoplayer2.ExoPlayer
@@ -40,7 +39,6 @@ class MovieViewActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setFullScreen()
-        THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
         binding = ActivityMovieViewBinding.inflate(layoutInflater)
         val view = binding!!.root

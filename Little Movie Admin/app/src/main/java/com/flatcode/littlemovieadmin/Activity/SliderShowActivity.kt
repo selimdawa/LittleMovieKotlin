@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.Unit.DATA
 import com.flatcode.littlemovieadmin.Unit.VOID
-import com.flatcode.littlemovieadmin.Unitimport.THEME
 import com.flatcode.littlemovieadmin.databinding.ActivitySliderShowBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -35,7 +34,6 @@ class SliderShowActivity : AppCompatActivity() {
     private var item = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(context)
         super.onCreate(savedInstanceState)
         binding = ActivitySliderShowBinding.inflate(layoutInflater)
         val view = binding!!.root

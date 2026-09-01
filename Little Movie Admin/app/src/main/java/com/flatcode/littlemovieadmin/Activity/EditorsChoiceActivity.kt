@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemovieadmin.Adapter.EditorsChoiceAdapter
 import com.flatcode.littlemovieadmin.Model.EditorsChoice
 import com.flatcode.littlemovieadmin.R
-import com.flatcode.littlemovieadmin.Unitimport.THEME
 import com.flatcode.littlemovieadmin.databinding.ActivityEditorsChoiceBinding
 
 class EditorsChoiceActivity : AppCompatActivity() {
@@ -18,7 +17,6 @@ class EditorsChoiceActivity : AppCompatActivity() {
     var editorsChoice = EditorsChoice()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
         binding = ActivityEditorsChoiceBinding.inflate(layoutInflater)
         val view = binding!!.root

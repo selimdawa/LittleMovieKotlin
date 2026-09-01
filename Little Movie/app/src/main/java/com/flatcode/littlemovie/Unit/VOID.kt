@@ -6,7 +6,6 @@ import android.content.ActivityNotFoundException
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
@@ -16,7 +15,6 @@ import android.view.WindowManager
 import android.webkit.MimeTypeMap
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.flatcode.littlemovie.R

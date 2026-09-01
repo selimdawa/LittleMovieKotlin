@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemovie.Unit.CLASS
-import com.flatcode.littlemovie.Unit.THEME
 import com.flatcode.littlemovie.Unit.VOID
 import com.flatcode.littlemovie.databinding.ActivityAuthBinding
 
@@ -15,7 +14,6 @@ class AuthActivity : AppCompatActivity() {
     var context: Context = this@AuthActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(context)
         super.onCreate(savedInstanceState)
         binding = ActivityAuthBinding.inflate(layoutInflater)
         val view = binding!!.root

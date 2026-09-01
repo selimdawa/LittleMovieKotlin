@@ -10,7 +10,6 @@ import com.flatcode.littlemovie.Adapter.MovieAdapter
 import com.flatcode.littlemovie.Model.Movie
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.Unit.DATA
-import com.flatcode.littlemovie.Unit.THEME
 import com.flatcode.littlemovie.Unit.VOID
 import com.flatcode.littlemovie.databinding.ActivityCastDetailsBinding
 import com.google.firebase.database.DataSnapshot
@@ -34,7 +33,6 @@ class CastDetailsActivity : AppCompatActivity() {
     var castAbout: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
         binding = ActivityCastDetailsBinding.inflate(layoutInflater)
         val view = binding!!.root

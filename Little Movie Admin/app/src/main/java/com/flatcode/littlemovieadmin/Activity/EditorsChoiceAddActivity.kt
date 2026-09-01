@@ -10,7 +10,6 @@ import com.flatcode.littlemovieadmin.Adapter.EditorsChoiceMovieAdapter
 import com.flatcode.littlemovieadmin.Model.Movie
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.Unit.DATA
-import com.flatcode.littlemovieadmin.Unitimport.THEME
 import com.flatcode.littlemovieadmin.databinding.ActivityEditorsChoiceAddBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -31,7 +30,6 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
     var oldId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
         binding = ActivityEditorsChoiceAddBinding.inflate(layoutInflater)
         val view = binding!!.root

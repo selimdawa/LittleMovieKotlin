@@ -20,7 +20,6 @@ import com.flatcode.littlemovieadmin.Unit.DATA.castMovieOld
 import com.flatcode.littlemovieadmin.Unit.VOID
 import com.flatcode.littlemovieadmin.Unit.VOID.incrementItemCount
 import com.flatcode.littlemovieadmin.Unit.VOID.incrementItemRemoveCount
-import com.flatcode.littlemovieadmin.Unitimport.THEME
 import com.flatcode.littlemovieadmin.databinding.ActivityMovieEditBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -43,7 +42,6 @@ class MovieEditActivity : AppCompatActivity() {
     private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
         binding = ActivityMovieEditBinding.inflate(layoutInflater)
         val view = binding!!.root

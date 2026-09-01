@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemovie.Adapter.MovieAdapter
 import com.flatcode.littlemovie.Model.Movie
 import com.flatcode.littlemovie.Unit.DATA
-import com.flatcode.littlemovie.Unit.THEME
 import com.flatcode.littlemovie.Unit.VOID
 import com.flatcode.littlemovie.databinding.ActivityCategoryDetailsBinding
 import com.google.firebase.database.DataSnapshot
@@ -30,7 +29,6 @@ class CategoryDetailsActivity : AppCompatActivity() {
     var type: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
         binding = ActivityCategoryDetailsBinding.inflate(layoutInflater)
         val view = binding!!.root
