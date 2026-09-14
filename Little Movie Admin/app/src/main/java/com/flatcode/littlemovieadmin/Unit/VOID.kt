@@ -17,7 +17,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import coil.load
+import coil3.load
 import com.flatcode.littlemovieadmin.Model.Cast
 import com.flatcode.littlemovieadmin.Model.Movie
 import com.flatcode.littlemovieadmin.Modelimport.Category

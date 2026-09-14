@@ -14,9 +14,11 @@ import android.view.Window
 import android.view.WindowManager
 import android.webkit.MimeTypeMap
 import android.widget.ImageView
+import coil3.load
+import coil3.request.crossfade
+import coil3.request.placeholder
+import coil3.request.transformations
 import android.widget.TextView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.flatcode.littlemovie.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot

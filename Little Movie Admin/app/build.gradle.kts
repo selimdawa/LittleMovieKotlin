@@ -55,7 +55,9 @@ dependencies {
     implementation(libs.firebase.analytics)
     //implementation(libs.firebase.crashlytics)
     //Image
-    implementation(libs.coil)                           //Coil Image
+    implementation(libs.coil3)
+    implementation(libs.coil3.view)
+    implementation(libs.coil3.network)
     api(libs.android.image.cropper)                     //Image Crop
     //Other's
     implementation(libs.material.ripple)                //Ripple Effect
