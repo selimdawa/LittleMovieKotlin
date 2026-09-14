@@ -59,12 +59,13 @@
                 android:layout_weight="2.5"
                 android:orientation="vertical">
 
-                <androidx.cardview.widget.CardView
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="10sp"
                     android:elevation="6sp"
-                    app:cardCornerRadius="15sp">
+                    app:cardCornerRadius="15sp"
+                    app:strokeWidth="0dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -99,7 +100,7 @@
 
                     </LinearLayout>
 
-                </androidx.cardview.widget.CardView>
+                </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
 

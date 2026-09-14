@@ -28,7 +28,7 @@
                     android:id="@+id/switchBar"
                     layout="@layout/toolbar_switch_movie" />
 
-                <androidx.cardview.widget.CardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -37,7 +37,8 @@
                     android:elevation="0sp"
                     android:src="@color/white"
                     app:cardCornerRadius="15dp"
-                    app:cardElevation="0sp">
+                    app:cardElevation="0sp"
+                    app:strokeWidth="0dp">
 
                     <FrameLayout
                         android:id="@+id/layout_image_profile"
@@ -124,7 +125,7 @@
 
                     </FrameLayout>
 
-                </androidx.cardview.widget.CardView>
+                </com.google.android.material.card.MaterialCardView>
 
                 <LinearLayout
                     android:layout_width="match_parent"
