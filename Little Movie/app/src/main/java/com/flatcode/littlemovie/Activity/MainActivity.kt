@@ -7,12 +7,9 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.flatcode.littlemovie.Fragment.CategoriesFragment
-import com.flatcode.littlemovie.Fragment.HomeFragment
-import com.flatcode.littlemovie.Fragment.SettingsFragment
-import com.flatcode.littlemovie.Fragment.myMoviesFragment
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.Unit.CLASS
 import com.flatcode.littlemovie.Unit.DATA
@@ -31,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     private var activity: Activity? = null
     private val context: Context = also { activity = it }
     private var bottomNavigation: NafisBottomNavigation? = null
+    private var navController: NavController? = null
     private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,34 +37,37 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding!!.root)
 
         bottomNavigation = binding!!.bottomNavigation
+
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
+
         bottomNavigation!!.add(NafisBottomNavigation.Model(1, R.drawable.ic_settings))
         bottomNavigation!!.add(NafisBottomNavigation.Model(2, R.drawable.ic_home))
         bottomNavigation!!.add(NafisBottomNavigation.Model(3, R.drawable.ic_books))
         bottomNavigation!!.add(NafisBottomNavigation.Model(4, R.drawable.ic_group))
         bottomNavigation!!.setOnShowListener { item: NafisBottomNavigation.Model ->
-            var fragment: Fragment? = null
             when (item.id) {
                 1 -> {
                     binding!!.toolbar.card.visibility = View.GONE
-                    fragment = SettingsFragment()
+                    navController?.navigate(R.id.settingsFragment)
                 }
 
                 2 -> {
                     binding!!.toolbar.card.visibility = View.VISIBLE
-                    fragment = HomeFragment()
+                    navController?.navigate(R.id.homeFragment)
                 }
 
                 3 -> {
                     binding!!.toolbar.card.visibility = View.GONE
-                    fragment = myMoviesFragment()
+                    navController?.navigate(R.id.myMoviesFragment)
                 }
 
                 4 -> {
                     binding!!.toolbar.card.visibility = View.GONE
-                    fragment = CategoriesFragment()
+                    navController?.navigate(R.id.categoriesFragment)
                 }
             }
-            loadFragment(fragment)
         }
 
         bottomNavigation!!.show(2, true)
@@ -99,13 +100,9 @@ class MainActivity : AppCompatActivity() {
         viewModel.loadUserInfo()
     }
 
-    private fun loadFragment(fragment: Fragment?) {
-        supportFragmentManager.beginTransaction().replace(
-            R.id.fragmentContainer, fragment!!
-        ).commit()
-    }
-
     override fun onBackPressed() {
-        VOID.closeApp(context, activity)
+        if (navController?.navigateUp() == false) {
+            VOID.closeApp(context, activity)
+        }
     }
 }
