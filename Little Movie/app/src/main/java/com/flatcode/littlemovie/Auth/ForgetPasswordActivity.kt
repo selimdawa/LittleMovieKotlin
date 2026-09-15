@@ -9,8 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemovie.Unit.CLASS
 import com.flatcode.littlemovie.Unit.VOID
 import com.flatcode.littlemovie.databinding.ActivityForgetPasswordBinding
+import dagger.hilt.android.AndroidEntryPoint
 import com.google.firebase.auth.FirebaseAuth
 
+@AndroidEntryPoint
 class ForgetPasswordActivity : AppCompatActivity() {
 
     private var binding: ActivityForgetPasswordBinding? = null

@@ -9,8 +9,9 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import timber.log.Timber
+import javax.inject.Inject
 
-class ToolsRepository {
+class ToolsRepository @Inject constructor() {
 
     private val database = FirebaseDatabase.getInstance()
     private val toolsRef = database.getReference(DATA.TOOLS)

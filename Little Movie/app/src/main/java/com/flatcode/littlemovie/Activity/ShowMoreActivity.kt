@@ -15,8 +15,10 @@ import com.flatcode.littlemovie.ViewModel.MovieListViewModel
 import com.flatcode.littlemovie.databinding.ActivityShowMoreBinding
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import dagger.hilt.android.AndroidEntryPoint
 import java.text.MessageFormat
 
+@AndroidEntryPoint
 class ShowMoreActivity : AppCompatActivity() {
 
     private var binding: ActivityShowMoreBinding? = null

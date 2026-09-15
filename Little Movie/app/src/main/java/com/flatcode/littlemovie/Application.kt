@@ -2,11 +2,13 @@ package com.flatcode.littlemovie
 
 import android.app.Application
 import android.text.format.DateFormat
+import dagger.hilt.android.HiltAndroidApp
 import io.selimdawa.multicolors.MultiColorManager
 import timber.log.Timber
 import java.util.Calendar
 import java.util.Locale
 
+@HiltAndroidApp
 class Application : Application() {
 
     override fun onCreate() {

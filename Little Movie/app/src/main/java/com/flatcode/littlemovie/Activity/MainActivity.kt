@@ -21,8 +21,10 @@ import com.flatcode.littlemovie.ViewModel.MainViewModel
 import com.flatcode.littlemovie.databinding.ActivityMainBinding
 import com.nafis.bottomnavigation.NafisBottomNavigation
 import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private var binding: ActivityMainBinding? = null

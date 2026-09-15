@@ -16,8 +16,10 @@ import com.flatcode.littlemovie.ViewModel.FavoritesViewModel
 import com.flatcode.littlemovie.databinding.ActivityFavoritesBinding
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import dagger.hilt.android.AndroidEntryPoint
 import java.text.MessageFormat
 
+@AndroidEntryPoint
 class FavoritesActivity : AppCompatActivity() {
 
     private var binding: ActivityFavoritesBinding? = null

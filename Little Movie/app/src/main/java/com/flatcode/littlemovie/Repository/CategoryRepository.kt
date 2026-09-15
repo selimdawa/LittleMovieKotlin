@@ -1,5 +1,6 @@
 package com.flatcode.littlemovie.Repository
 
+import com.flatcode.littlemovie.Data.Local.Dao.CategoryDao
 import com.flatcode.littlemovie.Model.Category
 import com.flatcode.littlemovie.Unit.DATA
 import com.google.firebase.database.DataSnapshot
@@ -9,9 +10,13 @@ import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
-class CategoryRepository {
+class CategoryRepository @Inject constructor(
+    private val categoryDao: CategoryDao
+) {
 
     private val database = FirebaseDatabase.getInstance()
     private val categoriesRef = database.getReference(DATA.CATEGORIES)
@@ -30,6 +35,12 @@ class CategoryRepository {
                 for (data in snapshot.children) {
                     data.getValue(Category::class.java)?.let { list.add(it) }
                 }
+                
+                // Save to local DB
+                launch {
+                    categoryDao.insertCategories(list)
+                }
+                
                 trySend(list)
             }
 

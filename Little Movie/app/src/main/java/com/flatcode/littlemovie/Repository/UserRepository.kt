@@ -1,6 +1,7 @@
 package com.flatcode.littlemovie.Repository
 
 import android.net.Uri
+import com.flatcode.littlemovie.Data.Local.Dao.UserDao
 import com.flatcode.littlemovie.Unit.DATA
 import com.flatcode.littlemovie.Model.User
 import com.google.firebase.auth.FirebaseAuth
@@ -12,10 +13,14 @@ import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
+import javax.inject.Inject
 
-class UserRepository {
+class UserRepository @Inject constructor(
+    private val userDao: UserDao
+) {
 
     private val auth = FirebaseAuth.getInstance()
     private val database = FirebaseDatabase.getInstance()
@@ -46,7 +51,13 @@ class UserRepository {
     fun getUserInfo(userId: String): Flow<User?> = callbackFlow {
         val listener = usersRef.child(userId).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                trySend(snapshot.getValue(User::class.java))
+                val user = snapshot.getValue(User::class.java)
+                user?.let {
+                    launch {
+                        userDao.insertUser(it)
+                    }
+                }
+                trySend(user)
             }
 
             override fun onCancelled(error: DatabaseError) {

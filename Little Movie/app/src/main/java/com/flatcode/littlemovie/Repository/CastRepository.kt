@@ -1,5 +1,6 @@
 package com.flatcode.littlemovie.Repository
 
+import com.flatcode.littlemovie.Data.Local.Dao.CastDao
 import com.flatcode.littlemovie.Model.Cast
 import com.flatcode.littlemovie.Unit.DATA
 import com.google.firebase.database.DataSnapshot
@@ -9,9 +10,13 @@ import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
-class CastRepository {
+class CastRepository @Inject constructor(
+    private val castDao: CastDao
+) {
 
     private val database = FirebaseDatabase.getInstance()
     private val castRef = database.getReference(DATA.CAST)
@@ -27,6 +32,12 @@ class CastRepository {
                     data.getValue(Cast::class.java)?.let { list.add(it) }
                 }
                 list.reverse()
+                
+                // Save to local DB
+                launch {
+                    castDao.insertCasts(list)
+                }
+                
                 trySend(list)
             }
 

@@ -5,14 +5,17 @@ import androidx.lifecycle.viewModelScope
 import com.flatcode.littlemovie.Model.User
 import com.flatcode.littlemovie.Repository.UserRepository
 import com.flatcode.littlemovie.Unit.DATA
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ProfileViewModel : ViewModel() {
-
-    private val repository = UserRepository()
+@HiltViewModel
+class ProfileViewModel @Inject constructor(
+    private val repository: UserRepository
+) : ViewModel() {
 
     private val _user = MutableStateFlow<User?>(null)
     val user: StateFlow<User?> = _user

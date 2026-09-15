@@ -16,8 +16,10 @@ import com.flatcode.littlemovie.ViewModel.CategoriesViewModel
 import com.flatcode.littlemovie.databinding.ActivityCategoriesBinding
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import dagger.hilt.android.AndroidEntryPoint
 import java.text.MessageFormat
 
+@AndroidEntryPoint
 class CategoriesActivity : AppCompatActivity() {
 
     private var binding: ActivityCategoriesBinding? = null

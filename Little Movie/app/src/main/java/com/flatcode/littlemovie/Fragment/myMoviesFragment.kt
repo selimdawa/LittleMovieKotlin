@@ -12,8 +12,10 @@ import com.flatcode.littlemovie.Model.Movie
 import com.flatcode.littlemovie.Unit.DATA
 import com.flatcode.littlemovie.ViewModel.MyMoviesViewModel
 import com.flatcode.littlemovie.databinding.FragmentMyMoviesBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class myMoviesFragment : Fragment() {
 
     private var binding: FragmentMyMoviesBinding? = null

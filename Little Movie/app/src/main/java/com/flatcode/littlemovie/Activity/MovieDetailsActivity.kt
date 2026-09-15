@@ -22,8 +22,10 @@ import com.flatcode.littlemovie.Unit.VOID
 import com.flatcode.littlemovie.ViewModel.MovieDetailsViewModel
 import com.flatcode.littlemovie.databinding.ActivityMovieDetailsBinding
 import com.flatcode.littlemovie.databinding.DialogCommentAddBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MovieDetailsActivity : AppCompatActivity() {
 
     private var binding: ActivityMovieDetailsBinding? = null

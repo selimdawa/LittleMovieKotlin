@@ -12,8 +12,10 @@ import com.flatcode.littlemovie.Unit.DATA
 import com.flatcode.littlemovie.Unit.VOID
 import com.flatcode.littlemovie.ViewModel.ProfileViewModel
 import com.flatcode.littlemovie.databinding.ActivityProfileBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class ProfileActivity : AppCompatActivity() {
 
     private var binding: ActivityProfileBinding? = null

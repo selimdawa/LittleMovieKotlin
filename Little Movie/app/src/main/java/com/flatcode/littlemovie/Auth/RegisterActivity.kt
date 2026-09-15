@@ -14,8 +14,10 @@ import com.flatcode.littlemovie.Unit.DATA
 import com.flatcode.littlemovie.Unit.VOID
 import com.flatcode.littlemovie.ViewModel.RegisterViewModel
 import com.flatcode.littlemovie.databinding.ActivityRegisterBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class RegisterActivity : AppCompatActivity() {
 
     private var binding: ActivityRegisterBinding? = null

@@ -1,36 +1,65 @@
 package com.flatcode.littlemovieadmin.Repository
 
-import com.flatcode.littlemovieadmin.Modelimport.Category
+import com.flatcode.littlemovieadmin.Data.Dao.CategoryDao
+import com.flatcode.littlemovieadmin.Model.Category
 import com.flatcode.littlemovieadmin.Unit.DATA
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ServerValue
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class CategoryRepository @Inject constructor(
-    private val database: FirebaseDatabase
+    private val database: FirebaseDatabase,
+    private val categoryDao: CategoryDao
 ) {
     private val categoriesRef = database.getReference(DATA.CATEGORIES)
 
+    val allCategories: Flow<List<Category>> = categoryDao.getAllCategories()
+
     suspend fun getCategories(orderBy: String): List<Category> {
-        val snapshot = categoriesRef.orderByChild(orderBy).get().await()
-        return snapshot.children.mapNotNull { it.getValue(Category::class.java) }.reversed()
+        return try {
+            val snapshot = categoriesRef.orderByChild(orderBy).get().await()
+            val categories = snapshot.children.mapNotNull { it.getValue(Category::class.java) }.reversed()
+            categoryDao.insertCategories(categories)
+            categories
+        } catch (e: Exception) {
+            emptyList()
+        }
     }
 
-    suspend fun getCategory(categoryId: String): Category? =
-        categoriesRef.child(categoryId).get().await().getValue(Category::class.java)
+    suspend fun getCategory(categoryId: String): Category? {
+        return try {
+            val category = categoriesRef.child(categoryId).get().await().getValue(Category::class.java)
+            category?.let { categoryDao.insertCategory(it) }
+            category
+        } catch (e: Exception) {
+            categoryDao.getCategoryById(categoryId)
+        }
+    }
 
-    suspend fun addCategory(category: Category, categoryId: String) =
+    suspend fun addCategory(category: Category, categoryId: String) {
         categoriesRef.child(categoryId).setValue(category).await()
+        categoryDao.insertCategory(category)
+    }
 
-    suspend fun updateCategory(categoryId: String, updates: Map<String, Any?>) =
+    suspend fun updateCategory(categoryId: String, updates: Map<String, Any?>) {
         categoriesRef.child(categoryId).updateChildren(updates).await()
+        val category = getCategory(categoryId)
+        category?.let { categoryDao.insertCategory(it) }
+    }
 
-    suspend fun incrementCount(categoryId: String, field: String) =
+    suspend fun incrementCount(categoryId: String, field: String) {
         categoriesRef.child(categoryId).child(field).setValue(ServerValue.increment(1)).await()
+        val category = getCategory(categoryId)
+        category?.let { categoryDao.insertCategory(it) }
+    }
 
-    suspend fun decrementCount(categoryId: String, field: String) =
+    suspend fun decrementCount(categoryId: String, field: String) {
         categoriesRef.child(categoryId).child(field).setValue(ServerValue.increment(-1)).await()
+        val category = getCategory(categoryId)
+        category?.let { categoryDao.insertCategory(it) }
+    }
 }

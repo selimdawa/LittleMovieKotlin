@@ -1,26 +1,34 @@
-package com.flatcode.littlemovieadmin.Modelimport
+package com.flatcode.littlemovieadmin.Model
 
-class Category {
-    var id: String? = null
-    var name: String? = null
-    var image: String? = null
-    var publisher: String? = null
-    var interestedCount = 0
-    var moviesCount = 0
+import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
+
+@Entity(tableName = "categories")
+@Parcelize
+data class Category(
+    @PrimaryKey
+    var id: String = "",
+    var name: String? = null,
+    var image: String? = null,
+    var publisher: String? = null,
+    var interestedCount: Int = 0,
+    var moviesCount: Int = 0,
     var timestamp: Long = 0
-
-    constructor()
+) : Parcelable {
+    constructor() : this("")
 
     constructor(
         id: String?, name: String?, image: String?, publisher: String?, timestamp: Long,
         interestedCount: Int, moviesCount: Int
-    ) {
-        this.id = id
-        this.name = name
-        this.publisher = publisher
-        this.image = image
-        this.timestamp = timestamp
-        this.interestedCount = interestedCount
-        this.moviesCount = moviesCount
-    }
+    ) : this(
+        id ?: "",
+        name,
+        image,
+        publisher,
+        interestedCount,
+        moviesCount,
+        timestamp
+    )
 }

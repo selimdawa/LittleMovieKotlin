@@ -5,15 +5,18 @@ import androidx.lifecycle.viewModelScope
 import com.flatcode.littlemovie.Model.Movie
 import com.flatcode.littlemovie.Repository.MovieRepository
 import com.flatcode.littlemovie.Unit.DATA
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
-class MovieListViewModel : ViewModel() {
-
-    private val repository = MovieRepository()
+@HiltViewModel
+class MovieListViewModel @Inject constructor(
+    private val repository: MovieRepository
+) : ViewModel() {
 
     private val _movies = MutableStateFlow<List<Movie>>(emptyList())
     val movies: StateFlow<List<Movie>> = _movies

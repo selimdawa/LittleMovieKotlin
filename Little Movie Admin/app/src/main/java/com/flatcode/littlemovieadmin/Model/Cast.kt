@@ -1,44 +1,32 @@
 package com.flatcode.littlemovieadmin.Model
 
-import com.flatcode.littlemovieadmin.Unit.DATA
+import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 
-class Cast {
-    var id: String? = null
-    var publisher: String? = null
-    var name: String? = null
-    var image: String? = null
-    var aboutMy: String? = null
-    var interestedCount = 0
-    var moviesCount = 0
+@Entity(tableName = "casts")
+@Parcelize
+data class Cast(
+    @PrimaryKey
+    var id: String = "",
+    var publisher: String? = null,
+    var name: String = "No Name",
+    var image: String? = null,
+    var aboutMy: String? = null,
+    var interestedCount: Int = 0,
+    var moviesCount: Int = 0,
     var timestamp: Long = 0
+) : Parcelable {
+    // No-arg constructor for Firebase
+    constructor() : this("")
 
-    constructor()
-
+    // Compatibility constructor for existing code
     constructor(
-        id: String?, publisher: String?, name: String, image: String?, aboutMy: String?,
-        timestamp: Long, interestedCount: Int, moviesCount: Int
-    ) {
-        var name = name
-        if (name.trim { it <= ' ' } == DATA.EMPTY) {
-            name = "No Name"
-        }
-        this.id = id
-        this.publisher = publisher
-        this.name = name
-        this.image = image
-        this.aboutMy = aboutMy
-        this.timestamp = timestamp
-        this.interestedCount = interestedCount
-        this.moviesCount = moviesCount
-    }
-
-    constructor(id: String?, name: String, image: String?) {
-        var name = name
-        if (name.trim { it <= ' ' } == DATA.EMPTY) {
-            name = "No Name"
-        }
-        this.id = id
-        this.name = name
-        this.image = image
-    }
+        id: String?, name: String, image: String?
+    ) : this(
+        id = id ?: "",
+        name = if (name.trim().isEmpty()) "No Name" else name,
+        image = image
+    )
 }

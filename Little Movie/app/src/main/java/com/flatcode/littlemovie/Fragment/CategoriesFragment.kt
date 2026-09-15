@@ -13,8 +13,10 @@ import com.flatcode.littlemovie.Unit.DATA
 import com.flatcode.littlemovie.ViewModel.CategoriesViewModel
 import com.flatcode.littlemovie.databinding.FragmentCategoriesBinding
 import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
+@AndroidEntryPoint
 class CategoriesFragment : Fragment() {
 
     private var binding: FragmentCategoriesBinding? = null

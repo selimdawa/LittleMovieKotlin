@@ -5,15 +5,18 @@ import androidx.lifecycle.viewModelScope
 import com.flatcode.littlemovie.Model.Category
 import com.flatcode.littlemovie.Repository.CategoryRepository
 import com.flatcode.littlemovie.Unit.DATA
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
-class MyCategoriesViewModel : ViewModel() {
-
-    private val repository = CategoryRepository()
+@HiltViewModel
+class MyCategoriesViewModel @Inject constructor(
+    private val repository: CategoryRepository
+) : ViewModel() {
 
     private val _categories = MutableStateFlow<List<Category>>(emptyList())
     val categories: StateFlow<List<Category>> = _categories

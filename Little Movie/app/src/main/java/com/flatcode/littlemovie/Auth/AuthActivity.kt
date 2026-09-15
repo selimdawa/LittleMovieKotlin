@@ -6,8 +6,10 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemovie.Unit.CLASS
 import com.flatcode.littlemovie.Unit.VOID
+import dagger.hilt.android.AndroidEntryPoint
 import com.flatcode.littlemovie.databinding.ActivityAuthBinding
 
+@AndroidEntryPoint
 class AuthActivity : AppCompatActivity() {
     private var binding: ActivityAuthBinding? = null
 

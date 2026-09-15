@@ -12,18 +12,21 @@ import com.flatcode.littlemovie.Repository.CategoryRepository
 import com.flatcode.littlemovie.Repository.MovieRepository
 import com.flatcode.littlemovie.Repository.UserRepository
 import com.flatcode.littlemovie.Unit.DATA
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
-class MovieDetailsViewModel : ViewModel() {
-
-    private val movieRepository = MovieRepository()
-    private val castRepository = CastRepository()
-    private val userRepository = UserRepository()
-    private val categoryRepository = CategoryRepository()
+@HiltViewModel
+class MovieDetailsViewModel @Inject constructor(
+    private val movieRepository: MovieRepository,
+    private val castRepository: CastRepository,
+    private val userRepository: UserRepository,
+    private val categoryRepository: CategoryRepository
+) : ViewModel() {
 
     private val _movie = MutableStateFlow<Movie?>(null)
     val movie: StateFlow<Movie?> = _movie

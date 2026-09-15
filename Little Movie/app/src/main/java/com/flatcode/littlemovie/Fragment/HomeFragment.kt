@@ -18,8 +18,10 @@ import com.flatcode.littlemovie.Unit.VOID
 import com.flatcode.littlemovie.ViewModel.HomeViewModel
 import com.flatcode.littlemovie.databinding.FragmentHomeBinding
 import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
+@AndroidEntryPoint
 class HomeFragment : Fragment() {
 
     private var binding: FragmentHomeBinding? = null

@@ -18,8 +18,10 @@ import com.flatcode.littlemovie.Unit.VOID
 import com.flatcode.littlemovie.ViewModel.ProfileEditViewModel
 import com.flatcode.littlemovie.databinding.ActivityProfileEditBinding
 import com.theartofdev.edmodo.cropper.CropImage
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class ProfileEditActivity : AppCompatActivity() {
 
     private var binding: ActivityProfileEditBinding? = null

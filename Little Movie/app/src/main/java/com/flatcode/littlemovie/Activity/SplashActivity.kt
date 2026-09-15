@@ -11,8 +11,10 @@ import com.flatcode.littlemovie.ViewModel.SplashViewModel
 import com.flatcode.littlemovie.databinding.ActivitySplashBinding
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
+@AndroidEntryPoint
 class SplashActivity : AppCompatActivity() {
 
     private var binding: ActivitySplashBinding? = null

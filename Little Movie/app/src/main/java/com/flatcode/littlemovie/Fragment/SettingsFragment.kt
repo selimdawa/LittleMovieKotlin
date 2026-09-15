@@ -16,8 +16,10 @@ import com.flatcode.littlemovie.Unit.VOID
 import com.flatcode.littlemovie.ViewModel.SettingsViewModel
 import com.flatcode.littlemovie.databinding.FragmentSettingsBinding
 import kotlinx.coroutines.flow.combine
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class SettingsFragment : Fragment() {
 
     private var binding: FragmentSettingsBinding? = null

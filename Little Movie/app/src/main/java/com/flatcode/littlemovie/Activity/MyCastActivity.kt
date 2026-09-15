@@ -18,8 +18,10 @@ import com.flatcode.littlemovie.ViewModel.MyCastViewModel
 import com.flatcode.littlemovie.databinding.ActivityMyCastBinding
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import dagger.hilt.android.AndroidEntryPoint
 import java.text.MessageFormat
 
+@AndroidEntryPoint
 class MyCastActivity : AppCompatActivity() {
 
     private var binding: ActivityMyCastBinding? = null

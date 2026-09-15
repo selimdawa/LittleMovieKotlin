@@ -1,7 +1,15 @@
 package com.flatcode.littlemovie.Model
 
-class User {
-    var id: String? = null
+import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+@Entity(tableName = "users")
+class User : Parcelable {
+    @PrimaryKey
+    var id: String = ""
     var username: String? = null
     var profileImage: String? = null
     var email: String? = null

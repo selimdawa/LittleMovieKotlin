@@ -3,15 +3,18 @@ package com.flatcode.littlemovie.ViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flatcode.littlemovie.Repository.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
-class SplashViewModel : ViewModel() {
-
-    private val repository = UserRepository()
+@HiltViewModel
+class SplashViewModel @Inject constructor(
+    private val repository: UserRepository
+) : ViewModel() {
 
     private val _isLoggedIn = MutableStateFlow<Boolean?>(null)
     val isLoggedIn: StateFlow<Boolean?> = _isLoggedIn

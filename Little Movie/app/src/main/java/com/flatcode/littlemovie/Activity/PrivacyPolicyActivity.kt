@@ -7,8 +7,10 @@ import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.ViewModel.PrivacyPolicyViewModel
 import com.flatcode.littlemovie.databinding.ActivityPrivacyPolicyBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class PrivacyPolicyActivity : AppCompatActivity() {
 
     private var binding: ActivityPrivacyPolicyBinding? = null
