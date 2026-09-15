@@ -1,154 +1,108 @@
 package com.flatcode.littlemovieadmin.Activity
 
-import android.app.Activity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.Adapter.MovieAdapter
 import com.flatcode.littlemovieadmin.Model.Movie
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.Unit.DATA
+import com.flatcode.littlemovieadmin.ViewModel.FavoritesViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityMoviesBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
-import com.google.firebase.database.ValueEventListener
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.text.MessageFormat
 
+@AndroidEntryPoint
 class FavoritesActivity : AppCompatActivity() {
 
-    private var binding: ActivityMoviesBinding? = null
-    private val activity: Activity = this@FavoritesActivity
-    var item: MutableList<String?>? = null
-    var list: ArrayList<Movie?>? = null
-    var adapter: MovieAdapter? = null
-    var type: String? = null
+    private lateinit var binding: ActivityMoviesBinding
+    private val viewModel: FavoritesViewModel by viewModels()
+    private val list = mutableListOf<Movie?>()
+    private lateinit var adapter: MovieAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMoviesBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding.root)
 
-        binding!!.toolbar.nameSpace.setText(R.string.favorites)
-        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
-        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
-        type = DATA.TIMESTAMP
+        binding.toolbar.nameSpace.setText(R.string.favorites)
+        binding.toolbar.close.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressed() }
 
-        binding!!.toolbar.search.setOnClickListener {
-            binding!!.toolbar.toolbar.visibility = View.GONE
-            binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
+        binding.toolbar.search.setOnClickListener {
+            binding.toolbar.toolbar.visibility = View.GONE
+            binding.toolbar.toolbarSearch.visibility = View.VISIBLE
             DATA.searchStatus = true
         }
 
-        binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
+        binding.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 try {
-                    adapter!!.filter.filter(s)
+                    adapter.filter.filter(s)
                 } catch (e: Exception) {
-                    //None
+                    Timber.e(e, "Filter error")
                 }
             }
-
             override fun afterTextChanged(s: Editable) {}
         })
 
-        //binding.recyclerView.setHasFixedSize(true);
-        list = ArrayList()
-        binding!!.recyclerView.adapter = adapter
-        adapter = MovieAdapter(activity, list!!)
+        adapter = MovieAdapter(this, list as ArrayList<Movie?>)
+        binding.recyclerView.adapter = adapter
 
-        binding!!.switchBar.all.setOnClickListener {
-            type = DATA.TIMESTAMP
-            getData(type)
-        }
-        binding!!.switchBar.mostViews.setOnClickListener {
-            type = DATA.VIEWS_COUNT
-            getData(type)
-        }
-        binding!!.switchBar.mostLoves.setOnClickListener {
-            type = DATA.LOVES_COUNT
-            getData(type)
-        }
-        binding!!.switchBar.name.setOnClickListener {
-            type = DATA.NAME
-            getData(type)
-        }
+        binding.switchBar.all.setOnClickListener { viewModel.getData(DATA.TIMESTAMP) }
+        binding.switchBar.mostViews.setOnClickListener { viewModel.getData(DATA.VIEWS_COUNT) }
+        binding.switchBar.mostLoves.setOnClickListener { viewModel.getData(DATA.LOVES_COUNT) }
+        binding.switchBar.name.setOnClickListener { viewModel.getData(DATA.NAME) }
+
+        observeState()
     }
 
-    private fun getData(orderBy: String?) {
-        item = ArrayList()
-        val reference = FirebaseDatabase.getInstance().getReference(DATA.FAVORITES)
-            .child(DATA.FirebaseUserUid)
-        reference.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                (item as ArrayList<String?>).clear()
-                for (snapshot in dataSnapshot.children)
-                    (item as ArrayList<String?>).add(snapshot.key)
-                getItems(orderBy)
-            }
+    private fun observeState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    binding.progress.visibility = if (state.isLoading) View.VISIBLE else View.GONE
+                    binding.toolbar.number.text = MessageFormat.format("( {0} )", state.count)
+                    
+                    list.clear()
+                    list.addAll(state.movies)
+                    adapter.notifyDataSetChanged()
 
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
-    }
-
-    private fun getItems(orderBy: String?) {
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.MOVIES)
-        ref.orderByChild(orderBy!!).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                list!!.clear()
-                var i = 0
-                for (snapshot in dataSnapshot.children) {
-                    val song = snapshot.getValue(Movie::class.java)
-                    for (id in item!!) {
-                        assert(song != null)
-                        if (song!!.id != null) if (song.id == id) {
-                            list!!.add(song)
-                            i++
-                        }
+                    if (state.movies.isNotEmpty()) {
+                        binding.recyclerView.visibility = View.VISIBLE
+                        binding.emptyText.visibility = View.GONE
+                    } else if (!state.isLoading) {
+                        binding.recyclerView.visibility = View.GONE
+                        binding.emptyText.visibility = View.VISIBLE
                     }
                 }
-                list!!.reverse()
-                binding!!.toolbar.number.text = MessageFormat.format("( {0} )", i)
-                binding!!.recyclerView.adapter = adapter
-                adapter!!.notifyDataSetChanged()
-                binding!!.progress.visibility = View.GONE
-                if (list!!.isNotEmpty()) {
-                    binding!!.recyclerView.visibility = View.VISIBLE
-                    binding!!.emptyText.visibility = View.GONE
-                } else {
-                    binding!!.recyclerView.visibility = View.GONE
-                    binding!!.emptyText.visibility = View.VISIBLE
-                }
             }
-
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
+        }
     }
 
     override fun onBackPressed() {
         if (DATA.searchStatus) {
-            binding!!.toolbar.toolbar.visibility = View.VISIBLE
-            binding!!.toolbar.toolbarSearch.visibility = View.GONE
+            binding.toolbar.toolbar.visibility = View.VISIBLE
+            binding.toolbar.toolbarSearch.visibility = View.GONE
             DATA.searchStatus = false
-            binding!!.toolbar.textSearch.setText(DATA.EMPTY)
+            binding.toolbar.textSearch.setText(DATA.EMPTY)
         } else if (DATA.isChange) {
             onResume()
             DATA.isChange = false
         } else super.onBackPressed()
     }
 
-    override fun onRestart() {
-        getData(type)
-        super.onRestart()
-    }
-
     override fun onResume() {
-        getData(type)
         super.onResume()
+        viewModel.getData(viewModel.uiState.value.currentType)
     }
 }

@@ -1,48 +1,50 @@
-package com.flatcode.littlemovieadmin.Activityimport
+package com.flatcode.littlemovieadmin.Activity
 
-import android.app.Activity
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.Adapter.EditorsChoiceAdapter
 import com.flatcode.littlemovieadmin.Model.EditorsChoice
 import com.flatcode.littlemovieadmin.R
+import com.flatcode.littlemovieadmin.ViewModel.EditorsChoiceViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityEditorsChoiceBinding
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class EditorsChoiceActivity : AppCompatActivity() {
 
-    private var binding: ActivityEditorsChoiceBinding? = null
-    var activity: Activity = this@EditorsChoiceActivity
-    var list: ArrayList<EditorsChoice>? = null
-    var adapter: EditorsChoiceAdapter? = null
-    var editorsChoice = EditorsChoice()
+    private lateinit var binding: ActivityEditorsChoiceBinding
+    private val viewModel: EditorsChoiceViewModel by viewModels()
+    private val list = mutableListOf<EditorsChoice>()
+    private lateinit var adapter: EditorsChoiceAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEditorsChoiceBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding.root)
 
-        binding!!.toolbar.nameSpace.setText(R.string.editors_choice)
-        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.nameSpace.setText(R.string.editors_choice)
+        binding.toolbar.back.setOnClickListener { onBackPressed() }
 
-        //binding.recyclerView.setHasFixedSize(true);
-        list = ArrayList()
-        adapter = EditorsChoiceAdapter(activity, list!!)
-        binding!!.recyclerView.adapter = adapter
+        adapter = EditorsChoiceAdapter(this, list as ArrayList<EditorsChoice>)
+        binding.recyclerView.adapter = adapter
 
-        IdeaPosts()
+        observeState()
     }
 
-    fun IdeaPosts() {
-        list!!.clear()
-        for (i in 0..49) {
-            list!!.add(editorsChoice)
+    private fun observeState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    list.clear()
+                    list.addAll(state.items)
+                    adapter.notifyDataSetChanged()
+                }
+            }
         }
-        adapter!!.notifyDataSetChanged()
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        finish()
     }
 }

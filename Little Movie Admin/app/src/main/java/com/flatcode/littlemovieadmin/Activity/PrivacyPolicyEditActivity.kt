@@ -1,68 +1,58 @@
-package com.flatcode.littlemovieadmin.Activityimport
+package com.flatcode.littlemovieadmin.Activity
 
-import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.R
-import com.flatcode.littlemovieadmin.Unit.DATA
-import com.flatcode.littlemovieadmin.Unit.VOID
+import com.flatcode.littlemovieadmin.ViewModel.PrivacyPolicyViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityPrivacyPolicyEditBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class PrivacyPolicyEditActivity : AppCompatActivity() {
 
-    private var binding: ActivityPrivacyPolicyEditBinding? = null
-    var context: Context = this@PrivacyPolicyEditActivity
+    private lateinit var binding: ActivityPrivacyPolicyEditBinding
+    private val viewModel: PrivacyPolicyViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPrivacyPolicyEditBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding.root)
 
-        binding!!.toolbar.nameSpace.setText(R.string.privacy_policy)
-        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
-        binding!!.go.setOnClickListener { validateData() }
+        binding.toolbar.nameSpace.setText(R.string.privacy_policy)
+        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.go.setOnClickListener { validateData() }
 
-        privacyPolicy()
+        observeState()
     }
 
-    private var description = DATA.EMPTY
     private fun validateData() {
-        description = binding!!.text.text.toString().trim { it <= ' ' }
-        if (TextUtils.isEmpty(description)) {
-            Toast.makeText(context, "Enter Privacy Policy...", Toast.LENGTH_SHORT).show()
+        val content = binding.text.text.toString().trim()
+        if (TextUtils.isEmpty(content)) {
+            Toast.makeText(this, "Enter Privacy Policy...", Toast.LENGTH_SHORT).show()
         } else {
-            update()
-        }
-    }
-
-    private fun update() {
-        val hashMap = HashMap<String?, Any>()
-        hashMap[DATA.PRIVACY_POLICY] = DATA.EMPTY + description
-        val ref = FirebaseDatabase.getInstance().getReference(DATA.TOOLS)
-        ref.updateChildren(hashMap).addOnSuccessListener {
-            Toast.makeText(context, "Privacy Policy updated...", Toast.LENGTH_SHORT).show()
-        }.addOnFailureListener { e: Exception ->
-            Toast.makeText(context, DATA.EMPTY + e.message, Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun privacyPolicy() {
-        val reference = FirebaseDatabase.getInstance().reference.child(DATA.TOOLS)
-            .child(DATA.PRIVACY_POLICY)
-        reference.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val name = dataSnapshot.value.toString()
-                binding!!.text.setText(name)
+            viewModel.updatePrivacyPolicy(content) { success, message ->
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                if (success) onBackPressed()
             }
+        }
+    }
 
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
+    private fun observeState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    if (binding.text.text.isEmpty()) {
+                        binding.text.setText(state.content)
+                    }
+                }
+            }
+        }
     }
 }

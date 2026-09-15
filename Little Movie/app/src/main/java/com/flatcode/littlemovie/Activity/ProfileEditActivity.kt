@@ -9,38 +9,42 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.Unit.DATA
 import com.flatcode.littlemovie.Unit.VOID
+import com.flatcode.littlemovie.ViewModel.ProfileEditViewModel
 import com.flatcode.littlemovie.databinding.ActivityProfileEditBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.UploadTask
 import com.theartofdev.edmodo.cropper.CropImage
-import java.util.Objects
+import kotlinx.coroutines.launch
 
 class ProfileEditActivity : AppCompatActivity() {
 
     private var binding: ActivityProfileEditBinding? = null
-    var activity: Activity? = null
-    var context: Context = also { activity = it }
+    private val activity: Activity = this@ProfileEditActivity
+    private val context: Context = this@ProfileEditActivity
+    private val viewModel: ProfileEditViewModel by viewModels()
+    
     private var imageUri: Uri? = null
     private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileEditBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding!!.root)
 
-        dialog = ProgressDialog(context)
-        dialog!!.setTitle("Please wait...")
-        dialog!!.setCanceledOnTouchOutside(false)
-        loadUserInfo()
+        setupUI()
+        observeViewModel()
+        viewModel.loadUserInfo()
+    }
+
+    private fun setupUI() {
+        dialog = ProgressDialog(context).apply {
+            setTitle("Please wait...")
+            setCanceledOnTouchOutside(false)
+        }
 
         binding!!.toolbar.nameSpace.setText(R.string.edit_profile)
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
@@ -48,77 +52,55 @@ class ProfileEditActivity : AppCompatActivity() {
         binding!!.go.setOnClickListener { validateData() }
     }
 
-    private var username = DATA.EMPTY
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            viewModel.user.collect { user ->
+                user?.let {
+                    VOID.GlideImage(true, context, it.profileImage, binding!!.profileImage)
+                    binding!!.nameEt.setText(it.username)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.imageUploadStatus.collect { result ->
+                result?.let {
+                    if (it.isFailure) {
+                        dialog!!.dismiss()
+                        Toast.makeText(context, "Failed to upload image: ${it.exceptionOrNull()?.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.updateStatus.collect { result ->
+                result?.let {
+                    dialog!!.dismiss()
+                    if (it.isSuccess) {
+                        Toast.makeText(context, "Profile updated...", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, "Failed to update profile: ${it.exceptionOrNull()?.message}", Toast.LENGTH_SHORT).show()
+                    }
+                    viewModel.resetStatus()
+                }
+            }
+        }
+    }
+
     private fun validateData() {
-        username = binding!!.nameEt.text.toString().trim { it <= ' ' }
+        val username = binding!!.nameEt.text.toString().trim()
         if (TextUtils.isEmpty(username)) {
             Toast.makeText(context, "Enter name...", Toast.LENGTH_SHORT).show()
         } else {
-            if (imageUri == null) {
-                updateProfile(DATA.EMPTY)
-            } else {
-                uploadImage()
-            }
+            dialog!!.setMessage("Updating profile...")
+            dialog!!.show()
+            val extension = imageUri?.let { VOID.getFileExtension(it, context) }
+            viewModel.updateProfile(username, imageUri, extension)
         }
     }
 
-    private fun uploadImage() {
-        dialog!!.setMessage("Uploading Image...")
-        dialog!!.show()
-        val filePathAndName = "Images/Profile/" + DATA.FirebaseUserUid
-        val reference = FirebaseStorage.getInstance()
-            .getReference(filePathAndName + DATA.DOT + VOID.getFileExtension(imageUri, context))
-        reference.putFile(imageUri!!)
-            .addOnSuccessListener { taskSnapshot: UploadTask.TaskSnapshot ->
-                val uriTask = taskSnapshot.storage.downloadUrl
-                while (!uriTask.isSuccessful);
-                val uploadedImageUrl = DATA.EMPTY + uriTask.result
-                updateProfile(uploadedImageUrl)
-            }.addOnFailureListener { e: Exception ->
-                dialog!!.dismiss()
-                Toast.makeText(
-                    context, "Failed to upload image due to " + e.message, Toast.LENGTH_SHORT
-                ).show()
-            }
-    }
-
-    private fun updateProfile(imageUrl: String?) {
-        dialog!!.setMessage("Updating user profile...")
-        dialog!!.show()
-        val hashMap = HashMap<String?, Any>()
-        hashMap[DATA.USER_NAME] = DATA.EMPTY + username
-        if (imageUri != null) {
-            hashMap[DATA.PROFILE_IMAGE] = DATA.EMPTY + imageUrl
-        }
-        val reference = FirebaseDatabase.getInstance().getReference(DATA.USERS)
-        reference.child(Objects.requireNonNull(DATA.FirebaseUserUid)).updateChildren(hashMap)
-            .addOnSuccessListener {
-                dialog!!.dismiss()
-                Toast.makeText(context, "Profile updated...", Toast.LENGTH_SHORT).show()
-            }.addOnFailureListener { e: Exception ->
-                dialog!!.dismiss()
-                Toast.makeText(
-                    context, "Failed to update db duo to " + e.message, Toast.LENGTH_SHORT
-                ).show()
-            }
-    }
-
-    private fun loadUserInfo() {
-        val reference = FirebaseDatabase.getInstance().getReference(DATA.USERS)
-        reference.child(Objects.requireNonNull(DATA.FirebaseUserUid))
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val username = DATA.EMPTY + snapshot.child(DATA.USER_NAME).value
-                    val profileImage = DATA.EMPTY + snapshot.child(DATA.PROFILE_IMAGE).value
-                    VOID.GlideImage(true, context, profileImage, binding!!.profileImage)
-                    binding!!.nameEt.setText(username)
-                }
-
-                override fun onCancelled(error: DatabaseError) {}
-            })
-    }
-
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == RESULT_OK) {
             val uri = CropImage.getPickImageResultUri(context, data)

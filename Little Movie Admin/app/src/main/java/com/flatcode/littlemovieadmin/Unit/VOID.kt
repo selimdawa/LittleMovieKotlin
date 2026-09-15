@@ -18,6 +18,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import coil3.load
+import coil3.request.error
+import coil3.request.crossfade
 import com.flatcode.littlemovieadmin.Model.Cast
 import com.flatcode.littlemovieadmin.Model.Movie
 import com.flatcode.littlemovieadmin.Modelimport.Category
@@ -30,6 +32,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
+import timber.log.Timber
 import java.text.MessageFormat
 
 object VOID {
@@ -75,24 +78,26 @@ object VOID {
 
     fun GlideImage(isUser: Boolean, context: Context?, Url: String?, Image: ImageView) {
         try {
-            if (Url == DATA.BASIC) {
+            if (Url == DATA.BASIC || Url.isNullOrEmpty()) {
                 if (isUser) Image.setImageResource(R.drawable.basic_user) else Image.setImageResource(
                     R.drawable.basic_music
                 )
             } else {
                 Image.load(Url) {
                     placeholder(R.color.image_profile)
+                    error(if (isUser) R.drawable.basic_user else R.drawable.basic_music)
                     crossfade(true)
                 }
             }
         } catch (e: Exception) {
+            Timber.e(e, "GlideImage error")
             Image.setImageResource(R.drawable.basic_music)
         }
     }
 
     fun GlideBlur(isUser: Boolean, context: Context?, Url: String?, Image: ImageView, level: Int) {
         try {
-            if (Url == DATA.BASIC) {
+            if (Url == DATA.BASIC || Url.isNullOrEmpty()) {
                 if (isUser) Image.setImageResource(R.drawable.basic_user) else Image.setImageResource(
                     R.drawable.basic_music
                 )
@@ -100,16 +105,18 @@ object VOID {
                 Image.load(Url) {
                     placeholder(R.color.image_profile)
                     transformations(SimpleBlurTransformation(level.toFloat()))
+                    error(if (isUser) R.drawable.basic_user else R.drawable.basic_music)
                 }
             }
         } catch (e: Exception) {
+            Timber.e(e, "GlideBlur error")
             Image.setImageResource(R.drawable.basic_music)
         }
     }
 
     fun GlideBlurUri(context: Context?, uri: Uri?, Image: ImageView?, level: Int) {
-        if (uri != null) {
-            Image?.load(uri) {
+        if (uri != null && Image != null) {
+            Image.load(uri) {
                 placeholder(R.color.image_profile)
                 transformations(SimpleBlurTransformation(level.toFloat()))
             }
@@ -118,54 +125,38 @@ object VOID {
 
     fun incrementItemCount(database: String?, id: String?, childDB: String?) {
         val ref = FirebaseDatabase.getInstance().getReference(database!!)
-        ref.child(id!!).addListenerForSingleValueEvent(object : ValueEventListener {
+        ref.child(id!!).child(childDB!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                //get views count
-                var itemsCount = DATA.EMPTY + snapshot.child(childDB!!).value
-                if (itemsCount == DATA.EMPTY || itemsCount == DATA.NULL) {
-                    itemsCount = DATA.EMPTY + DATA.ZERO
-                }
-                val newItemsCount = itemsCount.toLong() + 1
-                val hashMap = HashMap<String?, Any>()
-                hashMap[childDB] = newItemsCount
-                val reference = FirebaseDatabase.getInstance().getReference(database)
-                reference.child(id).updateChildren(hashMap)
+                val currentCount = snapshot.getValue(Long::class.java) ?: 0L
+                ref.child(id).child(childDB).setValue(currentCount + 1)
             }
-
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                Timber.e(error.toException(), "incrementItemCount cancelled")
+            }
         })
     }
 
     fun incrementItemRemoveCount(database: String?, id: String?, childDB: String?) {
         val ref = FirebaseDatabase.getInstance().getReference(database!!)
-        ref.child(id!!).addListenerForSingleValueEvent(object : ValueEventListener {
+        ref.child(id!!).child(childDB!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                //get views count
-                var lovesCount = DATA.EMPTY + snapshot.child(childDB!!).value
-                if (lovesCount == DATA.EMPTY || lovesCount == DATA.NULL)
-                    lovesCount = DATA.EMPTY + DATA.ZERO
-
-                val i = lovesCount.toInt()
-                if (i > 0) {
-                    val removeLovesCount = lovesCount.toInt() - 1
-                    val hashMap = HashMap<String?, Any>()
-                    hashMap[childDB] = removeLovesCount
-                    val reference = FirebaseDatabase.getInstance().getReference(database)
-                    reference.child(id).updateChildren(hashMap)
+                val currentCount = snapshot.getValue(Long::class.java) ?: 0L
+                if (currentCount > 0) {
+                    ref.child(id).child(childDB).setValue(currentCount - 1)
                 }
             }
-
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                Timber.e(error.toException(), "incrementItemRemoveCount cancelled")
+            }
         })
     }
 
     fun isFavorite(add: ImageView, Id: String?, UserId: String?) {
-        val reference = FirebaseDatabase.getInstance().reference.child(DATA.FAVORITES).child(
-            UserId!!
-        )
-        reference.addValueEventListener(object : ValueEventListener {
+        if (Id == null || UserId == null) return
+        val reference = FirebaseDatabase.getInstance().reference.child(DATA.FAVORITES).child(UserId)
+        reference.child(Id).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                if (dataSnapshot.child(Id!!).exists()) {
+                if (dataSnapshot.exists()) {
                     add.setImageResource(R.drawable.ic_star_selected)
                     add.tag = "added"
                 } else {
@@ -173,56 +164,61 @@ object VOID {
                     add.tag = "add"
                 }
             }
-
             override fun onCancelled(databaseError: DatabaseError) {}
         })
     }
 
     fun checkFavorite(image: ImageView, id: String?) {
-        if (image.tag == "add") FirebaseDatabase.getInstance().getReference(DATA.FAVORITES)
-            .child(DATA.FirebaseUserUid)
-            .child(id!!).setValue(true) else FirebaseDatabase.getInstance()
-            .getReference(DATA.FAVORITES).child(DATA.FirebaseUserUid)
-            .child(id!!).removeValue()
+        if (id == null) return
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.FAVORITES).child(DATA.FirebaseUserUid).child(id)
+        if (image.tag == "add") {
+            ref.setValue(true)
+        } else {
+            ref.removeValue()
+        }
     }
 
     fun nrLoves(number: TextView, id: String?) {
-        val reference = FirebaseDatabase.getInstance().reference.child(DATA.LOVES).child(
-            id!!
-        )
+        if (id == null) return
+        val reference = FirebaseDatabase.getInstance().reference.child(DATA.LOVES).child(id)
         reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 number.text = MessageFormat.format(" {0} ", dataSnapshot.childrenCount)
             }
-
             override fun onCancelled(databaseError: DatabaseError) {}
         })
     }
 
     fun CropImageSquare(activity: Activity?) {
-        CropImage.activity()
-            .setMinCropResultSize(DATA.MIX_SQUARE, DATA.MIX_SQUARE)
-            .setAspectRatio(1, 1)
-            .setCropShape(CropImageView.CropShape.OVAL)
-            .start(activity!!)
+        activity?.let {
+            CropImage.activity()
+                .setMinCropResultSize(DATA.MIX_SQUARE, DATA.MIX_SQUARE)
+                .setAspectRatio(1, 1)
+                .setCropShape(CropImageView.CropShape.OVAL)
+                .start(it)
+        }
     }
 
     fun CropVideoSquare(activity: Activity?) {
-        CropImage.activity()
-            .setMinCropResultSize(DATA.MIX_VIDEO_X, DATA.MIX_VIDEO_Y)
-            .setAspectRatio(10, 14)
-            .setCropShape(CropImageView.CropShape.OVAL)
-            .start(activity!!)
+        activity?.let {
+            CropImage.activity()
+                .setMinCropResultSize(DATA.MIX_VIDEO_X, DATA.MIX_VIDEO_Y)
+                .setAspectRatio(10, 14)
+                .setCropShape(CropImageView.CropShape.OVAL)
+                .start(it)
+        }
     }
 
     fun CropImageSlider(activity: Activity?) {
-        CropImage.activity()
-            .setGuidelines(CropImageView.Guidelines.ON)
-            .setMultiTouchEnabled(true)
-            .setMinCropResultSize(DATA.MIX_SLIDER_X, DATA.MIX_SLIDER_Y)
-            .setAspectRatio(16, 9)
-            .setCropShape(CropImageView.CropShape.OVAL)
-            .start(activity!!)
+        activity?.let {
+            CropImage.activity()
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .setMultiTouchEnabled(true)
+                .setMinCropResultSize(DATA.MIX_SLIDER_X, DATA.MIX_SLIDER_Y)
+                .setAspectRatio(16, 9)
+                .setCropShape(CropImageView.CropShape.OVAL)
+                .start(it)
+        }
     }
 
     fun getFileExtension(uri: Uri?, context: Context): String? {
@@ -324,7 +320,7 @@ object VOID {
             if (isEditorsChoice) dialogUpdateEditorsChoice(dialog, activity, id) else deleteDB(
                 dialog, activity, id, name, nameDB, DB, idDB, childDB
             )
-            if (cast!!) deleteCastInfo(id!!) else if (movie!!) deleteMovieInfo(id!!)
+            if (cast == true) deleteCastInfo(id!!) else if (movie == true) deleteMovieInfo(id!!)
         }
 
         dialog.findViewById<View>(R.id.no).setOnClickListener { dialog.dismiss() }
@@ -333,43 +329,29 @@ object VOID {
     }
 
     private fun deleteMovieInfo(id: String) {
-        castList = ArrayList()
         val ref = FirebaseDatabase.getInstance().getReference(DATA.CAST_MOVIE).child(id)
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                castList!!.clear()
-                for (snapshot in dataSnapshot.children)
-                    castList!!.add(snapshot.key!!)
-
-                var i = 0
-                while (castList!!.size > i) {
-                    incrementItemRemoveCount(DATA.CAST, castList!![i], DATA.MOVIES_COUNT)
-                    i++
+                for (snapshot in dataSnapshot.children) {
+                    incrementItemRemoveCount(DATA.CAST, snapshot.key, DATA.MOVIES_COUNT)
                 }
                 ref.removeValue()
             }
-
             override fun onCancelled(databaseError: DatabaseError) {}
         })
     }
 
     private fun deleteCastInfo(id: String) {
-        movieList = ArrayList()
         val ref = FirebaseDatabase.getInstance().getReference(DATA.CAST_MOVIE)
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                movieList!!.clear()
-                for (snapshot in dataSnapshot.children)
-                    if (snapshot.child(id).exists()) movieList!!.add(snapshot.key!!)
-
-                var i = 0
-                while (movieList!!.size > i) {
-                    ref.child(movieList!![i]).child(id).removeValue()
-                    incrementItemRemoveCount(DATA.MOVIES, movieList!![i], DATA.CAST_COUNT)
-                    i++
+                for (snapshot in dataSnapshot.children) {
+                    if (snapshot.hasChild(id)) {
+                        ref.child(snapshot.key!!).child(id).removeValue()
+                        incrementItemRemoveCount(DATA.MOVIES, snapshot.key, DATA.CAST_COUNT)
+                    }
                 }
             }
-
             override fun onCancelled(databaseError: DatabaseError) {}
         })
     }
@@ -378,7 +360,7 @@ object VOID {
         val dialog = ProgressDialog(context)
         dialog.setMessage("Updating Editors Choice...")
         dialog.show()
-        val hashMap = HashMap<String?, Any>()
+        val hashMap = HashMap<String, Any>()
         hashMap[DATA.EDITORS_CHOICE] = 0
 
         val reference = FirebaseDatabase.getInstance().getReference(DATA.MOVIES)
@@ -421,7 +403,7 @@ object VOID {
         val dialog = ProgressDialog(context)
         dialog.setMessage("Updating Editors Choice...")
         dialog.show()
-        val hashMap = HashMap<String?, Any>()
+        val hashMap = HashMap<String, Any>()
         hashMap[DATA.EDITORS_CHOICE] = number
         val reference = FirebaseDatabase.getInstance().getReference(DATA.MOVIES)
         reference.child(id!!).updateChildren(hashMap).addOnSuccessListener {
@@ -464,13 +446,12 @@ object VOID {
     }
 
     fun loadCategory(categoryId: String?, category: TextView) {
+        if (categoryId == null) return
         val ref = FirebaseDatabase.getInstance().getReference(DATA.CATEGORIES)
-        ref.child(categoryId!!).addListenerForSingleValueEvent(object : ValueEventListener {
+        ref.child(categoryId).child(DATA.NAME).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val Category = DATA.EMPTY + snapshot.child(DATA.NAME).value
-                category.text = Category
+                category.text = snapshot.value?.toString() ?: ""
             }
-
             override fun onCancelled(error: DatabaseError) {}
         })
     }

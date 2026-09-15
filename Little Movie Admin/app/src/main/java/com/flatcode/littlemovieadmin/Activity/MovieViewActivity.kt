@@ -1,6 +1,5 @@
 package com.flatcode.littlemovieadmin.Activity
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -8,59 +7,45 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.Unit.CLASS
 import com.flatcode.littlemovieadmin.Unit.DATA
 import com.flatcode.littlemovieadmin.databinding.ActivityMovieViewBinding
 import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.ExoPlayerFactory
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.extractor.ExtractorsFactory
-import com.google.android.exoplayer2.source.ExtractorMediaSource
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.trackselection.TrackSelector
-import com.google.android.exoplayer2.upstream.BandwidthMeter
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.util.Util
+import com.google.android.exoplayer2.MediaItem
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MovieViewActivity : AppCompatActivity() {
 
-    private var binding: ActivityMovieViewBinding? = null
-    var activity: Activity = this@MovieViewActivity
-    var videoUri: Uri? = null
-    var exoPlayer: ExoPlayer? = null
-    var extractorsFactory: ExtractorsFactory? = null
-    var exo_floating_widget: ImageView? = null
+    private lateinit var binding: ActivityMovieViewBinding
+    private var exoPlayer: ExoPlayer? = null
+    private var videoUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setFullScreen()
         super.onCreate(savedInstanceState)
         binding = ActivityMovieViewBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding.root)
 
-        exo_floating_widget = findViewById(R.id.exo_floating_widget)
-        val intent = intent
-        if (intent != null) {
-            val uriValue = intent.getStringExtra(DATA.MOVIE_LINK)
-            videoUri = Uri.parse(uriValue)
+        val uriValue = intent.getStringExtra(DATA.MOVIE_LINK)
+        if (uriValue != null) {
+            videoUri = uriValue.toUri()
         }
-        exo_floating_widget!!.setOnClickListener {
-            exoPlayer!!.playWhenReady = false
-            exoPlayer!!.release()
-            val service = Intent(activity, CLASS.SERVICE)
+
+        initializePlayer()
+
+        // Access view from sub-layout
+        binding.playerView.findViewById<ImageView>(R.id.exo_floating_widget)?.setOnClickListener {
+            exoPlayer?.let {
+                it.playWhenReady = false
+                it.release()
+            }
+            val service = Intent(this, CLASS.SERVICE)
             service.putExtra(DATA.MOVIE_LINK, videoUri.toString())
             startService(service)
         }
-        val bandwidthMeter: BandwidthMeter = DefaultBandwidthMeter()
-        val trackSelector: TrackSelector =
-            DefaultTrackSelector(AdaptiveTrackSelection.Factory(bandwidthMeter))
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector)
-        extractorsFactory = DefaultExtractorsFactory()
-        playVideo()
     }
 
     private fun setFullScreen() {
@@ -71,29 +56,32 @@ class MovieViewActivity : AppCompatActivity() {
         )
     }
 
-    private fun playVideo() {
-        try {
-            val playerInfo = Util.getUserAgent(this, "MovieAppClient")
-            val dataSourceFactory = DefaultDataSourceFactory(this, playerInfo)
-            val mediaSource: MediaSource = ExtractorMediaSource(
-                videoUri, dataSourceFactory, extractorsFactory, null, null
-            )
-            binding!!.playerView.player = exoPlayer
-            exoPlayer!!.prepare(mediaSource)
-            exoPlayer!!.playWhenReady = true
-        } catch (e: Exception) {
-            e.printStackTrace()
+    private fun initializePlayer() {
+        videoUri?.let { uri ->
+            exoPlayer = ExoPlayer.Builder(this).build().apply {
+                binding.playerView.player = this
+                val mediaItem = MediaItem.fromUri(uri)
+                setMediaItem(mediaItem)
+                prepare()
+                playWhenReady = true
+            }
         }
     }
 
     override fun onPause() {
         super.onPause()
-        exoPlayer!!.playWhenReady = false
+        exoPlayer?.playWhenReady = false
+    }
+
+    override fun onStop() {
+        super.onStop()
+        exoPlayer?.release()
+        exoPlayer = null
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
-        exoPlayer!!.playWhenReady = false
-        exoPlayer!!.release()
+        exoPlayer?.release()
+        exoPlayer = null
     }
 }

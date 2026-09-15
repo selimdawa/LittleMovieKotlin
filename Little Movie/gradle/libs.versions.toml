@@ -27,8 +27,10 @@ timber = "5.0.1"
 navigation = "2.10.1"
 room = "2.8.5"
 ksp = "2.3.11"
+kotlin = "2.4.20"
 
 [libraries]
+kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "coroutines" }
 android-image-cropper = { module = "com.theartofdev.edmodo:android-image-cropper", version.ref = "androidImageCropper" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
@@ -79,6 +81,7 @@ androidx-room-compiler = { group = "androidx.room", name = "room-compiler", vers
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }

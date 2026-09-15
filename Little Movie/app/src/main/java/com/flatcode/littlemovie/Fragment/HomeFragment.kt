@@ -4,10 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.Adapter.CategoryHomeAdapter
 import com.flatcode.littlemovie.Adapter.ImageSliderAdapter
 import com.flatcode.littlemovie.Adapter.MovieAdapter
@@ -16,207 +15,165 @@ import com.flatcode.littlemovie.Model.Movie
 import com.flatcode.littlemovie.Unit.CLASS
 import com.flatcode.littlemovie.Unit.DATA
 import com.flatcode.littlemovie.Unit.VOID
+import com.flatcode.littlemovie.ViewModel.HomeViewModel
 import com.flatcode.littlemovie.databinding.FragmentHomeBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
-import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class HomeFragment : Fragment() {
 
     private var binding: FragmentHomeBinding? = null
-    private var list: ArrayList<Movie?>? = null
-    private var list2: ArrayList<Movie?>? = null
-    private var list3: ArrayList<Movie?>? = null
-    private var list4: ArrayList<Movie?>? = null
-    private var adapter: MovieAdapter? = null
-    private var adapter2: MovieAdapter? = null
-    private var adapter3: MovieAdapter? = null
-    private var adapter4: MovieAdapter? = null
-    private val B_one = false
-    private val B_two = true
-    private val B_three = true
-    private val B_four = true
-    var TotalCounts = 0
-    private var categoryList: ArrayList<Category?>? = null
-    private var categoryAdapter: CategoryHomeAdapter? = null
+    private val viewModel: HomeViewModel by viewModels()
+
+    private val editorsChoiceList = ArrayList<Movie?>()
+    private val mostViewedList = ArrayList<Movie?>()
+    private val mostLovedList = ArrayList<Movie?>()
+    private val newMoviesList = ArrayList<Movie?>()
+    private val categoryList = ArrayList<Category?>()
+
+    private lateinit var categoryAdapter: CategoryHomeAdapter
+    private lateinit var editorsChoiceAdapter: MovieAdapter
+    private lateinit var mostViewedAdapter: MovieAdapter
+    private lateinit var mostLovedAdapter: MovieAdapter
+    private lateinit var newMoviesAdapter: MovieAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        binding = FragmentHomeBinding.inflate(LayoutInflater.from(context), container, false)
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
 
+        setupClickListeners()
+        setupAdapters()
+        observeViewModel()
+
+        return binding!!.root
+    }
+
+    private fun setupClickListeners() {
         binding!!.showMore.setOnClickListener {
             VOID.IntentExtra3(
                 context, CLASS.SHOW_MORE, DATA.SHOW_MORE_TYPE,
                 DATA.EDITORS_CHOICE, DATA.SHOW_MORE_NAME, binding!!.name.text.toString(),
-                DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + B_one
+                DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + false
             )
         }
         binding!!.showMore2.setOnClickListener {
             VOID.IntentExtra3(
                 context, CLASS.SHOW_MORE, DATA.SHOW_MORE_TYPE,
                 DATA.VIEWS_COUNT, DATA.SHOW_MORE_NAME, binding!!.mostViews.text.toString(),
-                DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + B_two
+                DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + true
             )
         }
         binding!!.showMore3.setOnClickListener {
             VOID.IntentExtra3(
                 context, CLASS.SHOW_MORE, DATA.SHOW_MORE_TYPE,
                 DATA.LOVES_COUNT, DATA.SHOW_MORE_NAME, binding!!.name3.text.toString(),
-                DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + B_three
+                DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + true
             )
         }
         binding!!.showMore4.setOnClickListener {
             VOID.IntentExtra3(
                 context, CLASS.SHOW_MORE, DATA.SHOW_MORE_TYPE,
                 DATA.TIMESTAMP, DATA.SHOW_MORE_NAME, binding!!.name4.text.toString(),
-                DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + B_four
+                DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + true
             )
         }
+    }
 
-        //RecyclerView Category
-        //binding.recyclerCategory.setHasFixedSize(true);
-        categoryList = ArrayList()
-        categoryAdapter = CategoryHomeAdapter(context, categoryList!!)
+    private fun setupAdapters() {
+        categoryAdapter = CategoryHomeAdapter(context, categoryList)
         binding!!.recyclerCategory.adapter = categoryAdapter
 
-        //RecyclerView Editor's Choice
-        //binding.recyclerView.setHasFixedSize(true);
-        list = ArrayList()
-        adapter = MovieAdapter(context, list!!, false)
-        binding!!.recyclerView.adapter = adapter
+        editorsChoiceAdapter = MovieAdapter(context, editorsChoiceList, false)
+        binding!!.recyclerView.adapter = editorsChoiceAdapter
 
-        //RecyclerView Views Count
-        //binding.recyclerView2.setHasFixedSize(true);
-        list2 = ArrayList()
-        adapter2 = MovieAdapter(context, list2!!, false)
-        binding!!.recyclerView2.adapter = adapter2
+        mostViewedAdapter = MovieAdapter(context, mostViewedList, false)
+        binding!!.recyclerView2.adapter = mostViewedAdapter
 
-        //RecyclerView Loves Count
-        //binding.recyclerView3.setHasFixedSize(true);
-        list3 = ArrayList()
-        adapter3 = MovieAdapter(context, list3!!, false)
-        binding!!.recyclerView3.adapter = adapter3
+        mostLovedAdapter = MovieAdapter(context, mostLovedList, false)
+        binding!!.recyclerView3.adapter = mostLovedAdapter
 
-        //RecyclerView New Songs
-        //binding.recyclerView4.setHasFixedSize(true);
-        list4 = ArrayList()
-        adapter4 = MovieAdapter(context, list4!!, false)
-        binding!!.recyclerView4.adapter = adapter4
-
-        FirebaseDatabase.getInstance().getReference(DATA.SLIDER_SHOW)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val counts = snapshot.childrenCount
-                    TotalCounts = counts.toInt()
-                    binding!!.imageSlider.sliderAdapter = ImageSliderAdapter(context, TotalCounts)
-                }
-
-                override fun onCancelled(error: DatabaseError) {}
-            })
-        return binding!!.root
+        newMoviesAdapter = MovieAdapter(context, newMoviesList, false)
+        binding!!.recyclerView4.adapter = newMoviesAdapter
     }
 
-    private fun init() {
-        loadCategories()
-        loadPostEditorsChoice(
-            DATA.EDITORS_CHOICE, list, adapter, binding!!.bar,
-            binding!!.recyclerView, binding!!.empty
-        )
-        loadPostBy(
-            DATA.VIEWS_COUNT, list2, adapter2, binding!!.bar2,
-            binding!!.recyclerView2, binding!!.empty2
-        )
-        loadPostBy(
-            DATA.LOVES_COUNT, list3, adapter3, binding!!.bar3,
-            binding!!.recyclerView3, binding!!.empty3
-        )
-        loadPostBy(
-            DATA.TIMESTAMP, list4, adapter4, binding!!.bar4,
-            binding!!.recyclerView4, binding!!.empty4
-        )
-    }
-
-    private fun loadCategories() {
-        val ref = FirebaseDatabase.getInstance().getReference(DATA.CATEGORIES)
-        ref.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                categoryList!!.clear()
-                for (data in snapshot.children) {
-                    val category = data.getValue(Category::class.java)
-                    categoryList!!.add(category)
-                }
-                categoryAdapter!!.notifyDataSetChanged()
+    private fun observeViewModel() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.categories.collect { categories ->
+                Timber.d("Categories collected: %d", categories.size)
+                categoryList.clear()
+                categoryList.addAll(categories)
+                categoryAdapter.notifyDataSetChanged()
             }
+        }
 
-            override fun onCancelled(error: DatabaseError) {}
-        })
-    }
-
-    private fun loadPostBy(
-        orderBy: String?, list: ArrayList<Movie?>?, adapter: MovieAdapter?,
-        bar: ProgressBar, recyclerView: RecyclerView, empty: TextView
-    ) {
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.MOVIES)
-        ref.orderByChild(orderBy!!).limitToLast(DATA.ORDER_MAIN)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    list!!.clear()
-                    for (data in snapshot.children) {
-                        val item = data.getValue(Movie::class.java)!!
-                        if (orderBy != DATA.EDITORS_CHOICE) list.add(item)
-                    }
-                    adapter!!.notifyDataSetChanged()
-                    bar.visibility = View.GONE
-                    if (list.isNotEmpty()) {
-                        recyclerView.visibility = View.VISIBLE
-                        empty.visibility = View.GONE
-                        if (orderBy != DATA.EDITORS_CHOICE) list.reverse()
-                    } else {
-                        recyclerView.visibility = View.GONE
-                        empty.visibility = View.VISIBLE
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {}
-            })
-    }
-
-    private fun loadPostEditorsChoice(
-        orderBy: String?, list: ArrayList<Movie?>?, adapter: MovieAdapter?,
-        bar: ProgressBar, recyclerView: RecyclerView, empty: TextView
-    ) {
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.MOVIES)
-        ref.orderByChild(orderBy!!).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                list!!.clear()
-                for (data in snapshot.children) {
-                    val item = data.getValue(Movie::class.java)!!
-                    if (orderBy == DATA.EDITORS_CHOICE) {
-                        if (item.editorsChoice <= 2 && item.editorsChoice > 0) list.add(item)
-                    }
-                }
-                adapter!!.notifyDataSetChanged()
-                bar.visibility = View.GONE
-                if (list.isNotEmpty()) {
-                    recyclerView.visibility = View.VISIBLE
-                    empty.visibility = View.GONE
-                    if (orderBy != DATA.EDITORS_CHOICE) list.reverse()
-                } else {
-                    recyclerView.visibility = View.GONE
-                    empty.visibility = View.VISIBLE
-                }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.sliderCount.collect { count ->
+                Timber.d("Slider count collected: %d", count)
+                binding!!.imageSlider.sliderAdapter = ImageSliderAdapter(context, count)
             }
+        }
 
-            override fun onCancelled(error: DatabaseError) {}
-        })
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.editorsChoiceMovies.collect { movies ->
+                Timber.d("Editors choice movies collected: %d", movies.size)
+                updateMovieList(
+                    movies, editorsChoiceList, editorsChoiceAdapter,
+                    binding!!.bar, binding!!.recyclerView, binding!!.empty
+                )
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.mostViewedMovies.collect { movies ->
+                Timber.d("Most viewed movies collected: %d", movies.size)
+                updateMovieList(
+                    movies, mostViewedList, mostViewedAdapter,
+                    binding!!.bar2, binding!!.recyclerView2, binding!!.empty2
+                )
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.mostLovedMovies.collect { movies ->
+                Timber.d("Most loved movies collected: %d", movies.size)
+                updateMovieList(
+                    movies, mostLovedList, mostLovedAdapter,
+                    binding!!.bar3, binding!!.recyclerView3, binding!!.empty3
+                )
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.newMovies.collect { movies ->
+                Timber.d("New movies collected: %d", movies.size)
+                updateMovieList(
+                    movies, newMoviesList, newMoviesAdapter,
+                    binding!!.bar4, binding!!.recyclerView4, binding!!.empty4
+                )
+            }
+        }
+    }
+
+    private fun updateMovieList(
+        movies: List<Movie>, list: ArrayList<Movie?>, adapter: MovieAdapter,
+        bar: View, recyclerView: View, empty: View
+    ) {
+        list.clear()
+        list.addAll(movies)
+        adapter.notifyDataSetChanged()
+        bar.visibility = View.GONE
+        if (list.isNotEmpty()) {
+            recyclerView.visibility = View.VISIBLE
+            empty.visibility = View.GONE
+        } else {
+            recyclerView.visibility = View.GONE
+            empty.visibility = View.VISIBLE
+        }
     }
 
     override fun onStart() {
-        init()
         super.onStart()
+        viewModel.loadData()
     }
 }

@@ -2,40 +2,43 @@ package com.flatcode.littlemovie.Activity
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.Unit.CLASS
 import com.flatcode.littlemovie.Unit.VOID
+import com.flatcode.littlemovie.ViewModel.SplashViewModel
 import com.flatcode.littlemovie.databinding.ActivitySplashBinding
-import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class SplashActivity : AppCompatActivity() {
 
     private var binding: ActivitySplashBinding? = null
-    var context: Context = this@SplashActivity
-    var auth: FirebaseAuth? = null
-    var time_per_second = 2
-    var time_final = time_per_millis * time_per_second
+    private val context: Context = this@SplashActivity
+    private val viewModel: SplashViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySplashBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding!!.root)
 
-        auth = FirebaseAuth.getInstance()
-        Handler().postDelayed({ checkUser() }, time_final.toLong())
-    }
-
-    private fun checkUser() {
-        //get current user, if logged in
-        val firebaseUser = auth!!.currentUser
-        if (firebaseUser == null) {
-            VOID.Intent1(context, CLASS.AUTH)
-        } else {
-            VOID.Intent1(context, CLASS.MAIN)
+        lifecycleScope.launch {
+            viewModel.isLoggedIn.filterNotNull().collect { isLoggedIn ->
+                Timber.d("User login status collected: %b", isLoggedIn)
+                if (isLoggedIn) {
+                    VOID.Intent1(context, CLASS.MAIN)
+                } else {
+                    VOID.Intent1(context, CLASS.AUTH)
+                }
+                finish()
+            }
         }
-        finish()
+
+        val timePerSecond = 2
+        val timeFinal = time_per_millis * timePerSecond
+        viewModel.checkUser(timeFinal.toLong())
     }
 
     companion object {

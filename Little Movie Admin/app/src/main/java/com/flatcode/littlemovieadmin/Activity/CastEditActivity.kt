@@ -8,140 +8,105 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.flatcode.littlemovieadmin.Model.Cast
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.Unit.DATA
 import com.flatcode.littlemovieadmin.Unit.VOID
+import com.flatcode.littlemovieadmin.ViewModel.CastEditViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityCastAddBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.UploadTask
 import com.theartofdev.edmodo.cropper.CropImage
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class CastEditActivity : AppCompatActivity() {
 
-    private var binding: ActivityCastAddBinding? = null
-    var activity: Activity = this@CastEditActivity
-    var castId: String? = null
+    private lateinit var binding: ActivityCastAddBinding
+    private val viewModel: CastEditViewModel by viewModels()
     private var imageUri: Uri? = null
-    private var dialog: ProgressDialog? = null
+    private var progressDialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCastAddBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding.root)
 
-        castId = intent.getStringExtra(DATA.CAST_ID)
-        dialog = ProgressDialog(activity)
-        dialog!!.setTitle("Please wait...")
-        dialog!!.setCanceledOnTouchOutside(false)
-        loadInfo()
+        val castId = intent.getStringExtra(DATA.CAST_ID) ?: ""
+        viewModel.init(castId)
 
-        binding!!.toolbar.nameSpace.setText(R.string.edit_cast)
-        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
-        binding!!.image.setOnClickListener { VOID.CropImageSquare(activity) }
-        binding!!.toolbar.ok.setOnClickListener { validateData() }
+        progressDialog = ProgressDialog(this).apply {
+            setTitle("Please wait...")
+            setCanceledOnTouchOutside(false)
+        }
+
+        binding.toolbar.nameSpace.setText(R.string.edit_cast)
+        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.image.setOnClickListener { VOID.CropImageSquare(this) }
+        binding.toolbar.ok.setOnClickListener { validateData() }
+
+        observeState()
     }
 
-    private var name = DATA.EMPTY
-    private var aboutMy = DATA.EMPTY
     private fun validateData() {
-        name = binding!!.nameEt.text.toString().trim { it <= ' ' }
-        aboutMy = binding!!.aboutMyEt.text.toString().trim { it <= ' ' }
+        val name = binding.nameEt.text.toString().trim()
+        val aboutMy = binding.aboutMyEt.text.toString().trim()
+
         if (TextUtils.isEmpty(name)) {
-            Toast.makeText(activity, "Enter name...", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Enter name...", Toast.LENGTH_SHORT).show()
         } else if (TextUtils.isEmpty(aboutMy)) {
-            Toast.makeText(activity, "Enter Description...", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Enter Description...", Toast.LENGTH_SHORT).show()
         } else {
-            if (imageUri == null) {
-                update(DATA.EMPTY)
-            } else {
-                uploadImage()
+            progressDialog?.setMessage("Updating Cast...")
+            progressDialog?.show()
+            val extension = imageUri?.let { VOID.getFileExtension(it, this) }
+            viewModel.updateCast(name, aboutMy, imageUri, extension) { success, message ->
+                progressDialog?.dismiss()
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                if (success) onBackPressed()
             }
         }
     }
 
-    private fun uploadImage() {
-        dialog!!.setMessage("Updating Cast...")
-        dialog!!.show()
-        val filePathAndName = "Images/Cast/$castId"
-        val reference = FirebaseStorage.getInstance()
-            .getReference(filePathAndName + DATA.DOT + VOID.getFileExtension(imageUri, activity))
-        reference.putFile(imageUri!!)
-            .addOnSuccessListener { taskSnapshot: UploadTask.TaskSnapshot ->
-                val uriTask = taskSnapshot.storage.downloadUrl
-                while (!uriTask.isSuccessful);
-                val uploadedImageUrl = DATA.EMPTY + uriTask.result
-                update(uploadedImageUrl)
-            }.addOnFailureListener { e: Exception ->
-                dialog!!.dismiss()
-                Toast.makeText(
-                    activity, "Failed to upload image due to " + e.message, Toast.LENGTH_SHORT
-                ).show()
+    private fun observeState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    if (state.isLoading) progressDialog?.show() else progressDialog?.dismiss()
+                    
+                    state.cast?.let { cast ->
+                        binding.nameEt.setText(cast.name)
+                        binding.aboutMyEt.setText(cast.aboutMy)
+                        if (imageUri == null) {
+                            VOID.GlideImage(true, this@CastEditActivity, cast.image, binding.image)
+                        }
+                    }
+                }
             }
-    }
-
-    private fun update(imageUrl: String?) {
-        dialog!!.setMessage("Updating cast image...")
-        dialog!!.show()
-        val hashMap = HashMap<String?, Any>()
-        hashMap[DATA.NAME] = DATA.EMPTY + name
-        hashMap[DATA.ABOUT_MY] = DATA.EMPTY + aboutMy
-        if (imageUri != null)
-            hashMap[DATA.IMAGE] = DATA.EMPTY + imageUrl
-        val reference = FirebaseDatabase.getInstance().getReference(DATA.CAST)
-        reference.child(castId!!).updateChildren(hashMap).addOnSuccessListener {
-            dialog!!.dismiss()
-            Toast.makeText(activity, "Cast updated...", Toast.LENGTH_SHORT).show()
-        }.addOnFailureListener { e: Exception ->
-            dialog!!.dismiss()
-            Toast.makeText(activity, "Failed to update db duo to " + e.message, Toast.LENGTH_SHORT)
-                .show()
         }
     }
 
-    private fun loadInfo() {
-        val reference = FirebaseDatabase.getInstance().getReference(DATA.CAST)
-        reference.child(castId!!).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val item = snapshot.getValue(Cast::class.java)!!
-                val name = item.name
-                val aboutMy = item.aboutMy
-                val image = item.image
-
-                VOID.GlideImage(true, activity, image, binding!!.image)
-                binding!!.nameEt.setText(name)
-                binding!!.aboutMyEt.setText(aboutMy)
-            }
-
-            override fun onCancelled(error: DatabaseError) {}
-        })
-    }
-
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == RESULT_OK) {
-            val uri = CropImage.getPickImageResultUri(activity, data)
-            if (CropImage.isReadExternalStoragePermissionsRequired(activity, uri)) {
+            val uri = CropImage.getPickImageResultUri(this, data)
+            if (CropImage.isReadExternalStoragePermissionsRequired(this, uri)) {
                 imageUri = uri
                 requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
             } else {
-                VOID.CropImageSquare(activity)
+                VOID.CropImageSquare(this)
             }
         }
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             val result = CropImage.getActivityResult(data)
             if (resultCode == RESULT_OK) {
                 imageUri = result.uri
-                binding!!.image.setImageURI(imageUri)
+                binding.image.setImageURI(imageUri)
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                val error = result.error
-                Toast.makeText(this, "Error! $error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Error! ${result.error}", Toast.LENGTH_SHORT).show()
             }
         }
     }

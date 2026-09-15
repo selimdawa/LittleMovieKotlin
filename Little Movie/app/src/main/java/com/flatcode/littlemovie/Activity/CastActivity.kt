@@ -5,17 +5,17 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.Adapter.CastAdapter
 import com.flatcode.littlemovie.Model.Cast
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.Unit.DATA
+import com.flatcode.littlemovie.ViewModel.CastViewModel
 import com.flatcode.littlemovie.databinding.ActivityCastBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
-import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.text.MessageFormat
 
 class CastActivity : AppCompatActivity() {
@@ -25,6 +25,7 @@ class CastActivity : AppCompatActivity() {
     var list: ArrayList<Cast?>? = null
     var adapter: CastAdapter? = null
     var type: String? = null
+    private val viewModel: CastViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,51 +49,43 @@ class CastActivity : AppCompatActivity() {
                 try {
                     adapter!!.filter.filter(s)
                 } catch (e: Exception) {
-                    //None
+                    Timber.e(e, "Error filtering adapter")
                 }
             }
 
             override fun afterTextChanged(s: Editable) {}
         })
 
-        //binding.recyclerView.setHasFixedSize(true);
         list = ArrayList()
         adapter = CastAdapter(activity, list!!)
         binding!!.recyclerView.adapter = adapter
 
         binding!!.switchBar.all.setOnClickListener {
             type = DATA.TIMESTAMP
-            getData(type)
+            viewModel.getData(type)
         }
         binding!!.switchBar.mostMovies.setOnClickListener {
             type = DATA.MOVIES_COUNT
-            getData(type)
+            viewModel.getData(type)
         }
         binding!!.switchBar.mostInterested.setOnClickListener {
             type = DATA.INTERESTED_COUNT
-            getData(type)
+            viewModel.getData(type)
         }
         binding!!.switchBar.name.setOnClickListener {
             type = DATA.NAME
-            getData(type)
+            viewModel.getData(type)
         }
+
+        observeViewModel()
     }
 
-    private fun getData(orderBy: String?) {
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.CAST)
-        ref.orderByChild(orderBy!!).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            viewModel.castList.collect { castItems ->
                 list!!.clear()
-                var i = 0
-                for (data in dataSnapshot.children) {
-                    val item = data.getValue(Cast::class.java)!!
-                    list!!.add(item)
-                    i++
-                }
-                list!!.reverse()
-                binding!!.toolbar.number.text = MessageFormat.format("( {0} )", i)
+                list!!.addAll(castItems)
                 adapter!!.notifyDataSetChanged()
-                binding!!.progress.visibility = View.GONE
                 if (list!!.isNotEmpty()) {
                     binding!!.recyclerView.visibility = View.VISIBLE
                     binding!!.emptyText.visibility = View.GONE
@@ -101,9 +94,19 @@ class CastActivity : AppCompatActivity() {
                     binding!!.emptyText.visibility = View.VISIBLE
                 }
             }
+        }
 
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
+        lifecycleScope.launch {
+            viewModel.castCount.collect { count ->
+                binding!!.toolbar.number.text = MessageFormat.format("( {0} )", count)
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.isLoading.collect { isLoading ->
+                binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+            }
+        }
     }
 
     override fun onBackPressed() {
@@ -119,12 +122,12 @@ class CastActivity : AppCompatActivity() {
     }
 
     override fun onRestart() {
-        getData(type)
+        viewModel.getData(type)
         super.onRestart()
     }
 
     override fun onResume() {
-        getData(type)
+        viewModel.getData(type)
         super.onResume()
     }
 }

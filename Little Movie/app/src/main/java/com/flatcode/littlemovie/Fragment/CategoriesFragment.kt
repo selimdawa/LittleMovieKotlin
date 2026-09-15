@@ -5,61 +5,72 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.Adapter.CategoryMainAdapter
 import com.flatcode.littlemovie.Model.Category
 import com.flatcode.littlemovie.Unit.DATA
+import com.flatcode.littlemovie.ViewModel.CategoriesViewModel
 import com.flatcode.littlemovie.databinding.FragmentCategoriesBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
-import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class CategoriesFragment : Fragment() {
 
     private var binding: FragmentCategoriesBinding? = null
-    private var list: ArrayList<Category?>? = null
-    private var adapter: CategoryMainAdapter? = null
+    private val viewModel: CategoriesViewModel by viewModels()
+    private val list = ArrayList<Category?>()
+    private lateinit var adapter: CategoryMainAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        binding = FragmentCategoriesBinding.inflate(LayoutInflater.from(context), container, false)
+        binding = FragmentCategoriesBinding.inflate(inflater, container, false)
+        
+        setupAdapter()
+        observeViewModel()
 
-        //binding.recyclerCategory.setHasFixedSize(true);
-        list = ArrayList()
-        adapter = CategoryMainAdapter(context, list!!)
-        binding!!.recyclerView.adapter = adapter
         return binding!!.root
     }
 
-    private fun loadItems() {
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.CATEGORIES)
-        ref.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                list!!.clear()
-                for (snapshot in dataSnapshot.children) {
-                    val item = snapshot.getValue(Category::class.java)!!
-                    if (item.publisher == DATA.FirebaseUserUid) list!!.add(item)
-                }
+    private fun setupAdapter() {
+        adapter = CategoryMainAdapter(context, list)
+        binding!!.recyclerView.adapter = adapter
+    }
+
+    private fun observeViewModel() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.categoriesList.collect { categories ->
+                Timber.d("Categories collected: %d", categories.size)
+                list.clear()
+                list.addAll(categories)
+                adapter.notifyDataSetChanged()
+                
                 binding!!.bar.visibility = View.GONE
-                if (list!!.isNotEmpty()) {
+                if (list.isNotEmpty()) {
                     binding!!.recyclerView.visibility = View.VISIBLE
                     binding!!.emptyText.visibility = View.GONE
                 } else {
                     binding!!.recyclerView.visibility = View.GONE
                     binding!!.emptyText.visibility = View.VISIBLE
                 }
-                adapter!!.notifyDataSetChanged()
             }
-
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
+        }
+        
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.isLoading.collect { isLoading ->
+                binding!!.bar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            }
+        }
     }
 
     override fun onResume() {
-        loadItems()
         super.onResume()
+        viewModel.getData(publisherId = DATA.FirebaseUserUid)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
     }
 }

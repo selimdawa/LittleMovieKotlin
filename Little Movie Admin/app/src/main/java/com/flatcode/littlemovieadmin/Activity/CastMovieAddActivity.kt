@@ -1,89 +1,74 @@
 package com.flatcode.littlemovieadmin.Activity
 
-import android.app.Activity
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.Adapter.CastMovieAddAdapter
 import com.flatcode.littlemovieadmin.Adapter.CastMovieAddAdapter.Companion.castAddRemove
 import com.flatcode.littlemovieadmin.Model.Cast
 import com.flatcode.littlemovieadmin.R
-import com.flatcode.littlemovieadmin.Unit.DATA
 import com.flatcode.littlemovieadmin.Unit.DATA.castMovie
+import com.flatcode.littlemovieadmin.ViewModel.CastMovieAddViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityCastMovieBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
-import com.google.firebase.database.ValueEventListener
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class CastMovieAddActivity : AppCompatActivity() {
 
-    private var binding: ActivityCastMovieBinding? = null
-    var activity: Activity = this@CastMovieAddActivity
-    var list: ArrayList<Cast?>? = null
-    var adapter: CastMovieAddAdapter? = null
-    var type: String? = null
+    private lateinit var binding: ActivityCastMovieBinding
+    private val viewModel: CastMovieAddViewModel by viewModels()
+    private val list = mutableListOf<Cast?>()
+    private lateinit var adapter: CastMovieAddAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCastMovieBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding.root)
 
-        binding!!.toolbar.nameSpace.setText(R.string.add_cast)
-        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
-        type = DATA.TIMESTAMP
+        binding.toolbar.nameSpace.setText(R.string.add_cast)
+        binding.toolbar.back.setOnClickListener { onBackPressed() }
 
-        //binding.recyclerView.setHasFixedSize(true);
-        list = ArrayList()
-        adapter = CastMovieAddAdapter(activity, list!!)
-        binding!!.recyclerView.adapter = adapter
+        adapter = CastMovieAddAdapter(this, list as ArrayList<Cast?>)
+        binding.recyclerView.adapter = adapter
+
+        observeState()
     }
 
-    private val data: Unit
-        get() {
-            val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.CAST)
-            ref.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    list!!.clear()
-                    for (data in dataSnapshot.children) {
-                        val item = data.getValue(Cast::class.java)!!
-                        list!!.add(item)
-                    }
-                    //for (i in 0..9) {
-                    //    val cast = Cast(DATA.EMPTY + i, DATA.EMPTY + i, "basic")
-                    //    list!!.add(cast)
-                    //}
-                    list!!.reverse()
-                    adapter!!.notifyDataSetChanged()
-                    binding!!.progress.visibility = View.GONE
-                    if (list!!.isNotEmpty()) {
-                        binding!!.recyclerView.visibility = View.VISIBLE
-                        binding!!.emptyText.visibility = View.GONE
-                    } else {
-                        binding!!.recyclerView.visibility = View.GONE
-                        binding!!.emptyText.visibility = View.VISIBLE
+    private fun observeState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    binding.progress.visibility = if (state.isLoading) View.VISIBLE else View.GONE
+                    
+                    list.clear()
+                    list.addAll(state.castList)
+                    adapter.notifyDataSetChanged()
+
+                    if (state.castList.isNotEmpty()) {
+                        binding.recyclerView.visibility = View.VISIBLE
+                        binding.emptyText.visibility = View.GONE
+                    } else if (!state.isLoading) {
+                        binding.recyclerView.visibility = View.GONE
+                        binding.emptyText.visibility = View.VISIBLE
                     }
                 }
-
-                override fun onCancelled(databaseError: DatabaseError) {}
-            })
+            }
         }
-
-    override fun onRestart() {
-        data
-        super.onRestart()
     }
 
     override fun onResume() {
-        data
         super.onResume()
+        viewModel.loadCast()
     }
 
     override fun onBackPressed() {
         castMovie.clear()
-        castMovie = castAddRemove as ArrayList<String?>
+        castMovie.addAll(castAddRemove as ArrayList<String?>)
         super.onBackPressed()
     }
 }

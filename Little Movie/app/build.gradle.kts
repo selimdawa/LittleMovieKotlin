@@ -48,8 +48,8 @@ android {
     //    }
     //}
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     buildFeatures {
         dataBinding = true
@@ -83,10 +83,8 @@ dependencies {
     implementation(libs.nafisbottomnav)                 //Nafis Bottom Navigation
     implementation (libs.exoplayer)                     //EXO Video Player
 
-    // MVVM & Lifecycle components (ViewModel, LiveData, StateFlow)
+    // MVVM & Lifecycle components (ViewModel, StateFlow)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.lifecycle.livedata.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
 
     // Hilt Dependency Injection
     implementation(libs.hilt.android)

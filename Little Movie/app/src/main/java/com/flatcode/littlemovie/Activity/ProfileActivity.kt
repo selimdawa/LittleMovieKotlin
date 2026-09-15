@@ -3,34 +3,36 @@ package com.flatcode.littlemovie.Activity
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.Unit.CLASS
 import com.flatcode.littlemovie.Unit.DATA
 import com.flatcode.littlemovie.Unit.VOID
+import com.flatcode.littlemovie.ViewModel.ProfileViewModel
 import com.flatcode.littlemovie.databinding.ActivityProfileBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import java.text.MessageFormat
+import kotlinx.coroutines.launch
 
 class ProfileActivity : AppCompatActivity() {
 
     private var binding: ActivityProfileBinding? = null
-    var context: Context = this@ProfileActivity
-    var profileId: String? = null
+    private val context: Context = this@ProfileActivity
+    private val viewModel: ProfileViewModel by viewModels()
+    private var profileId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding!!.root)
 
-        val intent = intent
         profileId = intent.getStringExtra(DATA.PROFILE_ID)
 
+        setupUI()
+        observeViewModel()
+    }
+
+    private fun setupUI() {
         if (profileId == DATA.FirebaseUserUid) {
             binding!!.edit.visibility = View.VISIBLE
             binding!!.edit.setImageResource(R.drawable.ic_edit_white)
@@ -39,63 +41,37 @@ class ProfileActivity : AppCompatActivity() {
         binding!!.back.setOnClickListener { onBackPressed() }
     }
 
-    private fun start() {
-        loadUserInfo()
-        nrFavorites
-        nrInterested(DATA.CAST, binding!!.numbercast)
-        nrInterested(DATA.CATEGORIES, binding!!.numberCategories)
-    }
-
-    private fun loadUserInfo() {
-        val reference = FirebaseDatabase.getInstance().getReference(DATA.USERS)
-        reference.child(profileId!!).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                //String email = DATA.EMPTY + snapshot.child(DATA.EMAIL).getValue();
-                val username = DATA.EMPTY + snapshot.child(DATA.USER_NAME).value
-                val profileImage = DATA.EMPTY + snapshot.child(DATA.PROFILE_IMAGE).value
-                //String timestamp = DATA.EMPTY + snapshot.child(DATA.TIMESTAMP).getValue();
-                //String id = DATA.EMPTY + snapshot.child(DATA.ID).getValue();
-                //int version = DATA.ZERO + snapshot.child(DATA.VERSION).getValue();
-                binding!!.username.text = username
-                VOID.GlideImage(true, context, profileImage, binding!!.profile)
-            }
-
-            override fun onCancelled(error: DatabaseError) {}
-        })
-    }
-
-    private fun nrInterested(database: String?, text: TextView) {
-        val reference = FirebaseDatabase.getInstance().getReference(DATA.INTERESTED)
-            .child(profileId!!).child(database!!)
-        reference.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                text.text = MessageFormat.format("{0}", dataSnapshot.childrenCount)
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
-    }
-
-    private val nrFavorites: Unit
-        get() {
-            val ref = FirebaseDatabase.getInstance().getReference(DATA.FAVORITES).child(profileId!!)
-            ref.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    binding!!.numberFavorites.text =
-                        MessageFormat.format("{0}", dataSnapshot.childrenCount)
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            viewModel.user.collect { user ->
+                user?.let {
+                    binding!!.username.text = it.username
+                    VOID.GlideImage(true, context, it.profileImage, binding!!.profile)
                 }
-
-                override fun onCancelled(databaseError: DatabaseError) {}
-            })
+            }
         }
 
-    override fun onRestart() {
-        start()
-        super.onRestart()
+        lifecycleScope.launch {
+            viewModel.castCount.collect { count ->
+                binding!!.numbercast.text = count.toString()
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.categoriesCount.collect { count ->
+                binding!!.numberCategories.text = count.toString()
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.favoritesCount.collect { count ->
+                binding!!.numberFavorites.text = count.toString()
+            }
+        }
     }
 
     override fun onResume() {
-        start()
         super.onResume()
+        profileId?.let { viewModel.loadData(it) }
     }
 }

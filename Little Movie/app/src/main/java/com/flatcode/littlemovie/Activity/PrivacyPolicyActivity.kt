@@ -1,44 +1,36 @@
 package com.flatcode.littlemovie.Activity
 
-import android.content.Context
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.R
-import com.flatcode.littlemovie.Unit.DATA
-import com.flatcode.littlemovie.Unit.VOID
+import com.flatcode.littlemovie.ViewModel.PrivacyPolicyViewModel
 import com.flatcode.littlemovie.databinding.ActivityPrivacyPolicyBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.launch
 
 class PrivacyPolicyActivity : AppCompatActivity() {
 
     private var binding: ActivityPrivacyPolicyBinding? = null
-    var context: Context = this@PrivacyPolicyActivity
+    private val viewModel: PrivacyPolicyViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPrivacyPolicyBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding!!.root)
 
         binding!!.toolbar.nameSpace.setText(R.string.privacy_policy)
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
 
-        privacyPolicy()
+        observeViewModel()
+        viewModel.loadPrivacyPolicy()
     }
 
-    private fun privacyPolicy() {
-        val reference = FirebaseDatabase.getInstance().reference.child(DATA.TOOLS)
-            .child(DATA.PRIVACY_POLICY)
-        reference.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val name = dataSnapshot.value.toString()
-                binding!!.text.text = name
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            viewModel.privacyPolicy.collect { policy ->
+                binding!!.text.text = policy
             }
-
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
+        }
     }
 }

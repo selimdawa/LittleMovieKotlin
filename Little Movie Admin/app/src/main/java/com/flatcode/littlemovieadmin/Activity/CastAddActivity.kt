@@ -1,4 +1,4 @@
-package com.flatcode.littlemovieadmin.Activityimport
+package com.flatcode.littlemovieadmin.Activity
 
 import android.Manifest
 import android.app.Activity
@@ -8,126 +8,97 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.Unit.DATA
 import com.flatcode.littlemovieadmin.Unit.VOID
+import com.flatcode.littlemovieadmin.ViewModel.CastAddViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityCastAddBinding
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.UploadTask
 import com.theartofdev.edmodo.cropper.CropImage
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class CastAddActivity : AppCompatActivity() {
 
-    private var binding: ActivityCastAddBinding? = null
-    var activity: Activity = this@CastAddActivity
+    private lateinit var binding: ActivityCastAddBinding
+    private val viewModel: CastAddViewModel by viewModels()
     private var imageUri: Uri? = null
-    private var dialog: ProgressDialog? = null
+    private var progressDialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCastAddBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding.root)
 
-        dialog = ProgressDialog(activity)
-        dialog!!.setTitle("Please wait...")
-        dialog!!.setCanceledOnTouchOutside(false)
+        progressDialog = ProgressDialog(this).apply {
+            setTitle("Please wait...")
+            setCanceledOnTouchOutside(false)
+        }
 
-        binding!!.toolbar.nameSpace.setText(R.string.add_new_cast)
-        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
-        binding!!.image.setOnClickListener { VOID.CropImageSquare(activity) }
-        binding!!.toolbar.ok.setOnClickListener { validateData() }
+        binding.toolbar.nameSpace.setText(R.string.add_new_cast)
+        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.image.setOnClickListener { VOID.CropImageSquare(this) }
+        binding.toolbar.ok.setOnClickListener { validateData() }
+
+        observeState()
     }
 
-    private var name = DATA.EMPTY
-    private var aboutMy = DATA.EMPTY
     private fun validateData() {
-        //get data
-        name = binding!!.nameEt.text.toString().trim { it <= ' ' }
-        aboutMy = binding!!.aboutMyEt.text.toString().trim { it <= ' ' }
+        val name = binding.nameEt.text.toString().trim()
+        val aboutMy = binding.aboutMyEt.text.toString().trim()
+        val uri = imageUri
 
-        //validate data
         if (TextUtils.isEmpty(name)) {
-            Toast.makeText(activity, "Enter Name...", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Enter Name...", Toast.LENGTH_SHORT).show()
         } else if (TextUtils.isEmpty(aboutMy)) {
-            Toast.makeText(activity, "Enter About My...", Toast.LENGTH_SHORT).show()
-        } else if (imageUri == null) {
-            Toast.makeText(activity, "Pick Image...", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Enter About My...", Toast.LENGTH_SHORT).show()
+        } else if (uri == null) {
+            Toast.makeText(this, "Pick Image...", Toast.LENGTH_SHORT).show()
         } else {
-            uploadToStorage()
+            progressDialog?.setMessage("Uploading Cast...")
+            progressDialog?.show()
+            val extension = VOID.getFileExtension(uri, this)
+            viewModel.uploadCast(name, aboutMy, uri, extension) { success, message ->
+                progressDialog?.dismiss()
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                if (success) finish()
+            }
         }
     }
 
-    private fun uploadToStorage() {
-        dialog!!.setMessage("Uploading Cast...")
-        dialog!!.show()
-        val ref = FirebaseDatabase.getInstance().getReference(DATA.CAST)
-        val id = ref.push().key
-        val filePathAndName = "Images/Cast/$id"
-        val reference = FirebaseStorage.getInstance()
-            .getReference(filePathAndName + DATA.DOT + VOID.getFileExtension(imageUri, activity))
-        reference.putFile(imageUri!!)
-            .addOnSuccessListener { taskSnapshot: UploadTask.TaskSnapshot ->
-                val uriTask = taskSnapshot.storage.downloadUrl
-                while (!uriTask.isSuccessful);
-                val uploadedImageUrl = DATA.EMPTY + uriTask.result
-                uploadInfoDB(uploadedImageUrl, id, ref)
-            }.addOnFailureListener { e: Exception ->
-                dialog!!.dismiss()
-                Toast.makeText(
-                    activity, "Cast upload failed due to : " + e.message, Toast.LENGTH_SHORT
-                ).show()
+    private fun observeState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    if (state.isLoading) progressDialog?.show() else progressDialog?.dismiss()
+                }
             }
-    }
-
-    private fun uploadInfoDB(uploadedImageUrl: String, id: String?, ref: DatabaseReference) {
-        dialog!!.setMessage("Uploading Cast info...")
-        dialog!!.show()
-
-        //setup data to upload
-        val hashMap = HashMap<String?, Any?>()
-        hashMap[DATA.PUBLISHER] = DATA.EMPTY + DATA.FirebaseUserUid
-        hashMap[DATA.TIMESTAMP] = System.currentTimeMillis()
-        hashMap[DATA.ID] = id
-        hashMap[DATA.NAME] = DATA.EMPTY + name
-        hashMap[DATA.ABOUT_MY] = DATA.EMPTY + aboutMy
-        hashMap[DATA.IMAGE] = uploadedImageUrl
-        hashMap[DATA.INTERESTED_COUNT] = DATA.ZERO
-        hashMap[DATA.MOVIES_COUNT] = DATA.ZERO
-        assert(id != null)
-        ref.child(id!!).setValue(hashMap).addOnSuccessListener {
-            dialog!!.dismiss()
-            Toast.makeText(activity, "Successfully uploaded...", Toast.LENGTH_SHORT).show()
-        }.addOnFailureListener { e: Exception ->
-            dialog!!.dismiss()
-            Toast.makeText(
-                activity, "Failure to upload to db due to : " + e.message, Toast.LENGTH_SHORT
-            ).show()
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            val uri = CropImage.getPickImageResultUri(activity, data)
-            if (CropImage.isReadExternalStoragePermissionsRequired(activity, uri)) {
+        if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == RESULT_OK) {
+            val uri = CropImage.getPickImageResultUri(this, data)
+            if (CropImage.isReadExternalStoragePermissionsRequired(this, uri)) {
                 imageUri = uri
                 requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
             } else {
-                VOID.CropImageSquare(activity)
+                VOID.CropImageSquare(this)
             }
         }
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             val result = CropImage.getActivityResult(data)
-            if (resultCode == Activity.RESULT_OK) {
+            if (resultCode == RESULT_OK) {
                 imageUri = result.uri
-                binding!!.image.setImageURI(imageUri)
+                binding.image.setImageURI(imageUri)
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                val error = result.error
-                Toast.makeText(activity, "Error! $error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Error! ${result.error}", Toast.LENGTH_SHORT).show()
             }
         }
     }

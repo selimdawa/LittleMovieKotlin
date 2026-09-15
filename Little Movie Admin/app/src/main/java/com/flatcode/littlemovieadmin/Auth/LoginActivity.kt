@@ -1,74 +1,74 @@
 package com.flatcode.littlemovieadmin.Auth
 
 import android.app.ProgressDialog
-import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Patterns
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.Unit.CLASS
-import com.flatcode.littlemovieadmin.Unit.DATA
 import com.flatcode.littlemovieadmin.Unit.VOID
+import com.flatcode.littlemovieadmin.ViewModel.LoginViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityLoginBinding
-import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
-    private var binding: ActivityLoginBinding? = null
-    var context: Context = this@LoginActivity
-    private var auth: FirebaseAuth? = null
-    private var dialog: ProgressDialog? = null
+    private lateinit var binding: ActivityLoginBinding
+    private val viewModel: LoginViewModel by viewModels()
+    private var progressDialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding.root)
 
-        auth = FirebaseAuth.getInstance()
-        dialog = ProgressDialog(this)
-        dialog!!.setTitle("Please wait...")
-        dialog!!.setCanceledOnTouchOutside(false)
+        progressDialog = ProgressDialog(this).apply {
+            setTitle("Please wait...")
+            setCanceledOnTouchOutside(false)
+        }
 
-        binding!!.forget.setOnClickListener { VOID.Intent1(context, CLASS.FORGET_PASSWORD) }
-        binding!!.loginBtn.setOnClickListener { validateDate() }
+        binding.forget.setOnClickListener { VOID.Intent1(this, CLASS.FORGET_PASSWORD) }
+        binding.loginBtn.setOnClickListener { validateDate() }
+
+        observeState()
     }
 
-    private var email = ""
-    private var password = ""
     private fun validateDate() {
+        val email = binding.emailEt.text.toString().trim()
+        val password = binding.passwordEt.text.toString().trim()
 
-        //get data
-        email = binding!!.emailEt.text.toString().trim { it <= ' ' }
-        password = binding!!.passwordEt.text.toString().trim { it <= ' ' }
-
-        //validate data
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(context, "Invalid email pattern...!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Invalid email pattern...!", Toast.LENGTH_SHORT).show()
         } else if (TextUtils.isEmpty(password)) {
-            Toast.makeText(context, "Enter password...!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Enter password...!", Toast.LENGTH_SHORT).show()
         } else {
-            loginUser()
+            progressDialog?.setMessage("Logging In...")
+            progressDialog?.show()
+            viewModel.login(email, password) { success, message ->
+                progressDialog?.dismiss()
+                if (success) {
+                    VOID.IntentClear(this, CLASS.MAIN)
+                } else {
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
-    private fun loginUser() {
-        dialog!!.setMessage("Logging In...")
-        dialog!!.show()
-        try {
-            auth!!.signInWithEmailAndPassword(email, password).addOnCanceledListener {
-                dialog!!.dismiss()
-                Toast.makeText(context, "Error!", Toast.LENGTH_SHORT).show()
-            }.addOnSuccessListener {
-                VOID.IntentClear(context, CLASS.MAIN)
-            }.addOnFailureListener { e: Exception ->
-                dialog!!.dismiss()
-                Toast.makeText(context, DATA.EMPTY + e.message, Toast.LENGTH_SHORT).show()
-            }.addOnCompleteListener { dialog!!.show() }
-        } catch (e: Exception) {
-            dialog!!.dismiss()
-            Toast.makeText(context, DATA.EMPTY + e.message, Toast.LENGTH_SHORT).show()
+    private fun observeState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    if (state.isLoading) progressDialog?.show() else progressDialog?.dismiss()
+                }
+            }
         }
     }
 }

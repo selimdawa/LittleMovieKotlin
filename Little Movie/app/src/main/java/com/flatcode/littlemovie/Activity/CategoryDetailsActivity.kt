@@ -5,106 +5,105 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.Adapter.MovieAdapter
 import com.flatcode.littlemovie.Model.Movie
 import com.flatcode.littlemovie.Unit.DATA
 import com.flatcode.littlemovie.Unit.VOID
+import com.flatcode.littlemovie.ViewModel.MovieListViewModel
 import com.flatcode.littlemovie.databinding.ActivityCategoryDetailsBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
-import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.text.MessageFormat
 
 class CategoryDetailsActivity : AppCompatActivity() {
 
     private var binding: ActivityCategoryDetailsBinding? = null
-    var activity: Activity = this@CategoryDetailsActivity
-    var list: ArrayList<Movie?>? = null
-    var adapter: MovieAdapter? = null
-    var categoryId: String? = null
-    var categoryName: String? = null
-    var type: String? = null
+    private val activity: Activity = this@CategoryDetailsActivity
+    private val viewModel: MovieListViewModel by viewModels()
+    
+    private val list = ArrayList<Movie?>()
+    private lateinit var adapter: MovieAdapter
+    
+    private var categoryId: String? = null
+    private var categoryName: String? = null
+    private var type: String = DATA.TIMESTAMP
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCategoryDetailsBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding!!.root)
 
         categoryId = intent.getStringExtra(DATA.CATEGORY_ID)
         categoryName = intent.getStringExtra(DATA.CATEGORY_NAME)
 
+        setupUI()
+        setupAdapter()
+        observeViewModel()
+    }
+
+    private fun setupUI() {
         binding!!.toolbar.nameSpace.text = categoryName
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         binding!!.toolbar.close.setOnClickListener { onBackPressed() }
-        type = DATA.TIMESTAMP
 
         VOID.isInterested(binding!!.switchBar.interest, categoryId, DATA.CATEGORIES)
         binding!!.switchBar.interest.setOnClickListener {
             VOID.checkInterested(binding!!.switchBar.interest, DATA.CATEGORIES, categoryId)
         }
+        
         binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
             binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
             DATA.searchStatus = true
         }
+        
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 try {
-                    adapter!!.filter.filter(s)
+                    adapter.filter.filter(s)
                 } catch (e: Exception) {
-                    //None
+                    Timber.e(e, "Error filtering movies")
                 }
             }
-
             override fun afterTextChanged(s: Editable) {}
         })
 
-        //binding.recyclerView.setHasFixedSize(true);
-        list = ArrayList()
-        adapter = MovieAdapter(activity, list!!, true)
-        binding!!.recyclerView.adapter = adapter
-
         binding!!.switchBar.all.setOnClickListener {
             type = DATA.TIMESTAMP
-            getData(type)
+            loadData()
         }
         binding!!.switchBar.mostViews.setOnClickListener {
             type = DATA.VIEWS_COUNT
-            getData(type)
+            loadData()
         }
         binding!!.switchBar.mostLoves.setOnClickListener {
             type = DATA.LOVES_COUNT
-            getData(type)
+            loadData()
         }
         binding!!.switchBar.name.setOnClickListener {
             type = DATA.NAME
-            getData(type)
+            loadData()
         }
     }
 
-    private fun getData(orderBy: String?) {
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.MOVIES)
-        ref.orderByChild(orderBy!!).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                list!!.clear()
-                var i = 0
-                for (data in dataSnapshot.children) {
-                    val item = data.getValue(Movie::class.java)!!
-                    if (item.categoryId == categoryId) {
-                        list!!.add(item)
-                        i++
-                    }
-                }
-                list!!.reverse()
-                binding!!.toolbar.number.text = MessageFormat.format("( {0} )", i)
-                adapter!!.notifyDataSetChanged()
+    private fun setupAdapter() {
+        adapter = MovieAdapter(activity, list, true)
+        binding!!.recyclerView.adapter = adapter
+    }
+
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            viewModel.movies.collect { movies ->
+                list.clear()
+                list.addAll(movies)
+                adapter.notifyDataSetChanged()
+                
                 binding!!.progress.visibility = View.GONE
-                if (list!!.isNotEmpty()) {
+                if (list.isNotEmpty()) {
                     binding!!.recyclerView.visibility = View.VISIBLE
                     binding!!.emptyText.visibility = View.GONE
                 } else {
@@ -112,9 +111,23 @@ class CategoryDetailsActivity : AppCompatActivity() {
                     binding!!.emptyText.visibility = View.VISIBLE
                 }
             }
+        }
 
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
+        lifecycleScope.launch {
+            viewModel.moviesCount.collect { count ->
+                binding!!.toolbar.number.text = MessageFormat.format("( {0} )", count)
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.isLoading.collect { isLoading ->
+                binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+            }
+        }
+    }
+
+    private fun loadData() {
+        categoryId?.let { viewModel.loadMoviesByCategory(it, type) }
     }
 
     override fun onBackPressed() {
@@ -124,18 +137,13 @@ class CategoryDetailsActivity : AppCompatActivity() {
             DATA.searchStatus = false
             binding!!.toolbar.textSearch.setText(DATA.EMPTY)
         } else if (DATA.isChange) {
-            onResume()
+            loadData()
             DATA.isChange = false
         } else super.onBackPressed()
     }
 
-    override fun onRestart() {
-        getData(type)
-        super.onRestart()
-    }
-
     override fun onResume() {
-        getData(type)
         super.onResume()
+        loadData()
     }
 }

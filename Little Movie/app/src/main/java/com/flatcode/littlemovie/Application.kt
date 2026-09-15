@@ -3,6 +3,7 @@ package com.flatcode.littlemovie
 import android.app.Application
 import android.text.format.DateFormat
 import io.selimdawa.multicolors.MultiColorManager
+import timber.log.Timber
 import java.util.Calendar
 import java.util.Locale
 
@@ -11,6 +12,7 @@ class Application : Application() {
     override fun onCreate() {
         super.onCreate()
         MultiColorManager.init(this)
+        Timber.plant(Timber.DebugTree())
     }
 
     companion object {
