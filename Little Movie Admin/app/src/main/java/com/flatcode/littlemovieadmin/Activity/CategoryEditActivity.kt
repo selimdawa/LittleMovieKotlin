@@ -23,7 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class CategoryEditActivity : AppCompatActivity() {
+class CategoryEditActivity : BaseActivity() {
 
     private lateinit var binding: ActivityCategoryAddBinding
     private val viewModel: CategoryEditViewModel by viewModels()

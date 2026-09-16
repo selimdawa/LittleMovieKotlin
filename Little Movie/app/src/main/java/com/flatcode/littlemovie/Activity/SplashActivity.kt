@@ -2,6 +2,7 @@ package com.flatcode.littlemovie.Activity
 
 import android.content.Context
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope

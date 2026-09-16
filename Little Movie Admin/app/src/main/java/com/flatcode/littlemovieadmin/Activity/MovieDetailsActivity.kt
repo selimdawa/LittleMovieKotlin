@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
-class MovieDetailsActivity : AppCompatActivity() {
+class MovieDetailsActivity : BaseActivity() {
 
     private lateinit var binding: ActivityMovieDetailsBinding
     private val viewModel: MovieDetailsViewModel by viewModels()

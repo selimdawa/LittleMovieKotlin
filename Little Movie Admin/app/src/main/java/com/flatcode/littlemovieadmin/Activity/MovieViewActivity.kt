@@ -17,7 +17,7 @@ import com.google.android.exoplayer2.MediaItem
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MovieViewActivity : AppCompatActivity() {
+class MovieViewActivity : BaseActivity() {
 
     private lateinit var binding: ActivityMovieViewBinding
     private var exoPlayer: ExoPlayer? = null

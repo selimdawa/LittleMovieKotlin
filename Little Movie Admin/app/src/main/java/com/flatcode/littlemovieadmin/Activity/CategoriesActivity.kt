@@ -21,7 +21,7 @@ import timber.log.Timber
 import java.text.MessageFormat
 
 @AndroidEntryPoint
-class CategoriesActivity : AppCompatActivity() {
+class CategoriesActivity : BaseActivity() {
 
     private lateinit var binding: ActivityCategoriesBinding
     private val viewModel: CategoriesViewModel by viewModels()

@@ -6,15 +6,19 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.Adapter.CastMovieAdapter
 import com.flatcode.littlemovie.Adapter.CommentAdapter
 import com.flatcode.littlemovie.Model.Cast
 import com.flatcode.littlemovie.Model.Comment
-import com.flatcode.littlemovie.MyApplication
+import com.flatcode.littlemovie.Application
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.Unit.CLASS
 import com.flatcode.littlemovie.Unit.DATA
@@ -44,9 +48,21 @@ class MovieDetailsActivity : AppCompatActivity() {
     private lateinit var adapterCast: CastMovieAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityMovieDetailsBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding!!.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(
+                left = systemBars.left,
+                right = systemBars.right,
+                bottom = systemBars.bottom
+            )
+            binding!!.toolbar.root.updatePadding(top = systemBars.top)
+            insets
+        }
 
         movieId = intent.getStringExtra(DATA.MOVIE_ID)
         movieLink = intent.getStringExtra(DATA.MOVIE_LINK)
@@ -93,7 +109,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.movie.collect { movie ->
                 movie?.let {
-                    val date: String = MyApplication.formatTimestamp(it.timestamp)
+                    val date: String = Application.formatTimestamp(it.timestamp)
                     VOID.GlideImage(false, activity, it.image, binding!!.image)
                     VOID.GlideImage(false, activity, it.image, binding!!.cover)
                     binding!!.title.text = it.name

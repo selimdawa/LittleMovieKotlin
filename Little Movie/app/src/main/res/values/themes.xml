@@ -1,6 +1,10 @@
 <resources>
     <!-- Base application theme. -->
 
+    <style name="Theme.MC.S1" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+    </style>
+
     <!--style for ripple library-->
     <style name="RippleStyleWhite">
         <item name="mrl_rippleOverlay">true</item>

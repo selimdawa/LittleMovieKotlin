@@ -23,7 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class ProfileEditActivity : AppCompatActivity() {
+class ProfileEditActivity : BaseActivity() {
 
     private lateinit var binding: ActivityProfileEditBinding
     private val viewModel: ProfileEditViewModel by viewModels()

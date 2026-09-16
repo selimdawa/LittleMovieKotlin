@@ -9,8 +9,12 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.Unit.DATA
@@ -33,9 +37,21 @@ class ProfileEditActivity : AppCompatActivity() {
     private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityProfileEditBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding!!.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(
+                left = systemBars.left,
+                right = systemBars.right,
+                bottom = systemBars.bottom
+            )
+            binding!!.toolbar.root.updatePadding(top = systemBars.top)
+            insets
+        }
 
         setupUI()
         observeViewModel()

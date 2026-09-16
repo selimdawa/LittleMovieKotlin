@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 import java.text.MessageFormat
 
 @AndroidEntryPoint
-class SliderShowActivity : AppCompatActivity() {
+class SliderShowActivity : BaseActivity() {
 
     private lateinit var binding: ActivitySliderShowBinding
     private val viewModel: SliderShowViewModel by viewModels()

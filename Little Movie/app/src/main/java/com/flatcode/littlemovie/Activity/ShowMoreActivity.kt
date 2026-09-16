@@ -5,8 +5,12 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.Adapter.MovieAdapter
 import com.flatcode.littlemovie.Model.Movie
@@ -33,9 +37,17 @@ class ShowMoreActivity : AppCompatActivity() {
     private var isReverse: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityShowMoreBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding!!.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(left = systemBars.left, right = systemBars.right, bottom = systemBars.bottom)
+            binding!!.toolbar.root.updatePadding(top = systemBars.top)
+            insets
+        }
 
         type = intent.getStringExtra(DATA.SHOW_MORE_TYPE)
         name = intent.getStringExtra(DATA.SHOW_MORE_NAME)

@@ -5,8 +5,12 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -32,9 +36,21 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding!!.container) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(
+                left = systemBars.left,
+                right = systemBars.right
+            )
+            binding!!.toolbar.root.updatePadding(top = systemBars.top)
+            binding!!.bottomNavigation.updatePadding(bottom = systemBars.bottom)
+            insets
+        }
 
         bottomNavigation = binding!!.bottomNavigation
 

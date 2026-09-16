@@ -21,7 +21,7 @@ import timber.log.Timber
 import java.text.MessageFormat
 
 @AndroidEntryPoint
-class EditorsChoiceAddActivity : AppCompatActivity() {
+class EditorsChoiceAddActivity : BaseActivity() {
 
     private lateinit var binding: ActivityEditorsChoiceAddBinding
     private val viewModel: EditorsChoiceAddViewModel by viewModels()

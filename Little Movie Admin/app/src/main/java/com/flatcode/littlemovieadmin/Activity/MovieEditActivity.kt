@@ -28,7 +28,7 @@ import timber.log.Timber
 import java.text.MessageFormat
 
 @AndroidEntryPoint
-class MovieEditActivity : AppCompatActivity() {
+class MovieEditActivity : BaseActivity() {
 
     private lateinit var binding: ActivityMovieEditBinding
     private val viewModel: MovieEditViewModel by viewModels()

@@ -15,7 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class PrivacyPolicyActivity : AppCompatActivity() {
+class PrivacyPolicyActivity : BaseActivity() {
 
     private lateinit var binding: ActivityPrivacyPolicyBinding
     private val viewModel: PrivacyPolicyViewModel by viewModels()

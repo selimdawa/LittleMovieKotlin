@@ -18,7 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class CastMovieAddActivity : AppCompatActivity() {
+class CastMovieAddActivity : BaseActivity() {
 
     private lateinit var binding: ActivityCastMovieBinding
     private val viewModel: CastMovieAddViewModel by viewModels()

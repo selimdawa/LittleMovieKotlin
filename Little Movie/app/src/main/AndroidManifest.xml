@@ -40,13 +40,16 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Auth.ForgetPasswordActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Auth.LoginActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Auth.RegisterActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Activity.PrivacyPolicyActivity"
             android:screenOrientation="portrait" />
@@ -55,7 +58,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activity.ProfileEditActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Activity.FavoritesActivity"
             android:screenOrientation="portrait" />

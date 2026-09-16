@@ -3,6 +3,10 @@ package com.flatcode.littlemovie.Activity
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import androidx.activity.enableEdgeToEdge
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -24,9 +28,21 @@ class ProfileActivity : AppCompatActivity() {
     private var profileId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding!!.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(
+                left = systemBars.left,
+                top = systemBars.top,
+                right = systemBars.right,
+                bottom = systemBars.bottom
+            )
+            insets
+        }
 
         profileId = intent.getStringExtra(DATA.PROFILE_ID)
 

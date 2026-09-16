@@ -22,7 +22,7 @@ import timber.log.Timber
 import java.text.MessageFormat
 
 @AndroidEntryPoint
-class CastDetailsActivity : AppCompatActivity() {
+class CastDetailsActivity : BaseActivity() {
 
     private lateinit var binding: ActivityCastDetailsBinding
     private val viewModel: CastDetailsViewModel by viewModels()

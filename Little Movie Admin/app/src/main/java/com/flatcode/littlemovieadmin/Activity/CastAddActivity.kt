@@ -23,7 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class CastAddActivity : AppCompatActivity() {
+class CastAddActivity : BaseActivity() {
 
     private lateinit var binding: ActivityCastAddBinding
     private val viewModel: CastAddViewModel by viewModels()

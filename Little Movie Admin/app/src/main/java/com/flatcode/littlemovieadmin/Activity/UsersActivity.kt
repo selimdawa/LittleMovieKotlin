@@ -21,7 +21,7 @@ import timber.log.Timber
 import java.text.MessageFormat
 
 @AndroidEntryPoint
-class UsersActivity : AppCompatActivity() {
+class UsersActivity : BaseActivity() {
 
     private lateinit var binding: ActivityUsersBinding
     private val viewModel: UsersViewModel by viewModels()

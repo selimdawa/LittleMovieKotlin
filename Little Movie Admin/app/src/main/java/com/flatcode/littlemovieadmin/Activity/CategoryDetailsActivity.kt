@@ -20,7 +20,7 @@ import timber.log.Timber
 import java.text.MessageFormat
 
 @AndroidEntryPoint
-class CategoryDetailsActivity : AppCompatActivity() {
+class CategoryDetailsActivity : BaseActivity() {
 
     private lateinit var binding: ActivityCategoryDetailsBinding
     private val viewModel: CategoryDetailsViewModel by viewModels()

@@ -6,12 +6,13 @@ import android.os.Bundle
 import android.util.Patterns
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.flatcode.littlemovieadmin.Activity.BaseActivity
 import com.flatcode.littlemovieadmin.Unit.VOID
 import com.flatcode.littlemovieadmin.databinding.ActivityForgetPasswordBinding
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 
-class ForgetPasswordActivity : AppCompatActivity() {
+class ForgetPasswordActivity : BaseActivity() {
 
     private var binding: ActivityForgetPasswordBinding? = null
     private val context: Context = this@ForgetPasswordActivity

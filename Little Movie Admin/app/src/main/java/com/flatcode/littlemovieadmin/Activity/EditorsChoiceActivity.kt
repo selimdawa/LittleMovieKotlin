@@ -15,7 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class EditorsChoiceActivity : AppCompatActivity() {
+class EditorsChoiceActivity : BaseActivity() {
 
     private lateinit var binding: ActivityEditorsChoiceBinding
     private val viewModel: EditorsChoiceViewModel by viewModels()

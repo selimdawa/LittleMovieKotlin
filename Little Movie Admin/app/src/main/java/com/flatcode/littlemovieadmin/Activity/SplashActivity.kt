@@ -11,7 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SplashActivity : AppCompatActivity() {
+class SplashActivity : BaseActivity() {
 
     private lateinit var binding: ActivitySplashBinding
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()

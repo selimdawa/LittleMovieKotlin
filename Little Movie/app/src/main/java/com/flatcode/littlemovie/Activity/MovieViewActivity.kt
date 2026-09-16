@@ -7,7 +7,11 @@ import android.os.Bundle
 import android.view.Window
 import android.view.WindowManager
 import android.widget.ImageView
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.Unit.CLASS
 import com.flatcode.littlemovie.Unit.DATA
@@ -40,11 +44,18 @@ class MovieViewActivity : AppCompatActivity() {
     var id: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         setFullScreen()
         super.onCreate(savedInstanceState)
         binding = ActivityMovieViewBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(left = systemBars.left, right = systemBars.right, bottom = systemBars.bottom)
+            insets
+        }
 
         exo_floating_widget = findViewById(R.id.exo_floating_widget)
         val intent = intent

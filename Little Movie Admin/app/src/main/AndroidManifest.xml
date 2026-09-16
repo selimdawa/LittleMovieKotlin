@@ -26,11 +26,27 @@
             android:name=".Activity.SplashActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Auth.ForgetPasswordActivity"
+            android:name=".Activity.CastActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Auth.LoginActivity"
+            android:name=".Activity.CastAddActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".Activity.EditorsChoiceActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.PrivacyPolicyEditActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".Auth.ForgetPasswordActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".Auth.LoginActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Activity.MainActivity"
             android:exported="true"
@@ -46,7 +62,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activity.ProfileEditActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Activity.SliderShowActivity"
             android:screenOrientation="portrait" />
@@ -61,10 +78,12 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activity.CategoryAddActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Activity.CategoryEditActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Activity.CastDetailsActivity"
             android:screenOrientation="portrait" />
@@ -73,10 +92,12 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activity.CastEditActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Activity.MovieEditActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Activity.MoviesActivity"
             android:screenOrientation="portrait" />
@@ -85,13 +106,15 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activity.MovieAddActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Activity.MovieDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activity.EditorsChoiceAddActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Activity.MovieViewActivity"
             android:screenOrientation="portrait" />

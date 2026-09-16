@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import java.text.MessageFormat
 
 @AndroidEntryPoint
-class ProfileActivity : AppCompatActivity() {
+class ProfileActivity : BaseActivity() {
 
     private lateinit var binding: ActivityProfileBinding
     private val viewModel: ProfileViewModel by viewModels()
