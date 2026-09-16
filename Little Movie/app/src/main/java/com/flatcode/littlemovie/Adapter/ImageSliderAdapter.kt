@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import com.bumptech.glide.Glide
+import coil3.load
 import com.flatcode.littlemovie.Adapter.ImageSliderAdapter.SliderViewHolder
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.Unit.DATA
@@ -30,136 +30,11 @@ class ImageSliderAdapter(var context: Context?, var setTotalCount: Int) :
         FirebaseDatabase.getInstance().getReference(DATA.SLIDER_SHOW)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    when (position) {
-                        0 -> {
-                            ImageLink = Objects.requireNonNull(snapshot.child("1").value).toString()
-                            Glide.with(viewHolder.itemView).load(ImageLink)
-                                .into(viewHolder.ImageSlider)
-                        }
-
-                        1 -> {
-                            ImageLink = Objects.requireNonNull(snapshot.child("2").value).toString()
-                            Glide.with(viewHolder.itemView).load(ImageLink)
-                                .into(viewHolder.ImageSlider)
-                        }
-
-                        2 -> {
-                            ImageLink = Objects.requireNonNull(snapshot.child("3").value).toString()
-                            Glide.with(viewHolder.itemView).load(ImageLink)
-                                .into(viewHolder.ImageSlider)
-                        }
-
-                        3 -> {
-                            ImageLink = Objects.requireNonNull(snapshot.child("4").value).toString()
-                            Glide.with(viewHolder.itemView).load(ImageLink)
-                                .into(viewHolder.ImageSlider)
-                        }
-
-                        4 -> {
-                            ImageLink = Objects.requireNonNull(snapshot.child("5").value).toString()
-                            Glide.with(viewHolder.itemView).load(ImageLink)
-                                .into(viewHolder.ImageSlider)
-                        }
-
-                        5 -> {
-                            ImageLink = Objects.requireNonNull(snapshot.child("6").value).toString()
-                            Glide.with(viewHolder.itemView).load(ImageLink)
-                                .into(viewHolder.ImageSlider)
-                        }
-
-                        6 -> {
-                            ImageLink = Objects.requireNonNull(snapshot.child("7").value).toString()
-                            Glide.with(viewHolder.itemView).load(ImageLink)
-                                .into(viewHolder.ImageSlider)
-                        }
-
-                        7 -> {
-                            ImageLink = Objects.requireNonNull(snapshot.child("8").value).toString()
-                            Glide.with(viewHolder.itemView).load(ImageLink)
-                                .into(viewHolder.ImageSlider)
-                        }
-
-                        8 -> {
-                            ImageLink = Objects.requireNonNull(snapshot.child("9").value).toString()
-                            Glide.with(viewHolder.itemView).load(ImageLink)
-                                .into(viewHolder.ImageSlider)
-                        }
-
-                        9 -> {
-                            ImageLink =
-                                Objects.requireNonNull(snapshot.child("10").value).toString()
-                            Glide.with(viewHolder.itemView).load(ImageLink)
-                                .into(viewHolder.ImageSlider)
-                        }
-
-                        10 -> {
-                            ImageLink =
-                                Objects.requireNonNull(snapshot.child("11").value).toString()
-                            Glide.with(viewHolder.itemView).load(ImageLink)
-                                .into(viewHolder.ImageSlider)
-                        }
-
-                        11 -> {
-                            ImageLink =
-                                Objects.requireNonNull(snapshot.child("12").value).toString()
-                            Glide.with(viewHolder.itemView).load(ImageLink)
-                                .into(viewHolder.ImageSlider)
-                        }
-
-                        12 -> {
-                            ImageLink =
-                                Objects.requireNonNull(snapshot.child("13").value).toString()
-                            Glide.with(viewHolder.itemView).load(ImageLink)
-                                .into(viewHolder.ImageSlider)
-                        }
-
-                        13 -> {
-                            ImageLink =
-                                Objects.requireNonNull(snapshot.child("14").value).toString()
-                            Glide.with(viewHolder.itemView).load(ImageLink)
-                                .into(viewHolder.ImageSlider)
-                        }
-
-                        14 -> {
-                            ImageLink =
-                                Objects.requireNonNull(snapshot.child("15").value).toString()
-                            Glide.with(viewHolder.itemView).load(ImageLink)
-                                .into(viewHolder.ImageSlider)
-                        }
-
-                        15 -> {
-                            ImageLink =
-                                Objects.requireNonNull(snapshot.child("16").value).toString()
-                            Glide.with(viewHolder.itemView).load(ImageLink)
-                                .into(viewHolder.ImageSlider)
-                        }
-
-                        16 -> {
-                            ImageLink =
-                                Objects.requireNonNull(snapshot.child("17").value).toString()
-                            Glide.with(viewHolder.itemView).load(ImageLink)
-                                .into(viewHolder.ImageSlider)
-                        }
-
-                        17 -> {
-                            ImageLink =
-                                Objects.requireNonNull(snapshot.child("18").value).toString()
-                            Glide.with(viewHolder.itemView).load(ImageLink)
-                                .into(viewHolder.ImageSlider)
-                        }
-
-                        18 -> {
-                            ImageLink =
-                                Objects.requireNonNull(snapshot.child("19").value).toString()
-                            Glide.with(viewHolder.itemView).load(ImageLink)
-                                .into(viewHolder.ImageSlider)
-                        }
-
-                        19 -> {
-                            ImageLink =
-                                Objects.requireNonNull(snapshot.child("20").value).toString()
-                            Glide.with(viewHolder.itemView).load(ImageLink)
-                                .into(viewHolder.ImageSlider)
+                    val key = (position + 1).toString()
+                    if (snapshot.hasChild(key)) {
+                        ImageLink = snapshot.child(key).value?.toString()
+                        ImageLink?.let {
+                            viewHolder.ImageSlider.load(it)
                         }
                     }
                 }
