@@ -11,7 +11,7 @@
         app:cardCornerRadius="6dp"
         app:strokeWidth="0dp">
 
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/white"
@@ -45,7 +45,7 @@
                 android:textSize="21sp"
                 android:textStyle="bold" />
 
-        </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.card.MaterialCardView>
 
