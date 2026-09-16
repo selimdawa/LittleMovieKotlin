@@ -37,6 +37,7 @@
                             android:id="@+id/image"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
+                            android:contentDescription="@null"
                             android:scaleType="centerCrop"
                             android:src="@color/image_profile"
                             app:layout_constraintDimensionRatio="1:1.4"
@@ -50,6 +51,7 @@
                         android:layout_height="25sp"
                         android:layout_gravity="top|end"
                         android:background="@drawable/button_more"
+                        android:contentDescription="@null"
                         android:gravity="center"
                         android:padding="2sp"
                         android:src="@drawable/ic_star_unselected"
@@ -92,58 +94,31 @@
                         android:layout_height="wrap_content"
                         android:padding="5sp">
 
-                        <LinearLayout
+                        <TextView
+                            android:id="@+id/nrViews"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_gravity="center"
                             android:layout_weight="1"
-                            android:gravity="center">
+                            android:drawablePadding="10sp"
+                            android:drawableStart="@drawable/ic_view"
+                            android:gravity="center"
+                            android:paddingHorizontal="10sp"
+                            android:textColor="@color/white"
+                            android:textSize="14sp"
+                            android:textStyle="normal" />
 
-                            <ImageView
-                                android:layout_width="20sp"
-                                android:layout_height="20sp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_view" />
-
-                            <TextView
-                                android:id="@+id/nrViews"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:gravity="center"
-                                android:paddingHorizontal="10sp"
-                                android:textColor="@color/white"
-                                android:textSize="14sp"
-                                android:textStyle="normal" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
+                        <TextView
+                            android:id="@+id/nrLoves"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_gravity="center"
                             android:layout_weight="1"
-                            android:gravity="center">
-
-                            <ImageView
-                                android:id="@+id/love"
-                                android:layout_width="20sp"
-                                android:layout_height="20sp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_heart_unselected" />
-
-                            <TextView
-                                android:id="@+id/nrLoves"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:gravity="center"
-                                android:paddingHorizontal="10sp"
-                                android:textColor="@color/white"
-                                android:textSize="14sp"
-                                android:textStyle="normal" />
-
-                        </LinearLayout>
+                            android:drawablePadding="10sp"
+                            android:drawableStart="@drawable/ic_heart_unselected"
+                            android:gravity="center"
+                            android:paddingHorizontal="10sp"
+                            android:textColor="@color/white"
+                            android:textSize="14sp"
+                            android:textStyle="normal" />
 
                     </LinearLayout>
 

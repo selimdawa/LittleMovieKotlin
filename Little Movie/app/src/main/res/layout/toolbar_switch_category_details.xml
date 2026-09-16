@@ -36,6 +36,7 @@
                         android:id="@+id/interest"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:contentDescription="@null"
                         android:paddingHorizontal="20sp"
                         android:paddingVertical="10sp"
                         android:src="@drawable/ic_star_unselected" />

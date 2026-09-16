@@ -53,6 +53,7 @@
                                 android:id="@+id/imageBlur"
                                 android:layout_width="match_parent"
                                 android:layout_height="0sp"
+                                android:contentDescription="@null"
                                 android:scaleType="centerCrop"
                                 android:src="@color/image_profile"
                                 app:layout_constraintDimensionRatio="2:1"
@@ -62,51 +63,49 @@
                                 android:id="@+id/image"
                                 android:layout_width="match_parent"
                                 android:layout_height="0sp"
+                                android:contentDescription="@null"
                                 app:layout_constraintDimensionRatio="2:1"
                                 tools:ignore="MissingConstraints" />
 
                             <ImageView
                                 android:layout_width="match_parent"
                                 android:layout_height="0sp"
+                                android:contentDescription="@null"
                                 android:scaleType="centerCrop"
                                 android:src="@color/overlay_dark_20"
                                 app:layout_constraintDimensionRatio="2:1"
                                 tools:ignore="MissingConstraints" />
 
-                            <LinearLayout
-                                android:layout_width="match_parent"
+                            <TextView
+                                android:id="@+id/name"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="center"
                                 android:layout_margin="20sp"
                                 android:gravity="center"
-                                android:orientation="horizontal"
-                                app:layout_constraintBottom_toBottomOf="@+id/imageBlur">
+                                android:textColor="@color/white"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                app:layout_constraintBottom_toBottomOf="@+id/imageBlur"
+                                app:layout_constraintEnd_toStartOf="@+id/go"
+                                app:layout_constraintHorizontal_chainStyle="packed"
+                                app:layout_constraintStart_toStartOf="parent" />
 
-                                <TextView
-                                    android:id="@+id/name"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:layout_marginHorizontal="10sp"
-                                    android:gravity="center"
-                                    android:textColor="@color/white"
-                                    android:textSize="18sp"
-                                    android:textStyle="bold" />
-
-                                <ImageView
-                                    android:id="@+id/go"
-                                    android:layout_width="25sp"
-                                    android:layout_height="25sp"
-                                    android:layout_gravity="top"
-                                    android:background="@drawable/button2"
-                                    android:backgroundTint="@color/white"
-                                    android:gravity="center"
-                                    android:padding="2sp"
-                                    android:rotation="180"
-                                    android:src="@drawable/ic_back_white"
-                                    app:tint="@color/dark" />
-
-                            </LinearLayout>
+                            <ImageView
+                                android:id="@+id/go"
+                                android:layout_width="25sp"
+                                android:layout_height="25sp"
+                                android:background="@drawable/button2"
+                                android:backgroundTint="@color/white"
+                                android:contentDescription="@null"
+                                android:gravity="center"
+                                android:padding="2sp"
+                                android:rotation="180"
+                                android:src="@drawable/ic_back_white"
+                                app:layout_constraintBottom_toBottomOf="@+id/name"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@+id/name"
+                                app:layout_constraintTop_toTopOf="@+id/name"
+                                app:tint="@color/dark" />
 
                             <ImageView
                                 android:id="@+id/add"
@@ -114,6 +113,7 @@
                                 android:layout_height="25sp"
                                 android:layout_gravity="top"
                                 android:background="@drawable/button_more"
+                                android:contentDescription="@null"
                                 android:gravity="center"
                                 android:padding="2sp"
                                 android:src="@drawable/ic_star_unselected"

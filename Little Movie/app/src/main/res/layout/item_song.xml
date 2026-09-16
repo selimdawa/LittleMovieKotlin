@@ -43,6 +43,7 @@
                             android:layout_width="25sp"
                             android:layout_height="25sp"
                             android:layout_marginHorizontal="5dp"
+                            android:contentDescription="@null"
                             android:src="@drawable/ic_heart_unselected" />
 
                         <TextView
@@ -62,6 +63,7 @@
                             android:layout_width="25sp"
                             android:layout_height="25sp"
                             android:layout_marginHorizontal="5dp"
+                            android:contentDescription="@null"
                             android:src="@drawable/ic_star_unselected" />
 
                     </LinearLayout>
@@ -79,6 +81,7 @@
                             android:id="@+id/wave"
                             android:layout_width="50sp"
                             android:layout_height="50sp"
+                            android:contentDescription="@null"
                             android:src="@drawable/ic_music_name" />
 
                     </LinearLayout>

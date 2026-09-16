@@ -50,6 +50,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="0dp"
                                     android:src="@color/white"
+                                    android:contentDescription="@null"
                                     app:layout_constraintDimensionRatio="1:1"
                                     tools:ignore="MissingConstraints" />
 
@@ -80,6 +81,7 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="0sp"
                                         android:src="@drawable/basic_music"
+                                        android:contentDescription="@null"
                                         app:layout_constraintBottom_toBottomOf="parent"
                                         app:layout_constraintDimensionRatio="1:1"
                                         tools:ignore="MissingConstraints" />
@@ -94,6 +96,7 @@
                                     android:background="@drawable/button_image_add"
                                     android:padding="5sp"
                                     android:src="@drawable/ic_adds"
+                                    android:contentDescription="@null"
                                     app:layout_constraintDimensionRatio="1:1"
                                     app:tint="?mc_tick" />
 
@@ -117,6 +120,7 @@
                         android:layout_width="20sp"
                         android:layout_height="20sp"
                         android:src="@drawable/ic_category_gray"
+                        android:contentDescription="@null"
                         app:tint="@color/white" />
 
                     <TextView

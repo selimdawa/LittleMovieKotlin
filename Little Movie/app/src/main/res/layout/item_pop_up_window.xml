@@ -25,6 +25,7 @@
                 android:id="@+id/close"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+                android:contentDescription="@null"
                 android:padding="7dp"
                 android:src="@drawable/ic_close"
                 app:tint="@color/white" />
@@ -33,6 +34,7 @@
                 android:id="@+id/maximize"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+                android:contentDescription="@null"
                 android:padding="7dp"
                 android:src="@drawable/ic_open"
                 app:tint="@color/white" />
