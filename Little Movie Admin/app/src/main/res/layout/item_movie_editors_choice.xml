@@ -6,10 +6,10 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="5sp"
-        android:layout_marginBottom="10sp"
-        android:elevation="6sp"
-        app:cardCornerRadius="20sp"
+        android:layout_marginHorizontal="5dp"
+        android:layout_marginBottom="10dp"
+        android:elevation="6dp"
+        app:cardCornerRadius="20dp"
         app:strokeWidth="0dp">
 
         <LinearLayout
@@ -27,18 +27,19 @@
 
                 <ImageView
                     android:id="@+id/remove"
-                    android:layout_width="0sp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:src="@drawable/ic_remove"
                     android:visibility="gone"
-                    app:tint="@color/white" />
+                    app:tint="@color/white"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:id="@+id/numberEditorsChoice"
-                    android:layout_width="0sp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
@@ -49,14 +50,15 @@
 
                 <ImageView
                     android:id="@+id/change"
-                    android:layout_width="0sp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:src="@drawable/ic_re"
                     android:visibility="gone"
-                    app:tint="@color/white" />
+                    app:tint="@color/white"
+                    tools:ignore="ContentDescription" />
 
             </LinearLayout>
 
@@ -68,10 +70,10 @@
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/addCard"
                     android:layout_width="match_parent"
-                    android:layout_height="300sp"
-                    android:elevation="6sp"
+                    android:layout_height="300dp"
+                    android:elevation="6dp"
                     android:visibility="visible"
-                    app:cardCornerRadius="15sp"
+                    app:cardCornerRadius="15dp"
                     app:strokeWidth="0dp">
 
                     <LinearLayout
@@ -85,9 +87,10 @@
 
                         <ImageView
                             android:id="@+id/add"
-                            android:layout_width="100sp"
-                            android:layout_height="100sp"
-                            android:src="@drawable/ic_add" />
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:src="@drawable/ic_add"
+                            tools:ignore="ContentDescription" />
 
                     </LinearLayout>
 
@@ -97,9 +100,9 @@
                     android:id="@+id/detailsCard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:elevation="6sp"
+                    android:elevation="6dp"
                     android:visibility="gone"
-                    app:cardCornerRadius="20sp"
+                    app:cardCornerRadius="20dp"
                     app:strokeWidth="0dp">
 
                     <LinearLayout
@@ -133,7 +136,7 @@
                                         android:scaleType="centerCrop"
                                         android:src="@color/image_profile"
                                         app:layout_constraintDimensionRatio="1:1.4"
-                                        tools:ignore="MissingConstraints" />
+                                        tools:ignore="MissingConstraints,ContentDescription" />
 
                                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -147,11 +150,11 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:orientation="horizontal"
-                                        android:padding="5sp">
+                                        android:padding="5dp">
 
                                         <TextView
                                             android:id="@+id/name"
-                                            android:layout_width="0sp"
+                                            android:layout_width="0dp"
                                             android:layout_height="match_parent"
                                             android:layout_gravity="center"
                                             android:layout_weight="1"
@@ -170,7 +173,7 @@
                                     <LinearLayout
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:padding="5sp">
+                                        android:padding="5dp">
 
                                         <LinearLayout
                                             android:layout_width="0dp"
@@ -180,10 +183,11 @@
                                             android:gravity="center">
 
                                             <ImageView
-                                                android:layout_width="20sp"
-                                                android:layout_height="20sp"
+                                                android:layout_width="20dp"
+                                                android:layout_height="20dp"
                                                 android:layout_gravity="center"
-                                                android:src="@drawable/ic_view" />
+                                                android:src="@drawable/ic_view"
+                                                tools:ignore="ContentDescription" />
 
                                             <TextView
                                                 android:id="@+id/nrViews"
@@ -191,7 +195,7 @@
                                                 android:layout_height="wrap_content"
                                                 android:layout_gravity="center"
                                                 android:gravity="center"
-                                                android:paddingHorizontal="10sp"
+                                                android:paddingHorizontal="10dp"
                                                 android:textColor="@color/white"
                                                 android:textSize="14sp"
                                                 android:textStyle="normal" />
@@ -206,10 +210,11 @@
                                             android:gravity="center">
 
                                             <ImageView
-                                                android:layout_width="20sp"
-                                                android:layout_height="20sp"
+                                                android:layout_width="20dp"
+                                                android:layout_height="20dp"
                                                 android:layout_gravity="center"
-                                                android:src="@drawable/ic_heart_selected" />
+                                                android:src="@drawable/ic_heart_selected"
+                                                tools:ignore="ContentDescription" />
 
                                             <TextView
                                                 android:id="@+id/nrLoves"
@@ -217,7 +222,7 @@
                                                 android:layout_height="wrap_content"
                                                 android:layout_gravity="center"
                                                 android:gravity="center"
-                                                android:paddingHorizontal="10sp"
+                                                android:paddingHorizontal="10dp"
                                                 android:textColor="@color/white"
                                                 android:textSize="14sp"
                                                 android:textStyle="normal" />

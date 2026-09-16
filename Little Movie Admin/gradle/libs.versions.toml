@@ -37,7 +37,7 @@ firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 firebase-database = { module = "com.google.firebase:firebase-database" }
 firebase-storage = { module = "com.google.firebase:firebase-storage" }
 coil3 = { group = "io.coil-kt.coil3", name = "coil", version.ref = "coil3" }
-coil3-view = { group = "io.coil-kt.coil3", name = "coil-view", version.ref = "coil3" }
+coil3-view = { group = "io.coil-kt.coil3", name = "coil", version.ref = "coil3" }
 coil3-network = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil3" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

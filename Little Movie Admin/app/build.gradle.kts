@@ -40,6 +40,7 @@ android {
     }
     buildFeatures {
         dataBinding = true
+        buildConfig = true
     }
 }
 
@@ -51,6 +52,8 @@ dependencies {
     //Layout
     implementation(libs.material)
     implementation(libs.multicolors)
+    implementation(libs.material.ripple)
+    implementation(libs.exoplayer)
     //Firebase
     implementation(platform(libs.firebase.bom)) //Firebase BOM
     implementation(libs.firebase.auth)

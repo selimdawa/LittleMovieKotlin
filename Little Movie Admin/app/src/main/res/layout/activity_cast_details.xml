@@ -21,8 +21,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:paddingHorizontal="5sp"
-                android:paddingBottom="10sp">
+                android:paddingHorizontal="5dp"
+                android:paddingBottom="10dp">
 
                 <include
                     android:id="@+id/switchBar"
@@ -32,12 +32,12 @@
                     android:id="@+id/card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="5sp"
-                    android:layout_marginTop="10sp"
-                    android:elevation="0sp"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_marginTop="10dp"
+                    android:elevation="0dp"
                     android:src="@color/white"
                     app:cardCornerRadius="15dp"
-                    app:cardElevation="0sp"
+                    app:cardElevation="0dp"
                     app:strokeWidth="0dp">
 
                     <FrameLayout
@@ -52,7 +52,7 @@
                             <ImageView
                                 android:id="@+id/imageBlur"
                                 android:layout_width="match_parent"
-                                android:layout_height="0sp"
+                                android:layout_height="0dp"
                                 android:scaleType="centerCrop"
                                 android:src="@color/image_profile"
                                 android:contentDescription="@null"
@@ -62,14 +62,14 @@
                             <ImageView
                                 android:id="@+id/image"
                                 android:layout_width="match_parent"
-                                android:layout_height="0sp"
+                                android:layout_height="0dp"
                                 android:contentDescription="@null"
                                 app:layout_constraintDimensionRatio="2:1"
                                 tools:ignore="MissingConstraints" />
 
                             <ImageView
                                 android:layout_width="match_parent"
-                                android:layout_height="0sp"
+                                android:layout_height="0dp"
                                 android:scaleType="centerCrop"
                                 android:src="@color/overlay_dark_20"
                                 android:contentDescription="@null"
@@ -80,7 +80,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:layout_margin="20sp"
+                                android:layout_margin="20dp"
                                 android:gravity="center"
                                 android:orientation="horizontal"
                                 app:layout_constraintBottom_toBottomOf="@+id/imageBlur">
@@ -90,7 +90,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center"
-                                    android:layout_marginHorizontal="10sp"
+                                    android:layout_marginHorizontal="10dp"
                                     android:gravity="center"
                                     android:textColor="@color/white"
                                     android:textSize="18sp"
@@ -98,13 +98,13 @@
 
                                 <ImageView
                                     android:id="@+id/go"
-                                    android:layout_width="25sp"
-                                    android:layout_height="25sp"
+                                    android:layout_width="25dp"
+                                    android:layout_height="25dp"
                                     android:layout_gravity="top"
                                     android:background="@drawable/button2"
                                     android:backgroundTint="@color/white"
                                     android:gravity="center"
-                                    android:padding="2sp"
+                                    android:padding="2dp"
                                     android:rotation="180"
                                     android:src="@drawable/ic_back_white"
                                     android:contentDescription="@null"
@@ -128,8 +128,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginHorizontal="20sp"
-                        android:layout_marginVertical="100sp"
+                        android:layout_marginHorizontal="20dp"
+                        android:layout_marginVertical="100dp"
                         android:gravity="center"
                         android:orientation="vertical"
                         android:visibility="gone">
@@ -163,7 +163,7 @@
                             android:id="@+id/recyclerView"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="10sp"
+                            android:layout_marginTop="10dp"
                             android:orientation="vertical"
                             android:visibility="gone"
                             app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"

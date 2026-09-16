@@ -22,7 +22,7 @@ import coil3.request.error
 import coil3.request.crossfade
 import com.flatcode.littlemovieadmin.Model.Cast
 import com.flatcode.littlemovieadmin.Model.Movie
-import com.flatcode.littlemovieadmin.Modelimport.Category
+import com.flatcode.littlemovieadmin.Model.Category
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.Unit.DATA.castList
 import com.flatcode.littlemovieadmin.Unit.DATA.movieList

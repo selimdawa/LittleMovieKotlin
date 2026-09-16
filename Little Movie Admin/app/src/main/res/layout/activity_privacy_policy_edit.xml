@@ -25,13 +25,14 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:padding="10sp">
+                android:padding="10dp">
 
                 <ImageView
                     android:id="@+id/logo"
                     android:layout_width="125dp"
                     android:layout_height="125dp"
-                    android:src="@drawable/logo" />
+                    android:src="@drawable/logo"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -55,16 +56,16 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0sp"
+                android:layout_height="0dp"
                 android:layout_weight="2.5"
                 android:orientation="vertical">
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="10sp"
-                    android:elevation="6sp"
-                    app:cardCornerRadius="15sp"
+                    android:layout_margin="10dp"
+                    android:elevation="6dp"
+                    app:cardCornerRadius="15dp"
                     app:strokeWidth="0dp">
 
                     <LinearLayout
@@ -89,7 +90,7 @@
                                     android:layout_height="match_parent"
                                     android:layout_gravity="center"
                                     android:gravity="center"
-                                    android:padding="10sp"
+                                    android:padding="10dp"
                                     android:textColor="@color/white"
                                     android:textSize="18sp"
                                     android:textStyle="bold" />
@@ -112,14 +113,15 @@
 
                 <ImageButton
                     android:id="@+id/go"
-                    android:layout_width="60sp"
-                    android:layout_height="60sp"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
                     android:layout_gravity="center"
-                    android:layout_margin="10sp"
+                    android:layout_margin="10dp"
                     android:background="@drawable/button2"
                     android:rotation="180"
                     android:src="@drawable/ic_back_white"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    tools:ignore="ContentDescription" />
 
             </LinearLayout>
 

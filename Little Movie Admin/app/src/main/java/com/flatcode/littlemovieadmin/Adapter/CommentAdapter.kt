@@ -15,7 +15,7 @@ import com.flatcode.littlemovieadmin.Model.Comment
 import com.flatcode.littlemovieadmin.Unit.DATA
 import com.flatcode.littlemovieadmin.Unit.VOID
 import com.flatcode.littlemovieadmin.databinding.ItemCommentBinding
-import com.flatcode.littlemovieadminimport.MyApplication
+import com.flatcode.littlemovieadmin.Application
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -38,7 +38,7 @@ class CommentAdapter(private val context: Context, var list: ArrayList<Comment?>
         val comment = DATA.EMPTY + item.comment
         val publisher = DATA.EMPTY + item.publisher
         val timestamp = DATA.EMPTY + item.timestamp
-        val date: String = MyApplication.formatTimestamp(timestamp.toLong())
+        val date: String = Application.formatTimestamp(timestamp.toLong())
 
         holder.date.text = date
         holder.comment.text = comment

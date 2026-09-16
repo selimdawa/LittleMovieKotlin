@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="5dp"
-        android:layout_marginBottom="10sp"
+        android:layout_marginBottom="10dp"
         android:orientation="vertical">
 
         <com.google.android.material.card.MaterialCardView
@@ -47,13 +47,13 @@
 
                     <ImageView
                         android:id="@+id/add"
-                        android:layout_width="25sp"
-                        android:layout_height="25sp"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
                         android:layout_gravity="top|end"
                         android:background="@drawable/button_more"
                         android:contentDescription="@null"
                         android:gravity="center"
-                        android:padding="2sp"
+                        android:padding="2dp"
                         android:src="@drawable/ic_star_unselected"
                         app:tint="@color/dark" />
 
@@ -69,11 +69,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:padding="5sp">
+                        android:padding="5dp">
 
                         <TextView
                             android:id="@+id/name"
-                            android:layout_width="0sp"
+                            android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_gravity="center"
                             android:layout_weight="1"
@@ -92,17 +92,17 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="5sp">
+                        android:padding="5dp">
 
                         <TextView
                             android:id="@+id/nrViews"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:drawablePadding="10sp"
-                            android:drawableStart="@drawable/ic_view"
+                            android:drawablePadding="10dp"
+                            app:drawableStartCompat="@drawable/ic_view"
                             android:gravity="center"
-                            android:paddingHorizontal="10sp"
+                            android:paddingHorizontal="10dp"
                             android:textColor="@color/white"
                             android:textSize="14sp"
                             android:textStyle="normal" />
@@ -112,10 +112,10 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:drawablePadding="10sp"
-                            android:drawableStart="@drawable/ic_heart_unselected"
+                            android:drawablePadding="10dp"
+                            app:drawableStartCompat="@drawable/ic_heart_unselected"
                             android:gravity="center"
-                            android:paddingHorizontal="10sp"
+                            android:paddingHorizontal="10dp"
                             android:textColor="@color/white"
                             android:textSize="14sp"
                             android:textStyle="normal" />

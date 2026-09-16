@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     app:cardBackgroundColor="@android:color/white"
@@ -33,7 +34,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:src="@color/image_profile" />
+                    android:src="@color/image_profile"
+                    tools:ignore="ContentDescription" />
 
             </LinearLayout>
 
@@ -50,7 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_margin="10sp"
+                android:layout_margin="10dp"
                 android:textAlignment="center"
                 android:textColor="?mc_track"
                 android:textSize="21sp"
@@ -74,7 +76,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:padding="10sp"
+                    android:padding="10dp"
                     android:textAlignment="center"
                     android:textColor="@color/white"
                     android:textSize="18sp"

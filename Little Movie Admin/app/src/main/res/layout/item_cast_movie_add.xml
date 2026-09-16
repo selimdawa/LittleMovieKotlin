@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="5dp"
-        android:layout_marginBottom="10sp"
+        android:layout_marginBottom="10dp"
         android:orientation="vertical">
 
         <FrameLayout
@@ -26,38 +26,40 @@
                     android:scaleType="centerCrop"
                     android:src="@color/image_profile"
                     app:strokeColor="@color/white"
-                    app:strokeWidth="2sp"
+                    app:strokeWidth="2dp"
                     app:layout_constraintDimensionRatio="1:1"
-                    tools:ignore="MissingConstraints"
+                    tools:ignore="MissingConstraints,ContentDescription"
                     app:shapeAppearanceOverlay="@style/ShapeAppearance.App.Circle" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <ImageView
                 android:id="@+id/add"
-                android:layout_width="25sp"
-                android:layout_height="25sp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:layout_gravity="top|end"
                 android:background="@drawable/button9"
                 android:backgroundTint="@color/green"
                 android:gravity="center"
-                android:padding="2sp"
+                android:padding="2dp"
                 android:src="@drawable/ic_add"
                 android:visibility="visible"
-                app:tint="@color/dark" />
+                app:tint="@color/dark"
+                tools:ignore="ContentDescription" />
 
             <ImageView
                 android:id="@+id/remove"
-                android:layout_width="25sp"
-                android:layout_height="25sp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:layout_gravity="top|end"
                 android:background="@drawable/button9"
                 android:backgroundTint="@color/red"
                 android:gravity="center"
-                android:padding="2sp"
+                android:padding="2dp"
                 android:src="@drawable/ic_remove"
                 android:visibility="gone"
-                app:tint="@color/dark" />
+                app:tint="@color/dark"
+                tools:ignore="ContentDescription" />
 
         </FrameLayout>
 

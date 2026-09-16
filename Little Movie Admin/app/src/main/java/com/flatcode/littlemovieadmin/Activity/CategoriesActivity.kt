@@ -10,7 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.Adapter.CategoryAdapter
-import com.flatcode.littlemovieadmin.Modelimport.Category
+import com.flatcode.littlemovieadmin.Model.Category
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.Unit.DATA
 import com.flatcode.littlemovieadmin.ViewModel.CategoriesViewModel

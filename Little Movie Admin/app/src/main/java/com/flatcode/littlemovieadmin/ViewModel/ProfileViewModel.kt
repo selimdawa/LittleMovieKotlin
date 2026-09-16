@@ -2,7 +2,7 @@ package com.flatcode.littlemovieadmin.ViewModel
 
 import androidx.lifecycle.ViewModel
 import com.flatcode.littlemovieadmin.Model.User
-import com.flatcode.littlemovieadmin.Modelimport.Category
+import com.flatcode.littlemovieadmin.Model.Category
 import com.flatcode.littlemovieadmin.Unit.DATA
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError

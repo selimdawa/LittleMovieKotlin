@@ -6,7 +6,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="5sp"
+        android:layout_marginHorizontal="5dp"
         android:layout_marginBottom="10dp"
         android:orientation="vertical">
 
@@ -36,7 +36,7 @@
                         android:scaleType="centerCrop"
                         android:src="@color/image_profile"
                         app:layout_constraintDimensionRatio="1:1"
-                        tools:ignore="MissingConstraints" />
+                        tools:ignore="MissingConstraints,ContentDescription" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -50,7 +50,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:padding="5sp">
+                        android:padding="5dp">
 
                         <TextView
                             android:id="@+id/username"

@@ -7,7 +7,7 @@
         android:id="@+id/item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="5sp"
+        android:layout_marginHorizontal="5dp"
         android:layout_marginBottom="10dp"
         android:orientation="vertical">
 
@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:elevation="6dp"
-            app:cardCornerRadius="10sp"
+            app:cardCornerRadius="10dp"
             app:strokeWidth="0dp">
 
             <LinearLayout
@@ -42,7 +42,7 @@
                             android:scaleType="centerCrop"
                             android:src="@color/image_profile"
                             app:layout_constraintDimensionRatio="1:1"
-                            tools:ignore="MissingConstraints" />
+                            tools:ignore="MissingConstraints,ContentDescription" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -61,13 +61,13 @@
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="0sp"
+                            android:layout_height="0dp"
                             android:layout_weight="1"
                             android:orientation="horizontal">
 
                             <TextView
                                 android:id="@+id/name"
-                                android:layout_width="0sp"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:gravity="start"
@@ -78,14 +78,15 @@
 
                             <ImageView
                                 android:id="@+id/more"
-                                android:layout_width="25sp"
-                                android:layout_height="25sp"
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
                                 android:layout_gravity="top"
                                 android:background="@drawable/button_more"
                                 android:gravity="center"
-                                android:padding="2sp"
+                                android:padding="2dp"
                                 android:src="@drawable/ic_more"
-                                app:tint="@color/dark" />
+                                app:tint="@color/dark"
+                                tools:ignore="ContentDescription" />
 
                         </LinearLayout>
 
@@ -97,7 +98,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:padding="5sp">
+                            android:padding="5dp">
 
                             <LinearLayout
                                 android:layout_width="0dp"
@@ -107,10 +108,11 @@
                                 android:gravity="center">
 
                                 <ImageView
-                                    android:layout_width="20sp"
-                                    android:layout_height="20sp"
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
                                     android:layout_gravity="center"
-                                    android:src="@drawable/ic_movie" />
+                                    android:src="@drawable/ic_movie"
+                                    tools:ignore="ContentDescription" />
 
                                 <TextView
                                     android:id="@+id/numberMovies"
@@ -118,7 +120,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center"
                                     android:gravity="center"
-                                    android:paddingHorizontal="10sp"
+                                    android:paddingHorizontal="10dp"
                                     android:textColor="@color/white"
                                     android:textSize="14sp"
                                     android:textStyle="normal" />
@@ -133,10 +135,11 @@
                                 android:gravity="center">
 
                                 <ImageView
-                                    android:layout_width="20sp"
-                                    android:layout_height="20sp"
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
                                     android:layout_gravity="center"
-                                    android:src="@drawable/ic_heart_selected" />
+                                    android:src="@drawable/ic_heart_selected"
+                                    tools:ignore="ContentDescription" />
 
                                 <TextView
                                     android:id="@+id/numberInterested"
@@ -144,7 +147,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center"
                                     android:gravity="center"
-                                    android:paddingHorizontal="10sp"
+                                    android:paddingHorizontal="10dp"
                                     android:textColor="@color/white"
                                     android:textSize="14sp"
                                     android:textStyle="normal" />

@@ -1,11 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <HorizontalScrollView
         android:id="@+id/scrollSwitchUser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="5sp"
+        android:layout_marginHorizontal="5dp"
         android:orientation="horizontal"
         android:scrollbarSize="0dp"
         android:scrollbarThumbHorizontal="@color/white">
@@ -22,9 +24,9 @@
                 android:id="@+id/all"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5sp"
-                android:elevation="6sp"
-                app:cardCornerRadius="10sp"
+                android:layout_marginEnd="5dp"
+                android:elevation="6dp"
+                app:cardCornerRadius="10dp"
                 app:strokeWidth="0dp">
 
                 <LinearLayout
@@ -35,8 +37,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingHorizontal="20sp"
-                        android:paddingVertical="10sp"
+                        android:paddingHorizontal="20dp"
+                        android:paddingVertical="10dp"
                         android:text="@string/all"
                         android:textColor="@color/white"
                         android:textSize="18sp"
@@ -50,9 +52,9 @@
                 android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5sp"
-                android:elevation="6sp"
-                app:cardCornerRadius="10sp"
+                android:layout_marginHorizontal="5dp"
+                android:elevation="6dp"
+                app:cardCornerRadius="10dp"
                 app:strokeWidth="0dp">
 
                 <LinearLayout
@@ -63,8 +65,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingHorizontal="20sp"
-                        android:paddingVertical="10sp"
+                        android:paddingHorizontal="20dp"
+                        android:paddingVertical="10dp"
                         android:text="@string/name"
                         android:textColor="@color/white"
                         android:textSize="18sp"

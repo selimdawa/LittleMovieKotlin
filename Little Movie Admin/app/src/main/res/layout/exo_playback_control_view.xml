@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
@@ -22,7 +23,8 @@
             android:id="@+id/exo_floating_widget"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_open" />
+            android:src="@drawable/ic_open"
+            tools:ignore="ContentDescription" />
 
         <ImageButton
             android:id="@id/exo_rew"
@@ -30,7 +32,7 @@
 
         <ImageButton
             android:id="@id/exo_shuffle"
-            style="@style/ExoMediaButton.Shuffle" />
+            style="@style/ExoMediaButton" />
 
         <ImageButton
             android:id="@id/exo_repeat_toggle"

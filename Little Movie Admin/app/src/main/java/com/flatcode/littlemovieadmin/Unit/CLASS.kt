@@ -1,10 +1,10 @@
 package com.flatcode.littlemovieadmin.Unit
 
 import com.flatcode.littlemovieadmin.Activity.*
-import com.flatcode.littlemovieadmin.Activityimport.CastActivity
-import com.flatcode.littlemovieadmin.Activityimport.CastAddActivity
-import com.flatcode.littlemovieadmin.Activityimport.EditorsChoiceActivity
-import com.flatcode.littlemovieadmin.Activityimport.PrivacyPolicyEditActivity
+import com.flatcode.littlemovieadmin.Activity.CastActivity
+import com.flatcode.littlemovieadmin.Activity.CastAddActivity
+import com.flatcode.littlemovieadmin.Activity.EditorsChoiceActivity
+import com.flatcode.littlemovieadmin.Activity.PrivacyPolicyEditActivity
 import com.flatcode.littlemovieadmin.Auth.ForgetPasswordActivity
 import com.flatcode.littlemovieadmin.Auth.LoginActivity
 import com.flatcode.littlemovieadmin.Service.FloatingWidgetService

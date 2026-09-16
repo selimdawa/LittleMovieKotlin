@@ -57,9 +57,9 @@
                         android:layout_width="110dp"
                         android:layout_height="150dp"
                         android:layout_gravity="end"
-                        android:layout_marginLeft="15sp"
-                        android:layout_marginRight="15sp"
-                        app:cardCornerRadius="10sp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="15dp"
+                        app:cardCornerRadius="10dp"
                         app:strokeWidth="0dp">
 
                         <ImageView
@@ -67,7 +67,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:scaleType="centerCrop"
-                            android:src="@color/image_profile" />
+                            android:src="@color/image_profile"
+                            tools:ignore="ContentDescription" />
 
                     </com.google.android.material.card.MaterialCardView>
 
@@ -78,17 +79,18 @@
                         android:layout_marginTop="-50dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:padding="15sp">
+                        android:padding="15dp">
 
                         <com.google.android.material.imageview.ShapeableImageView
                             android:id="@+id/publisherImage"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:src="@color/image_profile"
-                            app:shapeAppearanceOverlay="@style/ShapeAppearance.App.Circle" />
+                            app:shapeAppearanceOverlay="@style/ShapeAppearance.App.Circle"
+                            tools:ignore="ContentDescription" />
 
                         <View
-                            android:layout_width="15sp"
+                            android:layout_width="15dp"
                             android:layout_height="0dp" />
 
                         <LinearLayout
@@ -100,7 +102,7 @@
                                 android:id="@+id/title"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginEnd="130sp"
+                                android:layout_marginEnd="130dp"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                                 android:textColor="?colorError"
                                 app:fontFamily="sans-serif-medium" />
@@ -115,7 +117,7 @@
                                     android:id="@+id/publisherName"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="5sp"
+                                    android:layout_marginTop="5dp"
                                     android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                                     android:textColor="?colorError" />
 
@@ -128,14 +130,14 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_marginHorizontal="15sp"
+                        android:layout_marginHorizontal="15dp"
                         android:background="?colorError" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:padding="15sp">
+                        android:padding="15dp">
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -148,7 +150,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="3sp"
+                                android:layout_marginTop="3dp"
                                 android:text="@string/category"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                                 android:textColor="?colorError" />
@@ -173,7 +175,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="3sp"
+                                android:layout_marginTop="3dp"
                                 android:text="@string/duration"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                                 android:textColor="?colorError" />
@@ -198,7 +200,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="3sp"
+                                android:layout_marginTop="3dp"
                                 android:text="@string/date"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                                 android:textColor="?colorError" />
@@ -218,8 +220,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:paddingHorizontal="15sp"
-                        android:paddingBottom="15sp">
+                        android:paddingHorizontal="15dp"
+                        android:paddingBottom="15dp">
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -232,7 +234,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="3sp"
+                                android:layout_marginTop="3dp"
                                 android:text="@string/views"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                                 android:textColor="?colorError" />
@@ -257,7 +259,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="3sp"
+                                android:layout_marginTop="3dp"
                                 android:text="@string/year"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                                 android:textColor="?colorError" />
@@ -282,7 +284,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="3sp"
+                                android:layout_marginTop="3dp"
                                 android:text="@string/loves"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                                 android:textColor="?colorError" />
@@ -301,14 +303,14 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_marginHorizontal="15sp"
+                        android:layout_marginHorizontal="15dp"
                         android:background="?colorError" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:padding="15sp">
+                        android:padding="15dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -325,7 +327,8 @@
                                 android:layout_gravity="center"
                                 android:gravity="center"
                                 android:src="@drawable/ic_play_circle_outline_white"
-                                app:tint="?colorError" />
+                                app:tint="?colorError"
+                                tools:ignore="ContentDescription" />
 
                         </LinearLayout>
 
@@ -344,7 +347,8 @@
                                 android:layout_gravity="center"
                                 android:gravity="center"
                                 android:src="@drawable/ic_star_unselected"
-                                app:tint="?colorError" />
+                                app:tint="?colorError"
+                                tools:ignore="ContentDescription" />
 
                         </LinearLayout>
 
@@ -363,7 +367,8 @@
                                 android:layout_gravity="center"
                                 android:gravity="center"
                                 android:src="@drawable/ic_add"
-                                app:tint="?colorError" />
+                                app:tint="?colorError"
+                                tools:ignore="ContentDescription" />
 
                         </LinearLayout>
 
@@ -372,14 +377,14 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_marginHorizontal="15sp"
+                        android:layout_marginHorizontal="15dp"
                         android:background="?colorError" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="15sp"
-                        android:layout_marginTop="15sp"
+                        android:layout_marginHorizontal="15dp"
+                        android:layout_marginTop="15dp"
                         android:text="@string/cast"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="?colorError"
@@ -389,8 +394,8 @@
                         android:id="@+id/recyclerCast"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginHorizontal="10sp"
-                        android:layout_marginTop="10sp"
+                        android:layout_marginHorizontal="10dp"
+                        android:layout_marginTop="10dp"
                         android:orientation="horizontal"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:listitem="@layout/item_cast_movie" />
@@ -398,14 +403,14 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_marginHorizontal="15sp"
+                        android:layout_marginHorizontal="15dp"
                         android:background="?colorError" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="15sp"
-                        android:layout_marginTop="15sp"
+                        android:layout_marginHorizontal="15dp"
+                        android:layout_marginTop="15dp"
                         android:text="@string/the_description"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="?colorError"
@@ -415,9 +420,9 @@
                         android:id="@+id/description"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="15sp"
-                        android:layout_marginVertical="15sp"
-                        android:layout_marginBottom="10sp"
+                        android:layout_marginHorizontal="15dp"
+                        android:layout_marginVertical="15dp"
+                        android:layout_marginBottom="10dp"
                         android:lineSpacingExtra="3dp"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                         android:textColor="?colorError" />
@@ -426,8 +431,8 @@
                         android:id="@+id/textComment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="15sp"
-                        android:layout_marginBottom="15sp"
+                        android:layout_marginHorizontal="15dp"
+                        android:layout_marginBottom="15dp"
                         android:text="@string/Comments"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="?colorError"
@@ -438,7 +443,7 @@
                         android:id="@+id/recyclerComment"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginHorizontal="10sp"
+                        android:layout_marginHorizontal="10dp"
                         android:orientation="vertical"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:listitem="@layout/item_comment" />

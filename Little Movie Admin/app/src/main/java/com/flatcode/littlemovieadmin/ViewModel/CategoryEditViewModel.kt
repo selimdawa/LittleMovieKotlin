@@ -3,7 +3,7 @@ package com.flatcode.littlemovieadmin.ViewModel
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.flatcode.littlemovieadmin.Modelimport.Category
+import com.flatcode.littlemovieadmin.Model.Category
 import com.flatcode.littlemovieadmin.Repository.CategoryRepository
 import com.flatcode.littlemovieadmin.Unit.DATA
 import com.google.firebase.storage.FirebaseStorage

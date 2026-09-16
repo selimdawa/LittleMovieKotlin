@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Little Movie</string>
-    //Theme
+    <!-- Theme -->
     <string name="basic_theme">Basic Theme</string>
     <string name="sec_theme">Sec Theme</string>
-    //Needed
+    <!-- Needed -->
     <string name="new_user_signup">SignUp</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
@@ -37,7 +37,7 @@
     <string name="cast">Cast</string>
     <string name="my_categories">My Categories</string>
     <string name="my_cast">My Cast</string>
-    <string name="category">Category</string>u
+    <string name="category">Category</string>
     <string name="Comments">Comments</string>
     <string name="loves">Loves</string>
     <string name="comment">Comment</string>
@@ -50,4 +50,5 @@
     <string name="views">Views</string>
     <string name="date">Date</string>
     <string name="cast_details">Cast Details</string>
+    <string name="password_hint">********</string>
 </resources>

@@ -2,10 +2,11 @@
 
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:elevation="6sp"
-    app:cardCornerRadius="10sp"
+    android:elevation="6dp"
+    app:cardCornerRadius="10dp"
     app:strokeWidth="0dp">
 
     <LinearLayout
@@ -27,7 +28,8 @@
                 android:layout_height="40dp"
                 android:padding="7dp"
                 android:src="@drawable/ic_close"
-                app:tint="@color/white" />
+                app:tint="@color/white"
+                tools:ignore="ContentDescription" />
 
             <ImageView
                 android:id="@+id/maximize"
@@ -35,7 +37,8 @@
                 android:layout_height="40dp"
                 android:padding="7dp"
                 android:src="@drawable/ic_open"
-                app:tint="@color/white" />
+                app:tint="@color/white"
+                tools:ignore="ContentDescription" />
 
         </LinearLayout>
 

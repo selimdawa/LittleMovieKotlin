@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="5dp"
-        android:layout_marginBottom="10sp"
+        android:layout_marginBottom="10dp"
         android:orientation="vertical">
 
         <com.google.android.material.card.MaterialCardView
@@ -36,7 +36,7 @@
                         android:scaleType="centerCrop"
                         android:src="@color/image_profile"
                         app:layout_constraintDimensionRatio="1:1"
-                        tools:ignore="MissingConstraints" />
+                        tools:ignore="MissingConstraints,ContentDescription" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -50,11 +50,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:padding="5sp">
+                        android:padding="5dp">
 
                         <TextView
                             android:id="@+id/name"
-                            android:layout_width="0sp"
+                            android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_gravity="center"
                             android:layout_weight="1"
@@ -70,7 +70,8 @@
                             android:layout_gravity="end"
                             android:background="@android:color/transparent"
                             android:src="@drawable/ic_more"
-                            app:tint="@color/white" />
+                            app:tint="@color/white"
+                            tools:ignore="ContentDescription" />
 
                     </LinearLayout>
 
@@ -82,7 +83,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="5sp">
+                        android:padding="5dp">
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -92,10 +93,11 @@
                             android:gravity="center">
 
                             <ImageView
-                                android:layout_width="20sp"
-                                android:layout_height="20sp"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
                                 android:layout_gravity="center"
-                                android:src="@drawable/ic_movie" />
+                                android:src="@drawable/ic_movie"
+                                tools:ignore="ContentDescription" />
 
                             <TextView
                                 android:id="@+id/numberMovies"
@@ -103,7 +105,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:gravity="center"
-                                android:paddingHorizontal="10sp"
+                                android:paddingHorizontal="10dp"
                                 android:textColor="@color/white"
                                 android:textSize="14sp"
                                 android:textStyle="normal" />
@@ -118,10 +120,11 @@
                             android:gravity="center">
 
                             <ImageView
-                                android:layout_width="20sp"
-                                android:layout_height="20sp"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
                                 android:layout_gravity="center"
-                                android:src="@drawable/ic_heart_selected" />
+                                android:src="@drawable/ic_heart_selected"
+                                tools:ignore="ContentDescription" />
 
                             <TextView
                                 android:id="@+id/numberInterested"
@@ -129,7 +132,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:gravity="center"
-                                android:paddingHorizontal="10sp"
+                                android:paddingHorizontal="10dp"
                                 android:textColor="@color/white"
                                 android:textSize="14sp"
                                 android:textStyle="normal" />
