@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/background"
@@ -95,5 +93,3 @@
         </RelativeLayout>
 
     </FrameLayout>
-
-</layout>

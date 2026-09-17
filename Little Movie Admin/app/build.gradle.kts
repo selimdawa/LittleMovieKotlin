@@ -39,7 +39,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_21
     }
     buildFeatures {
-        dataBinding = true
+        viewBinding = true
         buildConfig = true
     }
 }

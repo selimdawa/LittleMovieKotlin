@@ -1,73 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10sp"
+    android:elevation="6sp"
+    app:cardCornerRadius="10sp"
+    app:strokeWidth="0dp">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card"
+    <LinearLayout
+        android:id="@+id/item"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10sp"
-        android:elevation="6sp"
-        app:cardCornerRadius="10sp"
-        app:strokeWidth="0dp">
+        android:layout_height="match_parent"
+        android:background="?mc_bg"
+        android:orientation="horizontal"
+        android:padding="10sp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/image"
+            android:layout_width="40sp"
+            android:layout_height="40sp"
+            android:scaleType="centerCrop"
+            android:src="@color/image_profile"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.App.Circle" />
 
         <LinearLayout
-            android:id="@+id/item"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="?mc_bg"
-            android:orientation="horizontal"
-            android:padding="10sp">
-
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/image"
-                android:layout_width="40sp"
-                android:layout_height="40sp"
-                android:scaleType="centerCrop"
-                android:src="@color/image_profile"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.App.Circle" />
+            android:layout_width="0sp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingStart="10sp">
 
             <LinearLayout
-                android:layout_width="0sp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:paddingStart="10sp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/name"
-                        android:layout_width="0sp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textColor="@color/white"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/white"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/comment"
-                    android:layout_width="match_parent"
+                    android:id="@+id/name"
+                    android:layout_width="0sp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5sp"
+                    android:layout_weight="1"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:textSize="12sp" />
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/comment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5sp"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+
         </LinearLayout>
 
-    </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
 
-</layout>
+</com.google.android.material.card.MaterialCardView>
