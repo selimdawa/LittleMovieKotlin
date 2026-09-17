@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?colorOnBackground"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="com.flatcode.littlemovie.Activity.CastActivity"
+    tools:ignore="all">
 
         <include
             android:id="@+id/toolbar"

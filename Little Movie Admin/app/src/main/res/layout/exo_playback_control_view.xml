@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="all"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
-    android:background="#CC000000"
+    android:background="@color/exo_background"
     android:layoutDirection="ltr"
     android:orientation="vertical">
 
@@ -70,7 +71,7 @@
             android:includeFontPadding="false"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
-            android:textColor="#FFBEBEBE"
+            android:textColor="@color/exo_text_color"
             android:textSize="14sp"
             android:textStyle="bold" />
 
@@ -87,7 +88,7 @@
             android:includeFontPadding="false"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
-            android:textColor="#FFBEBEBE"
+            android:textColor="@color/exo_text_color"
             android:textSize="14sp"
             android:textStyle="bold" />
 

@@ -19,4 +19,10 @@
     <color name="transparent">#00000000</color>
     <color name="overlay_dark_20">#33000000</color>
     <color name="overlay_dark_50">#80000000</color>
+    <color name="gray_c5">#C5C5C5</color>
+    <color name="gray_cc">#CCCCCC</color>
+    <color name="black_cc">#CC000000</color>
+    <color name="gray_be">#FFBEBEBE</color>
+    <color name="red_transparent">#00fd1d1d</color>
+    <color name="shadow_color">#1f212121</color>
 </resources>

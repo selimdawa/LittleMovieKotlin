@@ -120,7 +120,7 @@
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="20sp"
                     android:paddingVertical="10sp"
-                    android:text="Most Interested"
+                    android:text="@string/most_interested"
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold" />

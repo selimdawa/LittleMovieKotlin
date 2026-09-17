@@ -51,4 +51,9 @@
     <string name="date">Date</string>
     <string name="cast_details">Cast Details</string>
     <string name="password_hint">********</string>
+    <string name="website">Website</string>
+    <string name="facebook">Facebook</string>
+    <string name="most_movies">Most Movies</string>
+    <string name="most_interested">Most Interested</string>
+    <string name="zero">0</string>
 </resources>

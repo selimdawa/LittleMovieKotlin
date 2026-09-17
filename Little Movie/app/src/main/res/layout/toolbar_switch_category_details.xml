@@ -1,12 +1,14 @@
 <HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollSwitch"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="5sp"
     android:orientation="horizontal"
     android:scrollbarSize="0dp"
-    android:scrollbarThumbHorizontal="@color/white">
+    android:scrollbarThumbHorizontal="@color/white"
+    tools:ignore="all">
 
     <LinearLayout
         android:id="@+id/linearSwitch"
@@ -119,7 +121,7 @@
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="20sp"
                     android:paddingVertical="10sp"
-                    android:text="Most Views"
+                    android:text="@string/most_views"
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -147,7 +149,7 @@
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="20sp"
                     android:paddingVertical="10sp"
-                    android:text="Most Loves"
+                    android:text="@string/most_loves"
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold" />

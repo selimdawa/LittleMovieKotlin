@@ -1,12 +1,14 @@
 <HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollSwitchUser"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="5sp"
     android:orientation="horizontal"
     android:scrollbarSize="0dp"
-    android:scrollbarThumbHorizontal="@color/white">
+    android:scrollbarThumbHorizontal="@color/white"
+    tools:ignore="all">
 
     <LinearLayout
         android:id="@+id/linearSwitchUser"

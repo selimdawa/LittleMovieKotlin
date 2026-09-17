@@ -7,7 +7,8 @@
     android:layout_height="match_parent"
     android:background="?colorOnBackground"
     android:orientation="vertical"
-    tools:context=".Fragment.HomeFragment">
+    tools:context="com.flatcode.littlemovie.Fragment.HomeFragment"
+    tools:ignore="all">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -48,7 +49,7 @@
                         app:sliderIndicatorPadding="3dp"
                         app:sliderIndicatorRadius="1.5dp"
                         app:sliderIndicatorSelectedColor="?mc_tick"
-                        app:sliderIndicatorUnselectedColor="#FFF"
+                        app:sliderIndicatorUnselectedColor="@color/white"
                         app:sliderScrollTimeInSec="3"
                         app:sliderStartAutoCycle="true"
                         tools:ignore="MissingConstraints" />

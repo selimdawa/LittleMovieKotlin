@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
-    android:background="#CC000000"
+    android:background="@color/black_cc"
     android:layoutDirection="ltr"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:ignore="all">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -69,7 +71,7 @@
             android:includeFontPadding="false"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
-            android:textColor="#FFBEBEBE"
+            android:textColor="@color/gray_be"
             android:textSize="14sp"
             android:textStyle="bold" />
 
@@ -86,7 +88,7 @@
             android:includeFontPadding="false"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
-            android:textColor="#FFBEBEBE"
+            android:textColor="@color/gray_be"
             android:textSize="14sp"
             android:textStyle="bold" />
 

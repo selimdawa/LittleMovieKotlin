@@ -43,6 +43,8 @@
     <string name="description">Description</string>
     <string name="cast">Cast</string>
     <string name="cast_details">Cast Details</string>
+    <string name="most_movies">Most Movies</string>
+    <string name="most_interested">Most Interested</string>
     //Movie Details
     <string name="date">Date</string>
     <string name="views">Views</string>
@@ -76,4 +78,5 @@
     <string name="nineteen">19</string>
     <string name="twenty">20</string>
     <string name="edit">Edit</string>
+    <string name="password_hint">********</string>
 </resources>
