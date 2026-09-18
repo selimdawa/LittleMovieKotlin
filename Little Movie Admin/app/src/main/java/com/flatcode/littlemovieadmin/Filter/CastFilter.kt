@@ -1,8 +1,8 @@
-package com.flatcode.littlemovieadmin.Filter
+package com.flatcode.littlemovieadmin.filter
 
 import android.widget.Filter
-import com.flatcode.littlemovieadmin.Adapter.CastAdapter
-import com.flatcode.littlemovieadmin.Model.Cast
+import com.flatcode.littlemovieadmin.ui.cast.CastAdapter
+import com.flatcode.littlemovieadmin.model.Cast
 import java.util.*
 
 class CastFilter(var list: ArrayList<Cast?>, var adapter: CastAdapter) : Filter() {

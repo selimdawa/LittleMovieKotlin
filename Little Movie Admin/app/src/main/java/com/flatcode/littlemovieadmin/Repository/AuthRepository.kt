@@ -1,4 +1,4 @@
-package com.flatcode.littlemovieadmin.Repository
+package com.flatcode.littlemovieadmin.repository
 
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.tasks.await

@@ -1,11 +1,11 @@
-package com.flatcode.littlemovieadmin.DI
+package com.flatcode.littlemovieadmin.di
 
 import android.content.Context
 import androidx.room.Room
-import com.flatcode.littlemovieadmin.Data.AppDatabase
-import com.flatcode.littlemovieadmin.Data.Dao.CastDao
-import com.flatcode.littlemovieadmin.Data.Dao.CategoryDao
-import com.flatcode.littlemovieadmin.Data.Dao.MovieDao
+import com.flatcode.littlemovieadmin.db.AppDatabase
+import com.flatcode.littlemovieadmin.db.CastDao
+import com.flatcode.littlemovieadmin.db.CategoryDao
+import com.flatcode.littlemovieadmin.db.MovieDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

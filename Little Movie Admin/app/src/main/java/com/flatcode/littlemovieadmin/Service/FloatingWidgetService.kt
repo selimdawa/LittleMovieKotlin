@@ -1,4 +1,4 @@
-package com.flatcode.littlemovieadmin.Service
+package com.flatcode.littlemovieadmin.service
 
 import android.app.Service
 import android.content.Intent
@@ -14,14 +14,13 @@ import android.view.View.OnTouchListener
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
-import com.flatcode.littlemovieadmin.Activity.MovieViewActivity
+import com.flatcode.littlemovieadmin.ui.movie.MovieViewActivity
 import com.flatcode.littlemovieadmin.R
-import com.flatcode.littlemovieadmin.Unit.DATA
-import com.google.android.exoplayer2.ExoPlayerFactory
+import com.flatcode.littlemovieadmin.utils.DATA
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.extractor.ExtractorsFactory
-import com.google.android.exoplayer2.source.ExtractorMediaSource
+import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -37,7 +36,7 @@ class FloatingWidgetService : Service() {
     var windowManager: WindowManager? = null
     private var FloatingWidget: View? = null
     var videoUri: Uri? = null
-    var exoPlayer: SimpleExoPlayer? = null
+    var exoPlayer: ExoPlayer? = null
     var playerView: PlayerView? = null
 
     override fun onBind(intent: Intent): IBinder? {
@@ -80,10 +79,8 @@ class FloatingWidgetService : Service() {
             params.y = 200
             windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
             windowManager!!.addView(FloatingWidget, params)
-            val bandwidthMeter: BandwidthMeter = DefaultBandwidthMeter()
-            val trackSelector: TrackSelector =
-                DefaultTrackSelector(AdaptiveTrackSelection.Factory(bandwidthMeter))
-            exoPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector)
+            
+            exoPlayer = ExoPlayer.Builder(this).build()
             playerView = FloatingWidget!!.findViewById(R.id.playerView)
             val close = FloatingWidget!!.findViewById<ImageView>(R.id.close)
             val maximize = FloatingWidget!!.findViewById<ImageView>(R.id.maximize)
@@ -150,25 +147,17 @@ class FloatingWidgetService : Service() {
 
     fun playVideos() {
         try {
-            val bandwidthMeter: BandwidthMeter = DefaultBandwidthMeter()
-            val trackSelector: TrackSelector =
-                DefaultTrackSelector(AdaptiveTrackSelection.Factory(bandwidthMeter))
-            exoPlayer =
-                ExoPlayerFactory.newSimpleInstance(this@FloatingWidgetService, trackSelector)
-            val playerInfo = Util.getUserAgent(this, "VideoPlayer")
-            val dataSourceFactory = DefaultDataSourceFactory(this, playerInfo)
-            val extractorsFactory: ExtractorsFactory = DefaultExtractorsFactory()
-            val mediaSource: MediaSource = ExtractorMediaSource(
-                videoUri,
-                dataSourceFactory, extractorsFactory, null, null
-            )
+            exoPlayer = ExoPlayer.Builder(this).build()
+            val mediaItem = MediaItem.fromUri(videoUri!!)
             playerView!!.setPlayer(exoPlayer)
-            exoPlayer!!.prepare(mediaSource)
+            exoPlayer!!.setMediaItem(mediaItem)
+            exoPlayer!!.prepare()
             exoPlayer!!.setPlayWhenReady(true)
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
+
 
     override fun onDestroy() {
         super.onDestroy()

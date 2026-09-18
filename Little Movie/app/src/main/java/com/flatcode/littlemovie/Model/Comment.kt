@@ -1,4 +1,4 @@
-package com.flatcode.littlemovie.Model
+package com.flatcode.littlemovie.model
 
 class Comment {
     var id: String? = null

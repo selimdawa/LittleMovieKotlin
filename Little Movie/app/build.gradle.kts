@@ -39,7 +39,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_21
     }
     buildFeatures {
-        dataBinding = true
+        viewBinding = true
     }
 }
 
@@ -51,6 +51,7 @@ dependencies {
     //Layout
     implementation(libs.material)
     implementation(libs.multicolors)
+    implementation(libs.circleimageview)
     //Image
     implementation(libs.coil)                           //Coil Image
     implementation(libs.coil.network.okhttp)            //Coil Network Support

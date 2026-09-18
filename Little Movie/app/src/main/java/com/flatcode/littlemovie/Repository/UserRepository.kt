@@ -1,9 +1,9 @@
-package com.flatcode.littlemovie.Repository
+package com.flatcode.littlemovie.repository
 
 import android.net.Uri
-import com.flatcode.littlemovie.Data.Local.Dao.UserDao
-import com.flatcode.littlemovie.Unit.DATA
-import com.flatcode.littlemovie.Model.User
+import com.flatcode.littlemovie.db.UserDao
+import com.flatcode.littlemovie.utils.DATA
+import com.flatcode.littlemovie.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError

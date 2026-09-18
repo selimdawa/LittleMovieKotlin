@@ -1,3 +1,3 @@
-package com.flatcode.littlemovie.Model
+package com.flatcode.littlemovie.model
 
 class EditorsChoice

@@ -1,8 +1,8 @@
-package com.flatcode.littlemovieadmin.Filter
+package com.flatcode.littlemovieadmin.filter
 
 import android.widget.Filter
-import com.flatcode.littlemovieadmin.Adapter.UserAdapter
-import com.flatcode.littlemovieadmin.Model.User
+import com.flatcode.littlemovieadmin.ui.users.UserAdapter
+import com.flatcode.littlemovieadmin.model.User
 import java.util.*
 
 class UserFilter(var list: ArrayList<User?>, var adapter: UserAdapter) : Filter() {

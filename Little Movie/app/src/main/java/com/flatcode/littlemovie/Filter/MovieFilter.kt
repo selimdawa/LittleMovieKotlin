@@ -1,8 +1,8 @@
-package com.flatcode.littlemovie.Filter
+package com.flatcode.littlemovie.filter
 
 import android.widget.Filter
-import com.flatcode.littlemovie.Adapter.MovieAdapter
-import com.flatcode.littlemovie.Model.Movie
+import com.flatcode.littlemovie.ui.movie.MovieAdapter
+import com.flatcode.littlemovie.model.Movie
 import java.util.*
 
 class MovieFilter(var list: ArrayList<Movie?>, var adapter: MovieAdapter) : Filter() {

@@ -1,12 +1,12 @@
-package com.flatcode.littlemovie.DI
+package com.flatcode.littlemovie.di
 
 import android.content.Context
 import androidx.room.Room
-import com.flatcode.littlemovie.Data.Local.AppDatabase
-import com.flatcode.littlemovie.Data.Local.Dao.CastDao
-import com.flatcode.littlemovie.Data.Local.Dao.CategoryDao
-import com.flatcode.littlemovie.Data.Local.Dao.MovieDao
-import com.flatcode.littlemovie.Data.Local.Dao.UserDao
+import com.flatcode.littlemovie.db.AppDatabase
+import com.flatcode.littlemovie.db.CastDao
+import com.flatcode.littlemovie.db.CategoryDao
+import com.flatcode.littlemovie.db.MovieDao
+import com.flatcode.littlemovie.db.UserDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -23,7 +23,7 @@
         tools:replace="android:supportsRtl"
         tools:targetApi="31">
         <activity
-            android:name=".Activity.SplashActivity"
+            android:name=".ui.main.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -33,65 +33,65 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activity.MainActivity"
+            android:name=".ui.main.MainActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Auth.AuthActivity"
+            android:name=".ui.auth.AuthActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Auth.ForgetPasswordActivity"
+            android:name=".ui.auth.ForgetPasswordActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Auth.LoginActivity"
+            android:name=".ui.auth.LoginActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Auth.RegisterActivity"
+            android:name=".ui.auth.RegisterActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.PrivacyPolicyActivity"
+            android:name=".ui.settings.PrivacyPolicyActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.ProfileActivity"
+            android:name=".ui.profile.ProfileActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.ProfileEditActivity"
+            android:name=".ui.profile.ProfileEditActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.FavoritesActivity"
+            android:name=".ui.profile.FavoritesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.CategoryDetailsActivity"
+            android:name=".ui.category.CategoryDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.ShowMoreActivity"
+            android:name=".ui.movie.ShowMoreActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.MyCategoriesActivity"
+            android:name=".ui.category.MyCategoriesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.CategoriesActivity"
+            android:name=".ui.category.CategoriesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.CastActivity"
+            android:name=".ui.cast.CastActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.CastDetailsActivity"
+            android:name=".ui.cast.CastDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.MyCastActivity"
+            android:name=".ui.cast.MyCastActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.MovieDetailsActivity"
+            android:name=".ui.movie.MovieDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.MovieViewActivity"
+            android:name=".ui.movie.MovieViewActivity"
             android:screenOrientation="portrait" />
 
-        <service android:name=".Service.FloatingWidgetService" />
+        <service android:name=".service.FloatingWidgetService" />
 
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"

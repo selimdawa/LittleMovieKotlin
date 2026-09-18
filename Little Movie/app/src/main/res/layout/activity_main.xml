@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="?colorOnBackground"
     android:orientation="vertical"
-    tools:context="com.flatcode.littlemovie.Activity.MainActivity"
+    tools:context="com.flatcode.littlemovie.ui.main.MainActivity"
     tools:ignore="all">
 
         <include

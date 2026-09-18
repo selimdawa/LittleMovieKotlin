@@ -1,9 +1,9 @@
-package com.flatcode.littlemovie.Repository
+package com.flatcode.littlemovie.repository
 
-import com.flatcode.littlemovie.Data.Local.Dao.MovieDao
-import com.flatcode.littlemovie.Model.Comment
-import com.flatcode.littlemovie.Model.Movie
-import com.flatcode.littlemovie.Unit.DATA
+import com.flatcode.littlemovie.db.MovieDao
+import com.flatcode.littlemovie.model.Comment
+import com.flatcode.littlemovie.model.Movie
+import com.flatcode.littlemovie.utils.DATA
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -12,7 +12,6 @@ import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber

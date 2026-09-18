@@ -1,8 +1,8 @@
-package com.flatcode.littlemovieadmin.Repository
+package com.flatcode.littlemovieadmin.repository
 
-import com.flatcode.littlemovieadmin.Data.Dao.CategoryDao
-import com.flatcode.littlemovieadmin.Model.Category
-import com.flatcode.littlemovieadmin.Unit.DATA
+import com.flatcode.littlemovieadmin.db.CategoryDao
+import com.flatcode.littlemovieadmin.model.Category
+import com.flatcode.littlemovieadmin.utils.DATA
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ServerValue
 import kotlinx.coroutines.flow.Flow

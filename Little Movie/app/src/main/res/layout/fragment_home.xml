@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="?colorOnBackground"
     android:orientation="vertical"
-    tools:context="com.flatcode.littlemovie.Fragment.HomeFragment"
+    tools:context="com.flatcode.littlemovie.ui.main.HomeFragment"
     tools:ignore="all">
 
     <androidx.core.widget.NestedScrollView

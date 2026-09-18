@@ -1,4 +1,4 @@
-package com.flatcode.littlemovieadmin.Model
+package com.flatcode.littlemovieadmin.model
 
 import android.os.Parcelable
 import androidx.room.Entity

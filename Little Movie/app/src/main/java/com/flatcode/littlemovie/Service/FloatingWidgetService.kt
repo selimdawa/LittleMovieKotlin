@@ -1,4 +1,4 @@
-package com.flatcode.littlemovie.Service
+package com.flatcode.littlemovie.service
 
 import android.app.Service
 import android.content.Intent
@@ -14,52 +14,47 @@ import android.view.View.OnTouchListener
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
-import com.flatcode.littlemovie.Activity.MovieViewActivity
+import com.flatcode.littlemovie.ui.movie.MovieViewActivity
 import com.flatcode.littlemovie.R
-import com.flatcode.littlemovie.Unit.DATA.MOVIE_ID
-import com.flatcode.littlemovie.Unit.DATA.MOVIE_LINK
-import com.google.android.exoplayer2.ExoPlayerFactory
+import com.flatcode.littlemovie.utils.DATA.MOVIE_ID
+import com.flatcode.littlemovie.utils.DATA.MOVIE_LINK
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.extractor.ExtractorsFactory
-import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.trackselection.TrackSelector
 import com.google.android.exoplayer2.ui.PlayerView
-import com.google.android.exoplayer2.upstream.BandwidthMeter
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
+import com.flatcode.littlemovie.databinding.ItemPopUpWindowBinding
 
 class FloatingWidgetService : Service() {
 
     var windowManager: WindowManager? = null
-    private var FloatingWidget: View? = null
+    private var binding: ItemPopUpWindowBinding? = null
     var videoUri: Uri? = null
     var exoPlayer: SimpleExoPlayer? = null
-    var playerView: PlayerView? = null
 
     override fun onBind(intent: Intent): IBinder? {
         return null
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent != null) {
             val uriStr = intent.getStringExtra(MOVIE_LINK)
             val id = intent.getStringExtra(MOVIE_ID)
             videoUri = Uri.parse(uriStr)
-            if (windowManager != null && FloatingWidget!!.isShown && exoPlayer != null) {
-                windowManager!!.removeView(FloatingWidget)
-                FloatingWidget = null
+            if (windowManager != null && binding != null && binding!!.root.isShown && exoPlayer != null) {
+                windowManager!!.removeView(binding!!.root)
+                binding = null
                 windowManager = null
                 exoPlayer!!.playWhenReady = false
                 exoPlayer!!.release()
                 exoPlayer = null
             }
             val params: WindowManager.LayoutParams
-            FloatingWidget = LayoutInflater.from(this).inflate(R.layout.item_pop_up_window, null)
+            binding = ItemPopUpWindowBinding.inflate(LayoutInflater.from(this))
             params = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 WindowManager.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -81,19 +76,14 @@ class FloatingWidgetService : Service() {
             params.x = 200
             params.y = 200
             windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
-            windowManager!!.addView(FloatingWidget, params)
-            val bandwidthMeter: BandwidthMeter = DefaultBandwidthMeter()
-            val trackSelector: TrackSelector =
-                DefaultTrackSelector(AdaptiveTrackSelection.Factory(bandwidthMeter))
-            exoPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector)
-            playerView = FloatingWidget!!.findViewById(R.id.playerView)
-            val close = FloatingWidget!!.findViewById<ImageView>(R.id.close)
-            val maximize = FloatingWidget!!.findViewById<ImageView>(R.id.maximize)
+            windowManager!!.addView(binding!!.root, params)
+            val trackSelector = DefaultTrackSelector(this, AdaptiveTrackSelection.Factory())
+            exoPlayer = SimpleExoPlayer.Builder(this).setTrackSelector(trackSelector).build()
 
-            maximize.setOnClickListener {
-                if (windowManager != null && FloatingWidget!!.isShown() && exoPlayer != null) {
-                    windowManager!!.removeView(FloatingWidget)
-                    FloatingWidget = null
+            binding!!.maximize.setOnClickListener {
+                if (windowManager != null && binding != null && binding!!.root.isShown && exoPlayer != null) {
+                    windowManager!!.removeView(binding!!.root)
+                    binding = null
                     windowManager = null
                     exoPlayer!!.playWhenReady = false
                     exoPlayer!!.release()
@@ -108,10 +98,10 @@ class FloatingWidgetService : Service() {
                     startActivity(intent1)
                 }
             }
-            close.setOnClickListener {
-                if (windowManager != null && FloatingWidget!!.isShown() && exoPlayer != null) {
-                    windowManager!!.removeView(FloatingWidget)
-                    FloatingWidget = null
+            binding!!.close.setOnClickListener {
+                if (windowManager != null && binding != null && binding!!.root.isShown && exoPlayer != null) {
+                    windowManager!!.removeView(binding!!.root)
+                    binding = null
                     windowManager = null
                     exoPlayer!!.playWhenReady = false
                     exoPlayer!!.release()
@@ -120,51 +110,47 @@ class FloatingWidgetService : Service() {
                 }
             }
             playVideos()
-            FloatingWidget!!.findViewById<View>(R.id.item)
-                .setOnTouchListener(object : OnTouchListener {
-                    private var initialX = 0
-                    private var initialY = 0
-                    private var initialTouchX = 0f
-                    private var initialTouchY = 0f
-                    override fun onTouch(view: View, event: MotionEvent): Boolean {
-                        when (event.action) {
-                            MotionEvent.ACTION_DOWN -> {
-                                initialX = params.x
-                                initialY = params.y
-                                initialTouchX = event.rawX
-                                initialTouchY = event.rawY
-                                return true
-                            }
-
-                            MotionEvent.ACTION_UP -> return true
-                            MotionEvent.ACTION_MOVE -> {
-                                params.x = initialX + (event.rawX - initialTouchX).toInt()
-                                params.y = initialY + (event.rawY - initialTouchY).toInt()
-                                windowManager!!.updateViewLayout(FloatingWidget, params)
-                                return true
-                            }
+            binding!!.item.setOnTouchListener(object : OnTouchListener {
+                private var initialX = 0
+                private var initialY = 0
+                private var initialTouchX = 0f
+                private var initialTouchY = 0f
+                override fun onTouch(view: View, event: MotionEvent): Boolean {
+                    when (event.action) {
+                        MotionEvent.ACTION_DOWN -> {
+                            initialX = params.x
+                            initialY = params.y
+                            initialTouchX = event.rawX
+                            initialTouchY = event.rawY
+                            return true
                         }
-                        return false
+
+                        MotionEvent.ACTION_UP -> return true
+                        MotionEvent.ACTION_MOVE -> {
+                            params.x = initialX + (event.rawX - initialTouchX).toInt()
+                            params.y = initialY + (event.rawY - initialTouchY).toInt()
+                            windowManager!!.updateViewLayout(binding!!.root, params)
+                            return true
+                        }
                     }
-                })
+                    return false
+                }
+            })
         }
         return super.onStartCommand(intent, flags, startId)
     }
 
     fun playVideos() {
         try {
-            val bandwidthMeter: BandwidthMeter = DefaultBandwidthMeter()
-            val trackSelector: TrackSelector =
-                DefaultTrackSelector(AdaptiveTrackSelection.Factory(bandwidthMeter))
-            exoPlayer =
-                ExoPlayerFactory.newSimpleInstance(this@FloatingWidgetService, trackSelector)
+            val trackSelector = DefaultTrackSelector(this, AdaptiveTrackSelection.Factory())
+            exoPlayer = SimpleExoPlayer.Builder(this@FloatingWidgetService)
+                .setTrackSelector(trackSelector)
+                .build()
             val playerInfo = Util.getUserAgent(this, "VideoPlayer")
             val dataSourceFactory = DefaultDataSourceFactory(this, playerInfo)
-            val extractorsFactory: ExtractorsFactory = DefaultExtractorsFactory()
-            val mediaSource: MediaSource = ExtractorMediaSource(
-                videoUri, dataSourceFactory, extractorsFactory, null, null
-            )
-            playerView!!.setPlayer(exoPlayer)
+            val mediaSource: MediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+                .createMediaSource(MediaItem.fromUri(videoUri!!))
+            binding!!.playerView.setPlayer(exoPlayer)
             exoPlayer!!.prepare(mediaSource)
             exoPlayer!!.setPlayWhenReady(true)
         } catch (e: Exception) {
@@ -174,6 +160,6 @@ class FloatingWidgetService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (FloatingWidget != null) windowManager!!.removeView(FloatingWidget)
+        if (binding != null) windowManager!!.removeView(binding!!.root)
     }
 }

@@ -23,32 +23,32 @@
         tools:replace="android:supportsRtl"
         tools:targetApi="31">
         <activity
-            android:name=".Activity.SplashActivity"
+            android:name=".ui.main.SplashActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.CastActivity"
+            android:name=".ui.cast.CastActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.CastAddActivity"
+            android:name=".ui.cast.CastAddActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.EditorsChoiceActivity"
+            android:name=".ui.editorschoice.EditorsChoiceActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.PrivacyPolicyEditActivity"
+            android:name=".ui.privacypolicy.PrivacyPolicyEditActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Auth.ForgetPasswordActivity"
+            android:name=".ui.auth.ForgetPasswordActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Auth.LoginActivity"
+            android:name=".ui.auth.LoginActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.MainActivity"
+            android:name=".ui.main.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -58,71 +58,71 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activity.ProfileActivity"
+            android:name=".ui.profile.ProfileActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.ProfileEditActivity"
+            android:name=".ui.profile.ProfileEditActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.SliderShowActivity"
+            android:name=".ui.slider.SliderShowActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.PrivacyPolicyActivity"
+            android:name=".ui.privacypolicy.PrivacyPolicyActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.UsersActivity"
+            android:name=".ui.users.UsersActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.CategoriesActivity"
+            android:name=".ui.category.CategoriesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.CategoryAddActivity"
+            android:name=".ui.category.CategoryAddActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.CategoryEditActivity"
+            android:name=".ui.category.CategoryEditActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.CastDetailsActivity"
+            android:name=".ui.cast.CastDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.CategoryDetailsActivity"
+            android:name=".ui.category.CategoryDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.CastEditActivity"
+            android:name=".ui.cast.CastEditActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.MovieEditActivity"
+            android:name=".ui.movie.MovieEditActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.MoviesActivity"
+            android:name=".ui.movie.MoviesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.FavoritesActivity"
+            android:name=".ui.favorite.FavoritesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.MovieAddActivity"
+            android:name=".ui.movie.MovieAddActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.MovieDetailsActivity"
+            android:name=".ui.movie.MovieDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.EditorsChoiceAddActivity"
+            android:name=".ui.editorschoice.EditorsChoiceAddActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.MovieViewActivity"
+            android:name=".ui.movie.MovieViewActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.CastMovieAddActivity"
+            android:name=".ui.movie.CastMovieAddActivity"
             android:screenOrientation="portrait" />
 
-        <service android:name=".Service.FloatingWidgetService" />
+        <service android:name=".service.FloatingWidgetService" />
 
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"

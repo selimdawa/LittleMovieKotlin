@@ -1,8 +1,8 @@
-package com.flatcode.littlemovie.Repository
+package com.flatcode.littlemovie.repository
 
-import com.flatcode.littlemovie.Data.Local.Dao.CastDao
-import com.flatcode.littlemovie.Model.Cast
-import com.flatcode.littlemovie.Unit.DATA
+import com.flatcode.littlemovie.db.CastDao
+import com.flatcode.littlemovie.model.Cast
+import com.flatcode.littlemovie.utils.DATA
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase

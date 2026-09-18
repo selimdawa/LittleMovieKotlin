@@ -1,4 +1,4 @@
-package com.flatcode.littlemovieadmin.DI
+package com.flatcode.littlemovieadmin.di
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
