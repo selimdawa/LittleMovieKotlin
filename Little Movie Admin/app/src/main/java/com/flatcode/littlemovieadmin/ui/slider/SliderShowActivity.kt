@@ -14,7 +14,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.VOID
+import com.flatcode.littlemovieadmin.utils.cropImageSlider
+import com.flatcode.littlemovieadmin.utils.getFileExtension
+import com.flatcode.littlemovieadmin.utils.loadGlideImage
 import com.flatcode.littlemovieadmin.databinding.ActivitySliderShowBinding
 import com.theartofdev.edmodo.cropper.CropImage
 import dagger.hilt.android.AndroidEntryPoint
@@ -58,7 +60,7 @@ class SliderShowActivity : BaseActivity() {
 
         addButtons.forEachIndexed { index, button ->
             button.setOnClickListener {
-                VOID.CropImageSlider(this)
+                cropImageSlider()
                 imageNumber = index + 1
             }
         }
@@ -93,7 +95,7 @@ class SliderShowActivity : BaseActivity() {
 
                     imageViews.forEachIndexed { index, imageView ->
                         val url = state.images[(index + 1).toString()]
-                        VOID.GlideImage(false, this@SliderShowActivity, url, imageView)
+                        imageView.loadGlideImage(url, false)
                     }
                 }
             }
@@ -108,7 +110,7 @@ class SliderShowActivity : BaseActivity() {
                 imageUri = uri
                 requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
             } else {
-                VOID.CropImageSlider(this)
+                cropImageSlider()
             }
         }
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
@@ -127,7 +129,7 @@ class SliderShowActivity : BaseActivity() {
         progressDialog?.setMessage("Posting photo...")
         progressDialog?.show()
         
-        val extension = VOID.getFileExtension(uri, this)
+        val extension = getFileExtension(uri)
         viewModel.uploadImage(uri, imageNumber.toString(), extension) { success, message ->
             progressDialog?.dismiss()
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show()

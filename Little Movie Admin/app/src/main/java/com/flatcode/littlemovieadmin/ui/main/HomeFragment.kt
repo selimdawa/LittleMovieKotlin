@@ -13,7 +13,7 @@ import com.flatcode.littlemovieadmin.ui.main.MainAdapter
 import com.flatcode.littlemovieadmin.model.Main
 import com.flatcode.littlemovieadmin.ui.profile.ProfileActivity
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.intentExtra
+import com.flatcode.littlemovieadmin.utils.openActivity
 import com.flatcode.littlemovieadmin.utils.loadGlideImage
 import com.flatcode.littlemovieadmin.ui.main.MainViewModel
 import com.flatcode.littlemovieadmin.databinding.FragmentHomeBinding
@@ -42,7 +42,9 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.toolbar.image.setOnClickListener {
-            requireContext().intentExtra(ProfileActivity::class.java, DATA.PROFILE_ID, DATA.FirebaseUserUid)
+            requireContext().openActivity<ProfileActivity>(
+                extras = arrayOf(DATA.PROFILE_ID to DATA.FirebaseUserUid)
+            )
         }
 
         adapter = MainAdapter(requireContext(), list as ArrayList<Main>)

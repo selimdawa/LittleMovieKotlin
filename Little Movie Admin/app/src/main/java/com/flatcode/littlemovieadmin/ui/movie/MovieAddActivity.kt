@@ -19,7 +19,10 @@ import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.DATA.castMovie
-import com.flatcode.littlemovieadmin.utils.VOID
+import com.flatcode.littlemovieadmin.utils.convertDuration
+import com.flatcode.littlemovieadmin.utils.cropVideoSquare
+import com.flatcode.littlemovieadmin.utils.loadGlideBlurUri
+import com.flatcode.littlemovieadmin.utils.openActivity
 import com.flatcode.littlemovieadmin.ui.movie.MovieAddViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityMovieAddBinding
 import com.theartofdev.edmodo.cropper.CropImage
@@ -53,7 +56,7 @@ class MovieAddActivity : BaseActivity() {
         binding.toolbar.nameSpace.setText(R.string.add_new_movie)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
         binding.category.setOnClickListener { categoryPickDialog() }
-        binding.image.setOnClickListener { VOID.CropVideoSquare(this) }
+        binding.image.setOnClickListener { cropVideoSquare() }
         binding.chooseMovie.setOnClickListener { openVideoFiles() }
         binding.toolbar.ok.setOnClickListener { validateData() }
 
@@ -146,7 +149,7 @@ class MovieAddActivity : BaseActivity() {
             try {
                 retriever.setDataSource(this, videoUri)
                 durations = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-                binding.duration.text = VOID.convertDuration(durations?.toLong() ?: 0L)
+                binding.duration.text = (durations?.toLong() ?: 0L).convertDuration()
                 binding.choose.setText(R.string.ok)
             } catch (e: Exception) {
                 Timber.e(e, "Metadata retrieval failed")
@@ -160,7 +163,7 @@ class MovieAddActivity : BaseActivity() {
                 imageUri = uri
                 requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
             } else {
-                VOID.CropVideoSquare(this)
+                cropVideoSquare()
             }
         }
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
@@ -168,7 +171,7 @@ class MovieAddActivity : BaseActivity() {
             if (resultCode == RESULT_OK) {
                 imageUri = result.uri
                 binding.image.setImageURI(imageUri)
-                VOID.GlideBlurUri(this, imageUri, binding.imageBlur, 50)
+                binding.image.loadGlideBlurUri(imageUri, 50)
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Toast.makeText(this, "Error! ${result.error}", Toast.LENGTH_SHORT).show()
             }
@@ -178,7 +181,7 @@ class MovieAddActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         binding.cast.text = MessageFormat.format("{0}{1}", DATA.EMPTY, castMovie.size)
-        binding.cast.setOnClickListener { VOID.Intent1(this, CastMovieAddActivity::class.java) }
+        binding.cast.setOnClickListener { openActivity<CastMovieAddActivity>() }
     }
 
     override fun onBackPressed() {

@@ -1,6 +1,7 @@
 package com.flatcode.littlemovie.ui.settings
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +11,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovie.model.Setting
 import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.VOID
+import com.flatcode.littlemovie.utils.dialogAboutApp
+import com.flatcode.littlemovie.utils.dialogLogout
+import com.flatcode.littlemovie.utils.openActivity
+import com.flatcode.littlemovie.utils.rateApp
+import com.flatcode.littlemovie.utils.shareApp
 import com.flatcode.littlemovie.databinding.ItemSettingBinding
 import java.text.MessageFormat
 
@@ -42,11 +47,14 @@ class SettingAdapter(private val context: Context?, private val list: ArrayList<
 
         holder.binding.item.setOnClickListener {
             when (id) {
-                "5" -> VOID.dialogAboutApp(context)
-                "6" -> VOID.dialogLogout(context)
-                "7" -> VOID.shareApp(context)
-                "8" -> VOID.rateApp(context)
-                else -> VOID.Intent1(context, to)
+                "5" -> context?.dialogAboutApp()
+                "6" -> context?.dialogLogout()
+                "7" -> context?.shareApp()
+                "8" -> context?.rateApp()
+                else -> to?.let {
+                    val intent = Intent(context, it)
+                    context?.startActivity(intent)
+                }
             }
         }
     }

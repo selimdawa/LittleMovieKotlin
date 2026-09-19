@@ -20,7 +20,9 @@ import com.flatcode.littlemovie.model.Comment
 import com.flatcode.littlemovie.Application
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.VOID
+import com.flatcode.littlemovie.utils.convertDuration
+import com.flatcode.littlemovie.utils.GlideImage
+import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.databinding.ActivityMovieDetailsBinding
 import com.flatcode.littlemovie.databinding.DialogCommentAddBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -83,7 +85,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         binding!!.love.setOnClickListener { movieId?.let { viewModel.toggleLove(it) } }
         binding!!.favorite.setOnClickListener { movieId?.let { viewModel.toggleFavorite(it) } }
         binding!!.view.setOnClickListener {
-            VOID.IntentExtra2(activity, MovieViewActivity::class.java, DATA.MOVIE_LINK, movieLink, DATA.MOVIE_ID, movieId)
+            activity.openActivity<MovieViewActivity>(DATA.MOVIE_LINK to movieLink, DATA.MOVIE_ID to movieId)
         }
         binding!!.addComment.setOnClickListener {
             if (DATA.FIREBASE_USER == null) {
@@ -107,13 +109,13 @@ class MovieDetailsActivity : AppCompatActivity() {
             viewModel.movie.collect { movie ->
                 movie?.let {
                     val date: String = Application.formatTimestamp(it.timestamp)
-                    VOID.GlideImage(false, activity, it.image, binding!!.image)
-                    VOID.GlideImage(false, activity, it.image, binding!!.cover)
+                    binding!!.image.GlideImage(false, it.image)
+                    binding!!.cover.GlideImage(false, it.image)
                     binding!!.title.text = it.name
                     binding!!.description.text = it.description
                     binding!!.views.text = it.viewsCount.toString()
                     binding!!.date.text = date
-                    binding!!.duration.text = VOID.convertDuration(it.duration?.toLong() ?: 0L)
+                    binding!!.duration.text = (it.duration?.toLong() ?: 0L).convertDuration()
                     binding!!.year.text = it.year.toString()
                 }
             }
@@ -145,7 +147,7 @@ class MovieDetailsActivity : AppCompatActivity() {
             viewModel.publisher.collect { user ->
                 user?.let {
                     binding!!.publisherName.text = it.username
-                    VOID.GlideImage(true, activity, it.profileImage, binding!!.publisherImage)
+                    binding!!.publisherImage.GlideImage(true, it.profileImage)
                 }
             }
         }

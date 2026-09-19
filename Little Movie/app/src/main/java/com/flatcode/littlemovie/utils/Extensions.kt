@@ -10,6 +10,8 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
+import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
@@ -38,58 +40,26 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
+import java.io.Serializable
 import java.text.MessageFormat
 
-fun Context.IntentClear(c: Class<*>?) {
-    val intent = Intent(this, c)
-    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-    this.startActivity(intent)
-}
-
-fun Context.Intent1(c: Class<*>?) {
-    val intent = Intent(this, c)
-    this.startActivity(intent)
-}
-
-fun Context.IntentExtra(c: Class<*>?, key: String?, value: String?) {
-    val intent = Intent(this, c)
-    intent.putExtra(key, value)
-    this.startActivity(intent)
-}
-
-fun Context.IntentExtra2(
-    c: Class<*>?, key: String?, value: String?,
-    key2: String?, value2: String?,
+inline fun <reified T : Activity> Context.openActivity(
+    vararg extras: Pair<String, Any?>,
+    clear: Boolean = false,
 ) {
-    val intent = Intent(this, c)
-    intent.putExtra(key, value)
-    intent.putExtra(key2, value2)
-    this.startActivity(intent)
+    val intent = Intent(this, T::class.java).apply {
+        if (clear) {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        extras.forEach { (key, value) ->
+            when (value) {
+                is String -> putExtra(key, value)
+                is Boolean -> putExtra(key, value)
+            }
+        }
+    }
+    startActivity(intent)
 }
-
-fun Context.IntentExtra3(
-    c: Class<*>?, key: String?, value: String?,
-    key2: String?, value2: String?, key3: String?, value3: String?,
-) {
-    val intent = Intent(this, c)
-    intent.putExtra(key, value)
-    intent.putExtra(key2, value2)
-    intent.putExtra(key3, value3)
-    this.startActivity(intent)
-}
-
-fun Context.IntentExtra4(
-    c: Class<*>?, key: String?, value: String?, key2: String?,
-    value2: String?, key3: String?, value3: String?, key4: String?, value4: String?,
-) {
-    val intent = Intent(this, c)
-    intent.putExtra(key, value)
-    intent.putExtra(key2, value2)
-    intent.putExtra(key3, value3)
-    intent.putExtra(key4, value4)
-    this.startActivity(intent)
-}
-
 fun ImageView.GlideImage(isUser: Boolean, url: String?) {
     try {
         if (url == DATA.BASIC) {
@@ -158,7 +128,7 @@ fun Context.dialogLogout() {
     lp.height = WindowManager.LayoutParams.WRAP_CONTENT
     binding.yes.setOnClickListener {
         FirebaseAuth.getInstance().signOut()
-        this.IntentClear(AuthActivity::class.java)
+        this.openActivity<AuthActivity>(clear = true)
     }
     binding.no.setOnClickListener { dialog.cancel() }
     dialog.show()
@@ -489,7 +459,8 @@ class SimpleBlurTransformation(private val radius: Float) : Transformation() {
                 bs += p and 0xff
                 c++
             }
-            blurred[y * w + x] = (0xff shl 24) or ((rs / c).toInt() shl 16) or ((gs / c).toInt() shl 8) or (bs / c).toInt()
+            blurred[y * w + x] =
+                (0xff shl 24) or ((rs / c).toInt() shl 16) or ((gs / c).toInt() shl 8) or (bs / c).toInt()
         }
         for (x in 0 until w) for (y in 0 until h) {
             var rs = 0L
@@ -504,7 +475,8 @@ class SimpleBlurTransformation(private val radius: Float) : Transformation() {
                 bs += p and 0xff
                 c++
             }
-            pix[y * w + x] = (0xff shl 24) or ((rs / c).toInt() shl 16) or ((gs / c).toInt() shl 8) or (bs / c).toInt()
+            pix[y * w + x] =
+                (0xff shl 24) or ((rs / c).toInt() shl 16) or ((gs / c).toInt() shl 8) or (bs / c).toInt()
         }
         val output = createBitmap(w, h, Bitmap.Config.ARGB_8888)
         output.setPixels(pix, 0, w, 0, 0, w, h)

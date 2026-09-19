@@ -10,7 +10,8 @@ import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.model.Setting
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.VOID
+import com.flatcode.littlemovie.utils.GlideImage
+import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.databinding.FragmentSettingsBinding
 import com.flatcode.littlemovie.ui.cast.MyCastActivity
 import com.flatcode.littlemovie.ui.category.MyCategoriesActivity
@@ -49,7 +50,7 @@ class SettingsFragment : Fragment() {
 
     private fun setupClickListeners() {
         binding.toolbar.item.setOnClickListener {
-            VOID.IntentExtra(context, ProfileActivity::class.java, DATA.PROFILE_ID, DATA.FirebaseUserUid)
+            context?.openActivity<ProfileActivity>(DATA.PROFILE_ID to DATA.FirebaseUserUid)
         }
     }
 
@@ -57,7 +58,7 @@ class SettingsFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.user.collect { user ->
                 user?.let {
-                    VOID.GlideImage(true, context, it.profileImage, binding.toolbar.imageProfile)
+                    binding.toolbar.imageProfile.GlideImage(true, it.profileImage)
                     binding.toolbar.username.text = it.username
                     binding.toolbar.email.text = it.email
                 }

@@ -7,7 +7,7 @@ import android.util.Patterns
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemovieadmin.ui.BaseActivity
-import com.flatcode.littlemovieadmin.utils.VOID
+
 import com.flatcode.littlemovieadmin.databinding.ActivityForgetPasswordBinding
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth

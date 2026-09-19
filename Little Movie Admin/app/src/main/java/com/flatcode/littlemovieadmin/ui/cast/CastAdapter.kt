@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.filter.CastFilter
 import com.flatcode.littlemovieadmin.model.Cast
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.intentExtra4
+import com.flatcode.littlemovieadmin.utils.openActivity
 import com.flatcode.littlemovieadmin.utils.loadGlideImage
 import com.flatcode.littlemovieadmin.utils.moreDeleteCast
 import com.flatcode.littlemovieadmin.databinding.ItemCastBinding
@@ -63,9 +63,13 @@ class CastAdapter(private val activity: Activity, var list: ArrayList<Cast?>) :
         }
 
         holder.item.setOnClickListener {
-            activity.intentExtra4(
-                CastDetailsActivity::class.java, DATA.CAST_ID, id, DATA.CAST_NAME,
-                name, DATA.CAST_IMAGE, image, DATA.CAST_ABOUT, aboutMy
+            activity.openActivity<CastDetailsActivity>(
+                extras = arrayOf(
+                    DATA.CAST_ID to id,
+                    DATA.CAST_NAME to name,
+                    DATA.CAST_IMAGE to image,
+                    DATA.CAST_ABOUT to aboutMy
+                )
             )
         }
     }

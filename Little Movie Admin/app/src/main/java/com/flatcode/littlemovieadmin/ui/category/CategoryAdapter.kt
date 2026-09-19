@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.filter.CategoryFilter
 import com.flatcode.littlemovieadmin.model.Category
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.intentExtra2
+import com.flatcode.littlemovieadmin.utils.openActivity
 import com.flatcode.littlemovieadmin.utils.loadGlideImage
 import com.flatcode.littlemovieadmin.utils.moreDeleteCategory
 import com.flatcode.littlemovieadmin.databinding.ItemCategoryBinding
@@ -61,8 +61,10 @@ class CategoryAdapter(private val activity: Activity, var list: ArrayList<Catego
         }
 
         holder.item.setOnClickListener {
-            activity.intentExtra2(
-                CategoryDetailsActivity::class.java, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
+            activity.openActivity<CategoryDetailsActivity>(
+                extras = arrayOf(
+                    DATA.CATEGORY_ID to id, DATA.CATEGORY_NAME to name
+                )
             )
         }
     }

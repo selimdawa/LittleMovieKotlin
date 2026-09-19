@@ -15,7 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.model.Cast
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.VOID
+import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.databinding.ActivityMyCastBinding
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -75,7 +75,7 @@ class MyCastActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        binding!!.switchBar.explore.setOnClickListener { VOID.Intent1(activity, CastActivity::class.java) }
+        binding!!.switchBar.explore.setOnClickListener { activity.openActivity<CastActivity>() }
         binding!!.switchBar.all.setOnClickListener {
             type = DATA.TIMESTAMP
             loadData()

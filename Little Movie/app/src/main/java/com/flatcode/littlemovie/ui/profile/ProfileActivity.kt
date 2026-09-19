@@ -12,7 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.VOID
+import com.flatcode.littlemovie.utils.GlideImage
+import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.databinding.ActivityProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -52,7 +53,7 @@ class ProfileActivity : AppCompatActivity() {
         if (profileId == DATA.FirebaseUserUid) {
             binding!!.edit.visibility = View.VISIBLE
             binding!!.edit.setImageResource(R.drawable.ic_edit_white)
-            binding!!.edit.setOnClickListener { VOID.Intent1(context, ProfileEditActivity::class.java) }
+            binding!!.edit.setOnClickListener { context.openActivity<ProfileEditActivity>() }
         }
         binding!!.back.setOnClickListener { onBackPressed() }
     }
@@ -62,7 +63,7 @@ class ProfileActivity : AppCompatActivity() {
             viewModel.user.collect { user ->
                 user?.let {
                     binding!!.username.text = it.username
-                    VOID.GlideImage(true, context, it.profileImage, binding!!.profile)
+                    binding!!.profile.GlideImage(true, it.profileImage)
                 }
             }
         }

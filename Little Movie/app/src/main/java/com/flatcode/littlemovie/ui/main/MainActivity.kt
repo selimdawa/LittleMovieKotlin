@@ -16,7 +16,9 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.VOID
+import com.flatcode.littlemovie.utils.closeApp
+import com.flatcode.littlemovie.utils.GlideImage
+import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.databinding.ActivityMainBinding
 import com.flatcode.littlemovie.ui.profile.ProfileActivity
 import com.nafis.bottomnavigation.NafisBottomNavigation
@@ -103,13 +105,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
         binding!!.toolbar.image.setOnClickListener {
-            VOID.IntentExtra(context, ProfileActivity::class.java, DATA.PROFILE_ID, DATA.FirebaseUserUid)
+            context.openActivity<ProfileActivity>(DATA.PROFILE_ID to DATA.FirebaseUserUid)
         }
 
         lifecycleScope.launch {
             viewModel.profileImageUrl.collect { profileImage ->
                 Timber.d("Profile image URL updated: %s", profileImage)
-                VOID.GlideImage(true, context, profileImage, binding!!.toolbar.image)
+                binding!!.toolbar.image.GlideImage(true, profileImage)
             }
         }
         viewModel.loadUserInfo()
@@ -117,7 +119,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         if (navController?.navigateUp() == false) {
-            VOID.closeApp(context, activity)
+            context.closeApp(activity)
         }
     }
 }

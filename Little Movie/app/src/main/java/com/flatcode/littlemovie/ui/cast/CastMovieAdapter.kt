@@ -10,7 +10,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovie.model.Cast
 import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.VOID
+import com.flatcode.littlemovie.utils.GlideImage
+import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.databinding.ItemCastMovieBinding
 
 class CastMovieAdapter(private val activity: Activity, var list: ArrayList<Cast?>) :
@@ -28,7 +29,7 @@ class CastMovieAdapter(private val activity: Activity, var list: ArrayList<Cast?
         val image = DATA.EMPTY + item.image
         val aboutMy = DATA.EMPTY + item.aboutMy
 
-        VOID.GlideImage(true, activity, image, holder.binding.image)
+        holder.binding.image.GlideImage(true, image)
 
         if (item.name == DATA.EMPTY) {
             holder.binding.name.visibility = View.GONE
@@ -38,9 +39,9 @@ class CastMovieAdapter(private val activity: Activity, var list: ArrayList<Cast?
         }
 
         holder.binding.item.setOnClickListener {
-            VOID.IntentExtra4(
-                activity, CastDetailsActivity::class.java, DATA.CAST_ID, id, DATA.CAST_NAME,
-                name, DATA.CAST_IMAGE, image, DATA.CAST_ABOUT, aboutMy
+            activity.openActivity<CastDetailsActivity>(
+                DATA.CAST_ID to id, DATA.CAST_NAME to name,
+                DATA.CAST_IMAGE to image, DATA.CAST_ABOUT to aboutMy
             )
         }
     }

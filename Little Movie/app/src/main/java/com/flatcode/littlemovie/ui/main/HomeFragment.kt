@@ -13,7 +13,7 @@ import com.flatcode.littlemovie.ui.movie.MovieAdapter
 import com.flatcode.littlemovie.model.Category
 import com.flatcode.littlemovie.model.Movie
 import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.VOID
+import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.databinding.FragmentHomeBinding
 import com.flatcode.littlemovie.ui.movie.ShowMoreActivity
 import kotlinx.coroutines.launch
@@ -53,31 +53,31 @@ class HomeFragment : Fragment() {
 
     private fun setupClickListeners() {
         binding.showMore.setOnClickListener {
-            VOID.IntentExtra3(
-                context, ShowMoreActivity::class.java, DATA.SHOW_MORE_TYPE,
-                DATA.EDITORS_CHOICE, DATA.SHOW_MORE_NAME, binding.name.text.toString(),
-                DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + false
+            context?.openActivity<ShowMoreActivity>(
+                DATA.SHOW_MORE_TYPE to DATA.EDITORS_CHOICE,
+                DATA.SHOW_MORE_NAME to binding.name.text.toString(),
+                DATA.SHOW_MORE_BOOLEAN to (DATA.EMPTY + false)
             )
         }
         binding.showMore2.setOnClickListener {
-            VOID.IntentExtra3(
-                context, ShowMoreActivity::class.java, DATA.SHOW_MORE_TYPE,
-                DATA.VIEWS_COUNT, DATA.SHOW_MORE_NAME, binding.mostViews.text.toString(),
-                DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + true
+            context?.openActivity<ShowMoreActivity>(
+                DATA.SHOW_MORE_TYPE to DATA.VIEWS_COUNT,
+                DATA.SHOW_MORE_NAME to binding.mostViews.text.toString(),
+                DATA.SHOW_MORE_BOOLEAN to (DATA.EMPTY + true)
             )
         }
         binding.showMore3.setOnClickListener {
-            VOID.IntentExtra3(
-                context, ShowMoreActivity::class.java, DATA.SHOW_MORE_TYPE,
-                DATA.LOVES_COUNT, DATA.SHOW_MORE_NAME, binding.name3.text.toString(),
-                DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + true
+            context?.openActivity<ShowMoreActivity>(
+                DATA.SHOW_MORE_TYPE to DATA.LOVES_COUNT,
+                DATA.SHOW_MORE_NAME to binding.name3.text.toString(),
+                DATA.SHOW_MORE_BOOLEAN to (DATA.EMPTY + true)
             )
         }
         binding.showMore4.setOnClickListener {
-            VOID.IntentExtra3(
-                context, ShowMoreActivity::class.java, DATA.SHOW_MORE_TYPE,
-                DATA.TIMESTAMP, DATA.SHOW_MORE_NAME, binding.name4.text.toString(),
-                DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + true
+            context?.openActivity<ShowMoreActivity>(
+                DATA.SHOW_MORE_TYPE to DATA.TIMESTAMP,
+                DATA.SHOW_MORE_NAME to binding.name4.text.toString(),
+                DATA.SHOW_MORE_BOOLEAN to (DATA.EMPTY + true)
             )
         }
     }

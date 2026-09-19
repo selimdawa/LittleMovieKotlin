@@ -7,7 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.R
-import com.flatcode.littlemovieadmin.utils.VOID
+import com.flatcode.littlemovieadmin.utils.openActivity
 import com.flatcode.littlemovieadmin.databinding.ActivityPrivacyPolicyBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -25,7 +25,7 @@ class PrivacyPolicyActivity : BaseActivity() {
 
         binding.toolbar.nameSpace.setText(R.string.privacy_policy)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.edit.setOnClickListener { VOID.Intent1(this, PrivacyPolicyEditActivity::class.java) }
+        binding.edit.setOnClickListener { openActivity<PrivacyPolicyEditActivity>() }
 
         observeState()
     }

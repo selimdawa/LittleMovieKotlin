@@ -13,8 +13,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovie.filter.CategoryFilter
 import com.flatcode.littlemovie.model.Category
 import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.VOID
-import com.flatcode.littlemovie.utils.VOID.GlideImage
+import com.flatcode.littlemovie.utils.GlideImage
+import com.flatcode.littlemovie.utils.checkInterested
+import com.flatcode.littlemovie.utils.isInterested
+import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.databinding.ItemCategoryBinding
 import java.text.MessageFormat
 
@@ -37,7 +39,7 @@ class CategoryAdapter(private val activity: Activity, var list: ArrayList<Catego
         val interestedCount = DATA.EMPTY + item.interestedCount
         val moviesCount = DATA.EMPTY + item.moviesCount
 
-        GlideImage(false, activity, image, holder.binding.image)
+        holder.binding.image.GlideImage(false, image)
 
         if (item.name == DATA.EMPTY) {
             holder.binding.name.visibility = View.GONE
@@ -54,12 +56,12 @@ class CategoryAdapter(private val activity: Activity, var list: ArrayList<Catego
             "{0}{1}", DATA.EMPTY, DATA.ZERO
         ) else holder.binding.numberMovies.text = moviesCount
 
-        VOID.isInterested(holder.binding.add, id, DATA.CATEGORIES)
-        holder.binding.add.setOnClickListener { VOID.checkInterested(holder.binding.add, DATA.CATEGORIES, id) }
+        holder.binding.add.isInterested(id, DATA.CATEGORIES)
+        holder.binding.add.setOnClickListener { holder.binding.add.checkInterested(DATA.CATEGORIES, id) }
 
         holder.binding.item.setOnClickListener {
-            VOID.IntentExtra2(
-                activity, CategoryDetailsActivity::class.java, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
+            activity.openActivity<CategoryDetailsActivity>(
+                DATA.CATEGORY_ID to id, DATA.CATEGORY_NAME to name
             )
         }
     }

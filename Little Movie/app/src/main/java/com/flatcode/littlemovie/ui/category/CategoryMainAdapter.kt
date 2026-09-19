@@ -10,7 +10,9 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovie.model.Category
 import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.VOID
+import com.flatcode.littlemovie.utils.GlideBlur
+import com.flatcode.littlemovie.utils.GlideImage
+import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.databinding.ItemCategoryMainBinding
 
 class CategoryMainAdapter(private val context: Context?, var list: ArrayList<Category?>) :
@@ -27,8 +29,8 @@ class CategoryMainAdapter(private val context: Context?, var list: ArrayList<Cat
         val name = DATA.EMPTY + item.name
         val image = DATA.EMPTY + item.image
 
-        VOID.GlideImage(false, context, image, holder.binding.image)
-        VOID.GlideBlur(false, context, image, holder.binding.imageBlur, 50)
+        holder.binding.image.GlideImage(false, image)
+        holder.binding.imageBlur.GlideBlur(false, image, 50)
 
         if (name == DATA.EMPTY) {
             holder.binding.name.visibility = View.GONE
@@ -38,8 +40,8 @@ class CategoryMainAdapter(private val context: Context?, var list: ArrayList<Cat
         }
 
         holder.binding.card.setOnClickListener {
-            VOID.IntentExtra2(
-                context, CategoryDetailsActivity::class.java, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
+            context?.openActivity<CategoryDetailsActivity>(
+                DATA.CATEGORY_ID to id, DATA.CATEGORY_NAME to name
             )
         }
     }

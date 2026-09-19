@@ -41,45 +41,26 @@ import com.google.firebase.database.ValueEventListener
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import timber.log.Timber
+import java.io.Serializable
 import java.text.MessageFormat
 
-fun Context.intentClear(c: Class<*>?) {
-    val intent = Intent(this, c)
-    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-    this.startActivity(intent)
-}
-
-fun Context.intent1(c: Class<*>?) {
-    val intent = Intent(this, c)
-    this.startActivity(intent)
-}
-
-fun Context.intentExtra(c: Class<*>?, key: String?, value: String?) {
-    val intent = Intent(this, c)
-    intent.putExtra(key, value)
-    this.startActivity(intent)
-}
-
-fun Context.intentExtra2(
-    c: Class<*>?, key: String?, value: String?,
-    key2: String?, value2: String?,
+inline fun <reified T : Activity> Context.openActivity(
+    clear: Boolean = false,
+    vararg extras: Pair<String, Any?>
 ) {
-    val intent = Intent(this, c)
-    intent.putExtra(key, value)
-    intent.putExtra(key2, value2)
-    this.startActivity(intent)
-}
-
-fun Context.intentExtra4(
-    c: Class<*>?, key: String?, value: String?, key2: String?, value2: String?,
-    key3: String?, value3: String?, key4: String?, value4: String?,
-) {
-    val intent = Intent(this, c)
-    intent.putExtra(key, value)
-    intent.putExtra(key2, value2)
-    intent.putExtra(key3, value3)
-    intent.putExtra(key4, value4)
-    this.startActivity(intent)
+    val intent = Intent(this, T::class.java).apply {
+        if (clear) addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        extras.forEach { (key, value) ->
+            when (value) {
+                is String -> putExtra(key, value)
+                is Int -> putExtra(key, value)
+                is Long -> putExtra(key, value)
+                is Boolean -> putExtra(key, value)
+                is Serializable -> putExtra(key, value)
+            }
+        }
+    }
+    startActivity(intent)
 }
 
 fun ImageView.loadGlideImage(url: String?, isUser: Boolean = false) {
@@ -237,7 +218,7 @@ fun Activity.moreDeleteCategory(
     val builder = AlertDialog.Builder(this)
     builder.setTitle("Choose Options").setItems(options) { dialog: DialogInterface?, which: Int ->
             if (which == 0) {
-                this.intentExtra(CategoryEditActivity::class.java, DATA.CATEGORY_ID, id)
+                this.openActivity<CategoryEditActivity>(extras = arrayOf(DATA.CATEGORY_ID to id))
             } else if (which == 1) {
                 this.dialogOptionDelete(
                     id, name, DATA.CATEGORY, DATA.CATEGORIES,
@@ -257,7 +238,7 @@ fun Activity.moreDeleteCast(
     val builder = AlertDialog.Builder(this)
     builder.setTitle("Choose Options").setItems(options) { dialog: DialogInterface?, which: Int ->
             if (which == 0) {
-                this.intentExtra(CastEditActivity::class.java, DATA.CAST_ID, id)
+                this.openActivity<CastEditActivity>(extras = arrayOf(DATA.CAST_ID to id))
             } else if (which == 1) {
                 this.dialogOptionDelete(
                     id, name, DATA.CAST, DATA.CAST,
@@ -278,8 +259,10 @@ fun Activity.moreDeleteMovie(
     val builder = AlertDialog.Builder(this)
     builder.setTitle("Choose Options").setItems(options) { dialog: DialogInterface?, which: Int ->
             if (which == 0) {
-                this.intentExtra2(
-                    MovieEditActivity::class.java, DATA.MOVIE_ID, id, DATA.CATEGORY_ID, categoryId
+                this.openActivity<MovieEditActivity>(
+                    extras = arrayOf(
+                        DATA.MOVIE_ID to id, DATA.CATEGORY_ID to categoryId
+                    )
                 )
             } else if (which == 1) {
                 this.dialogOptionDelete(

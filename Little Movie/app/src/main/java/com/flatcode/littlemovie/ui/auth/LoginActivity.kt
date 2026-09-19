@@ -12,7 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.VOID
+import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.databinding.ActivityLoginBinding
 import com.flatcode.littlemovie.ui.main.MainActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -49,8 +49,8 @@ class LoginActivity : AppCompatActivity() {
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
 
-        binding!!.forget.setOnClickListener { VOID.Intent1(context, ForgetPasswordActivity::class.java) }
-        binding!!.noAccount.setOnClickListener { VOID.Intent1(context, RegisterActivity::class.java) }
+        binding!!.forget.setOnClickListener { context.openActivity<ForgetPasswordActivity>() }
+        binding!!.noAccount.setOnClickListener { context.openActivity<RegisterActivity>() }
         binding!!.loginBtn.setOnClickListener { validateDate() }
     }
 
@@ -76,7 +76,7 @@ class LoginActivity : AppCompatActivity() {
         dialog!!.setMessage("Logging In...")
         dialog!!.show()
         auth!!.signInWithEmailAndPassword(email, password)
-            .addOnSuccessListener { VOID.IntentClear(context, MainActivity::class.java) }
+            .addOnSuccessListener { context.openActivity<MainActivity>(clear = true) }
             .addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
                 Toast.makeText(context, DATA.EMPTY + e.message, Toast.LENGTH_SHORT).show()

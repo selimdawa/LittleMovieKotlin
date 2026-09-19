@@ -15,7 +15,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.VOID
+import com.flatcode.littlemovieadmin.utils.cropImageSquare
+import com.flatcode.littlemovieadmin.utils.getFileExtension
+import com.flatcode.littlemovieadmin.utils.loadGlideImage
 import com.flatcode.littlemovieadmin.databinding.ActivityProfileEditBinding
 import com.theartofdev.edmodo.cropper.CropImage
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,7 +43,7 @@ class ProfileEditActivity : BaseActivity() {
 
         binding.toolbar.nameSpace.setText(R.string.edit_profile)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.image.setOnClickListener { VOID.CropImageSquare(this) }
+        binding.image.setOnClickListener { cropImageSquare() }
         binding.go.setOnClickListener { validateData() }
 
         observeState()
@@ -54,7 +56,7 @@ class ProfileEditActivity : BaseActivity() {
         } else {
             progressDialog?.setMessage("Updating profile...")
             progressDialog?.show()
-            val extension = imageUri?.let { VOID.getFileExtension(it, this) }
+            val extension = imageUri?.let { getFileExtension(it) }
             viewModel.updateProfile(username, imageUri, extension) { success, message ->
                 progressDialog?.dismiss()
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
@@ -72,7 +74,7 @@ class ProfileEditActivity : BaseActivity() {
                     state.user?.let { user ->
                         binding.nameEt.setText(user.username)
                         if (imageUri == null) {
-                            VOID.GlideImage(true, this@ProfileEditActivity, user.profileImage, binding.profileImage)
+                            binding.profileImage.loadGlideImage(user.profileImage, true)
                         }
                     }
                 }
@@ -88,7 +90,7 @@ class ProfileEditActivity : BaseActivity() {
                 imageUri = uri
                 requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
             } else {
-                VOID.CropImageSquare(this)
+                cropImageSquare()
             }
         }
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {

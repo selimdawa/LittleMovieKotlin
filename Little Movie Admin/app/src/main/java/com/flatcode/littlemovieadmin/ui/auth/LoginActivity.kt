@@ -11,8 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.ui.main.MainActivity
-import com.flatcode.littlemovieadmin.utils.intent1
-import com.flatcode.littlemovieadmin.utils.intentClear
+import com.flatcode.littlemovieadmin.utils.openActivity
 import com.flatcode.littlemovieadmin.ui.auth.LoginViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,7 +34,7 @@ class LoginActivity : BaseActivity() {
             setCanceledOnTouchOutside(false)
         }
 
-        binding.forget.setOnClickListener { intent1(ForgetPasswordActivity::class.java) }
+        binding.forget.setOnClickListener { openActivity<ForgetPasswordActivity>() }
         binding.loginBtn.setOnClickListener { validateDate() }
 
         observeState()
@@ -55,7 +54,7 @@ class LoginActivity : BaseActivity() {
             viewModel.login(email, password) { success, message ->
                 progressDialog?.dismiss()
                 if (success) {
-                    intentClear(MainActivity::class.java)
+                    openActivity<MainActivity>(clear = true)
                 } else {
                     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 }

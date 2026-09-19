@@ -1,6 +1,7 @@
 package com.flatcode.littlemovieadmin.ui.main
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.model.Main
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.intent1
+
 import com.flatcode.littlemovieadmin.databinding.ItemMainBinding
 import java.text.MessageFormat
 
@@ -48,7 +49,12 @@ class MainAdapter(private val context: Context, var list: List<Main>) :
 
         holder.name.text = name
 
-        holder.itemView.setOnClickListener { context.intent1(c) }
+        holder.itemView.setOnClickListener {
+            if (c != null) {
+                val intent = Intent(context, c)
+                context.startActivity(intent)
+            }
+        }
     }
 
     override fun getItemCount(): Int {

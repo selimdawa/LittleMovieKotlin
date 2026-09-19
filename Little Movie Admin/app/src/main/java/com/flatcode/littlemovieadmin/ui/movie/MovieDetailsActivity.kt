@@ -18,7 +18,13 @@ import com.flatcode.littlemovieadmin.model.Cast
 import com.flatcode.littlemovieadmin.model.Comment
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.VOID
+import com.flatcode.littlemovieadmin.utils.checkFavorite
+import com.flatcode.littlemovieadmin.utils.convertDuration
+import com.flatcode.littlemovieadmin.utils.isFavorite
+import com.flatcode.littlemovieadmin.utils.loadCategory
+import com.flatcode.littlemovieadmin.utils.loadGlideImage
+import com.flatcode.littlemovieadmin.utils.nrLoves
+import com.flatcode.littlemovieadmin.utils.openActivity
 import com.flatcode.littlemovieadmin.ui.movie.MovieDetailsViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityMovieDetailsBinding
 import com.flatcode.littlemovieadmin.databinding.DialogCommentAddBinding
@@ -50,8 +56,8 @@ class MovieDetailsActivity : BaseActivity() {
         binding.toolbar.nameSpace.setText(R.string.details_movie)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
         
-        VOID.nrLoves(binding.loves, movieId)
-        binding.favorite.setOnClickListener { VOID.checkFavorite(binding.favorite, movieId) }
+        binding.loves.nrLoves(movieId)
+        binding.favorite.setOnClickListener { binding.favorite.checkFavorite(movieId) }
 
         progressDialog = ProgressDialog(this).apply {
             setTitle("Please wait...")
@@ -60,7 +66,7 @@ class MovieDetailsActivity : BaseActivity() {
 
         binding.view.setOnClickListener {
             val movieLink = intent.getStringExtra(DATA.MOVIE_LINK)
-            VOID.IntentExtra(this, MovieViewActivity::class.java, DATA.MOVIE_LINK, movieLink)
+            openActivity<MovieViewActivity>(extras = arrayOf(DATA.MOVIE_LINK to movieLink))
         }
 
         binding.addComment.setOnClickListener {
@@ -89,19 +95,19 @@ class MovieDetailsActivity : BaseActivity() {
                         binding.description.text = movie.description
                         binding.views.text = movie.viewsCount.toString()
                         binding.date.text = Application.formatTimestamp(movie.timestamp)
-                        binding.duration.text = VOID.convertDuration(movie.duration?.toLong() ?: 0L)
+                        binding.duration.text = (movie.duration?.toLong() ?: 0L).convertDuration()
                         binding.year.text = movie.year.toString()
                         
-                        VOID.loadCategory(movie.categoryId, binding.category)
-                        VOID.GlideImage(false, this@MovieDetailsActivity, movie.image, binding.image)
-                        VOID.GlideImage(false, this@MovieDetailsActivity, movie.image, binding.cover)
+                        binding.category.loadCategory(movie.categoryId)
+                        binding.image.loadGlideImage(movie.image, false)
+                        binding.cover.loadGlideImage(movie.image, false)
                         
-                        VOID.isFavorite(binding.favorite, movie.id, DATA.FirebaseUserUid)
+                        binding.favorite.isFavorite(movie.id, DATA.FirebaseUserUid)
                     }
 
                     state.publisher?.let { user ->
                         binding.publisherName.text = user.username
-                        VOID.GlideImage(true, this@MovieDetailsActivity, user.profileImage, binding.publisherImage)
+                        binding.publisherImage.loadGlideImage(user.profileImage, true)
                     }
 
                     listComment.clear()

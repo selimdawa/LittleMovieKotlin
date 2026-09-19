@@ -13,7 +13,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
-import com.flatcode.littlemovie.utils.VOID
+import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.databinding.ActivityRegisterBinding
 import com.flatcode.littlemovie.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,9 +55,9 @@ class RegisterActivity : AppCompatActivity() {
             setCanceledOnTouchOutside(false)
         }
 
-        binding!!.forget.setOnClickListener { VOID.Intent1(context, ForgetPasswordActivity::class.java) }
+        binding!!.forget.setOnClickListener { context.openActivity<ForgetPasswordActivity>() }
         binding!!.login.setOnClickListener {
-            VOID.Intent1(context, LoginActivity::class.java)
+            context.openActivity<LoginActivity>()
             finish()
         }
         binding!!.go.setOnClickListener { validateData() }
@@ -70,7 +70,7 @@ class RegisterActivity : AppCompatActivity() {
                     dialog!!.dismiss()
                     if (it.isSuccess) {
                         Toast.makeText(context, "Account created...", Toast.LENGTH_SHORT).show()
-                        VOID.IntentClear(context, MainActivity::class.java)
+                        context.openActivity<MainActivity>(clear = true)
                         finish()
                     } else {
                         Toast.makeText(context, "Registration failed: ${it.exceptionOrNull()?.message}", Toast.LENGTH_SHORT).show()

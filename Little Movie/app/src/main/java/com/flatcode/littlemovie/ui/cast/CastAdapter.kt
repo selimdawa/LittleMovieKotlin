@@ -13,7 +13,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovie.filter.CastFilter
 import com.flatcode.littlemovie.model.Cast
 import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.VOID
+import com.flatcode.littlemovie.utils.GlideImage
+import com.flatcode.littlemovie.utils.checkInterested
+import com.flatcode.littlemovie.utils.isInterested
+import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.databinding.ItemCastBinding
 import java.text.MessageFormat
 
@@ -37,7 +40,7 @@ class CastAdapter(private val activity: Activity, var list: ArrayList<Cast?>) :
         val interestedCount = DATA.EMPTY + item.interestedCount
         val moviesCount = DATA.EMPTY + item.moviesCount
 
-        VOID.GlideImage(true, activity, image, holder.binding.image)
+        holder.binding.image.GlideImage(true, image)
 
         if (item.name == DATA.EMPTY) {
             holder.binding.name.visibility = View.GONE
@@ -54,13 +57,13 @@ class CastAdapter(private val activity: Activity, var list: ArrayList<Cast?>) :
             "{0}{1}", DATA.EMPTY, DATA.ZERO
         ) else holder.binding.numberMovies.text = moviesCount
 
-        VOID.isInterested(holder.binding.add, id, DATA.CAST)
-        holder.binding.add.setOnClickListener { VOID.checkInterested(holder.binding.add, DATA.CAST, id) }
+        holder.binding.add.isInterested(id, DATA.CAST)
+        holder.binding.add.setOnClickListener { holder.binding.add.checkInterested(DATA.CAST, id) }
 
         holder.binding.item.setOnClickListener {
-            VOID.IntentExtra4(
-                activity, CastDetailsActivity::class.java, DATA.CAST_ID, id, DATA.CAST_NAME,
-                name, DATA.CAST_IMAGE, image, DATA.CAST_ABOUT, aboutMy
+            activity.openActivity<CastDetailsActivity>(
+                DATA.CAST_ID to id, DATA.CAST_NAME to name,
+                DATA.CAST_IMAGE to image, DATA.CAST_ABOUT to aboutMy
             )
         }
     }

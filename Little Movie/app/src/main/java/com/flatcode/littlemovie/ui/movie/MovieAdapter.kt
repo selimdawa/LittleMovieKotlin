@@ -15,7 +15,13 @@ import com.flatcode.littlemovie.filter.MovieFilter
 import com.flatcode.littlemovie.model.Movie
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.VOID
+import com.flatcode.littlemovie.utils.GlideImage
+import com.flatcode.littlemovie.utils.checkFavorite
+import com.flatcode.littlemovie.utils.checkLove
+import com.flatcode.littlemovie.utils.isFavorite
+import com.flatcode.littlemovie.utils.isLoves
+import com.flatcode.littlemovie.utils.nrLoves
+import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.databinding.ItemMovieBinding
 import java.text.MessageFormat
 
@@ -40,7 +46,7 @@ class MovieAdapter(private val context: Context?, var list: ArrayList<Movie?>, a
         val lovesCount = DATA.EMPTY + item.lovesCount
         val movieLink = DATA.EMPTY + item.movieLink
 
-        VOID.GlideImage(false, context, image, holder.binding.image)
+        holder.binding.image.GlideImage(false, image)
 
         if (item.name == DATA.EMPTY) {
             holder.binding.name.visibility = View.GONE
@@ -57,18 +63,18 @@ class MovieAdapter(private val context: Context?, var list: ArrayList<Movie?>, a
             MessageFormat.format("{0}{1}", DATA.EMPTY, DATA.ZERO) else holder.binding.nrLoves.text =
             lovesCount
 
-        VOID.isFavorite(holder.binding.add, id, DATA.FirebaseUserUid)
-        holder.binding.add.setOnClickListener { VOID.checkFavorite(holder.binding.add, id) }
-        VOID.isLoves(holder.binding.love, id)
-        VOID.nrLoves(holder.binding.nrLoves, id)
-        holder.binding.love.setOnClickListener { VOID.checkLove(holder.binding.love, id) }
+        holder.binding.add.isFavorite(id, DATA.FirebaseUserUid)
+        holder.binding.add.setOnClickListener { holder.binding.add.checkFavorite(id) }
+        holder.binding.love.isLoves(id)
+        holder.binding.nrLoves.nrLoves(id)
+        holder.binding.love.setOnClickListener { holder.binding.love.checkLove(id) }
         if (animation) holder.binding.item.animation = AnimationUtils.loadAnimation(
             context, R.anim.fade_transition_animation
         )
 
         holder.binding.item.setOnClickListener {
-            VOID.IntentExtra2(
-                context, MovieDetailsActivity::class.java, DATA.MOVIE_ID, id, DATA.MOVIE_LINK, movieLink
+            context?.openActivity<MovieDetailsActivity>(
+                DATA.MOVIE_ID to id, DATA.MOVIE_LINK to movieLink
             )
         }
     }

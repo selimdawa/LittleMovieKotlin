@@ -14,7 +14,8 @@ import com.flatcode.littlemovieadmin.filter.UserFilter
 import com.flatcode.littlemovieadmin.model.User
 import com.flatcode.littlemovieadmin.ui.profile.ProfileActivity
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.VOID
+import com.flatcode.littlemovieadmin.utils.loadGlideImage
+import com.flatcode.littlemovieadmin.utils.openActivity
 import com.flatcode.littlemovieadmin.databinding.ItemUserBinding
 
 class UserAdapter(private val context: Context, var list: ArrayList<User?>) :
@@ -34,7 +35,7 @@ class UserAdapter(private val context: Context, var list: ArrayList<User?>) :
         val id = item!!.id
         val image = item.profileImage
 
-        VOID.GlideImage(true, context, image, holder.image)
+        holder.image.loadGlideImage(image, true)
 
         if (item.username == DATA.EMPTY) {
             holder.username.visibility = View.GONE
@@ -44,7 +45,7 @@ class UserAdapter(private val context: Context, var list: ArrayList<User?>) :
         }
 
         holder.item.setOnClickListener {
-            VOID.IntentExtra(context, ProfileActivity::class.java, DATA.PROFILE_ID, id)
+            context.openActivity<ProfileActivity>(extras = arrayOf(DATA.PROFILE_ID to id))
         }
     }
 

@@ -17,7 +17,7 @@ import com.flatcode.littlemovieadmin.model.Movie
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.checkFavorite
-import com.flatcode.littlemovieadmin.utils.intentExtra2
+import com.flatcode.littlemovieadmin.utils.openActivity
 import com.flatcode.littlemovieadmin.utils.isFavorite
 import com.flatcode.littlemovieadmin.utils.loadGlideImage
 import com.flatcode.littlemovieadmin.utils.moreDeleteMovie
@@ -75,8 +75,10 @@ class MovieAdapter(private val activity: Activity, var list: ArrayList<Movie?>) 
             )
         }
         holder.item.setOnClickListener {
-            activity.intentExtra2(
-                MovieDetailsActivity::class.java, DATA.MOVIE_ID, id, DATA.MOVIE_LINK, movieLink
+            activity.openActivity<MovieDetailsActivity>(
+                extras = arrayOf(
+                    DATA.MOVIE_ID to id, DATA.MOVIE_LINK to movieLink
+                )
             )
         }
     }

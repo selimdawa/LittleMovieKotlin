@@ -6,7 +6,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.flatcode.littlemovie.utils.VOID
+import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.databinding.ActivitySplashBinding
 import com.flatcode.littlemovie.ui.auth.AuthActivity
 import kotlinx.coroutines.flow.filterNotNull
@@ -30,9 +30,9 @@ class SplashActivity : AppCompatActivity() {
             viewModel.isLoggedIn.filterNotNull().collect { isLoggedIn ->
                 Timber.d("User login status collected: %b", isLoggedIn)
                 if (isLoggedIn) {
-                    VOID.Intent1(context, MainActivity::class.java)
+                    context.openActivity<MainActivity>()
                 } else {
-                    VOID.Intent1(context, AuthActivity::class.java)
+                    context.openActivity<AuthActivity>()
                 }
                 finish()
             }

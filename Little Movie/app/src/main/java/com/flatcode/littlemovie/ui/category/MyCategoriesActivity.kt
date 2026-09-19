@@ -15,7 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.model.Category
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.VOID
+import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.databinding.ActivityMyCategoriesBinding
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -75,7 +75,7 @@ class MyCategoriesActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        binding!!.switchBar.explore.setOnClickListener { VOID.Intent1(activity, CategoriesActivity::class.java) }
+        binding!!.switchBar.explore.setOnClickListener { activity.openActivity<CategoriesActivity>() }
         binding!!.switchBar.all.setOnClickListener {
             type = DATA.TIMESTAMP
             loadData()

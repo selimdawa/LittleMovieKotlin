@@ -18,7 +18,12 @@ import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.DATA.castMovie
-import com.flatcode.littlemovieadmin.utils.VOID
+import com.flatcode.littlemovieadmin.utils.convertDuration
+import com.flatcode.littlemovieadmin.utils.cropVideoSquare
+import com.flatcode.littlemovieadmin.utils.loadGlideBlur
+import com.flatcode.littlemovieadmin.utils.loadGlideBlurUri
+import com.flatcode.littlemovieadmin.utils.loadGlideImage
+import com.flatcode.littlemovieadmin.utils.openActivity
 import com.flatcode.littlemovieadmin.ui.movie.MovieEditViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityMovieEditBinding
 import com.theartofdev.edmodo.cropper.CropImage
@@ -52,7 +57,7 @@ class MovieEditActivity : BaseActivity() {
         binding.toolbar.nameSpace.setText(R.string.edit_movie)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
         binding.category.setOnClickListener { categoryPickDialog() }
-        binding.editImage.setOnClickListener { VOID.CropVideoSquare(this) }
+        binding.editImage.setOnClickListener { cropVideoSquare() }
         binding.toolbar.ok.setOnClickListener { validateData() }
 
         observeState()
@@ -100,12 +105,12 @@ class MovieEditActivity : BaseActivity() {
                         binding.nameEt.setText(movie.name)
                         binding.descriptionEt.setText(movie.description)
                         binding.yearEt.setText(movie.year.toString())
-                        binding.duration.text = VOID.convertDuration(movie.duration?.toLong() ?: 0L)
+                        binding.duration.text = (movie.duration?.toLong() ?: 0L).convertDuration()
                         binding.cast.text = movie.castCount.toString()
                         
                         if (imageUri == null) {
-                            VOID.GlideImage(true, this@MovieEditActivity, movie.image, binding.image)
-                            VOID.GlideBlur(false, this@MovieEditActivity, movie.image, binding.imageBlur, 50)
+                            binding.image.loadGlideImage(movie.image, true)
+                            binding.imageBlur.loadGlideBlur(movie.image, 50, false)
                         }
                     }
                     
@@ -135,7 +140,7 @@ class MovieEditActivity : BaseActivity() {
                 imageUri = uri
                 requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
             } else {
-                VOID.CropVideoSquare(this)
+                cropVideoSquare()
             }
         }
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
@@ -143,7 +148,7 @@ class MovieEditActivity : BaseActivity() {
             if (resultCode == RESULT_OK) {
                 imageUri = result.uri
                 binding.image.setImageURI(imageUri)
-                VOID.GlideBlurUri(this, imageUri, binding.imageBlur, 50)
+                binding.imageBlur.loadGlideBlurUri(imageUri, 50)
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Toast.makeText(this, "Error! ${result.error}", Toast.LENGTH_SHORT).show()
             }
@@ -153,7 +158,7 @@ class MovieEditActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         binding.cast.text = MessageFormat.format("{0}{1}", DATA.EMPTY, castMovie.size)
-        binding.cast.setOnClickListener { VOID.Intent1(this, CastMovieAddActivity::class.java) }
+        binding.cast.setOnClickListener { openActivity<CastMovieAddActivity>() }
     }
 
     override fun onBackPressed() {
