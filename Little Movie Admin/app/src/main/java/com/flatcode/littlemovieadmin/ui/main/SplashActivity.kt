@@ -5,8 +5,8 @@ import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemovieadmin.ui.BaseActivity
-import com.flatcode.littlemovieadmin.utils.CLASS
-import com.flatcode.littlemovieadmin.utils.VOID
+import com.flatcode.littlemovieadmin.ui.auth.LoginActivity
+import com.flatcode.littlemovieadmin.utils.intent1
 import com.flatcode.littlemovieadmin.databinding.ActivitySplashBinding
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,9 +30,9 @@ class SplashActivity : BaseActivity() {
     private fun checkUser() {
         val firebaseUser = auth.currentUser
         if (firebaseUser == null) {
-            VOID.Intent1(this, CLASS.LOGIN)
+            intent1(LoginActivity::class.java)
         } else {
-            VOID.Intent1(this, CLASS.MAIN)
+            intent1(MainActivity::class.java)
         }
         finish()
     }

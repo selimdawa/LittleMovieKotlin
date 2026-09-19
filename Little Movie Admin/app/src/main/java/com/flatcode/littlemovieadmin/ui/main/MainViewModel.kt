@@ -5,7 +5,17 @@ import androidx.lifecycle.viewModelScope
 import com.flatcode.littlemovieadmin.model.Main
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.repository.*
-import com.flatcode.littlemovieadmin.utils.CLASS
+import com.flatcode.littlemovieadmin.ui.cast.CastActivity
+import com.flatcode.littlemovieadmin.ui.cast.CastAddActivity
+import com.flatcode.littlemovieadmin.ui.category.CategoriesActivity
+import com.flatcode.littlemovieadmin.ui.category.CategoryAddActivity
+import com.flatcode.littlemovieadmin.ui.editorschoice.EditorsChoiceActivity
+import com.flatcode.littlemovieadmin.ui.favorite.FavoritesActivity
+import com.flatcode.littlemovieadmin.ui.movie.MovieAddActivity
+import com.flatcode.littlemovieadmin.ui.movie.MoviesActivity
+import com.flatcode.littlemovieadmin.ui.privacypolicy.PrivacyPolicyActivity
+import com.flatcode.littlemovieadmin.ui.slider.SliderShowActivity
+import com.flatcode.littlemovieadmin.ui.users.UsersActivity
 import com.flatcode.littlemovieadmin.utils.DATA
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -55,17 +65,17 @@ class MainViewModel @Inject constructor(
                 val favoritesCount = movieRepo.getFavoriteMovieIds(uid).size
 
                 val list = mutableListOf<Main>().apply {
-                    add(Main(R.drawable.ic_person, "Users", users, CLASS.USERS))
-                    add(Main(R.drawable.ic_add, "Add Movie", 0, CLASS.MOVIE_ADD))
-                    add(Main(R.drawable.ic_movie, "Movies", moviesCount, CLASS.MOVIES))
-                    add(Main(R.drawable.ic_users, "Editors Choice", editorsChoiceCount, CLASS.EDITORS_CHOICE))
-                    add(Main(R.drawable.ic_add_category, "Add Category", 0, CLASS.CATEGORY_ADD))
-                    add(Main(R.drawable.ic_category_gray, "Categories", categoriesCount, CLASS.CATEGORIES))
-                    add(Main(R.drawable.ic_slider, "Slider Show", sliderCount, CLASS.SLIDER_SHOW))
-                    add(Main(R.drawable.ic__add, "Add Cast", 0, CLASS.CAST_ADD))
-                    add(Main(R.drawable.ic_cast, "Cast", castCount, CLASS.CAST))
-                    add(Main(R.drawable.ic_star_selected, "Favorites", favoritesCount, CLASS.FAVORITES))
-                    add(Main(R.drawable.ic_privacy_policy, "Privacy Policy", 0, CLASS.PRIVACY_POLICY))
+                    add(Main(R.drawable.ic_person, "Users", users, UsersActivity::class.java))
+                    add(Main(R.drawable.ic_add, "Add Movie", 0, MovieAddActivity::class.java))
+                    add(Main(R.drawable.ic_movie, "Movies", moviesCount, MoviesActivity::class.java))
+                    add(Main(R.drawable.ic_users, "Editors Choice", editorsChoiceCount, EditorsChoiceActivity::class.java))
+                    add(Main(R.drawable.ic_add_category, "Add Category", 0, CategoryAddActivity::class.java))
+                    add(Main(R.drawable.ic_category_gray, "Categories", categoriesCount, CategoriesActivity::class.java))
+                    add(Main(R.drawable.ic_slider, "Slider Show", sliderCount, SliderShowActivity::class.java))
+                    add(Main(R.drawable.ic__add, "Add Cast", 0, CastAddActivity::class.java))
+                    add(Main(R.drawable.ic_cast, "Cast", castCount, CastActivity::class.java))
+                    add(Main(R.drawable.ic_star_selected, "Favorites", favoritesCount, FavoritesActivity::class.java))
+                    add(Main(R.drawable.ic_privacy_policy, "Privacy Policy", 0, PrivacyPolicyActivity::class.java))
                 }
 
                 _uiState.update { 

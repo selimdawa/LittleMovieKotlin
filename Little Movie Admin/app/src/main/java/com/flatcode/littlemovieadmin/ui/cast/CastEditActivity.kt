@@ -16,7 +16,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.VOID
+import com.flatcode.littlemovieadmin.utils.cropImageSquare
+import com.flatcode.littlemovieadmin.utils.getFileExtension
+import com.flatcode.littlemovieadmin.utils.loadGlideImage
 import com.flatcode.littlemovieadmin.ui.cast.CastEditViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityCastAddBinding
 import com.theartofdev.edmodo.cropper.CropImage
@@ -46,7 +48,7 @@ class CastEditActivity : BaseActivity() {
 
         binding.toolbar.nameSpace.setText(R.string.edit_cast)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.image.setOnClickListener { VOID.CropImageSquare(this) }
+        binding.image.setOnClickListener { cropImageSquare() }
         binding.toolbar.ok.setOnClickListener { validateData() }
 
         observeState()
@@ -63,7 +65,7 @@ class CastEditActivity : BaseActivity() {
         } else {
             progressDialog?.setMessage("Updating Cast...")
             progressDialog?.show()
-            val extension = imageUri?.let { VOID.getFileExtension(it, this) }
+            val extension = imageUri?.let { getFileExtension(it) }
             viewModel.updateCast(name, aboutMy, imageUri, extension) { success, message ->
                 progressDialog?.dismiss()
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
@@ -82,7 +84,7 @@ class CastEditActivity : BaseActivity() {
                         binding.nameEt.setText(cast.name)
                         binding.aboutMyEt.setText(cast.aboutMy)
                         if (imageUri == null) {
-                            VOID.GlideImage(true, this@CastEditActivity, cast.image, binding.image)
+                            binding.image.loadGlideImage(cast.image, true)
                         }
                     }
                 }
@@ -98,7 +100,7 @@ class CastEditActivity : BaseActivity() {
                 imageUri = uri
                 requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
             } else {
-                VOID.CropImageSquare(this)
+                cropImageSquare()
             }
         }
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {

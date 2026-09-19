@@ -11,7 +11,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.R
-import com.flatcode.littlemovie.utils.CLASS
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.VOID
 import com.flatcode.littlemovie.databinding.ActivityProfileBinding
@@ -53,7 +52,7 @@ class ProfileActivity : AppCompatActivity() {
         if (profileId == DATA.FirebaseUserUid) {
             binding!!.edit.visibility = View.VISIBLE
             binding!!.edit.setImageResource(R.drawable.ic_edit_white)
-            binding!!.edit.setOnClickListener { VOID.Intent1(context, CLASS.PROFILE_EDIT) }
+            binding!!.edit.setOnClickListener { VOID.Intent1(context, ProfileEditActivity::class.java) }
         }
         binding!!.back.setOnClickListener { onBackPressed() }
     }

@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.R
-import com.flatcode.littlemovieadmin.utils.CLASS
+import com.flatcode.littlemovieadmin.service.FloatingWidgetService
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.databinding.ActivityMovieViewBinding
 import com.google.android.exoplayer2.ExoPlayer
@@ -43,7 +43,7 @@ class MovieViewActivity : BaseActivity() {
                 it.playWhenReady = false
                 it.release()
             }
-            val service = Intent(this, CLASS.SERVICE)
+            val service = Intent(this, FloatingWidgetService::class.java)
             service.putExtra(DATA.MOVIE_LINK, videoUri.toString())
             startService(service)
         }

@@ -19,7 +19,6 @@ import com.flatcode.littlemovie.model.Cast
 import com.flatcode.littlemovie.model.Comment
 import com.flatcode.littlemovie.Application
 import com.flatcode.littlemovie.R
-import com.flatcode.littlemovie.utils.CLASS
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.VOID
 import com.flatcode.littlemovie.databinding.ActivityMovieDetailsBinding
@@ -84,7 +83,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         binding!!.love.setOnClickListener { movieId?.let { viewModel.toggleLove(it) } }
         binding!!.favorite.setOnClickListener { movieId?.let { viewModel.toggleFavorite(it) } }
         binding!!.view.setOnClickListener {
-            VOID.IntentExtra2(activity, CLASS.MOVIE_VIEW, DATA.MOVIE_LINK, movieLink, DATA.MOVIE_ID, movieId)
+            VOID.IntentExtra2(activity, MovieViewActivity::class.java, DATA.MOVIE_LINK, movieLink, DATA.MOVIE_ID, movieId)
         }
         binding!!.addComment.setOnClickListener {
             if (DATA.FIREBASE_USER == null) {

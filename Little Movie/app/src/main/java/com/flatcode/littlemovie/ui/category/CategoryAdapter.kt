@@ -12,7 +12,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovie.filter.CategoryFilter
 import com.flatcode.littlemovie.model.Category
-import com.flatcode.littlemovie.utils.CLASS
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.VOID
 import com.flatcode.littlemovie.utils.VOID.GlideImage
@@ -60,7 +59,7 @@ class CategoryAdapter(private val activity: Activity, var list: ArrayList<Catego
 
         holder.binding.item.setOnClickListener {
             VOID.IntentExtra2(
-                activity, CLASS.CATEGORY_DETAILS, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
+                activity, CategoryDetailsActivity::class.java, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
             )
         }
     }

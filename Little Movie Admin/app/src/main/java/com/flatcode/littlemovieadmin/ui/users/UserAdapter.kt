@@ -12,7 +12,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.filter.UserFilter
 import com.flatcode.littlemovieadmin.model.User
-import com.flatcode.littlemovieadmin.utils.CLASS
+import com.flatcode.littlemovieadmin.ui.profile.ProfileActivity
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.VOID
 import com.flatcode.littlemovieadmin.databinding.ItemUserBinding
@@ -44,7 +44,7 @@ class UserAdapter(private val context: Context, var list: ArrayList<User?>) :
         }
 
         holder.item.setOnClickListener {
-            VOID.IntentExtra(context, CLASS.PROFILE, DATA.PROFILE_ID, id)
+            VOID.IntentExtra(context, ProfileActivity::class.java, DATA.PROFILE_ID, id)
         }
     }
 

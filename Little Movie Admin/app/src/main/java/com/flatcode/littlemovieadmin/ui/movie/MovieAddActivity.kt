@@ -17,7 +17,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.R
-import com.flatcode.littlemovieadmin.utils.CLASS
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.DATA.castMovie
 import com.flatcode.littlemovieadmin.utils.VOID
@@ -179,7 +178,7 @@ class MovieAddActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         binding.cast.text = MessageFormat.format("{0}{1}", DATA.EMPTY, castMovie.size)
-        binding.cast.setOnClickListener { VOID.Intent1(this, CLASS.CAST_MOVIE) }
+        binding.cast.setOnClickListener { VOID.Intent1(this, CastMovieAddActivity::class.java) }
     }
 
     override fun onBackPressed() {

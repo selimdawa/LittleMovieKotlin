@@ -15,9 +15,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.filter.MovieFilter
 import com.flatcode.littlemovieadmin.model.Movie
 import com.flatcode.littlemovieadmin.R
-import com.flatcode.littlemovieadmin.utils.CLASS
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.VOID
+import com.flatcode.littlemovieadmin.utils.checkFavorite
+import com.flatcode.littlemovieadmin.utils.intentExtra2
+import com.flatcode.littlemovieadmin.utils.isFavorite
+import com.flatcode.littlemovieadmin.utils.loadGlideImage
+import com.flatcode.littlemovieadmin.utils.moreDeleteMovie
 import com.flatcode.littlemovieadmin.databinding.ItemMovieBinding
 import java.text.MessageFormat
 
@@ -43,7 +46,7 @@ class MovieAdapter(private val activity: Activity, var list: ArrayList<Movie?>) 
         val movieLink = DATA.EMPTY + item.movieLink
         val categoryId = DATA.EMPTY + item.categoryId
 
-        VOID.GlideImage(false, activity, image, holder.image)
+        holder.image.loadGlideImage(image, false)
 
         if (item.name == DATA.EMPTY) {
             holder.name.visibility = View.GONE
@@ -60,20 +63,20 @@ class MovieAdapter(private val activity: Activity, var list: ArrayList<Movie?>) 
             MessageFormat.format("{0}{1}", DATA.EMPTY, DATA.ZERO) else holder.numberLoves.text =
             lovesCount
 
-        VOID.isFavorite(holder.add, item.id, DATA.FirebaseUserUid)
-        holder.add.setOnClickListener { VOID.checkFavorite(holder.add, id) }
+        holder.add.isFavorite(item.id, DATA.FirebaseUserUid)
+        holder.add.setOnClickListener { holder.add.checkFavorite(id) }
 
         holder.item.animation =
             AnimationUtils.loadAnimation(activity, R.anim.fade_transition_animation)
 
         holder.more.setOnClickListener {
-            VOID.moreDeleteMovie(
-                activity, item, DATA.CATEGORIES, categoryId, DATA.MOVIES_COUNT, false, true
+            activity.moreDeleteMovie(
+                item, DATA.CATEGORIES, categoryId, DATA.MOVIES_COUNT, false, true
             )
         }
         holder.item.setOnClickListener {
-            VOID.IntentExtra2(
-                activity, CLASS.MOVIE_DETAILS, DATA.MOVIE_ID, id, DATA.MOVIE_LINK, movieLink
+            activity.intentExtra2(
+                MovieDetailsActivity::class.java, DATA.MOVIE_ID, id, DATA.MOVIE_LINK, movieLink
             )
         }
     }

@@ -13,10 +13,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.flatcode.littlemovie.R
-import com.flatcode.littlemovie.utils.CLASS
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.VOID
 import com.flatcode.littlemovie.databinding.ActivityMovieViewBinding
+import com.flatcode.littlemovie.service.FloatingWidgetService
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.source.MediaSource
@@ -60,7 +60,7 @@ class MovieViewActivity : AppCompatActivity() {
         binding!!.exoFloatingWidget.setOnClickListener {
             exoPlayer!!.playWhenReady = false
             exoPlayer!!.release()
-            val service = Intent(activity, CLASS.SERVICE)
+            val service = Intent(activity, FloatingWidgetService::class.java)
             service.putExtra(DATA.MOVIE_LINK, videoUri.toString())
             service.putExtra(DATA.MOVIE_ID, id)
             startService(service)

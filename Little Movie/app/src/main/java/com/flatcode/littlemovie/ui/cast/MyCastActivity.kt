@@ -14,7 +14,6 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.model.Cast
 import com.flatcode.littlemovie.R
-import com.flatcode.littlemovie.utils.CLASS
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.VOID
 import com.flatcode.littlemovie.databinding.ActivityMyCastBinding
@@ -76,7 +75,7 @@ class MyCastActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        binding!!.switchBar.explore.setOnClickListener { VOID.Intent1(activity, CLASS.CAST) }
+        binding!!.switchBar.explore.setOnClickListener { VOID.Intent1(activity, CastActivity::class.java) }
         binding!!.switchBar.all.setOnClickListener {
             type = DATA.TIMESTAMP
             loadData()

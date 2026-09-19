@@ -9,7 +9,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovie.model.Cast
-import com.flatcode.littlemovie.utils.CLASS
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.VOID
 import com.flatcode.littlemovie.databinding.ItemCastMovieBinding
@@ -40,7 +39,7 @@ class CastMovieAdapter(private val activity: Activity, var list: ArrayList<Cast?
 
         holder.binding.item.setOnClickListener {
             VOID.IntentExtra4(
-                activity, CLASS.CAST_DETAILS, DATA.CAST_ID, id, DATA.CAST_NAME,
+                activity, CastDetailsActivity::class.java, DATA.CAST_ID, id, DATA.CAST_NAME,
                 name, DATA.CAST_IMAGE, image, DATA.CAST_ABOUT, aboutMy
             )
         }

@@ -12,9 +12,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.filter.CategoryFilter
 import com.flatcode.littlemovieadmin.model.Category
-import com.flatcode.littlemovieadmin.utils.CLASS
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.VOID
+import com.flatcode.littlemovieadmin.utils.intentExtra2
+import com.flatcode.littlemovieadmin.utils.loadGlideImage
+import com.flatcode.littlemovieadmin.utils.moreDeleteCategory
 import com.flatcode.littlemovieadmin.databinding.ItemCategoryBinding
 import java.text.MessageFormat
 
@@ -38,7 +39,7 @@ class CategoryAdapter(private val activity: Activity, var list: ArrayList<Catego
         val interestedCount = DATA.EMPTY + item.interestedCount
         val moviesCount = DATA.EMPTY + item.moviesCount
 
-        VOID.GlideImage(false, activity, image, holder.image)
+        holder.image.loadGlideImage(image, false)
 
         if (item.name == DATA.EMPTY) {
             holder.name.visibility = View.GONE
@@ -56,12 +57,12 @@ class CategoryAdapter(private val activity: Activity, var list: ArrayList<Catego
         ) else holder.numberMovies.text = moviesCount
 
         holder.more.setOnClickListener {
-            VOID.moreDeleteCategory(activity, item, DATA.NULL, DATA.NULL, DATA.NULL, false, false)
+            activity.moreDeleteCategory(item, DATA.NULL, DATA.NULL, DATA.NULL, false, false)
         }
 
         holder.item.setOnClickListener {
-            VOID.IntentExtra2(
-                activity, CLASS.CATEGORY_DETAILS, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
+            activity.intentExtra2(
+                CategoryDetailsActivity::class.java, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
             )
         }
     }

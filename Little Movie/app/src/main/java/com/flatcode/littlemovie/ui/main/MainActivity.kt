@@ -15,10 +15,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.flatcode.littlemovie.R
-import com.flatcode.littlemovie.utils.CLASS
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.VOID
 import com.flatcode.littlemovie.databinding.ActivityMainBinding
+import com.flatcode.littlemovie.ui.profile.ProfileActivity
 import com.nafis.bottomnavigation.NafisBottomNavigation
 import kotlinx.coroutines.launch
 import dagger.hilt.android.AndroidEntryPoint
@@ -103,7 +103,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         binding!!.toolbar.image.setOnClickListener {
-            VOID.IntentExtra(context, CLASS.PROFILE, DATA.PROFILE_ID, DATA.FirebaseUserUid)
+            VOID.IntentExtra(context, ProfileActivity::class.java, DATA.PROFILE_ID, DATA.FirebaseUserUid)
         }
 
         lifecycleScope.launch {

@@ -14,7 +14,9 @@ import com.flatcode.littlemovieadmin.ui.movie.MovieAdapter
 import com.flatcode.littlemovieadmin.model.Movie
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.VOID
+import com.flatcode.littlemovieadmin.utils.dialogAboutArtist
+import com.flatcode.littlemovieadmin.utils.loadGlideBlur
+import com.flatcode.littlemovieadmin.utils.loadGlideImage
 import com.flatcode.littlemovieadmin.ui.cast.CastDetailsViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityCastDetailsBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -66,7 +68,7 @@ class CastDetailsActivity : BaseActivity() {
 
         binding.go.setOnClickListener {
             val state = viewModel.uiState.value
-            VOID.dialogAboutArtist(this, state.castImage, state.castName, state.castAbout)
+            dialogAboutArtist(state.castImage, state.castName, state.castAbout)
         }
 
         adapter = MovieAdapter(this, list as ArrayList<Movie?>)
@@ -88,8 +90,8 @@ class CastDetailsActivity : BaseActivity() {
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", state.count)
                     binding.name.text = state.castName
                     
-                    VOID.GlideImage(true, this@CastDetailsActivity, state.castImage, binding.image)
-                    VOID.GlideBlur(true, this@CastDetailsActivity, state.castImage, binding.imageBlur, 50)
+                    binding.image.loadGlideImage(state.castImage, true)
+                    binding.imageBlur.loadGlideBlur(state.castImage, 50, true)
 
                     list.clear()
                     list.addAll(state.movies)

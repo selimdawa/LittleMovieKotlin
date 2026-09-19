@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovie.filter.MovieFilter
 import com.flatcode.littlemovie.model.Movie
 import com.flatcode.littlemovie.R
-import com.flatcode.littlemovie.utils.CLASS
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.VOID
 import com.flatcode.littlemovie.databinding.ItemMovieBinding
@@ -69,7 +68,7 @@ class MovieAdapter(private val context: Context?, var list: ArrayList<Movie?>, a
 
         holder.binding.item.setOnClickListener {
             VOID.IntentExtra2(
-                context, CLASS.MOVIE_DETAILS, DATA.MOVIE_ID, id, DATA.MOVIE_LINK, movieLink
+                context, MovieDetailsActivity::class.java, DATA.MOVIE_ID, id, DATA.MOVIE_LINK, movieLink
             )
         }
     }

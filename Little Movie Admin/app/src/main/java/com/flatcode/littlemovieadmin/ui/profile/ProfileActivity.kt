@@ -8,7 +8,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.R
-import com.flatcode.littlemovieadmin.utils.CLASS
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.VOID
 import com.flatcode.littlemovieadmin.databinding.ActivityProfileBinding
@@ -50,7 +49,7 @@ class ProfileActivity : BaseActivity() {
                     if (state.isMyProfile) {
                         binding.edit.visibility = View.VISIBLE
                         binding.edit.setImageResource(R.drawable.ic_edit_white)
-                        binding.edit.setOnClickListener { VOID.Intent1(this@ProfileActivity, CLASS.PROFILE_EDIT) }
+                        binding.edit.setOnClickListener { VOID.Intent1(this@ProfileActivity, ProfileEditActivity::class.java) }
                     } else {
                         binding.edit.visibility = View.GONE
                     }

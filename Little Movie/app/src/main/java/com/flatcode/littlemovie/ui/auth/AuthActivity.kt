@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import com.flatcode.littlemovie.utils.CLASS
 import com.flatcode.littlemovie.utils.VOID
 import com.flatcode.littlemovie.databinding.ActivityAuthBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -37,7 +36,7 @@ class AuthActivity : AppCompatActivity() {
             insets
         }
 
-        binding!!.loginBtn.setOnClickListener { VOID.Intent1(context, CLASS.LOGIN) }
-        binding!!.skipBtn.setOnClickListener { VOID.Intent1(context, CLASS.REGISTER) }
+        binding!!.loginBtn.setOnClickListener { VOID.Intent1(context, LoginActivity::class.java) }
+        binding!!.skipBtn.setOnClickListener { VOID.Intent1(context, RegisterActivity::class.java) }
     }
 }

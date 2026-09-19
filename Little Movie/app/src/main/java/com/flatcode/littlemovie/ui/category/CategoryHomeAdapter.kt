@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovie.model.Category
-import com.flatcode.littlemovie.utils.CLASS
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.VOID
 import com.flatcode.littlemovie.databinding.ItemCategoryHomeBinding
@@ -30,7 +29,7 @@ class CategoryHomeAdapter(private val context: Context?, var list: ArrayList<Cat
 
         holder.binding.image.setOnClickListener {
             VOID.IntentExtra2(
-                context, CLASS.CATEGORY_DETAILS, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
+                context, CategoryDetailsActivity::class.java, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
             )
         }
     }

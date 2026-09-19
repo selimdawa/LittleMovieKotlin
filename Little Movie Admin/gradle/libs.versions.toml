@@ -1,6 +1,6 @@
 [versions]
 agp = "9.4.0"
-androidImageCropper = "2.8.0"
+androidImageCropper = "4.5.0"
 #noinspection GradleDependency
 exoplayer = "2.19.1"
 firebaseBom = "34.18.0"
@@ -22,11 +22,12 @@ navigation = "2.10.1"
 coroutines = "1.11.0"
 lifecycle = "2.11.0"
 timber = "5.0.1"
+cloudinary = "3.1.2"
 ksp = "2.3.11"
 kotlin = "2.4.20"
 
 [libraries]
-android-image-cropper = { module = "com.theartofdev.edmodo:android-image-cropper", version.ref = "androidImageCropper" }
+android-image-cropper = { module = "com.github.CanHub:Android-Image-Cropper", version.ref = "androidImageCropper" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 exoplayer = { module = "com.google.android.exoplayer:exoplayer", version.ref = "exoplayer" }
@@ -35,7 +36,7 @@ firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 firebase-database = { module = "com.google.firebase:firebase-database" }
-firebase-storage = { module = "com.google.firebase:firebase-storage" }
+cloudinary-android = { module = "com.cloudinary:cloudinary-android", version.ref = "cloudinary" }
 coil3 = { group = "io.coil-kt.coil3", name = "coil", version.ref = "coil3" }
 coil3-view = { group = "io.coil-kt.coil3", name = "coil", version.ref = "coil3" }
 coil3-network = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil3" }

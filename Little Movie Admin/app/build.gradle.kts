@@ -58,7 +58,7 @@ dependencies {
     implementation(platform(libs.firebase.bom)) //Firebase BOM
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
-    implementation(libs.firebase.storage)
+    implementation(libs.cloudinary.android)
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
     //Image
@@ -66,7 +66,6 @@ dependencies {
     implementation(libs.coil3.view)
     implementation(libs.coil3.network)
     api(libs.android.image.cropper)                     //Image Crop
-
 
     // Hilt
     implementation(libs.hilt.android)

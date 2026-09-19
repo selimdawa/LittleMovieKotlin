@@ -17,7 +17,6 @@ import com.flatcode.littlemovieadmin.ui.movie.CommentAdapter
 import com.flatcode.littlemovieadmin.model.Cast
 import com.flatcode.littlemovieadmin.model.Comment
 import com.flatcode.littlemovieadmin.R
-import com.flatcode.littlemovieadmin.utils.CLASS
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.VOID
 import com.flatcode.littlemovieadmin.ui.movie.MovieDetailsViewModel
@@ -61,7 +60,7 @@ class MovieDetailsActivity : BaseActivity() {
 
         binding.view.setOnClickListener {
             val movieLink = intent.getStringExtra(DATA.MOVIE_LINK)
-            VOID.IntentExtra(this, CLASS.MOVIE_VIEW, DATA.MOVIE_LINK, movieLink)
+            VOID.IntentExtra(this, MovieViewActivity::class.java, DATA.MOVIE_LINK, movieLink)
         }
 
         binding.addComment.setOnClickListener {

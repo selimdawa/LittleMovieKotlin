@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import com.flatcode.littlemovie.utils.CLASS
 import com.flatcode.littlemovie.utils.VOID
 import com.flatcode.littlemovie.databinding.ActivityForgetPasswordBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -48,11 +47,11 @@ class ForgetPasswordActivity : AppCompatActivity() {
         dialog!!.setCanceledOnTouchOutside(false)
 
         binding!!.noAccount.setOnClickListener {
-            VOID.Intent1(context, CLASS.REGISTER)
+            VOID.Intent1(context, RegisterActivity::class.java)
             finish()
         }
         binding!!.login.setOnClickListener {
-            VOID.Intent1(context, CLASS.LOGIN)
+            VOID.Intent1(context, LoginActivity::class.java)
             finish()
         }
         binding!!.go.setOnClickListener { validateDate() }

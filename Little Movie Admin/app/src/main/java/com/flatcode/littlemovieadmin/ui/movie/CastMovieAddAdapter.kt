@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.model.Cast
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.DATA.castMovie
-import com.flatcode.littlemovieadmin.utils.VOID
+import com.flatcode.littlemovieadmin.utils.loadGlideImage
 import com.flatcode.littlemovieadmin.databinding.ItemCastMovieAddBinding
 
 class CastMovieAddAdapter(private val activity: Activity, var list: ArrayList<Cast?>?) :
@@ -30,7 +30,7 @@ class CastMovieAddAdapter(private val activity: Activity, var list: ArrayList<Ca
         val name = DATA.EMPTY + item.name
         val image = DATA.EMPTY + item.image
 
-        VOID.GlideImage(true, activity, image, holder.image)
+        holder.image.loadGlideImage(image, true)
 
         if (name == DATA.EMPTY) {
             holder.name.visibility = View.GONE

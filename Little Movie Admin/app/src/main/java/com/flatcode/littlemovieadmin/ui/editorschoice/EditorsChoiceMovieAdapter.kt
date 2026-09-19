@@ -13,7 +13,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.filter.EditorsChoiceFilter
 import com.flatcode.littlemovieadmin.model.Movie
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.VOID
+import com.flatcode.littlemovieadmin.utils.addToEditorsChoice
+import com.flatcode.littlemovieadmin.utils.loadGlideImage
 import com.flatcode.littlemovieadmin.databinding.ItemEditorsChoiceBinding
 
 class EditorsChoiceMovieAdapter(
@@ -38,7 +39,7 @@ class EditorsChoiceMovieAdapter(
         val nrViews = DATA.EMPTY + item.viewsCount
         val nrLoves = DATA.EMPTY + item.lovesCount
 
-        VOID.GlideImage(false, activity, image, holder.image)
+        holder.image.loadGlideImage(image, false)
 
         if (name == DATA.EMPTY) {
             holder.name.visibility = View.GONE
@@ -52,10 +53,10 @@ class EditorsChoiceMovieAdapter(
 
         holder.add.setOnClickListener {
             if (oldId != null) {
-                VOID.addToEditorsChoice(activity, activity, id, number)
-                VOID.addToEditorsChoice(activity, activity, oldId, 0)
+                activity.addToEditorsChoice(activity, id, number)
+                activity.addToEditorsChoice(activity, oldId, 0)
             } else {
-                VOID.addToEditorsChoice(activity, activity, id, number)
+                activity.addToEditorsChoice(activity, id, number)
             }
         }
     }

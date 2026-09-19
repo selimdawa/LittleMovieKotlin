@@ -16,7 +16,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.VOID
+import com.flatcode.littlemovieadmin.utils.cropImageSquare
+import com.flatcode.littlemovieadmin.utils.getFileExtension
 import com.flatcode.littlemovieadmin.ui.cast.CastAddViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityCastAddBinding
 import com.theartofdev.edmodo.cropper.CropImage
@@ -43,7 +44,7 @@ class CastAddActivity : BaseActivity() {
 
         binding.toolbar.nameSpace.setText(R.string.add_new_cast)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.image.setOnClickListener { VOID.CropImageSquare(this) }
+        binding.image.setOnClickListener { cropImageSquare() }
         binding.toolbar.ok.setOnClickListener { validateData() }
 
         observeState()
@@ -63,7 +64,7 @@ class CastAddActivity : BaseActivity() {
         } else {
             progressDialog?.setMessage("Uploading Cast...")
             progressDialog?.show()
-            val extension = VOID.getFileExtension(uri, this)
+            val extension = getFileExtension(uri)
             viewModel.uploadCast(name, aboutMy, uri, extension) { success, message ->
                 progressDialog?.dismiss()
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
@@ -90,7 +91,7 @@ class CastAddActivity : BaseActivity() {
                 imageUri = uri
                 requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
             } else {
-                VOID.CropImageSquare(this)
+                cropImageSquare()
             }
         }
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {

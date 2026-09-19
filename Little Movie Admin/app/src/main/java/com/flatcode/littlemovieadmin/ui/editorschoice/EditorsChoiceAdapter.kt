@@ -9,12 +9,13 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import com.flatcode.littlemovieadmin.databinding.ItemMovieEditorsChoiceBinding
 import com.flatcode.littlemovieadmin.model.EditorsChoice
 import com.flatcode.littlemovieadmin.model.Movie
-import com.flatcode.littlemovieadmin.utils.CLASS
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.VOID
-import com.flatcode.littlemovieadmin.databinding.ItemMovieEditorsChoiceBinding
+import com.flatcode.littlemovieadmin.utils.dialogOptionDelete
+import com.flatcode.littlemovieadmin.utils.intentExtra2
+import com.flatcode.littlemovieadmin.utils.loadGlideImage
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -43,8 +44,8 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
         holder.numberEditorsChoice.text = MessageFormat.format("{0}{1}", DATA.EMPTY, id)
 
         holder.add.setOnClickListener {
-            VOID.IntentExtra2(
-                activity, CLASS.EDITORS_CHOICE_ADD,
+            activity.intentExtra2(
+                EditorsChoiceAddActivity::class.java,
                 DATA.EDITORS_CHOICE_ID, editorsChoiceId, DATA.OLD_ID, null
             )
         }
@@ -88,7 +89,7 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
         i: Int,
         position: String,
         title: TextView,
-        image: ImageView,
+        imageView: ImageView,
         viewsCount: TextView,
         lovesCount: TextView,
         remove: ImageView,
@@ -110,14 +111,14 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
                         remove.visibility = View.VISIBLE
                         change.visibility = View.VISIBLE
                         remove.setOnClickListener {
-                            VOID.dialogOptionDelete(
-                                activity, id, name, DATA.EDITORS_CHOICE, DATA.EDITORS_CHOICE,
+                            activity.dialogOptionDelete(
+                                id, name, DATA.EDITORS_CHOICE, DATA.EDITORS_CHOICE,
                                 true, DATA.NULL, DATA.NULL, DATA.NULL, false, false,
                             )
                         }
                         change.setOnClickListener {
-                            VOID.IntentExtra2(
-                                activity, CLASS.EDITORS_CHOICE_ADD,
+                            activity.intentExtra2(
+                                EditorsChoiceAddActivity::class.java,
                                 DATA.EDITORS_CHOICE_ID, position, DATA.OLD_ID, id
                             )
                         }
@@ -141,7 +142,7 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
                         val ViewsCount = DATA.EMPTY + item.viewsCount
                         val LovesCount = DATA.EMPTY + item.lovesCount
 
-                        VOID.GlideImage(false, activity, imageLink, image)
+                        imageView.loadGlideImage(imageLink, false)
                         title.text = name
                         viewsCount.text = ViewsCount
                         lovesCount.text = LovesCount

@@ -11,9 +11,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.ui.main.MainAdapter
 import com.flatcode.littlemovieadmin.model.Main
-import com.flatcode.littlemovieadmin.utils.CLASS
+import com.flatcode.littlemovieadmin.ui.profile.ProfileActivity
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.VOID
+import com.flatcode.littlemovieadmin.utils.intentExtra
+import com.flatcode.littlemovieadmin.utils.loadGlideImage
 import com.flatcode.littlemovieadmin.ui.main.MainViewModel
 import com.flatcode.littlemovieadmin.databinding.FragmentHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,7 +42,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.toolbar.image.setOnClickListener {
-            VOID.IntentExtra(requireContext(), CLASS.PROFILE, DATA.PROFILE_ID, DATA.FirebaseUserUid)
+            requireContext().intentExtra(ProfileActivity::class.java, DATA.PROFILE_ID, DATA.FirebaseUserUid)
         }
 
         adapter = MainAdapter(requireContext(), list as ArrayList<Main>)
@@ -61,7 +62,7 @@ class HomeFragment : Fragment() {
                         binding.recyclerView.visibility = if (state.items.isNotEmpty()) View.VISIBLE else View.GONE
                         
                         state.userProfileImage?.let {
-                            VOID.GlideImage(true, requireContext(), it, binding.toolbar.image)
+                            binding.toolbar.image.loadGlideImage(it, true)
                         }
 
                         list.clear()

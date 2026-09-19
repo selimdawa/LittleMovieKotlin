@@ -16,7 +16,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.VOID
+import com.flatcode.littlemovieadmin.utils.cropImageSquare
+import com.flatcode.littlemovieadmin.utils.getFileExtension
+import com.flatcode.littlemovieadmin.utils.loadGlideImage
 import com.flatcode.littlemovieadmin.ui.category.CategoryEditViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityCategoryAddBinding
 import com.theartofdev.edmodo.cropper.CropImage
@@ -46,7 +48,7 @@ class CategoryEditActivity : BaseActivity() {
 
         binding.toolbar.nameSpace.setText(R.string.edit_category)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.image.setOnClickListener { VOID.CropImageSquare(this) }
+        binding.image.setOnClickListener { cropImageSquare() }
         binding.toolbar.ok.setOnClickListener { validateData() }
 
         observeState()
@@ -59,7 +61,7 @@ class CategoryEditActivity : BaseActivity() {
         } else {
             progressDialog?.setMessage("Updating Category...")
             progressDialog?.show()
-            val extension = imageUri?.let { VOID.getFileExtension(it, this) }
+            val extension = imageUri?.let { getFileExtension(it) }
             viewModel.updateCategory(name, imageUri, extension) { success, message ->
                 progressDialog?.dismiss()
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
@@ -77,7 +79,7 @@ class CategoryEditActivity : BaseActivity() {
                     state.category?.let { category ->
                         binding.nameEt.setText(category.name)
                         if (imageUri == null) {
-                            VOID.GlideImage(true, this@CategoryEditActivity, category.image, binding.image)
+                            binding.image.loadGlideImage(category.image, true)
                         }
                     }
                 }
@@ -93,7 +95,7 @@ class CategoryEditActivity : BaseActivity() {
                 imageUri = uri
                 requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
             } else {
-                VOID.CropImageSquare(this)
+                cropImageSquare()
             }
         }
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {

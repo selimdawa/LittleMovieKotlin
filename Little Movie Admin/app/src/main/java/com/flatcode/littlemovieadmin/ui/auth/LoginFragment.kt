@@ -15,8 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.flatcode.littlemovieadmin.R
-import com.flatcode.littlemovieadmin.utils.CLASS
-import com.flatcode.littlemovieadmin.utils.VOID
+import com.flatcode.littlemovieadmin.utils.intent1
 import com.flatcode.littlemovieadmin.ui.auth.LoginViewModel
 import com.flatcode.littlemovieadmin.databinding.FragmentLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,7 +45,7 @@ class LoginFragment : Fragment() {
             setCanceledOnTouchOutside(false)
         }
 
-        binding.forget.setOnClickListener { VOID.Intent1(requireContext(), CLASS.FORGET_PASSWORD) }
+        binding.forget.setOnClickListener { requireContext().intent1(ForgetPasswordActivity::class.java) }
         binding.loginBtn.setOnClickListener { validateDate() }
 
         observeState()

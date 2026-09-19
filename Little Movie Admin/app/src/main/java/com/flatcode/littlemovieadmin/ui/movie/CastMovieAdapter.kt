@@ -9,9 +9,10 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.model.Cast
-import com.flatcode.littlemovieadmin.utils.CLASS
+import com.flatcode.littlemovieadmin.ui.cast.CastDetailsActivity
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.VOID
+import com.flatcode.littlemovieadmin.utils.intentExtra4
+import com.flatcode.littlemovieadmin.utils.loadGlideImage
 import com.flatcode.littlemovieadmin.databinding.ItemCastMovieBinding
 
 class CastMovieAdapter(private val activity: Activity, var list: ArrayList<Cast?>) :
@@ -29,7 +30,7 @@ class CastMovieAdapter(private val activity: Activity, var list: ArrayList<Cast?
         val image = DATA.EMPTY + item.image
         val aboutMy = DATA.EMPTY + item.aboutMy
 
-        VOID.GlideImage(true, activity, image, holder.image)
+        holder.image.loadGlideImage(image, true)
 
         if (item.name == DATA.EMPTY) {
             holder.name.visibility = View.GONE
@@ -39,8 +40,8 @@ class CastMovieAdapter(private val activity: Activity, var list: ArrayList<Cast?
         }
 
         holder.item.setOnClickListener {
-            VOID.IntentExtra4(
-                activity, CLASS.CAST_DETAILS, DATA.CAST_ID, id, DATA.CAST_NAME,
+            activity.intentExtra4(
+                CastDetailsActivity::class.java, DATA.CAST_ID, id, DATA.CAST_NAME,
                 name, DATA.CAST_IMAGE, image, DATA.CAST_ABOUT, aboutMy
             )
         }

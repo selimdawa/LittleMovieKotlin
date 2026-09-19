@@ -13,7 +13,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.model.Comment
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.VOID
+import com.flatcode.littlemovieadmin.utils.loadGlideImage
 import com.flatcode.littlemovieadmin.databinding.ItemCommentBinding
 import com.flatcode.littlemovieadmin.Application
 import com.google.firebase.database.DataSnapshot
@@ -95,7 +95,7 @@ class CommentAdapter(private val context: Context, var list: ArrayList<Comment?>
                 val username = DATA.EMPTY + snapshot.child(DATA.USER_NAME).value
                 val profileImage = DATA.EMPTY + snapshot.child(DATA.PROFILE_IMAGE).value
 
-                VOID.GlideImage(true, context, profileImage, image)
+                image.loadGlideImage(profileImage, true)
                 name.text = username
             }
 

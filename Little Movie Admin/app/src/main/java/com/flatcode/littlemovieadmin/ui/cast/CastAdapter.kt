@@ -13,9 +13,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.filter.CastFilter
 import com.flatcode.littlemovieadmin.model.Cast
-import com.flatcode.littlemovieadmin.utils.CLASS
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.VOID
+import com.flatcode.littlemovieadmin.utils.intentExtra4
+import com.flatcode.littlemovieadmin.utils.loadGlideImage
+import com.flatcode.littlemovieadmin.utils.moreDeleteCast
 import com.flatcode.littlemovieadmin.databinding.ItemCastBinding
 import java.text.MessageFormat
 
@@ -40,7 +41,7 @@ class CastAdapter(private val activity: Activity, var list: ArrayList<Cast?>) :
         val interestedCount = DATA.EMPTY + item.interestedCount
         val moviesCount = DATA.EMPTY + item.moviesCount
 
-        VOID.GlideImage(true, activity, image, holder.image)
+        holder.image.loadGlideImage(image, true)
 
         if (item.name == DATA.EMPTY) {
             holder.name.visibility = View.GONE
@@ -58,12 +59,12 @@ class CastAdapter(private val activity: Activity, var list: ArrayList<Cast?>) :
         ) else holder.numberMovies.text = moviesCount
 
         holder.more.setOnClickListener {
-            VOID.moreDeleteCast(activity, item, DATA.NULL, DATA.NULL, DATA.NULL, true, false)
+            activity.moreDeleteCast(item, DATA.NULL, DATA.NULL, DATA.NULL, true, false)
         }
 
         holder.item.setOnClickListener {
-            VOID.IntentExtra4(
-                activity, CLASS.CAST_DETAILS, DATA.CAST_ID, id, DATA.CAST_NAME,
+            activity.intentExtra4(
+                CastDetailsActivity::class.java, DATA.CAST_ID, id, DATA.CAST_NAME,
                 name, DATA.CAST_IMAGE, image, DATA.CAST_ABOUT, aboutMy
             )
         }

@@ -9,10 +9,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.model.Setting
 import com.flatcode.littlemovie.R
-import com.flatcode.littlemovie.utils.CLASS
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.VOID
 import com.flatcode.littlemovie.databinding.FragmentSettingsBinding
+import com.flatcode.littlemovie.ui.cast.MyCastActivity
+import com.flatcode.littlemovie.ui.category.MyCategoriesActivity
+import com.flatcode.littlemovie.ui.profile.FavoritesActivity
+import com.flatcode.littlemovie.ui.profile.ProfileActivity
+import com.flatcode.littlemovie.ui.profile.ProfileEditActivity
 import kotlinx.coroutines.flow.combine
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -45,7 +49,7 @@ class SettingsFragment : Fragment() {
 
     private fun setupClickListeners() {
         binding.toolbar.item.setOnClickListener {
-            VOID.IntentExtra(context, CLASS.PROFILE, DATA.PROFILE_ID, DATA.FirebaseUserUid)
+            VOID.IntentExtra(context, ProfileActivity::class.java, DATA.PROFILE_ID, DATA.FirebaseUserUid)
         }
     }
 
@@ -75,15 +79,15 @@ class SettingsFragment : Fragment() {
 
     private fun loadSettings(myCast: Int, myCategories: Int, favorites: Int) {
         list.clear()
-        list.add(Setting("1", "Edit Profile", R.drawable.ic_edit_white, 0, CLASS.PROFILE_EDIT))
-        list.add(Setting("2", "My Cast", R.drawable.ic_cast, myCast, CLASS.MY_CAST))
-        list.add(Setting("3", "My Categories", R.drawable.ic_category_gray, myCategories, CLASS.MY_CATEGORIES))
-        list.add(Setting("4", "Favorites", R.drawable.ic_star_selected, favorites, CLASS.FAVORITES))
+        list.add(Setting("1", "Edit Profile", R.drawable.ic_edit_white, 0, ProfileEditActivity::class.java))
+        list.add(Setting("2", "My Cast", R.drawable.ic_cast, myCast, MyCastActivity::class.java))
+        list.add(Setting("3", "My Categories", R.drawable.ic_category_gray, myCategories, MyCategoriesActivity::class.java))
+        list.add(Setting("4", "Favorites", R.drawable.ic_star_selected, favorites, FavoritesActivity::class.java))
         list.add(Setting("5", "About App", R.drawable.ic_info, 0, null))
         list.add(Setting("6", "Logout", R.drawable.ic_logout_white, 0, null))
         list.add(Setting("7", "Share App", R.drawable.ic_share, 0, null))
         list.add(Setting("8", "Rate APP", R.drawable.ic_heart_selected, 0, null))
-        list.add(Setting("9", "Privacy Policy", R.drawable.ic_privacy_policy, 0, CLASS.PRIVACY_POLICY))
+        list.add(Setting("9", "Privacy Policy", R.drawable.ic_privacy_policy, 0, PrivacyPolicyActivity::class.java))
         adapter.notifyDataSetChanged()
     }
 
