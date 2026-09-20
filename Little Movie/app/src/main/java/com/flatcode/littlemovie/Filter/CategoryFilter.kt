@@ -1,24 +1,20 @@
 package com.flatcode.littlemovie.filter
 
 import android.widget.Filter
-import com.flatcode.littlemovie.ui.category.CategoryAdapter
 import com.flatcode.littlemovie.model.Category
+import com.flatcode.littlemovie.ui.category.CategoryAdapter
 import java.util.*
 
-class CategoryFilter(var list: ArrayList<Category?>, var adapter: CategoryAdapter) : Filter() {
-    override fun performFiltering(constraint: CharSequence): FilterResults {
-        var constraint: CharSequence? = constraint
+class CategoryFilter(private val list: List<Category>, private val adapter: CategoryAdapter) : Filter() {
+    override fun performFiltering(constraint: CharSequence?): FilterResults {
         val results = FilterResults()
-        if (constraint != null && constraint.length > 0) {
-            constraint = constraint.toString().uppercase(Locale.getDefault())
-            val filter = ArrayList<Category?>()
-            for (i in list.indices) {
-                if (list[i]!!.name!!.uppercase(Locale.getDefault()).contains(constraint)) {
-                    filter.add(list[i])
-                }
+        if (!constraint.isNullOrEmpty()) {
+            val query = constraint.toString().uppercase(Locale.getDefault())
+            val filtered = list.filter {
+                it.name?.uppercase(Locale.getDefault())?.contains(query) == true
             }
-            results.count = filter.size
-            results.values = filter
+            results.count = filtered.size
+            results.values = filtered
         } else {
             results.count = list.size
             results.values = list
@@ -26,8 +22,8 @@ class CategoryFilter(var list: ArrayList<Category?>, var adapter: CategoryAdapte
         return results
     }
 
-    override fun publishResults(constraint: CharSequence, results: FilterResults) {
-        adapter.list = (results.values as ArrayList<Category?>)
-        adapter.notifyDataSetChanged()
+    @Suppress("UNCHECKED_CAST")
+    override fun publishResults(constraint: CharSequence?, results: FilterResults) {
+        adapter.submitList(results.values as? List<Category>)
     }
 }

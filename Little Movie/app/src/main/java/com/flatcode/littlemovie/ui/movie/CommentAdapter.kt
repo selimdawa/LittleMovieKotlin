@@ -4,25 +4,25 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.flatcode.littlemovie.model.Comment
 import com.flatcode.littlemovie.Application
+import com.flatcode.littlemovie.databinding.ItemCommentBinding
+import com.flatcode.littlemovie.model.Comment
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.VOID
-import com.flatcode.littlemovie.databinding.ItemCommentBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-class CommentAdapter(private val context: Context, var list: ArrayList<Comment?>) :
-    RecyclerView.Adapter<CommentAdapter.ViewHolder>() {
+class CommentAdapter(private val context: Context) :
+    ListAdapter<Comment, CommentAdapter.ViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemCommentBinding.inflate(LayoutInflater.from(context), parent, false)
@@ -30,8 +30,8 @@ class CommentAdapter(private val context: Context, var list: ArrayList<Comment?>
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = list[position]
-        val commentId = DATA.EMPTY + item!!.id
+        val item = getItem(position)
+        val commentId = DATA.EMPTY + item.id
         val movieId = DATA.EMPTY + item.movieId
         val comment = DATA.EMPTY + item.comment
         val publisher = DATA.EMPTY + item.publisher
@@ -66,8 +66,12 @@ class CommentAdapter(private val context: Context, var list: ArrayList<Comment?>
             .show()
     }
 
-    override fun getItemCount(): Int {
-        return list.size
+    object DiffCallback : DiffUtil.ItemCallback<Comment>() {
+        override fun areItemsTheSame(oldItem: Comment, newItem: Comment): Boolean =
+            oldItem.id == newItem.id
+
+        override fun areContentsTheSame(oldItem: Comment, newItem: Comment): Boolean =
+            oldItem.id == newItem.id && oldItem.comment == newItem.comment
     }
 
     inner class ViewHolder(val binding: ItemCommentBinding) : RecyclerView.ViewHolder(binding.root)

@@ -26,7 +26,6 @@ class CastActivity : AppCompatActivity() {
 
     private var binding: ActivityCastBinding? = null
     var activity: Activity = this@CastActivity
-    var list: ArrayList<Cast?>? = null
     var adapter: CastAdapter? = null
     var type: String? = null
     private val viewModel: CastViewModel by viewModels()
@@ -68,8 +67,7 @@ class CastActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        list = ArrayList()
-        adapter = CastAdapter(activity, list!!)
+        adapter = CastAdapter(activity)
         binding!!.recyclerView.adapter = adapter
 
         binding!!.switchBar.all.setOnClickListener {
@@ -95,10 +93,8 @@ class CastActivity : AppCompatActivity() {
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.castList.collect { castItems ->
-                list!!.clear()
-                list!!.addAll(castItems)
-                adapter!!.notifyDataSetChanged()
-                if (list!!.isNotEmpty()) {
+                adapter!!.setFullList(castItems)
+                if (castItems.isNotEmpty()) {
                     binding!!.recyclerView.visibility = View.VISIBLE
                     binding!!.emptyText.visibility = View.GONE
                 } else {

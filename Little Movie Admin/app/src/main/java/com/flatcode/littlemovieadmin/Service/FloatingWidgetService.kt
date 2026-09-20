@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
 import com.flatcode.littlemovieadmin.ui.movie.MovieViewActivity
+import com.flatcode.littlemovieadmin.utils.openActivity
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.google.android.exoplayer2.ExoPlayer
@@ -94,12 +95,10 @@ class FloatingWidgetService : Service() {
                     exoPlayer!!.release()
                     exoPlayer = null
                     stopSelf()
-                    val intent1 = Intent(
-                        this@FloatingWidgetService, MovieViewActivity::class.java
+                    this@FloatingWidgetService.openActivity<MovieViewActivity>(
+                        clear = true,
+                        extras = arrayOf(DATA.MOVIE_LINK to videoUri.toString())
                     )
-                    intent1.putExtra(DATA.MOVIE_LINK, videoUri.toString())
-                    intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(intent1)
                 }
             }
             close.setOnClickListener {

@@ -7,13 +7,13 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.Filter
 import android.widget.Filterable
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.flatcode.littlemovie.R
+import com.flatcode.littlemovie.databinding.ItemMovieBinding
 import com.flatcode.littlemovie.filter.MovieFilter
 import com.flatcode.littlemovie.model.Movie
-import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.GlideImage
 import com.flatcode.littlemovie.utils.checkFavorite
@@ -22,15 +22,13 @@ import com.flatcode.littlemovie.utils.isFavorite
 import com.flatcode.littlemovie.utils.isLoves
 import com.flatcode.littlemovie.utils.nrLoves
 import com.flatcode.littlemovie.utils.openActivity
-import com.flatcode.littlemovie.databinding.ItemMovieBinding
 import java.text.MessageFormat
 
-class MovieAdapter(private val context: Context?, var list: ArrayList<Movie?>, animation: Boolean) :
-    RecyclerView.Adapter<MovieAdapter.ViewHolder>(), Filterable {
+class MovieAdapter(private val context: Context?, private val animation: Boolean) :
+    ListAdapter<Movie, MovieAdapter.ViewHolder>(DiffCallback), Filterable {
 
-    var filterList: ArrayList<Movie?>
+    private var fullList: List<Movie> = emptyList()
     private var filter: MovieFilter? = null
-    private val animation: Boolean
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemMovieBinding.inflate(LayoutInflater.from(context), parent, false)
@@ -38,8 +36,8 @@ class MovieAdapter(private val context: Context?, var list: ArrayList<Movie?>, a
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = list[position]
-        val id = DATA.EMPTY + item!!.id
+        val item = getItem(position)
+        val id = DATA.EMPTY + item.id
         val name = DATA.EMPTY + item.name
         val image = DATA.EMPTY + item.image
         val viewsCount = DATA.EMPTY + item.viewsCount
@@ -68,6 +66,7 @@ class MovieAdapter(private val context: Context?, var list: ArrayList<Movie?>, a
         holder.binding.love.isLoves(id)
         holder.binding.nrLoves.nrLoves(id)
         holder.binding.love.setOnClickListener { holder.binding.love.checkLove(id) }
+
         if (animation) holder.binding.item.animation = AnimationUtils.loadAnimation(
             context, R.anim.fade_transition_animation
         )
@@ -79,21 +78,25 @@ class MovieAdapter(private val context: Context?, var list: ArrayList<Movie?>, a
         }
     }
 
-    override fun getItemCount(): Int {
-        return list.size
+    fun setFullList(list: List<Movie>) {
+        fullList = list
+        submitList(list)
     }
 
     override fun getFilter(): Filter {
         if (filter == null) {
-            filter = MovieFilter(filterList, this)
+            filter = MovieFilter(fullList, this)
         }
         return filter!!
     }
 
-    inner class ViewHolder(val binding: ItemMovieBinding) : RecyclerView.ViewHolder(binding.root)
+    object DiffCallback : DiffUtil.ItemCallback<Movie>() {
+        override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean =
+            oldItem.id == newItem.id
 
-    init {
-        filterList = list
-        this.animation = animation
+        override fun areContentsTheSame(oldItem: Movie, newItem: Movie): Boolean =
+            oldItem == newItem
     }
+
+    inner class ViewHolder(val binding: ItemMovieBinding) : RecyclerView.ViewHolder(binding.root)
 }

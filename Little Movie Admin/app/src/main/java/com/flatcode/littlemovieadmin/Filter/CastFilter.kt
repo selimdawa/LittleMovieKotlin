@@ -5,15 +5,15 @@ import com.flatcode.littlemovieadmin.ui.cast.CastAdapter
 import com.flatcode.littlemovieadmin.model.Cast
 import java.util.*
 
-class CastFilter(var list: ArrayList<Cast?>, var adapter: CastAdapter) : Filter() {
+class CastFilter(var list: List<Cast>, var adapter: CastAdapter) : Filter() {
     override fun performFiltering(constraint: CharSequence): FilterResults {
         var constraint: CharSequence? = constraint
         val results = FilterResults()
         if (constraint != null && constraint.length > 0) {
             constraint = constraint.toString().uppercase(Locale.getDefault())
-            val filter = ArrayList<Cast?>()
+            val filter = ArrayList<Cast>()
             for (i in list.indices) {
-                if (list[i]!!.name!!.uppercase(Locale.getDefault()).contains(constraint)) {
+                if (list[i].name!!.uppercase(Locale.getDefault()).contains(constraint)) {
                     filter.add(list[i])
                 }
             }
@@ -27,7 +27,6 @@ class CastFilter(var list: ArrayList<Cast?>, var adapter: CastAdapter) : Filter(
     }
 
     override fun publishResults(constraint: CharSequence, results: FilterResults) {
-        adapter.list = (results.values as ArrayList<Cast?>)
-        adapter.notifyDataSetChanged()
+        adapter.submitList(results.values as List<Cast>)
     }
 }

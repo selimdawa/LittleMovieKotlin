@@ -23,7 +23,6 @@ class UsersActivity : BaseActivity() {
 
     private lateinit var binding: ActivityUsersBinding
     private val viewModel: UsersViewModel by viewModels()
-    private val list = mutableListOf<User?>()
     private lateinit var adapter: UserAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +52,7 @@ class UsersActivity : BaseActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        adapter = UserAdapter(this, list as ArrayList<User?>)
+        adapter = UserAdapter(this)
         binding.recyclerView.adapter = adapter
 
         binding.switchBar.all.setOnClickListener { viewModel.getData(DATA.TIMESTAMP) }
@@ -69,9 +68,8 @@ class UsersActivity : BaseActivity() {
                     binding.progress.visibility = if (state.isLoading) View.VISIBLE else View.GONE
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", state.count)
                     
-                    list.clear()
-                    list.addAll(state.users)
-                    adapter.notifyDataSetChanged()
+                    adapter.filterList = state.users
+                    adapter.submitList(state.users)
 
                     if (state.users.isNotEmpty()) {
                         binding.recyclerView.visibility = View.VISIBLE

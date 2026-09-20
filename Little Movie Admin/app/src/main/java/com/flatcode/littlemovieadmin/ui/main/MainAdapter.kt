@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.model.Main
 import com.flatcode.littlemovieadmin.R
@@ -16,38 +18,35 @@ import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.databinding.ItemMainBinding
 import java.text.MessageFormat
 
-class MainAdapter(private val context: Context, var list: List<Main>) :
-    RecyclerView.Adapter<MainAdapter.ViewHolder>() {
-
-    private var binding: ItemMainBinding? = null
+class MainAdapter(private val context: Context) :
+    ListAdapter<Main, MainAdapter.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ItemMainBinding.inflate(LayoutInflater.from(context), parent, false)
-        return ViewHolder(binding!!.root)
+        val binding = ItemMainBinding.inflate(LayoutInflater.from(context), parent, false)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val model = list[position]
+        val model = getItem(position)
         val image = model.image
         val number = model.number
         val name = model.title
-        //String id = list.getId();
         val c = model.c
 
         if (image != 0) {
-            holder.image.setImageResource(image)
+            holder.binding.image.setImageResource(image)
         } else {
-            holder.image.setImageResource(R.drawable.ic_load)
+            holder.binding.image.setImageResource(R.drawable.ic_load)
         }
 
         if (number != 0) {
-            holder.number.visibility = View.VISIBLE
-            holder.number.text = MessageFormat.format("{0}{1}", DATA.EMPTY, number)
+            holder.binding.number.visibility = View.VISIBLE
+            holder.binding.number.text = MessageFormat.format("{0}{1}", DATA.EMPTY, number)
         } else {
-            holder.number.visibility = View.GONE
+            holder.binding.number.visibility = View.GONE
         }
 
-        holder.name.text = name
+        holder.binding.name.text = name
 
         holder.itemView.setOnClickListener {
             if (c != null) {
@@ -57,21 +56,14 @@ class MainAdapter(private val context: Context, var list: List<Main>) :
         }
     }
 
-    override fun getItemCount(): Int {
-        return list.size
-    }
+    class ViewHolder(val binding: ItemMainBinding) : RecyclerView.ViewHolder(binding.root)
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var name: TextView
-        var number: TextView
-        var image: ImageView
-        var item: LinearLayout
+    class DiffCallback : DiffUtil.ItemCallback<Main>() {
+        override fun areItemsTheSame(oldItem: Main, newItem: Main): Boolean =
+            oldItem.title == newItem.title
 
-        init {
-            image = binding!!.image
-            name = binding!!.name
-            number = binding!!.number
-            item = binding!!.item
-        }
+        override fun areContentsTheSame(oldItem: Main, newItem: Main): Boolean =
+            oldItem.title == newItem.title && oldItem.image == newItem.image && 
+            oldItem.number == newItem.number
     }
 }

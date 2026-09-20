@@ -25,7 +25,6 @@ class CategoryDetailsActivity : BaseActivity() {
 
     private lateinit var binding: ActivityCategoryDetailsBinding
     private val viewModel: CategoryDetailsViewModel by viewModels()
-    private val list = mutableListOf<Movie?>()
     private lateinit var adapter: MovieAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +58,7 @@ class CategoryDetailsActivity : BaseActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        adapter = MovieAdapter(this, list as ArrayList<Movie?>)
+        adapter = MovieAdapter(this)
         binding.recyclerView.adapter = adapter
 
         binding.switchBar.all.setOnClickListener { viewModel.getData(DATA.TIMESTAMP) }
@@ -77,9 +76,8 @@ class CategoryDetailsActivity : BaseActivity() {
                     binding.progress.visibility = if (state.isLoading) View.VISIBLE else View.GONE
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", state.count)
                     
-                    list.clear()
-                    list.addAll(state.movies)
-                    adapter.notifyDataSetChanged()
+                    adapter.filterList = state.movies
+                    adapter.submitList(state.movies)
 
                     if (state.movies.isNotEmpty()) {
                         binding.recyclerView.visibility = View.VISIBLE

@@ -4,18 +4,17 @@ import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.flatcode.littlemovie.databinding.ItemCastMovieBinding
 import com.flatcode.littlemovie.model.Cast
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.GlideImage
 import com.flatcode.littlemovie.utils.openActivity
-import com.flatcode.littlemovie.databinding.ItemCastMovieBinding
 
-class CastMovieAdapter(private val activity: Activity, var list: ArrayList<Cast?>) :
-    RecyclerView.Adapter<CastMovieAdapter.ViewHolder>() {
+class CastMovieAdapter(private val activity: Activity) :
+    ListAdapter<Cast, CastMovieAdapter.ViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemCastMovieBinding.inflate(LayoutInflater.from(activity), parent, false)
@@ -23,8 +22,8 @@ class CastMovieAdapter(private val activity: Activity, var list: ArrayList<Cast?
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = list[position]
-        val id = DATA.EMPTY + item!!.id
+        val item = getItem(position)
+        val id = DATA.EMPTY + item.id
         val name = DATA.EMPTY + item.name
         val image = DATA.EMPTY + item.image
         val aboutMy = DATA.EMPTY + item.aboutMy
@@ -46,8 +45,12 @@ class CastMovieAdapter(private val activity: Activity, var list: ArrayList<Cast?
         }
     }
 
-    override fun getItemCount(): Int {
-        return list.size
+    object DiffCallback : DiffUtil.ItemCallback<Cast>() {
+        override fun areItemsTheSame(oldItem: Cast, newItem: Cast): Boolean =
+            oldItem.id == newItem.id
+
+        override fun areContentsTheSame(oldItem: Cast, newItem: Cast): Boolean =
+            oldItem == newItem
     }
 
     inner class ViewHolder(val binding: ItemCastMovieBinding) : RecyclerView.ViewHolder(binding.root)

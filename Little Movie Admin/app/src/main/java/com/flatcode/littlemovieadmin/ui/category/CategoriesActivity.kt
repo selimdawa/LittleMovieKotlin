@@ -26,7 +26,6 @@ class CategoriesActivity : BaseActivity() {
 
     private lateinit var binding: ActivityCategoriesBinding
     private val viewModel: CategoriesViewModel by viewModels()
-    private val list = mutableListOf<Category?>()
     private lateinit var adapter: CategoryAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,7 +55,7 @@ class CategoriesActivity : BaseActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        adapter = CategoryAdapter(this, list as ArrayList<Category?>)
+        adapter = CategoryAdapter(this)
         binding.recyclerView.adapter = adapter
 
         binding.switchBar.all.setOnClickListener { viewModel.getData(DATA.TIMESTAMP) }
@@ -74,9 +73,8 @@ class CategoriesActivity : BaseActivity() {
                     binding.progress.visibility = if (state.isLoading) View.VISIBLE else View.GONE
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", state.count)
                     
-                    list.clear()
-                    list.addAll(state.categories)
-                    adapter.notifyDataSetChanged()
+                    adapter.filterList = state.categories
+                    adapter.submitList(state.categories)
 
                     if (state.categories.isNotEmpty()) {
                         binding.recyclerView.visibility = View.VISIBLE

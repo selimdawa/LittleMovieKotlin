@@ -10,6 +10,8 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.filter.CastFilter
 import com.flatcode.littlemovieadmin.model.Cast
@@ -20,49 +22,48 @@ import com.flatcode.littlemovieadmin.utils.moreDeleteCast
 import com.flatcode.littlemovieadmin.databinding.ItemCastBinding
 import java.text.MessageFormat
 
-class CastAdapter(private val activity: Activity, var list: ArrayList<Cast?>) :
-    RecyclerView.Adapter<CastAdapter.ViewHolder>(), Filterable {
+class CastAdapter(private val activity: Activity) :
+    ListAdapter<Cast, CastAdapter.ViewHolder>(DiffCallback()), Filterable {
 
-    private var binding: ItemCastBinding? = null
-    var filterList: ArrayList<Cast?>
+    var filterList: List<Cast> = emptyList()
     private var filter: CastFilter? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ItemCastBinding.inflate(LayoutInflater.from(activity), parent, false)
-        return ViewHolder(binding!!.root)
+        val binding = ItemCastBinding.inflate(LayoutInflater.from(activity), parent, false)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = list[position]
-        val id = DATA.EMPTY + item!!.id
+        val item = getItem(position)
+        val id = DATA.EMPTY + item.id
         val name = DATA.EMPTY + item.name
         val image = DATA.EMPTY + item.image
         val aboutMy = DATA.EMPTY + item.aboutMy
         val interestedCount = DATA.EMPTY + item.interestedCount
         val moviesCount = DATA.EMPTY + item.moviesCount
 
-        holder.image.loadGlideImage(image, true)
+        holder.binding.image.loadGlideImage(image, true)
 
         if (item.name == DATA.EMPTY) {
-            holder.name.visibility = View.GONE
+            holder.binding.name.visibility = View.GONE
         } else {
-            holder.name.visibility = View.VISIBLE
-            holder.name.text = name
+            holder.binding.name.visibility = View.VISIBLE
+            holder.binding.name.text = name
         }
 
-        if (interestedCount == DATA.EMPTY) holder.numberInterested.text = MessageFormat.format(
+        if (interestedCount == DATA.EMPTY) holder.binding.numberInterested.text = MessageFormat.format(
             "{0}{1}", DATA.EMPTY, DATA.ZERO
-        ) else holder.numberInterested.text = interestedCount
+        ) else holder.binding.numberInterested.text = interestedCount
 
-        if (moviesCount == DATA.EMPTY) holder.numberMovies.text = MessageFormat.format(
+        if (moviesCount == DATA.EMPTY) holder.binding.numberMovies.text = MessageFormat.format(
             "{0}{1}", DATA.EMPTY, DATA.ZERO
-        ) else holder.numberMovies.text = moviesCount
+        ) else holder.binding.numberMovies.text = moviesCount
 
-        holder.more.setOnClickListener {
+        holder.binding.more.setOnClickListener {
             activity.moreDeleteCast(item, DATA.NULL, DATA.NULL, DATA.NULL, true, false)
         }
 
-        holder.item.setOnClickListener {
+        holder.binding.item.setOnClickListener {
             activity.openActivity<CastDetailsActivity>(
                 extras = arrayOf(
                     DATA.CAST_ID to id,
@@ -74,10 +75,6 @@ class CastAdapter(private val activity: Activity, var list: ArrayList<Cast?>) :
         }
     }
 
-    override fun getItemCount(): Int {
-        return list.size
-    }
-
     override fun getFilter(): Filter {
         if (filter == null) {
             filter = CastFilter(filterList, this)
@@ -85,27 +82,13 @@ class CastAdapter(private val activity: Activity, var list: ArrayList<Cast?>) :
         return filter!!
     }
 
-    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(
-        view!!
-    ) {
-        var image: ImageView
-        var more: ImageButton
-        var name: TextView
-        var numberMovies: TextView
-        var numberInterested: TextView
-        var item: LinearLayout
+    class ViewHolder(val binding: ItemCastBinding) : RecyclerView.ViewHolder(binding.root)
 
-        init {
-            image = binding!!.image
-            name = binding!!.name
-            more = binding!!.more
-            numberMovies = binding!!.numberMovies
-            numberInterested = binding!!.numberInterested
-            item = binding!!.item
-        }
-    }
+    class DiffCallback : DiffUtil.ItemCallback<Cast>() {
+        override fun areItemsTheSame(oldItem: Cast, newItem: Cast): Boolean =
+            oldItem.id == newItem.id
 
-    init {
-        filterList = list
+        override fun areContentsTheSame(oldItem: Cast, newItem: Cast): Boolean =
+            oldItem == newItem
     }
 }

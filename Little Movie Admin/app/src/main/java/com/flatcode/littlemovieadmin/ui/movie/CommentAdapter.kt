@@ -10,6 +10,8 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.model.Comment
 import com.flatcode.littlemovieadmin.utils.DATA
@@ -21,30 +23,28 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-class CommentAdapter(private val context: Context, var list: ArrayList<Comment?>) :
-    RecyclerView.Adapter<CommentAdapter.ViewHolder>() {
-
-    private var binding: ItemCommentBinding? = null
+class CommentAdapter(private val context: Context) :
+    ListAdapter<Comment, CommentAdapter.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ItemCommentBinding.inflate(LayoutInflater.from(context), parent, false)
-        return ViewHolder(binding!!.root)
+        val binding = ItemCommentBinding.inflate(LayoutInflater.from(context), parent, false)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = list[position]
-        val commentId = DATA.EMPTY + item!!.id
+        val item = getItem(position)
+        val commentId = DATA.EMPTY + item.id
         val movieId = DATA.EMPTY + item.movieId
         val comment = DATA.EMPTY + item.comment
         val publisher = DATA.EMPTY + item.publisher
         val timestamp = DATA.EMPTY + item.timestamp
         val date: String = Application.formatTimestamp(timestamp.toLong())
 
-        holder.date.text = date
-        holder.comment.text = comment
-        loadUserDetails(publisher, holder.name, holder.image)
+        holder.binding.date.text = date
+        holder.binding.comment.text = comment
+        loadUserDetails(publisher, holder.binding.name, holder.binding.image)
 
-        holder.item.setOnClickListener {
+        holder.binding.item.setOnClickListener {
             if (publisher == DATA.FirebaseUserUid) deleteComment(commentId, movieId)
         }
     }
@@ -68,24 +68,15 @@ class CommentAdapter(private val context: Context, var list: ArrayList<Comment?>
             .show()
     }
 
-    override fun getItemCount(): Int {
-        return list.size
-    }
+    class ViewHolder(val binding: ItemCommentBinding) : RecyclerView.ViewHolder(binding.root)
 
-    inner class ViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!) {
-        var image: ImageView
-        var name: TextView
-        var comment: TextView
-        var date: TextView
-        var item: LinearLayout
+    class DiffCallback : DiffUtil.ItemCallback<Comment>() {
+        override fun areItemsTheSame(oldItem: Comment, newItem: Comment): Boolean =
+            oldItem.id == newItem.id
 
-        init {
-            image = binding!!.image
-            name = binding!!.name
-            comment = binding!!.comment
-            date = binding!!.date
-            item = binding!!.item
-        }
+        override fun areContentsTheSame(oldItem: Comment, newItem: Comment): Boolean =
+            oldItem.id == newItem.id && oldItem.comment == newItem.comment && 
+            oldItem.timestamp == newItem.timestamp
     }
 
     private fun loadUserDetails(publisher: String, name: TextView, image: ImageView) {

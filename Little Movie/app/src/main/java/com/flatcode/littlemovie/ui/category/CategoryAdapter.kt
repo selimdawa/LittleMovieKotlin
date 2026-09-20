@@ -6,10 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.flatcode.littlemovie.databinding.ItemCategoryBinding
 import com.flatcode.littlemovie.filter.CategoryFilter
 import com.flatcode.littlemovie.model.Category
 import com.flatcode.littlemovie.utils.DATA
@@ -17,13 +17,12 @@ import com.flatcode.littlemovie.utils.GlideImage
 import com.flatcode.littlemovie.utils.checkInterested
 import com.flatcode.littlemovie.utils.isInterested
 import com.flatcode.littlemovie.utils.openActivity
-import com.flatcode.littlemovie.databinding.ItemCategoryBinding
 import java.text.MessageFormat
 
-class CategoryAdapter(private val activity: Activity, var list: ArrayList<Category?>) :
-    RecyclerView.Adapter<CategoryAdapter.ViewHolder>(), Filterable {
+class CategoryAdapter(private val activity: Activity) :
+    ListAdapter<Category, CategoryAdapter.ViewHolder>(DiffCallback), Filterable {
 
-    var filterList: ArrayList<Category?>
+    private var fullList: List<Category> = emptyList()
     private var filter: CategoryFilter? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -32,8 +31,8 @@ class CategoryAdapter(private val activity: Activity, var list: ArrayList<Catego
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = list[position]
-        val id = DATA.EMPTY + item!!.id
+        val item = getItem(position)
+        val id = DATA.EMPTY + item.id
         val name = DATA.EMPTY + item.name
         val image = DATA.EMPTY + item.image
         val interestedCount = DATA.EMPTY + item.interestedCount
@@ -66,20 +65,25 @@ class CategoryAdapter(private val activity: Activity, var list: ArrayList<Catego
         }
     }
 
-    override fun getItemCount(): Int {
-        return list.size
+    fun setFullList(list: List<Category>) {
+        fullList = list
+        submitList(list)
     }
 
     override fun getFilter(): Filter {
         if (filter == null) {
-            filter = CategoryFilter(filterList, this)
+            filter = CategoryFilter(fullList, this)
         }
         return filter!!
     }
 
-    inner class ViewHolder(val binding: ItemCategoryBinding) : RecyclerView.ViewHolder(binding.root)
+    object DiffCallback : DiffUtil.ItemCallback<Category>() {
+        override fun areItemsTheSame(oldItem: Category, newItem: Category): Boolean =
+            oldItem.id == newItem.id
 
-    init {
-        filterList = list
+        override fun areContentsTheSame(oldItem: Category, newItem: Category): Boolean =
+            oldItem == newItem
     }
+
+    inner class ViewHolder(val binding: ItemCategoryBinding) : RecyclerView.ViewHolder(binding.root)
 }

@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.model.Cast
 import com.flatcode.littlemovieadmin.ui.cast.CastDetailsActivity
@@ -15,31 +17,31 @@ import com.flatcode.littlemovieadmin.utils.openActivity
 import com.flatcode.littlemovieadmin.utils.loadGlideImage
 import com.flatcode.littlemovieadmin.databinding.ItemCastMovieBinding
 
-class CastMovieAdapter(private val activity: Activity, var list: ArrayList<Cast?>) :
-    RecyclerView.Adapter<CastMovieAdapter.ViewHolder>() {
-    private var binding: ItemCastMovieBinding? = null
+class CastMovieAdapter(private val activity: Activity) :
+    ListAdapter<Cast, CastMovieAdapter.ViewHolder>(DiffCallback()) {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ItemCastMovieBinding.inflate(LayoutInflater.from(activity), parent, false)
-        return ViewHolder(binding!!.root)
+        val binding = ItemCastMovieBinding.inflate(LayoutInflater.from(activity), parent, false)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = list[position]
-        val id = DATA.EMPTY + item!!.id
+        val item = getItem(position)
+        val id = DATA.EMPTY + item.id
         val name = DATA.EMPTY + item.name
         val image = DATA.EMPTY + item.image
         val aboutMy = DATA.EMPTY + item.aboutMy
 
-        holder.image.loadGlideImage(image, true)
+        holder.binding.image.loadGlideImage(image, true)
 
         if (item.name == DATA.EMPTY) {
-            holder.name.visibility = View.GONE
+            holder.binding.name.visibility = View.GONE
         } else {
-            holder.name.visibility = View.VISIBLE
-            holder.name.text = name
+            holder.binding.name.visibility = View.VISIBLE
+            holder.binding.name.text = name
         }
 
-        holder.item.setOnClickListener {
+        holder.binding.item.setOnClickListener {
             activity.openActivity<CastDetailsActivity>(
                 extras = arrayOf(
                     DATA.CAST_ID to id, DATA.CAST_NAME to name,
@@ -49,19 +51,13 @@ class CastMovieAdapter(private val activity: Activity, var list: ArrayList<Cast?
         }
     }
 
-    override fun getItemCount(): Int {
-        return list.size
-    }
+    class ViewHolder(val binding: ItemCastMovieBinding) : RecyclerView.ViewHolder(binding.root)
 
-    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
-        var image: ImageView
-        var name: TextView
-        var item: LinearLayout
+    class DiffCallback : DiffUtil.ItemCallback<Cast>() {
+        override fun areItemsTheSame(oldItem: Cast, newItem: Cast): Boolean =
+            oldItem.id == newItem.id
 
-        init {
-            image = binding!!.image
-            name = binding!!.name
-            item = binding!!.item
-        }
+        override fun areContentsTheSame(oldItem: Cast, newItem: Cast): Boolean =
+            oldItem == newItem
     }
 }

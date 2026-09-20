@@ -6,10 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.flatcode.littlemovie.databinding.ItemCastBinding
 import com.flatcode.littlemovie.filter.CastFilter
 import com.flatcode.littlemovie.model.Cast
 import com.flatcode.littlemovie.utils.DATA
@@ -17,13 +17,12 @@ import com.flatcode.littlemovie.utils.GlideImage
 import com.flatcode.littlemovie.utils.checkInterested
 import com.flatcode.littlemovie.utils.isInterested
 import com.flatcode.littlemovie.utils.openActivity
-import com.flatcode.littlemovie.databinding.ItemCastBinding
 import java.text.MessageFormat
 
-class CastAdapter(private val activity: Activity, var list: ArrayList<Cast?>) :
-    RecyclerView.Adapter<CastAdapter.ViewHolder>(), Filterable {
+class CastAdapter(private val activity: Activity) :
+    ListAdapter<Cast, CastAdapter.ViewHolder>(DiffCallback), Filterable {
 
-    var filterList: ArrayList<Cast?>
+    private var fullList: List<Cast> = emptyList()
     private var filter: CastFilter? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -32,8 +31,8 @@ class CastAdapter(private val activity: Activity, var list: ArrayList<Cast?>) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = list[position]
-        val id = DATA.EMPTY + item!!.id
+        val item = getItem(position)
+        val id = DATA.EMPTY + item.id
         val name = DATA.EMPTY + item.name
         val image = DATA.EMPTY + item.image
         val aboutMy = DATA.EMPTY + item.aboutMy
@@ -68,20 +67,25 @@ class CastAdapter(private val activity: Activity, var list: ArrayList<Cast?>) :
         }
     }
 
-    override fun getItemCount(): Int {
-        return list.size
+    fun setFullList(list: List<Cast>) {
+        fullList = list
+        submitList(list)
     }
 
     override fun getFilter(): Filter {
         if (filter == null) {
-            filter = CastFilter(filterList, this)
+            filter = CastFilter(fullList, this)
         }
         return filter!!
     }
 
-    inner class ViewHolder(val binding: ItemCastBinding) : RecyclerView.ViewHolder(binding.root)
+    object DiffCallback : DiffUtil.ItemCallback<Cast>() {
+        override fun areItemsTheSame(oldItem: Cast, newItem: Cast): Boolean =
+            oldItem.id == newItem.id
 
-    init {
-        filterList = list
+        override fun areContentsTheSame(oldItem: Cast, newItem: Cast): Boolean =
+            oldItem == newItem
     }
+
+    inner class ViewHolder(val binding: ItemCastBinding) : RecyclerView.ViewHolder(binding.root)
 }

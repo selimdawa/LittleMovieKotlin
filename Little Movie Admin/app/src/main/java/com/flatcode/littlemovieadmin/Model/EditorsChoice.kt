@@ -1,3 +1,3 @@
 package com.flatcode.littlemovieadmin.model
 
-class EditorsChoice
+data class EditorsChoice(val id: Int = 0)

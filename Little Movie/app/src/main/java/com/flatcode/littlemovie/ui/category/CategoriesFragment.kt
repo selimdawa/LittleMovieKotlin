@@ -20,7 +20,6 @@ class CategoriesFragment : Fragment() {
     private var _binding: FragmentCategoriesBinding? = null
     private val binding get() = _binding!!
     private val viewModel: CategoriesViewModel by viewModels()
-    private val list = ArrayList<Category?>()
     private lateinit var adapter: CategoryMainAdapter
 
     override fun onCreateView(
@@ -35,7 +34,7 @@ class CategoriesFragment : Fragment() {
     }
 
     private fun setupAdapter() {
-        adapter = CategoryMainAdapter(context, list)
+        adapter = CategoryMainAdapter(context)
         binding.recyclerView.adapter = adapter
     }
 
@@ -43,12 +42,10 @@ class CategoriesFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.categoriesList.collect { categories ->
                 Timber.d("Categories collected: %d", categories.size)
-                list.clear()
-                list.addAll(categories)
-                adapter.notifyDataSetChanged()
+                adapter.submitList(categories)
                 
                 binding.bar.visibility = View.GONE
-                if (list.isNotEmpty()) {
+                if (categories.isNotEmpty()) {
                     binding.recyclerView.visibility = View.VISIBLE
                     binding.emptyText.visibility = View.GONE
                 } else {

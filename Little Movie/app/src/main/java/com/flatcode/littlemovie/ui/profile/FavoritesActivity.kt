@@ -29,7 +29,6 @@ class FavoritesActivity : AppCompatActivity() {
     private val activity: Activity = this@FavoritesActivity
     private val viewModel: FavoritesViewModel by viewModels()
     
-    private val list = ArrayList<Movie?>()
     private lateinit var adapter: MovieAdapter
     
     private var type: String = DATA.TIMESTAMP
@@ -94,20 +93,18 @@ class FavoritesActivity : AppCompatActivity() {
     }
 
     private fun setupAdapter() {
-        adapter = MovieAdapter(activity, list, true)
+        adapter = MovieAdapter(activity, true)
         binding!!.recyclerView.adapter = adapter
     }
 
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.movies.collect { movies ->
-                list.clear()
-                list.addAll(movies)
-                adapter.notifyDataSetChanged()
+                adapter.setFullList(movies)
                 
-                binding!!.toolbar.number.text = MessageFormat.format("( {0} )", list.size)
+                binding!!.toolbar.number.text = MessageFormat.format("( {0} )", movies.size)
                 binding!!.progress.visibility = View.GONE
-                if (list.isNotEmpty()) {
+                if (movies.isNotEmpty()) {
                     binding!!.recyclerView.visibility = View.VISIBLE
                     binding!!.emptyText.visibility = View.GONE
                 } else {

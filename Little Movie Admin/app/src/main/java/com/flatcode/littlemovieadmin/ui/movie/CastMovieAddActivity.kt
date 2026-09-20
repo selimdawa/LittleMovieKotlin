@@ -23,7 +23,6 @@ class CastMovieAddActivity : BaseActivity() {
 
     private lateinit var binding: ActivityCastMovieBinding
     private val viewModel: CastMovieAddViewModel by viewModels()
-    private val list = mutableListOf<Cast?>()
     private lateinit var adapter: CastMovieAddAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +33,7 @@ class CastMovieAddActivity : BaseActivity() {
         binding.toolbar.nameSpace.setText(R.string.add_cast)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
 
-        adapter = CastMovieAddAdapter(this, list as ArrayList<Cast?>)
+        adapter = CastMovieAddAdapter(this)
         binding.recyclerView.adapter = adapter
 
         observeState()
@@ -46,9 +45,7 @@ class CastMovieAddActivity : BaseActivity() {
                 viewModel.uiState.collect { state ->
                     binding.progress.visibility = if (state.isLoading) View.VISIBLE else View.GONE
                     
-                    list.clear()
-                    list.addAll(state.castList)
-                    adapter.notifyDataSetChanged()
+                    adapter.submitList(state.castList)
 
                     if (state.castList.isNotEmpty()) {
                         binding.recyclerView.visibility = View.VISIBLE

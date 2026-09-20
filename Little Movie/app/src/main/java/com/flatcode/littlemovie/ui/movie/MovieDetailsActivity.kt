@@ -40,9 +40,6 @@ class MovieDetailsActivity : AppCompatActivity() {
     
     private var dialog: ProgressDialog? = null
     
-    private val listComment = ArrayList<Comment?>()
-    private val listCast = ArrayList<Cast?>()
-    
     private lateinit var adapterComment: CommentAdapter
     private lateinit var adapterCast: CastMovieAdapter
 
@@ -97,10 +94,10 @@ class MovieDetailsActivity : AppCompatActivity() {
     }
 
     private fun setupAdapters() {
-        adapterCast = CastMovieAdapter(activity, listCast)
+        adapterCast = CastMovieAdapter(activity)
         binding!!.recyclerCast.adapter = adapterCast
         
-        adapterComment = CommentAdapter(activity, listComment)
+        adapterComment = CommentAdapter(activity)
         binding!!.recyclerComment.adapter = adapterComment
     }
 
@@ -129,17 +126,13 @@ class MovieDetailsActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             viewModel.comments.collect { comments ->
-                listComment.clear()
-                listComment.addAll(comments)
-                adapterComment.notifyDataSetChanged()
+                adapterComment.submitList(comments)
             }
         }
 
         lifecycleScope.launch {
             viewModel.cast.collect { castMembers ->
-                listCast.clear()
-                listCast.addAll(castMembers)
-                adapterCast.notifyDataSetChanged()
+                adapterCast.submitList(castMembers)
             }
         }
 

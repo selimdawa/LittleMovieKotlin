@@ -26,7 +26,6 @@ class CategoriesActivity : AppCompatActivity() {
 
     private var binding: ActivityCategoriesBinding? = null
     var activity: Activity = this@CategoriesActivity
-    var list: ArrayList<Category?>? = null
     var adapter: CategoryAdapter? = null
     var type: String? = null
     private val viewModel: CategoriesViewModel by viewModels()
@@ -68,8 +67,7 @@ class CategoriesActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        list = ArrayList()
-        adapter = CategoryAdapter(activity, list!!)
+        adapter = CategoryAdapter(activity)
         binding!!.recyclerView.adapter = adapter
 
         binding!!.switchBar.all.setOnClickListener {
@@ -95,10 +93,8 @@ class CategoriesActivity : AppCompatActivity() {
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.categoriesList.collect { categories ->
-                list!!.clear()
-                list!!.addAll(categories)
-                adapter!!.notifyDataSetChanged()
-                if (list!!.isNotEmpty()) {
+                adapter!!.setFullList(categories)
+                if (categories.isNotEmpty()) {
                     binding!!.recyclerView.visibility = View.VISIBLE
                     binding!!.emptyText.visibility = View.GONE
                 } else {

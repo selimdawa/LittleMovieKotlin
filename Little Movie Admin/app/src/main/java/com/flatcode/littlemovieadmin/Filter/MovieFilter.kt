@@ -5,15 +5,15 @@ import com.flatcode.littlemovieadmin.ui.movie.MovieAdapter
 import com.flatcode.littlemovieadmin.model.Movie
 import java.util.*
 
-class MovieFilter(var list: ArrayList<Movie?>, var adapter: MovieAdapter) : Filter() {
+class MovieFilter(var list: List<Movie>, var adapter: MovieAdapter) : Filter() {
     override fun performFiltering(constraint: CharSequence): FilterResults {
         var constraint: CharSequence? = constraint
         val results = FilterResults()
         if (constraint != null && constraint.length > 0) {
             constraint = constraint.toString().uppercase(Locale.getDefault())
-            val filter = ArrayList<Movie?>()
+            val filter = ArrayList<Movie>()
             for (i in list.indices) {
-                if (list[i]!!.name!!.uppercase(Locale.getDefault()).contains(constraint)) {
+                if (list[i].name.uppercase(Locale.getDefault()).contains(constraint)) {
                     filter.add(list[i])
                 }
             }
@@ -27,7 +27,6 @@ class MovieFilter(var list: ArrayList<Movie?>, var adapter: MovieAdapter) : Filt
     }
 
     override fun publishResults(constraint: CharSequence, results: FilterResults) {
-        adapter.list = (results.values as ArrayList<Movie?>)
-        adapter.notifyDataSetChanged()
+        adapter.submitList(results.values as List<Movie>)
     }
 }

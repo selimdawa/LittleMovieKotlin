@@ -27,7 +27,6 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by viewModels()
-    private val list = mutableListOf<Main>()
     private lateinit var adapter: MainAdapter
 
     override fun onCreateView(
@@ -47,7 +46,7 @@ class HomeFragment : Fragment() {
             )
         }
 
-        adapter = MainAdapter(requireContext(), list as ArrayList<Main>)
+        adapter = MainAdapter(requireContext())
         binding.recyclerView.adapter = adapter
 
         observeState()
@@ -67,9 +66,7 @@ class HomeFragment : Fragment() {
                             binding.toolbar.image.loadGlideImage(it, true)
                         }
 
-                        list.clear()
-                        list.addAll(state.items)
-                        adapter.notifyDataSetChanged()
+                        adapter.submitList(state.items)
                     }
                 }
             }

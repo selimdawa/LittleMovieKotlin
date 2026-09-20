@@ -5,15 +5,15 @@ import com.flatcode.littlemovieadmin.ui.category.CategoryAdapter
 import com.flatcode.littlemovieadmin.model.Category
 import java.util.*
 
-class CategoryFilter(var list: ArrayList<Category?>, var adapter: CategoryAdapter) : Filter() {
+class CategoryFilter(var list: List<Category>, var adapter: CategoryAdapter) : Filter() {
     override fun performFiltering(constraint: CharSequence): FilterResults {
         var constraint: CharSequence? = constraint
         val results = FilterResults()
         if (constraint != null && constraint.length > 0) {
             constraint = constraint.toString().uppercase(Locale.getDefault())
-            val filter = ArrayList<Category?>()
+            val filter = ArrayList<Category>()
             for (i in list.indices) {
-                if (list[i]!!.name!!.uppercase(Locale.getDefault()).contains(constraint)) {
+                if (list[i].name!!.uppercase(Locale.getDefault()).contains(constraint)) {
                     filter.add(list[i])
                 }
             }
@@ -27,7 +27,6 @@ class CategoryFilter(var list: ArrayList<Category?>, var adapter: CategoryAdapte
     }
 
     override fun publishResults(constraint: CharSequence, results: FilterResults) {
-        adapter.list = (results.values as ArrayList<Category?>)
-        adapter.notifyDataSetChanged()
+        adapter.submitList(results.values as List<Category>)
     }
 }

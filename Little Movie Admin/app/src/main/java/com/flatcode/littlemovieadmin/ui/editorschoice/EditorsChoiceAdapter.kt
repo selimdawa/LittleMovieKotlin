@@ -8,6 +8,8 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.databinding.ItemMovieEditorsChoiceBinding
 import com.flatcode.littlemovieadmin.model.EditorsChoice
@@ -22,28 +24,27 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import java.text.MessageFormat
 
-class EditorsChoiceAdapter(private val activity: Activity, var list: List<EditorsChoice>) :
-    RecyclerView.Adapter<EditorsChoiceAdapter.ViewHolder>() {
-
-    private var binding: ItemMovieEditorsChoiceBinding? = null
+class EditorsChoiceAdapter(private val activity: Activity) :
+    ListAdapter<EditorsChoice, EditorsChoiceAdapter.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding =
+        val binding =
             ItemMovieEditorsChoiceBinding.inflate(LayoutInflater.from(activity), parent, false)
-        return ViewHolder(binding!!.root)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val id = position + 1
+        val model = getItem(position)
+        val id = model.id
         val editorsChoiceId = DATA.EMPTY + id
 
         loadMovieDetails(
-            id, editorsChoiceId, holder.name, holder.image, holder.nrViews,
-            holder.nrLoves, holder.remove, holder.change, holder.addCard, holder.detailsCard
+            id, editorsChoiceId, holder.binding.name, holder.binding.image, holder.binding.nrLoves,
+            holder.binding.nrViews, holder.binding.remove, holder.binding.change, holder.binding.addCard, holder.binding.detailsCard
         )
-        holder.numberEditorsChoice.text = MessageFormat.format("{0}{1}", DATA.EMPTY, id)
+        holder.binding.numberEditorsChoice.text = MessageFormat.format("{0}{1}", DATA.EMPTY, id)
 
-        holder.add.setOnClickListener {
+        holder.binding.add.setOnClickListener {
             activity.openActivity<EditorsChoiceAddActivity>(
                 extras = arrayOf(
                     DATA.EDITORS_CHOICE_ID to editorsChoiceId, DATA.OLD_ID to null
@@ -52,38 +53,14 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
         }
     }
 
-    override fun getItemCount(): Int {
-        return list.size
-    }
+    class ViewHolder(val binding: ItemMovieEditorsChoiceBinding) : RecyclerView.ViewHolder(binding.root)
 
-    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
-        var add: ImageView
-        var remove: ImageView
-        var change: ImageView
-        var image: ImageView
-        var name: TextView
-        var nrViews: TextView
-        var nrLoves: TextView
-        var numberEditorsChoice: TextView
-        var item: LinearLayout
-        var item2: LinearLayout
-        var addCard: CardView
-        var detailsCard: CardView
+    class DiffCallback : DiffUtil.ItemCallback<EditorsChoice>() {
+        override fun areItemsTheSame(oldItem: EditorsChoice, newItem: EditorsChoice): Boolean =
+            oldItem.id == newItem.id
 
-        init {
-            nrLoves = binding!!.nrLoves
-            nrViews = binding!!.nrViews
-            name = binding!!.name
-            image = binding!!.image
-            item = binding!!.item
-            item2 = binding!!.item2
-            add = binding!!.add
-            numberEditorsChoice = binding!!.numberEditorsChoice
-            addCard = binding!!.addCard
-            detailsCard = binding!!.detailsCard
-            remove = binding!!.remove
-            change = binding!!.change
-        }
+        override fun areContentsTheSame(oldItem: EditorsChoice, newItem: EditorsChoice): Boolean =
+            oldItem == newItem
     }
 
     private fun loadMovieDetails(

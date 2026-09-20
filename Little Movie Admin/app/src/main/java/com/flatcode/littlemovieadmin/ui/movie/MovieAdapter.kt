@@ -11,6 +11,8 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.filter.MovieFilter
 import com.flatcode.littlemovieadmin.model.Movie
@@ -24,21 +26,20 @@ import com.flatcode.littlemovieadmin.utils.moreDeleteMovie
 import com.flatcode.littlemovieadmin.databinding.ItemMovieBinding
 import java.text.MessageFormat
 
-class MovieAdapter(private val activity: Activity, var list: ArrayList<Movie?>) :
-    RecyclerView.Adapter<MovieAdapter.ViewHolder>(), Filterable {
+class MovieAdapter(private val activity: Activity) :
+    ListAdapter<Movie, MovieAdapter.ViewHolder>(DiffCallback()), Filterable {
 
-    private var binding: ItemMovieBinding? = null
-    var filterList: ArrayList<Movie?>
+    var filterList: List<Movie> = emptyList()
     private var filter: MovieFilter? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ItemMovieBinding.inflate(LayoutInflater.from(activity), parent, false)
-        return ViewHolder(binding!!.root)
+        val binding = ItemMovieBinding.inflate(LayoutInflater.from(activity), parent, false)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = list[position]
-        val id = DATA.EMPTY + item!!.id
+        val item = getItem(position)
+        val id = DATA.EMPTY + item.id
         val name = DATA.EMPTY + item.name
         val image = DATA.EMPTY + item.image
         val viewsCount = DATA.EMPTY + item.viewsCount
@@ -46,45 +47,41 @@ class MovieAdapter(private val activity: Activity, var list: ArrayList<Movie?>) 
         val movieLink = DATA.EMPTY + item.movieLink
         val categoryId = DATA.EMPTY + item.categoryId
 
-        holder.image.loadGlideImage(image, false)
+        holder.binding.image.loadGlideImage(image, false)
 
         if (item.name == DATA.EMPTY) {
-            holder.name.visibility = View.GONE
+            holder.binding.name.visibility = View.GONE
         } else {
-            holder.name.visibility = View.VISIBLE
-            holder.name.text = name
+            holder.binding.name.visibility = View.VISIBLE
+            holder.binding.name.text = name
         }
 
-        if (viewsCount == DATA.EMPTY) holder.numberViews.text =
-            MessageFormat.format("{0}{1}", DATA.EMPTY, DATA.ZERO) else holder.numberViews.text =
+        if (viewsCount == DATA.EMPTY) holder.binding.nrViews.text =
+            MessageFormat.format("{0}{1}", DATA.EMPTY, DATA.ZERO) else holder.binding.nrViews.text =
             viewsCount
 
-        if (lovesCount == DATA.EMPTY) holder.numberLoves.text =
-            MessageFormat.format("{0}{1}", DATA.EMPTY, DATA.ZERO) else holder.numberLoves.text =
+        if (lovesCount == DATA.EMPTY) holder.binding.nrLoves.text =
+            MessageFormat.format("{0}{1}", DATA.EMPTY, DATA.ZERO) else holder.binding.nrLoves.text =
             lovesCount
 
-        holder.add.isFavorite(item.id, DATA.FirebaseUserUid)
-        holder.add.setOnClickListener { holder.add.checkFavorite(id) }
+        holder.binding.add.isFavorite(item.id, DATA.FirebaseUserUid)
+        holder.binding.add.setOnClickListener { holder.binding.add.checkFavorite(id) }
 
-        holder.item.animation =
+        holder.binding.item.animation =
             AnimationUtils.loadAnimation(activity, R.anim.fade_transition_animation)
 
-        holder.more.setOnClickListener {
+        holder.binding.more.setOnClickListener {
             activity.moreDeleteMovie(
                 item, DATA.CATEGORIES, categoryId, DATA.MOVIES_COUNT, false, true
             )
         }
-        holder.item.setOnClickListener {
+        holder.binding.item.setOnClickListener {
             activity.openActivity<MovieDetailsActivity>(
                 extras = arrayOf(
                     DATA.MOVIE_ID to id, DATA.MOVIE_LINK to movieLink
                 )
             )
         }
-    }
-
-    override fun getItemCount(): Int {
-        return list.size
     }
 
     override fun getFilter(): Filter {
@@ -94,27 +91,13 @@ class MovieAdapter(private val activity: Activity, var list: ArrayList<Movie?>) 
         return filter!!
     }
 
-    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
-        var image: ImageView
-        var add: ImageView
-        var more: ImageButton
-        var name: TextView
-        var numberViews: TextView
-        var numberLoves: TextView
-        var item: LinearLayout
+    class ViewHolder(val binding: ItemMovieBinding) : RecyclerView.ViewHolder(binding.root)
 
-        init {
-            image = binding!!.image
-            add = binding!!.add
-            name = binding!!.name
-            more = binding!!.more
-            numberViews = binding!!.nrViews
-            numberLoves = binding!!.nrLoves
-            item = binding!!.item
-        }
-    }
+    class DiffCallback : DiffUtil.ItemCallback<Movie>() {
+        override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean =
+            oldItem.id == newItem.id
 
-    init {
-        filterList = list
+        override fun areContentsTheSame(oldItem: Movie, newItem: Movie): Boolean =
+            oldItem == newItem
     }
 }

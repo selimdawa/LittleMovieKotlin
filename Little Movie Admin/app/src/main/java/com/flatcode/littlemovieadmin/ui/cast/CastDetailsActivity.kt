@@ -29,7 +29,6 @@ class CastDetailsActivity : BaseActivity() {
 
     private lateinit var binding: ActivityCastDetailsBinding
     private val viewModel: CastDetailsViewModel by viewModels()
-    private val list = mutableListOf<Movie?>()
     private lateinit var adapter: MovieAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,7 +70,7 @@ class CastDetailsActivity : BaseActivity() {
             dialogAboutArtist(state.castImage, state.castName, state.castAbout)
         }
 
-        adapter = MovieAdapter(this, list as ArrayList<Movie?>)
+        adapter = MovieAdapter(this)
         binding.recyclerView.adapter = adapter
 
         binding.switchBar.all.setOnClickListener { viewModel.getData(DATA.TIMESTAMP) }
@@ -93,9 +92,8 @@ class CastDetailsActivity : BaseActivity() {
                     binding.image.loadGlideImage(state.castImage, true)
                     binding.imageBlur.loadGlideBlur(state.castImage, 50, true)
 
-                    list.clear()
-                    list.addAll(state.movies)
-                    adapter.notifyDataSetChanged()
+                    adapter.filterList = state.movies
+                    adapter.submitList(state.movies)
 
                     if (state.movies.isNotEmpty()) {
                         binding.recyclerView.visibility = View.VISIBLE

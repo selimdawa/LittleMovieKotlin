@@ -9,6 +9,8 @@ import android.widget.Filterable
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.filter.UserFilter
 import com.flatcode.littlemovieadmin.model.User
@@ -18,39 +20,34 @@ import com.flatcode.littlemovieadmin.utils.loadGlideImage
 import com.flatcode.littlemovieadmin.utils.openActivity
 import com.flatcode.littlemovieadmin.databinding.ItemUserBinding
 
-class UserAdapter(private val context: Context, var list: ArrayList<User?>) :
-    RecyclerView.Adapter<UserAdapter.ViewHolder>(), Filterable {
+class UserAdapter(private val context: Context) :
+    ListAdapter<User, UserAdapter.ViewHolder>(DiffCallback()), Filterable {
 
-    private var binding: ItemUserBinding? = null
-    var filterList: ArrayList<User?>
+    var filterList: List<User> = emptyList()
     private var filter: UserFilter? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ItemUserBinding.inflate(LayoutInflater.from(context), parent, false)
-        return ViewHolder(binding!!.root)
+        val binding = ItemUserBinding.inflate(LayoutInflater.from(context), parent, false)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = list[position]
-        val id = item!!.id
+        val item = getItem(position)
+        val id = item.id
         val image = item.profileImage
 
-        holder.image.loadGlideImage(image, true)
+        holder.binding.imageProfile.loadGlideImage(image, true)
 
         if (item.username == DATA.EMPTY) {
-            holder.username.visibility = View.GONE
+            holder.binding.username.visibility = View.GONE
         } else {
-            holder.username.visibility = View.VISIBLE
-            holder.username.text = item.username
+            holder.binding.username.visibility = View.VISIBLE
+            holder.binding.username.text = item.username
         }
 
-        holder.item.setOnClickListener {
+        holder.binding.item.setOnClickListener {
             context.openActivity<ProfileActivity>(extras = arrayOf(DATA.PROFILE_ID to id))
         }
-    }
-
-    override fun getItemCount(): Int {
-        return list.size
     }
 
     override fun getFilter(): Filter {
@@ -60,19 +57,14 @@ class UserAdapter(private val context: Context, var list: ArrayList<User?>) :
         return filter!!
     }
 
-    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
-        var image: ImageView
-        var username: TextView
-        var item: LinearLayout
+    class ViewHolder(val binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root)
 
-        init {
-            image = binding!!.imageProfile
-            username = binding!!.username
-            item = binding!!.item
-        }
-    }
+    class DiffCallback : DiffUtil.ItemCallback<User>() {
+        override fun areItemsTheSame(oldItem: User, newItem: User): Boolean =
+            oldItem.id == newItem.id
 
-    init {
-        filterList = list
+        override fun areContentsTheSame(oldItem: User, newItem: User): Boolean =
+            oldItem.id == newItem.id && oldItem.username == newItem.username && 
+            oldItem.profileImage == newItem.profileImage
     }
 }

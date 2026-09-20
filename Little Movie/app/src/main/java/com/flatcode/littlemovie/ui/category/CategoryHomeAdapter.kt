@@ -2,18 +2,18 @@ package com.flatcode.littlemovie.ui.category
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.flatcode.littlemovie.databinding.ItemCategoryHomeBinding
 import com.flatcode.littlemovie.model.Category
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.GlideImage
 import com.flatcode.littlemovie.utils.openActivity
-import com.flatcode.littlemovie.databinding.ItemCategoryHomeBinding
 
-class CategoryHomeAdapter(private val context: Context?, var list: ArrayList<Category?>) :
-    RecyclerView.Adapter<CategoryHomeAdapter.ViewHolder>() {
+class CategoryHomeAdapter(private val context: Context?) :
+    ListAdapter<Category, CategoryHomeAdapter.ViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemCategoryHomeBinding.inflate(LayoutInflater.from(context), parent, false)
@@ -21,8 +21,8 @@ class CategoryHomeAdapter(private val context: Context?, var list: ArrayList<Cat
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = list[position]
-        val id = item!!.id
+        val item = getItem(position)
+        val id = item.id
         val name = item.name
         val image = item.image
 
@@ -35,8 +35,12 @@ class CategoryHomeAdapter(private val context: Context?, var list: ArrayList<Cat
         }
     }
 
-    override fun getItemCount(): Int {
-        return list.size
+    object DiffCallback : DiffUtil.ItemCallback<Category>() {
+        override fun areItemsTheSame(oldItem: Category, newItem: Category): Boolean =
+            oldItem.id == newItem.id
+
+        override fun areContentsTheSame(oldItem: Category, newItem: Category): Boolean =
+            oldItem == newItem
     }
 
     class ViewHolder(val binding: ItemCategoryHomeBinding) : RecyclerView.ViewHolder(binding.root)

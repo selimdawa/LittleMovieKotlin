@@ -26,7 +26,6 @@ class CastActivity : BaseActivity() {
 
     private lateinit var binding: ActivityCastBinding
     private val viewModel: CastViewModel by viewModels()
-    private val list = mutableListOf<Cast?>()
     private lateinit var adapter: CastAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,7 +55,7 @@ class CastActivity : BaseActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        adapter = CastAdapter(this, list as ArrayList<Cast?>)
+        adapter = CastAdapter(this)
         binding.recyclerView.adapter = adapter
 
         binding.switchBar.all.setOnClickListener { viewModel.getData(DATA.TIMESTAMP) }
@@ -74,9 +73,8 @@ class CastActivity : BaseActivity() {
                     binding.progress.visibility = if (state.isLoading) View.VISIBLE else View.GONE
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", state.count)
                     
-                    list.clear()
-                    list.addAll(state.castList)
-                    adapter.notifyDataSetChanged()
+                    adapter.filterList = state.castList
+                    adapter.submitList(state.castList)
 
                     if (state.castList.isNotEmpty()) {
                         binding.recyclerView.visibility = View.VISIBLE

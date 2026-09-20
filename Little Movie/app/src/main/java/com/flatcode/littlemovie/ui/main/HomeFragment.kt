@@ -27,12 +27,6 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: HomeViewModel by viewModels()
 
-    private val editorsChoiceList = ArrayList<Movie?>()
-    private val mostViewedList = ArrayList<Movie?>()
-    private val mostLovedList = ArrayList<Movie?>()
-    private val newMoviesList = ArrayList<Movie?>()
-    private val categoryList = ArrayList<Category?>()
-
     private lateinit var categoryAdapter: CategoryHomeAdapter
     private lateinit var editorsChoiceAdapter: MovieAdapter
     private lateinit var mostViewedAdapter: MovieAdapter
@@ -83,19 +77,19 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupAdapters() {
-        categoryAdapter = CategoryHomeAdapter(context, categoryList)
+        categoryAdapter = CategoryHomeAdapter(context)
         binding.recyclerCategory.adapter = categoryAdapter
 
-        editorsChoiceAdapter = MovieAdapter(context, editorsChoiceList, false)
+        editorsChoiceAdapter = MovieAdapter(context, false)
         binding.recyclerView.adapter = editorsChoiceAdapter
 
-        mostViewedAdapter = MovieAdapter(context, mostViewedList, false)
+        mostViewedAdapter = MovieAdapter(context, false)
         binding.recyclerView2.adapter = mostViewedAdapter
 
-        mostLovedAdapter = MovieAdapter(context, mostLovedList, false)
+        mostLovedAdapter = MovieAdapter(context, false)
         binding.recyclerView3.adapter = mostLovedAdapter
 
-        newMoviesAdapter = MovieAdapter(context, newMoviesList, false)
+        newMoviesAdapter = MovieAdapter(context, false)
         binding.recyclerView4.adapter = newMoviesAdapter
     }
 
@@ -103,9 +97,7 @@ class HomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.categories.collect { categories ->
                 Timber.d("Categories collected: %d", categories.size)
-                categoryList.clear()
-                categoryList.addAll(categories)
-                categoryAdapter.notifyDataSetChanged()
+                categoryAdapter.submitList(categories)
             }
         }
 
@@ -120,7 +112,7 @@ class HomeFragment : Fragment() {
             viewModel.editorsChoiceMovies.collect { movies ->
                 Timber.d("Editors choice movies collected: %d", movies.size)
                 updateMovieList(
-                    movies, editorsChoiceList, editorsChoiceAdapter,
+                    movies, editorsChoiceAdapter,
                     binding.bar, binding.recyclerView, binding.empty
                 )
             }
@@ -130,7 +122,7 @@ class HomeFragment : Fragment() {
             viewModel.mostViewedMovies.collect { movies ->
                 Timber.d("Most viewed movies collected: %d", movies.size)
                 updateMovieList(
-                    movies, mostViewedList, mostViewedAdapter,
+                    movies, mostViewedAdapter,
                     binding.bar2, binding.recyclerView2, binding.empty2
                 )
             }
@@ -140,7 +132,7 @@ class HomeFragment : Fragment() {
             viewModel.mostLovedMovies.collect { movies ->
                 Timber.d("Most loved movies collected: %d", movies.size)
                 updateMovieList(
-                    movies, mostLovedList, mostLovedAdapter,
+                    movies, mostLovedAdapter,
                     binding.bar3, binding.recyclerView3, binding.empty3
                 )
             }
@@ -150,7 +142,7 @@ class HomeFragment : Fragment() {
             viewModel.newMovies.collect { movies ->
                 Timber.d("New movies collected: %d", movies.size)
                 updateMovieList(
-                    movies, newMoviesList, newMoviesAdapter,
+                    movies, newMoviesAdapter,
                     binding.bar4, binding.recyclerView4, binding.empty4
                 )
             }
@@ -158,14 +150,12 @@ class HomeFragment : Fragment() {
     }
 
     private fun updateMovieList(
-        movies: List<Movie>, list: ArrayList<Movie?>, adapter: MovieAdapter,
+        movies: List<Movie>, adapter: MovieAdapter,
         bar: View, recyclerView: View, empty: View
     ) {
-        list.clear()
-        list.addAll(movies)
-        adapter.notifyDataSetChanged()
+        adapter.submitList(movies)
         bar.visibility = View.GONE
-        if (list.isNotEmpty()) {
+        if (movies.isNotEmpty()) {
             recyclerView.visibility = View.VISIBLE
             empty.visibility = View.GONE
         } else {

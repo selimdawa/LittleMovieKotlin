@@ -29,7 +29,6 @@ class MyCastActivity : AppCompatActivity() {
     private val activity: Activity = this@MyCastActivity
     private val viewModel: MyCastViewModel by viewModels()
     
-    private val list = ArrayList<Cast?>()
     private lateinit var adapter: CastAdapter
     
     private var type: String = DATA.TIMESTAMP
@@ -95,20 +94,18 @@ class MyCastActivity : AppCompatActivity() {
     }
 
     private fun setupAdapter() {
-        adapter = CastAdapter(activity, list)
+        adapter = CastAdapter(activity)
         binding!!.recyclerView.adapter = adapter
     }
 
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.cast.collect { castItems ->
-                list.clear()
-                list.addAll(castItems)
-                adapter.notifyDataSetChanged()
+                adapter.setFullList(castItems)
                 
-                binding!!.toolbar.number.text = MessageFormat.format("( {0} )", list.size)
+                binding!!.toolbar.number.text = MessageFormat.format("( {0} )", castItems.size)
                 binding!!.progress.visibility = View.GONE
-                if (list.isNotEmpty()) {
+                if (castItems.isNotEmpty()) {
                     binding!!.recyclerView.visibility = View.VISIBLE
                     binding!!.emptyText.visibility = View.GONE
                 } else {

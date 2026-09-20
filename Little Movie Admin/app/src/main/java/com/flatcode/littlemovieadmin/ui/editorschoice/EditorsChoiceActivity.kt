@@ -20,7 +20,6 @@ class EditorsChoiceActivity : BaseActivity() {
 
     private lateinit var binding: ActivityEditorsChoiceBinding
     private val viewModel: EditorsChoiceViewModel by viewModels()
-    private val list = mutableListOf<EditorsChoice>()
     private lateinit var adapter: EditorsChoiceAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +30,7 @@ class EditorsChoiceActivity : BaseActivity() {
         binding.toolbar.nameSpace.setText(R.string.editors_choice)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
 
-        adapter = EditorsChoiceAdapter(this, list as ArrayList<EditorsChoice>)
+        adapter = EditorsChoiceAdapter(this)
         binding.recyclerView.adapter = adapter
 
         observeState()
@@ -41,9 +40,7 @@ class EditorsChoiceActivity : BaseActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
-                    list.clear()
-                    list.addAll(state.items)
-                    adapter.notifyDataSetChanged()
+                    adapter.submitList(state.items)
                 }
             }
         }

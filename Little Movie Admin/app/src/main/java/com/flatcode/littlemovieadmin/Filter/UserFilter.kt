@@ -5,15 +5,15 @@ import com.flatcode.littlemovieadmin.ui.users.UserAdapter
 import com.flatcode.littlemovieadmin.model.User
 import java.util.*
 
-class UserFilter(var list: ArrayList<User?>, var adapter: UserAdapter) : Filter() {
+class UserFilter(var list: List<User>, var adapter: UserAdapter) : Filter() {
     override fun performFiltering(constraint: CharSequence): FilterResults {
         var constraint: CharSequence? = constraint
         val results = FilterResults()
         if (constraint != null && constraint.length > 0) {
             constraint = constraint.toString().uppercase(Locale.getDefault())
-            val filter = ArrayList<User?>()
+            val filter = ArrayList<User>()
             for (i in list.indices) {
-                if (list[i]!!.username!!.uppercase(Locale.getDefault()).contains(constraint)) {
+                if (list[i].username!!.uppercase(Locale.getDefault()).contains(constraint)) {
                     filter.add(list[i])
                 }
             }
@@ -27,7 +27,6 @@ class UserFilter(var list: ArrayList<User?>, var adapter: UserAdapter) : Filter(
     }
 
     override fun publishResults(constraint: CharSequence, results: FilterResults) {
-        adapter.list = (results.values as ArrayList<User?>)
-        adapter.notifyDataSetChanged()
+        adapter.submitList(results.values as List<User>)
     }
 }

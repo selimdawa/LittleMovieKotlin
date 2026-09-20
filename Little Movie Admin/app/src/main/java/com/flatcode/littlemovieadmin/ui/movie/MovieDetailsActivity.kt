@@ -40,8 +40,6 @@ class MovieDetailsActivity : BaseActivity() {
     private val viewModel: MovieDetailsViewModel by viewModels()
     private var progressDialog: ProgressDialog? = null
     
-    private val listComment = mutableListOf<Comment?>()
-    private val listCast = mutableListOf<Cast?>()
     private lateinit var adapterComment: CommentAdapter
     private lateinit var adapterCast: CastMovieAdapter
 
@@ -77,10 +75,10 @@ class MovieDetailsActivity : BaseActivity() {
             }
         }
 
-        adapterCast = CastMovieAdapter(this, listCast as ArrayList<Cast?>)
+        adapterCast = CastMovieAdapter(this)
         binding.recyclerCast.adapter = adapterCast
         
-        adapterComment = CommentAdapter(this, listComment as ArrayList<Comment?>)
+        adapterComment = CommentAdapter(this)
         binding.recyclerComment.adapter = adapterComment
 
         observeState()
@@ -110,13 +108,8 @@ class MovieDetailsActivity : BaseActivity() {
                         binding.publisherImage.loadGlideImage(user.profileImage, true)
                     }
 
-                    listComment.clear()
-                    listComment.addAll(state.comments)
-                    adapterComment.notifyDataSetChanged()
-
-                    listCast.clear()
-                    listCast.addAll(state.castList)
-                    adapterCast.notifyDataSetChanged()
+                    adapterComment.submitList(state.comments)
+                    adapterCast.submitList(state.castList)
                 }
             }
         }

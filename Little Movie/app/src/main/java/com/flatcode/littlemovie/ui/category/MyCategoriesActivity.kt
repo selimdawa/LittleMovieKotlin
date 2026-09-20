@@ -29,7 +29,6 @@ class MyCategoriesActivity : AppCompatActivity() {
     private val activity: Activity = this@MyCategoriesActivity
     private val viewModel: MyCategoriesViewModel by viewModels()
     
-    private val list = ArrayList<Category?>()
     private lateinit var adapter: CategoryAdapter
     
     private var type: String = DATA.TIMESTAMP
@@ -95,20 +94,18 @@ class MyCategoriesActivity : AppCompatActivity() {
     }
 
     private fun setupAdapter() {
-        adapter = CategoryAdapter(activity, list)
+        adapter = CategoryAdapter(activity)
         binding!!.recyclerView.adapter = adapter
     }
 
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.categories.collect { categories ->
-                list.clear()
-                list.addAll(categories)
-                adapter.notifyDataSetChanged()
+                adapter.setFullList(categories)
                 
-                binding!!.toolbar.number.text = MessageFormat.format("( {0} )", list.size)
+                binding!!.toolbar.number.text = MessageFormat.format("( {0} )", categories.size)
                 binding!!.progress.visibility = View.GONE
-                if (list.isNotEmpty()) {
+                if (categories.isNotEmpty()) {
                     binding!!.recyclerView.visibility = View.VISIBLE
                     binding!!.emptyText.visibility = View.GONE
                 } else {

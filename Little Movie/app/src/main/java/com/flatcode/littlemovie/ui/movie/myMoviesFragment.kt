@@ -19,7 +19,6 @@ class myMoviesFragment : Fragment() {
     private var _binding: FragmentMyMoviesBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MyMoviesViewModel by viewModels()
-    private val list = ArrayList<Movie?>()
     private lateinit var adapter: MovieAdapter
     private var type: String = DATA.TIMESTAMP
 
@@ -36,7 +35,7 @@ class myMoviesFragment : Fragment() {
     }
 
     private fun setupAdapter() {
-        adapter = MovieAdapter(context, list, true)
+        adapter = MovieAdapter(context, true)
         binding.recyclerView.adapter = adapter
     }
 
@@ -62,12 +61,10 @@ class myMoviesFragment : Fragment() {
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.movies.collect { movies ->
-                list.clear()
-                list.addAll(movies)
-                adapter.notifyDataSetChanged()
+                adapter.submitList(movies)
                 
                 binding.progress.visibility = View.GONE
-                if (list.isNotEmpty()) {
+                if (movies.isNotEmpty()) {
                     binding.recyclerView.visibility = View.VISIBLE
                     binding.emptyText.visibility = View.GONE
                 } else {

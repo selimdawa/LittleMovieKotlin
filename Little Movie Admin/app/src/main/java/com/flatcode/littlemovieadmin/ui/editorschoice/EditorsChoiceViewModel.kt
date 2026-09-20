@@ -21,9 +21,8 @@ class EditorsChoiceViewModel @Inject constructor() : ViewModel() {
 
     private fun loadData() {
         val list = mutableListOf<EditorsChoice>()
-        val editorsChoice = EditorsChoice()
-        for (i in 0..49) {
-            list.add(editorsChoice)
+        for (i in 1..50) {
+            list.add(EditorsChoice(i))
         }
         _uiState.update { it.copy(items = list) }
     }

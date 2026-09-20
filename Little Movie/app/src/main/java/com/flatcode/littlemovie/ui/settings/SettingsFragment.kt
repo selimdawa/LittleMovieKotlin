@@ -28,7 +28,6 @@ class SettingsFragment : Fragment() {
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
     private val viewModel: SettingsViewModel by viewModels()
-    private val list = ArrayList<Setting>()
     private lateinit var adapter: SettingAdapter
 
     override fun onCreateView(
@@ -44,7 +43,7 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setupAdapter() {
-        adapter = SettingAdapter(context, list)
+        adapter = SettingAdapter(context)
         binding.recyclerView.adapter = adapter
     }
 
@@ -79,17 +78,17 @@ class SettingsFragment : Fragment() {
     }
 
     private fun loadSettings(myCast: Int, myCategories: Int, favorites: Int) {
-        list.clear()
-        list.add(Setting("1", "Edit Profile", R.drawable.ic_edit_white, 0, ProfileEditActivity::class.java))
-        list.add(Setting("2", "My Cast", R.drawable.ic_cast, myCast, MyCastActivity::class.java))
-        list.add(Setting("3", "My Categories", R.drawable.ic_category_gray, myCategories, MyCategoriesActivity::class.java))
-        list.add(Setting("4", "Favorites", R.drawable.ic_star_selected, favorites, FavoritesActivity::class.java))
-        list.add(Setting("5", "About App", R.drawable.ic_info, 0, null))
-        list.add(Setting("6", "Logout", R.drawable.ic_logout_white, 0, null))
-        list.add(Setting("7", "Share App", R.drawable.ic_share, 0, null))
-        list.add(Setting("8", "Rate APP", R.drawable.ic_heart_selected, 0, null))
-        list.add(Setting("9", "Privacy Policy", R.drawable.ic_privacy_policy, 0, PrivacyPolicyActivity::class.java))
-        adapter.notifyDataSetChanged()
+        val settings = mutableListOf<Setting>()
+        settings.add(Setting("1", "Edit Profile", R.drawable.ic_edit_white, 0, ProfileEditActivity::class.java))
+        settings.add(Setting("2", "My Cast", R.drawable.ic_cast, myCast, MyCastActivity::class.java))
+        settings.add(Setting("3", "My Categories", R.drawable.ic_category_gray, myCategories, MyCategoriesActivity::class.java))
+        settings.add(Setting("4", "Favorites", R.drawable.ic_star_selected, favorites, FavoritesActivity::class.java))
+        settings.add(Setting("5", "About App", R.drawable.ic_info, 0, null))
+        settings.add(Setting("6", "Logout", R.drawable.ic_logout_white, 0, null))
+        settings.add(Setting("7", "Share App", R.drawable.ic_share, 0, null))
+        settings.add(Setting("8", "Rate APP", R.drawable.ic_heart_selected, 0, null))
+        settings.add(Setting("9", "Privacy Policy", R.drawable.ic_privacy_policy, 0, PrivacyPolicyActivity::class.java))
+        adapter.submitList(settings)
     }
 
     override fun onResume() {
