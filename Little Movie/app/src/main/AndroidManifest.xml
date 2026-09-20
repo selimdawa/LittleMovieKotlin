@@ -94,9 +94,9 @@
         <service android:name=".service.FloatingWidgetService" />
 
         <activity
-            android:name="com.canhub.cropper.CropImageActivity"
+            android:name=".utils.CropActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Base.Theme.AppCompat" />
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
 
     </application>
 

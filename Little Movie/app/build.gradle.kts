@@ -47,7 +47,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity)
-    implementation(libs.androidx.datastore.preferences)   //DataStore
+    implementation(libs.androidx.fragment.ktx)
     //Layout
     implementation(libs.material)
     implementation(libs.multicolors)
@@ -61,39 +61,26 @@ dependencies {
     implementation(platform(libs.firebase.bom)) //Firebase BOM
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
+    //Cloudinary
     implementation(libs.cloudinary.android)
-    implementation(libs.firebase.analytics)
-    implementation(libs.firebase.crashlytics)
-    //Other's
+    //MVVM
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    //Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    //Coroutines
+    implementation(libs.kotlinx.coroutines.android)
+    //Navigation
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+    //Room
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    //Other
     implementation(libs.material.ripple)                //Ripple Effect
     implementation(libs.nafisbottomnav)                 //Nafis Bottom Navigation
     implementation (libs.exoplayer)                     //EXO Video Player
-
-    // MVVM & Lifecycle components (ViewModel, StateFlow)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
-
-    // Hilt Dependency Injection
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
-
-    // Coroutines
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.coroutines.android)
-
-    // Timber Logging
     implementation(libs.timber)
-
-    // Jetpack Navigation
-    implementation(libs.androidx.navigation.fragment.ktx)
-    implementation(libs.androidx.navigation.ui.ktx)
-
-    // Room Database
-    implementation(libs.androidx.room.runtime)
-    ksp(libs.androidx.room.compiler)
-    //Test
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 }
 
 ksp {

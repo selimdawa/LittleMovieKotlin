@@ -48,51 +48,38 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity)
-    implementation(libs.androidx.datastore.preferences)   //DataStore
+    implementation(libs.androidx.fragment.ktx)
     //Layout
     implementation(libs.material)
     implementation(libs.multicolors)
-    implementation(libs.material.ripple)
-    implementation(libs.exoplayer)
     //Firebase
     implementation(platform(libs.firebase.bom)) //Firebase BOM
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
+    //Cloudinary
     implementation(libs.cloudinary.android)
-    implementation(libs.firebase.analytics)
-    implementation(libs.firebase.crashlytics)
     //Image
     implementation(libs.coil3)
-    implementation(libs.coil3.view)
     implementation(libs.coil3.network)
     api(libs.android.image.cropper)                     //Image Crop
-
-    // Hilt
+    //MVVM
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    //Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-
-    // Room
+    //Room
     implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
-
-    // Navigation
+    //Navigation
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-
-    // Coroutines
+    //Coroutines
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.play.services)
-
-    // Lifecycle (MVVM)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
-
-    // Timber
+    //Other
+    implementation(libs.material.ripple)
+    implementation(libs.exoplayer)
     implementation(libs.timber)
-    //Test
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 }
 
 ksp {
