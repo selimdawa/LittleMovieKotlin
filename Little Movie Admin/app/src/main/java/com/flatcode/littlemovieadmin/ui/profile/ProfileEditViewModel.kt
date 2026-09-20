@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flatcode.littlemovieadmin.model.User
 import com.flatcode.littlemovieadmin.repository.UserRepository
+import com.flatcode.littlemovieadmin.utils.CloudinaryHelper
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,8 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileEditViewModel @Inject constructor(
-    private val repository: UserRepository,
-    private val storage: FirebaseStorage
+    private val repository: UserRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileEditUiState())
@@ -41,15 +40,12 @@ class ProfileEditViewModel @Inject constructor(
         }
     }
 
-    fun updateProfile(username: String, imageUri: Uri?, extension: String?, onResult: (Boolean, String?) -> Unit) {
+    fun updateProfile(username: String, imageUri: Uri?, onResult: (Boolean, String?) -> Unit) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
                 val imageUrl = if (imageUri != null) {
-                    val path = "Images/Profile/${DATA.FirebaseUserUid}.${extension ?: "jpg"}"
-                    val ref = storage.getReference(path)
-                    ref.putFile(imageUri).await()
-                    ref.downloadUrl.await().toString()
+                    CloudinaryHelper.uploadFile(imageUri)
                 } else null
 
                 val updates = mutableMapOf<String, Any>()

@@ -56,4 +56,8 @@
     <string name="most_movies">Most Movies</string>
     <string name="most_interested">Most Interested</string>
     <string name="zero">0</string>
+    <string name="close">Close</string>
+    <string name="done">Done</string>
+    <string name="crop_image">Crop Image</string>
+    <string name="back">Back</string>
 </resources>

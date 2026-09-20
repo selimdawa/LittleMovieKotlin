@@ -57,7 +57,7 @@ class MovieViewActivity : AppCompatActivity() {
             id = intent.getStringExtra(DATA.MOVIE_ID)
             VOID.incrementViewCount(id)
         }
-        binding!!.exoFloatingWidget.setOnClickListener {
+        binding!!.playerView.findViewById<ImageView>(R.id.exo_floating_widget).setOnClickListener {
             exoPlayer!!.playWhenReady = false
             exoPlayer!!.release()
             val service = Intent(activity, FloatingWidgetService::class.java)

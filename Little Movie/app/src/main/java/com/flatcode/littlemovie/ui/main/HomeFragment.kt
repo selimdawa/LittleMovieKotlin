@@ -51,28 +51,28 @@ class HomeFragment : Fragment() {
         binding.showMore.setOnClickListener {
             context?.openActivity<ShowMoreActivity>(
                 DATA.SHOW_MORE_TYPE to DATA.EDITORS_CHOICE,
-                DATA.SHOW_MORE_NAME to binding.name.text.toString(),
+                DATA.SHOW_MORE_NAME to binding.showMore.text.toString(),
                 DATA.SHOW_MORE_BOOLEAN to (DATA.EMPTY + false)
             )
         }
         binding.showMore2.setOnClickListener {
             context?.openActivity<ShowMoreActivity>(
                 DATA.SHOW_MORE_TYPE to DATA.VIEWS_COUNT,
-                DATA.SHOW_MORE_NAME to binding.mostViews.text.toString(),
+                DATA.SHOW_MORE_NAME to binding.showMore2.text.toString(),
                 DATA.SHOW_MORE_BOOLEAN to (DATA.EMPTY + true)
             )
         }
         binding.showMore3.setOnClickListener {
             context?.openActivity<ShowMoreActivity>(
                 DATA.SHOW_MORE_TYPE to DATA.LOVES_COUNT,
-                DATA.SHOW_MORE_NAME to binding.name3.text.toString(),
+                DATA.SHOW_MORE_NAME to binding.showMore3.text.toString(),
                 DATA.SHOW_MORE_BOOLEAN to (DATA.EMPTY + true)
             )
         }
         binding.showMore4.setOnClickListener {
             context?.openActivity<ShowMoreActivity>(
                 DATA.SHOW_MORE_TYPE to DATA.TIMESTAMP,
-                DATA.SHOW_MORE_NAME to binding.name4.text.toString(),
+                DATA.SHOW_MORE_NAME to binding.showMore4.text.toString(),
                 DATA.SHOW_MORE_BOOLEAN to (DATA.EMPTY + true)
             )
         }
@@ -132,9 +132,9 @@ class HomeFragment : Fragment() {
         
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.sliderImages.collect { images ->
-                binding.imageSlider.sliderAdapter = ImageSliderAdapter(images) { position ->
+                binding.imageSlider.setSliderAdapter(ImageSliderAdapter(images) { position ->
                     // Handle click
-                }
+                })
             }
         }
 

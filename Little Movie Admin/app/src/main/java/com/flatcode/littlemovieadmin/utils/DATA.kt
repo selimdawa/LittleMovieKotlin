@@ -51,6 +51,10 @@ object DATA {
     var searchStatus = false
     var isChange = false
 
+    //Cloudinary
+    var CLOUDINARY_CLOUD_NAME = "j8jsphcf"
+    var CLOUDINARY_UPLOAD_PRESET = "flat_code"
+
     //Shared
     var PROFILE_ID = "profileId"
     var COLOR_OPTION = "color_option"

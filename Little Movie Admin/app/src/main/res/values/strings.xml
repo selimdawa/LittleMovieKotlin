@@ -79,4 +79,7 @@
     <string name="twenty">20</string>
     <string name="edit">Edit</string>
     <string name="password_hint">********</string>
+    <string name="close">Close</string>
+    <string name="done">Done</string>
+    <string name="crop_image">Crop Image</string>
 </resources>

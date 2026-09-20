@@ -15,10 +15,10 @@ import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.cropImageSlider
+import com.flatcode.littlemovieadmin.utils.pickImage
 import com.flatcode.littlemovieadmin.utils.getFileExtension
 import com.flatcode.littlemovieadmin.utils.loadGlideImage
 import com.flatcode.littlemovieadmin.databinding.ActivitySliderShowBinding
-import com.theartofdev.edmodo.cropper.CropImage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.text.MessageFormat
@@ -60,7 +60,7 @@ class SliderShowActivity : BaseActivity() {
 
         addButtons.forEachIndexed { index, button ->
             button.setOnClickListener {
-                cropImageSlider()
+                pickImage(DATA.MIX_SLIDER_X)
                 imageNumber = index + 1
             }
         }
@@ -104,22 +104,16 @@ class SliderShowActivity : BaseActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == RESULT_OK) {
-            val uri = CropImage.getPickImageResultUri(this, data)
-            if (CropImage.isReadExternalStoragePermissionsRequired(this, uri)) {
-                imageUri = uri
-                requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
+        if (requestCode == DATA.MIX_SLIDER_X && resultCode == RESULT_OK && data != null) {
+            val uri = data.data
+            if (uri != null) {
+                cropImageSlider(uri)
             } else {
-                cropImageSlider()
-            }
-        }
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            val result = CropImage.getActivityResult(data)
-            if (resultCode == RESULT_OK) {
-                imageUri = result.uri
-                uploadImage()
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Toast.makeText(this, "Error! ${result.error}", Toast.LENGTH_SHORT).show()
+                val resultUri = data.getParcelableExtra<Uri>("CROP_RESULT_URI")
+                if (resultUri != null) {
+                    imageUri = resultUri
+                    uploadImage()
+                }
             }
         }
     }
@@ -129,8 +123,7 @@ class SliderShowActivity : BaseActivity() {
         progressDialog?.setMessage("Posting photo...")
         progressDialog?.show()
         
-        val extension = getFileExtension(uri)
-        viewModel.uploadImage(uri, imageNumber.toString(), extension) { success, message ->
+        viewModel.uploadImage(uri, imageNumber.toString()) { success, message ->
             progressDialog?.dismiss()
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }

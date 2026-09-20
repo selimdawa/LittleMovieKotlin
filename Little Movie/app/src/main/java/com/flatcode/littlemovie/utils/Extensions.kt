@@ -38,10 +38,42 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.theartofdev.edmodo.cropper.CropImage
-import com.theartofdev.edmodo.cropper.CropImageView
+import com.canhub.cropper.CropImage
+import com.canhub.cropper.CropImageView
+import com.canhub.cropper.CropImageOptions
+import com.canhub.cropper.CropImageContractOptions
 import java.io.Serializable
 import java.text.MessageFormat
+
+object VOID {
+    fun GlideImage(isUser: Boolean, context: Context, url: String?, imageView: ImageView) {
+        imageView.GlideImage(isUser, url)
+    }
+
+    fun GlideBlur(isUser: Boolean, context: Context, url: String?, imageView: ImageView, level: Int) {
+        imageView.GlideBlur(isUser, url, level)
+    }
+
+    fun dialogAboutArtist(context: Context, imageDB: String?, nameDB: String?, aboutDB: String?) {
+        context.dialogAboutArtist(imageDB, nameDB, aboutDB)
+    }
+
+    fun isInterested(imageView: ImageView, id: String?, type: String?) {
+        imageView.isInterested(id, type)
+    }
+
+    fun checkInterested(imageView: ImageView, type: String?, id: String?) {
+        imageView.checkInterested(type, id)
+    }
+
+    fun incrementViewCount(id: String?) {
+        id?.incrementViewCount()
+    }
+
+    fun getFileExtension(uri: Uri, context: Context): String {
+        return uri.getFileExtension(context)
+    }
+}
 
 inline fun <reified T : Activity> Context.openActivity(
     vararg extras: Pair<String, Any?>,
@@ -197,14 +229,6 @@ fun Context.dialogAboutApp() {
     })
     dialog.show()
     dialog.window!!.attributes = lp
-}
-
-fun Activity.CropImageSquare() {
-    CropImage.activity()
-        .setMinCropResultSize(DATA.MIX_SQUARE, DATA.MIX_SQUARE)
-        .setAspectRatio(1, 1)
-        .setCropShape(CropImageView.CropShape.OVAL)
-        .start(this)
 }
 
 fun Uri.getFileExtension(context: Context): String {

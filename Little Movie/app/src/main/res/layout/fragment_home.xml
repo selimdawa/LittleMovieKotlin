@@ -81,13 +81,12 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/name"
+                    android:id="@+id/showMore"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5sp"
                     android:layout_marginBottom="10sp"
                     android:drawableEnd="@drawable/ic_back_white"
-                    android:drawableRotation="180"
                     android:drawableTint="?colorError"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="10sp"
@@ -145,11 +144,10 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/mostViews"
+                    android:id="@+id/showMore2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableEnd="@drawable/ic_back_white"
-                    android:drawableRotation="180"
                     android:drawableTint="?colorError"
                     android:gravity="center_vertical"
                     android:padding="10sp"
@@ -207,11 +205,10 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/name3"
+                    android:id="@+id/showMore3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableEnd="@drawable/ic_back_white"
-                    android:drawableRotation="180"
                     android:drawableTint="?colorError"
                     android:gravity="center_vertical"
                     android:padding="10sp"
@@ -269,11 +266,10 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/name4"
+                    android:id="@+id/showMore4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableEnd="@drawable/ic_back_white"
-                    android:drawableRotation="180"
                     android:drawableTint="?colorError"
                     android:gravity="center_vertical"
                     android:padding="10sp"

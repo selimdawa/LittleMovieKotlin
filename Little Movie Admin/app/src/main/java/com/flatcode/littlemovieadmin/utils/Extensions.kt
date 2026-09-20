@@ -38,8 +38,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.theartofdev.edmodo.cropper.CropImage
-import com.theartofdev.edmodo.cropper.CropImageView
 import timber.log.Timber
 import java.io.Serializable
 import java.text.MessageFormat
@@ -182,20 +180,47 @@ fun TextView.nrLoves(id: String?) {
     })
 }
 
-fun Activity.cropImageSquare() {
-    CropImage.activity().setMinCropResultSize(DATA.MIX_SQUARE, DATA.MIX_SQUARE).setAspectRatio(1, 1)
-        .setCropShape(CropImageView.CropShape.OVAL).start(this)
+fun Activity.pickImage(requestCode: Int) {
+    val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+        type = "image/*"
+    }
+    startActivityForResult(Intent.createChooser(intent, "Select Picture"), requestCode)
 }
 
-fun Activity.cropVideoSquare() {
-    CropImage.activity().setMinCropResultSize(DATA.MIX_VIDEO_X, DATA.MIX_VIDEO_Y)
-        .setAspectRatio(10, 14).setCropShape(CropImageView.CropShape.OVAL).start(this)
+fun Activity.cropImageSquare(uri: Uri) {
+    val intent = Intent(this, CropActivity::class.java).apply {
+        putExtra("IMAGE_URI", uri)
+        putExtra("ASPECT_RATIO_X", 1)
+        putExtra("ASPECT_RATIO_Y", 1)
+        putExtra("IS_OVAL", true)
+        putExtra("MIN_WIDTH", DATA.MIX_SQUARE)
+        putExtra("MIN_HEIGHT", DATA.MIX_SQUARE)
+    }
+    startActivityForResult(intent, DATA.MIX_SQUARE)
 }
 
-fun Activity.cropImageSlider() {
-    CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).setMultiTouchEnabled(true)
-        .setMinCropResultSize(DATA.MIX_SLIDER_X, DATA.MIX_SLIDER_Y).setAspectRatio(16, 9)
-        .setCropShape(CropImageView.CropShape.OVAL).start(this)
+fun Activity.cropVideoSquare(uri: Uri) {
+    val intent = Intent(this, CropActivity::class.java).apply {
+        putExtra("IMAGE_URI", uri)
+        putExtra("ASPECT_RATIO_X", 10)
+        putExtra("ASPECT_RATIO_Y", 14)
+        putExtra("IS_OVAL", true)
+        putExtra("MIN_WIDTH", DATA.MIX_VIDEO_X)
+        putExtra("MIN_HEIGHT", DATA.MIX_VIDEO_Y)
+    }
+    startActivityForResult(intent, DATA.MIX_VIDEO_X)
+}
+
+fun Activity.cropImageSlider(uri: Uri) {
+    val intent = Intent(this, CropActivity::class.java).apply {
+        putExtra("IMAGE_URI", uri)
+        putExtra("ASPECT_RATIO_X", 16)
+        putExtra("ASPECT_RATIO_Y", 9)
+        putExtra("IS_OVAL", true)
+        putExtra("MIN_WIDTH", DATA.MIX_SLIDER_X)
+        putExtra("MIN_HEIGHT", DATA.MIX_SLIDER_Y)
+    }
+    startActivityForResult(intent, DATA.MIX_SLIDER_X)
 }
 
 fun Context.getFileExtension(uri: Uri?): String? {

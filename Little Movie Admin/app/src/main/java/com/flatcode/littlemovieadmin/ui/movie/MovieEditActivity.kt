@@ -26,7 +26,7 @@ import com.flatcode.littlemovieadmin.utils.loadGlideImage
 import com.flatcode.littlemovieadmin.utils.openActivity
 import com.flatcode.littlemovieadmin.ui.movie.MovieEditViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityMovieEditBinding
-import com.theartofdev.edmodo.cropper.CropImage
+import com.flatcode.littlemovieadmin.utils.pickImage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -57,7 +57,7 @@ class MovieEditActivity : BaseActivity() {
         binding.toolbar.nameSpace.setText(R.string.edit_movie)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
         binding.category.setOnClickListener { categoryPickDialog() }
-        binding.editImage.setOnClickListener { cropVideoSquare() }
+        binding.editImage.setOnClickListener { pickImage(DATA.MIX_VIDEO_X) }
         binding.toolbar.ok.setOnClickListener { validateData() }
 
         observeState()
@@ -134,23 +134,17 @@ class MovieEditActivity : BaseActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == RESULT_OK) {
-            val uri = CropImage.getPickImageResultUri(this, data)
-            if (CropImage.isReadExternalStoragePermissionsRequired(this, uri)) {
-                imageUri = uri
-                requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
+        if (requestCode == DATA.MIX_VIDEO_X && resultCode == RESULT_OK && data != null) {
+            val uri = data.data
+            if (uri != null) {
+                cropVideoSquare(uri)
             } else {
-                cropVideoSquare()
-            }
-        }
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            val result = CropImage.getActivityResult(data)
-            if (resultCode == RESULT_OK) {
-                imageUri = result.uri
-                binding.image.setImageURI(imageUri)
-                binding.imageBlur.loadGlideBlurUri(imageUri, 50)
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Toast.makeText(this, "Error! ${result.error}", Toast.LENGTH_SHORT).show()
+                val resultUri = data.getParcelableExtra<Uri>("CROP_RESULT_URI")
+                if (resultUri != null) {
+                    imageUri = resultUri
+                    binding.image.setImageURI(imageUri)
+                    binding.imageBlur.loadGlideBlurUri(imageUri, 50)
+                }
             }
         }
     }

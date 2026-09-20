@@ -7,8 +7,8 @@ import com.flatcode.littlemovieadmin.model.Movie
 import com.flatcode.littlemovieadmin.repository.CastRepository
 import com.flatcode.littlemovieadmin.repository.CategoryRepository
 import com.flatcode.littlemovieadmin.repository.MovieRepository
+import com.flatcode.littlemovieadmin.utils.CloudinaryHelper
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,8 +23,7 @@ import javax.inject.Inject
 class MovieEditViewModel @Inject constructor(
     private val movieRepo: MovieRepository,
     private val categoryRepo: CategoryRepository,
-    private val castRepo: CastRepository,
-    private val storage: FirebaseStorage
+    private val castRepo: CastRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MovieEditUiState())
@@ -79,10 +78,7 @@ class MovieEditViewModel @Inject constructor(
                 val movieId = _uiState.value.movieId ?: throw Exception("Invalid Movie ID")
                 
                 val imageUrl = if (imageUri != null) {
-                    val path = "Images/Movie/$movieId"
-                    val ref = storage.getReference(path)
-                    ref.putFile(imageUri).await()
-                    ref.downloadUrl.await().toString()
+                    CloudinaryHelper.uploadFile(imageUri)
                 } else null
 
                 val updates = mutableMapOf<String, Any?>().apply {

@@ -8,9 +8,9 @@ import com.flatcode.littlemovieadmin.repository.AuthRepository
 import com.flatcode.littlemovieadmin.repository.CategoryRepository
 import com.flatcode.littlemovieadmin.repository.MovieRepository
 import com.flatcode.littlemovieadmin.repository.CastRepository
+import com.flatcode.littlemovieadmin.utils.CloudinaryHelper
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,8 +26,7 @@ class MovieAddViewModel @Inject constructor(
     private val movieRepo: MovieRepository,
     private val categoryRepo: CategoryRepository,
     private val castRepo: CastRepository,
-    private val authRepo: AuthRepository,
-    private val storage: FirebaseStorage
+    private val authRepo: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MovieAddUiState())
@@ -58,23 +57,14 @@ class MovieAddViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
-                val movieRef = FirebaseDatabase.getInstance().getReference(DATA.MOVIES)
-                val id = movieRef.push().key ?: throw Exception("Database error")
-
                 // 1. Upload Video
-                val videoPath = "Movies/$id"
-                val videoRef = storage.getReference(videoPath)
-                videoRef.putFile(videoUri).addOnProgressListener { taskSnapshot ->
-                    val progress = (100.0 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount).toInt()
-                    onProgress(progress)
-                }.await()
-                val videoUrl = videoRef.downloadUrl.await().toString()
+                val videoUrl = CloudinaryHelper.uploadFile(videoUri, isVideo = true, onProgress = onProgress)
 
                 // 2. Upload Image
-                val imagePath = "Images/Movie/$id"
-                val imageRef = storage.getReference(imagePath)
-                imageRef.putFile(imageUri).await()
-                val imageUrl = imageRef.downloadUrl.await().toString()
+                val imageUrl = CloudinaryHelper.uploadFile(imageUri)
+
+                val movieRef = FirebaseDatabase.getInstance().getReference(DATA.MOVIES)
+                val id = movieRef.push().key ?: throw Exception("Database error")
 
                 // 3. Save Info
                 val movie = Movie().apply {

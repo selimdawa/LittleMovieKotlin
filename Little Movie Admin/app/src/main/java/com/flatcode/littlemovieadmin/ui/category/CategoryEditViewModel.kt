@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flatcode.littlemovieadmin.model.Category
 import com.flatcode.littlemovieadmin.repository.CategoryRepository
+import com.flatcode.littlemovieadmin.utils.CloudinaryHelper
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,8 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CategoryEditViewModel @Inject constructor(
-    private val repository: CategoryRepository,
-    private val storage: FirebaseStorage
+    private val repository: CategoryRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CategoryEditUiState())
@@ -37,16 +36,13 @@ class CategoryEditViewModel @Inject constructor(
         }
     }
 
-    fun updateCategory(name: String, imageUri: Uri?, extension: String?, onResult: (Boolean, String?) -> Unit) {
+    fun updateCategory(name: String, imageUri: Uri?, onResult: (Boolean, String?) -> Unit) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
                 val categoryId = _uiState.value.categoryId ?: throw Exception("Invalid Category ID")
                 val imageUrl = if (imageUri != null) {
-                    val path = "Images/Category/$categoryId.${extension ?: "jpg"}"
-                    val ref = storage.getReference(path)
-                    ref.putFile(imageUri).await()
-                    ref.downloadUrl.await().toString()
+                    CloudinaryHelper.uploadFile(imageUri)
                 } else null
 
                 val updates = mutableMapOf<String, Any?>()

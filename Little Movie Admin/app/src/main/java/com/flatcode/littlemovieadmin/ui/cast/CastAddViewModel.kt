@@ -6,9 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.flatcode.littlemovieadmin.model.Cast
 import com.flatcode.littlemovieadmin.repository.AuthRepository
 import com.flatcode.littlemovieadmin.repository.CastRepository
+import com.flatcode.littlemovieadmin.utils.CloudinaryHelper
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,24 +21,20 @@ import javax.inject.Inject
 @HiltViewModel
 class CastAddViewModel @Inject constructor(
     private val repository: CastRepository,
-    private val authRepo: AuthRepository,
-    private val storage: FirebaseStorage
+    private val authRepo: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CastAddUiState())
     val uiState: StateFlow<CastAddUiState> = _uiState.asStateFlow()
 
-    fun uploadCast(name: String, aboutMy: String, imageUri: Uri, extension: String?, onResult: (Boolean, String?) -> Unit) {
+    fun uploadCast(name: String, aboutMy: String, imageUri: Uri, onResult: (Boolean, String?) -> Unit) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
+                val imageUrl = CloudinaryHelper.uploadFile(imageUri)
+
                 val ref = FirebaseDatabase.getInstance().getReference(DATA.CAST)
                 val id = ref.push().key ?: throw Exception("Database error")
-                
-                val path = "Images/Cast/$id.${extension ?: "jpg"}"
-                val storageRef = storage.getReference(path)
-                storageRef.putFile(imageUri).await()
-                val imageUrl = storageRef.downloadUrl.await().toString()
 
                 val cast = Cast().apply {
                     this.id = id

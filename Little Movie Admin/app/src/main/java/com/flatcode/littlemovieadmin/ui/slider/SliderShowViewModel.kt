@@ -4,7 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flatcode.littlemovieadmin.repository.SliderRepository
-import com.google.firebase.storage.FirebaseStorage
+import com.flatcode.littlemovieadmin.utils.CloudinaryHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,8 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SliderShowViewModel @Inject constructor(
-    private val repository: SliderRepository,
-    private val storage: FirebaseStorage
+    private val repository: SliderRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SliderShowUiState())
@@ -47,13 +46,10 @@ class SliderShowViewModel @Inject constructor(
         }
     }
 
-    fun uploadImage(imageUri: Uri, name: String, extension: String?, onResult: (Boolean, String?) -> Unit) {
+    fun uploadImage(imageUri: Uri, name: String, onResult: (Boolean, String?) -> Unit) {
         viewModelScope.launch {
             try {
-                val path = "Images/SliderShow/$name.${extension ?: "jpg"}"
-                val ref = storage.getReference(path)
-                ref.putFile(imageUri).await()
-                val url = ref.downloadUrl.await().toString()
+                val url = CloudinaryHelper.uploadFile(imageUri)
                 repository.updateSliderImage(name, url)
                 loadSliderShow()
                 onResult(true, "The photo has been posted")

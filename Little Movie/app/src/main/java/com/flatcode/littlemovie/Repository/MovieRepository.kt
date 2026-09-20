@@ -341,4 +341,22 @@ class MovieRepository @Inject constructor(
         })
         awaitClose { ref.removeEventListener(listener) }
     }
+
+    fun getSliderImages(): Flow<List<String>> = callbackFlow {
+        val ref = database.getReference(DATA.SLIDER_SHOW)
+        val listener = ref.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val list = mutableListOf<String>()
+                for (data in snapshot.children) {
+                    val image = data.child(DATA.IMAGE).value?.toString()
+                    image?.let { list.add(it) }
+                }
+                trySend(list)
+            }
+            override fun onCancelled(error: DatabaseError) {
+                close(error.toException())
+            }
+        })
+        awaitClose { ref.removeEventListener(listener) }
+    }
 }

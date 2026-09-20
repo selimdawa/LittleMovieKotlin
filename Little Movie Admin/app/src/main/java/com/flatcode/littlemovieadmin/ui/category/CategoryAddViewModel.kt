@@ -6,9 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.flatcode.littlemovieadmin.model.Category
 import com.flatcode.littlemovieadmin.repository.AuthRepository
 import com.flatcode.littlemovieadmin.repository.CategoryRepository
+import com.flatcode.littlemovieadmin.utils.CloudinaryHelper
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,24 +21,20 @@ import javax.inject.Inject
 @HiltViewModel
 class CategoryAddViewModel @Inject constructor(
     private val repository: CategoryRepository,
-    private val authRepo: AuthRepository,
-    private val storage: FirebaseStorage
+    private val authRepo: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CategoryAddUiState())
     val uiState: StateFlow<CategoryAddUiState> = _uiState.asStateFlow()
 
-    fun uploadCategory(name: String, imageUri: Uri, extension: String?, onResult: (Boolean, String?) -> Unit) {
+    fun uploadCategory(name: String, imageUri: Uri, onResult: (Boolean, String?) -> Unit) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
+                val imageUrl = CloudinaryHelper.uploadFile(imageUri)
+
                 val ref = FirebaseDatabase.getInstance().getReference(DATA.CATEGORIES)
                 val id = ref.push().key ?: throw Exception("Database error")
-                
-                val path = "Images/Category/$id.${extension ?: "jpg"}"
-                val storageRef = storage.getReference(path)
-                storageRef.putFile(imageUri).await()
-                val imageUrl = storageRef.downloadUrl.await().toString()
 
                 val category = Category().apply {
                     this.id = id

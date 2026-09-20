@@ -59,6 +59,10 @@ object DATA {
     var MOVIE_ID = "movieId"
     var COMMENT = "comment"
 
+    // Cloudinary
+    var CLOUDINARY_CLOUD_NAME = "YOUR_CLOUD_NAME"
+    var CLOUDINARY_UPLOAD_PRESET = "YOUR_UPLOAD_PRESET"
+
     //Other
     val AUTH = FirebaseAuth.getInstance()
     val FIREBASE_USER = AUTH.currentUser

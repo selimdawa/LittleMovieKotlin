@@ -1,6 +1,9 @@
 package com.flatcode.littlemovie.repository
 
 import android.net.Uri
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
 import com.flatcode.littlemovie.db.UserDao
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.model.User
@@ -9,14 +12,15 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.coroutines.resume
 
 class UserRepository @Inject constructor(
     private val userDao: UserDao
@@ -24,7 +28,6 @@ class UserRepository @Inject constructor(
 
     private val auth = FirebaseAuth.getInstance()
     private val database = FirebaseDatabase.getInstance()
-    private val storage = FirebaseStorage.getInstance()
     private val usersRef = database.getReference(DATA.USERS)
     private val interestedRef = database.getReference(DATA.INTERESTED)
     private val favoritesRef = database.getReference(DATA.FAVORITES)
@@ -82,14 +85,40 @@ class UserRepository @Inject constructor(
     }
 
     suspend fun uploadProfileImage(userId: String, imageUri: Uri, extension: String): Result<String> {
-        return try {
-            val filePathAndName = "Images/Profile/$userId.$extension"
-            val reference = storage.getReference(filePathAndName)
-            reference.putFile(imageUri).await()
-            val downloadUrl = reference.downloadUrl.await().toString()
-            Result.success(downloadUrl)
-        } catch (e: Exception) {
-            Result.failure(e)
+        return suspendCancellableCoroutine { continuation ->
+            MediaManager.get().upload(imageUri)
+                .option("folder", "Images/Profile")
+                .option("public_id", userId)
+                .option("unsigned", true)
+                .option("upload_preset", DATA.CLOUDINARY_UPLOAD_PRESET)
+                .callback(object : UploadCallback {
+                    override fun onStart(requestId: String) {
+                        Timber.d("Cloudinary upload started: %s", requestId)
+                    }
+
+                    override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {
+                        // Progress can be handled here if needed
+                    }
+
+                    override fun onSuccess(requestId: String, resultData: Map<*, *>) {
+                        val url = resultData["secure_url"] as? String
+                        if (url != null) {
+                            continuation.resume(Result.success(url))
+                        } else {
+                            continuation.resume(Result.failure(Exception("Failed to get secure URL from Cloudinary")))
+                        }
+                    }
+
+                    override fun onError(requestId: String, error: ErrorInfo) {
+                        Timber.e("Cloudinary upload error: %s", error.description)
+                        continuation.resume(Result.failure(Exception(error.description)))
+                    }
+
+                    override fun onReschedule(requestId: String, error: ErrorInfo) {
+                        Timber.w("Cloudinary upload rescheduled: %s", error.description)
+                    }
+                })
+                .dispatch()
         }
     }
 

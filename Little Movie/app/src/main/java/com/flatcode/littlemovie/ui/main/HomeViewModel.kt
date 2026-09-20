@@ -39,6 +39,9 @@ class HomeViewModel @Inject constructor(
     private val _sliderCount = MutableStateFlow(0)
     val sliderCount: StateFlow<Int> = _sliderCount
 
+    private val _sliderImages = MutableStateFlow<List<String>>(emptyList())
+    val sliderImages: StateFlow<List<String>> = _sliderImages
+
     fun loadData() {
         loadCategories()
         loadSliderShow()
@@ -62,6 +65,12 @@ class HomeViewModel @Inject constructor(
             movieRepository.getSliderCount().collectLatest { count ->
                 _sliderCount.value = count
                 Timber.d("Slider count updated: %d", count)
+            }
+        }
+        viewModelScope.launch {
+            movieRepository.getSliderImages().collectLatest { list ->
+                _sliderImages.value = list
+                Timber.d("Slider images updated: %d", list.size)
             }
         }
     }
