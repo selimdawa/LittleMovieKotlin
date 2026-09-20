@@ -1,68 +1,35 @@
 package com.flatcode.littlemovieadmin.ui.editorschoice
 
-import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.flatcode.littlemovieadmin.databinding.ItemEditorsChoiceBinding
 import com.flatcode.littlemovieadmin.filter.EditorsChoiceFilter
 import com.flatcode.littlemovieadmin.model.Movie
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.addToEditorsChoice
 import com.flatcode.littlemovieadmin.utils.loadGlideImage
-import com.flatcode.littlemovieadmin.databinding.ItemEditorsChoiceBinding
 
 class EditorsChoiceMovieAdapter(
-    private val activity: Activity, var oldId: String?, var list: ArrayList<Movie?>, number: Int
-) : RecyclerView.Adapter<EditorsChoiceMovieAdapter.ViewHolder>(), Filterable {
+    private val onAddClick: (Movie) -> Unit
+) : ListAdapter<Movie, EditorsChoiceMovieAdapter.ViewHolder>(DiffCallback()), Filterable {
 
-    private var binding: ItemEditorsChoiceBinding? = null
-    var filterList: ArrayList<Movie?>
+    var filterList: List<Movie> = emptyList()
     private var filter: EditorsChoiceFilter? = null
-    var number: Int
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ItemEditorsChoiceBinding.inflate(LayoutInflater.from(activity), parent, false)
-        return ViewHolder(binding!!.root)
+        val binding = ItemEditorsChoiceBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false
+        )
+        return ViewHolder(binding, onAddClick)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = list[position]
-        val id = DATA.EMPTY + item!!.id
-        val name = DATA.EMPTY + item.name
-        val image = DATA.EMPTY + item.image
-        val nrViews = DATA.EMPTY + item.viewsCount
-        val nrLoves = DATA.EMPTY + item.lovesCount
-
-        holder.image.loadGlideImage(image, false)
-
-        if (name == DATA.EMPTY) {
-            holder.name.visibility = View.GONE
-        } else {
-            holder.name.visibility = View.VISIBLE
-            holder.name.text = name
-        }
-
-        holder.nrViews.text = nrViews
-        holder.nrLoves.text = nrLoves
-
-        holder.add.setOnClickListener {
-            if (oldId != null) {
-                activity.addToEditorsChoice(activity, id, number)
-                activity.addToEditorsChoice(activity, oldId, 0)
-            } else {
-                activity.addToEditorsChoice(activity, id, number)
-            }
-        }
-    }
-
-    override fun getItemCount(): Int {
-        return list.size
+        holder.bind(getItem(position))
     }
 
     override fun getFilter(): Filter {
@@ -72,26 +39,38 @@ class EditorsChoiceMovieAdapter(
         return filter!!
     }
 
-    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
-        var add: ImageView
-        var image: ImageView
-        var name: TextView
-        var nrViews: TextView
-        var nrLoves: TextView
-        var item: LinearLayout
+    class ViewHolder(
+        val binding: ItemEditorsChoiceBinding,
+        private val onAddClick: (Movie) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
 
-        init {
-            image = binding!!.image
-            name = binding!!.name
-            nrViews = binding!!.nrViews
-            nrLoves = binding!!.nrLoves
-            add = binding!!.add
-            item = binding!!.item
+        fun bind(item: Movie) {
+            val name = item.name
+            val image = item.image ?: DATA.EMPTY
+            val nrViews = item.viewsCount
+            val nrLoves = item.lovesCount
+
+            binding.image.loadGlideImage(image, false)
+
+            if (name == DATA.EMPTY) {
+                binding.name.visibility = View.GONE
+            } else {
+                binding.name.visibility = View.VISIBLE
+                binding.name.text = name
+            }
+
+            binding.nrViews.text = nrViews.toString()
+            binding.nrLoves.text = nrLoves.toString()
+
+            binding.add.setOnClickListener { onAddClick(item) }
         }
     }
 
-    init {
-        filterList = list
-        this.number = number
+    class DiffCallback : DiffUtil.ItemCallback<Movie>() {
+        override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean =
+            oldItem.id == newItem.id
+
+        override fun areContentsTheSame(oldItem: Movie, newItem: Movie): Boolean =
+            oldItem == newItem
     }
 }

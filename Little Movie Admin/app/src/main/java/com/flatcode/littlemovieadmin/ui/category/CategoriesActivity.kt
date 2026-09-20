@@ -16,6 +16,8 @@ import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.ui.category.CategoriesViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityCategoriesBinding
+import com.flatcode.littlemovieadmin.utils.moreDeleteCategory
+import com.flatcode.littlemovieadmin.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -55,7 +57,19 @@ class CategoriesActivity : BaseActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        adapter = CategoryAdapter(this)
+        adapter = CategoryAdapter(
+            onMoreClick = { category ->
+                moreDeleteCategory(category, DATA.NULL, DATA.NULL, DATA.NULL, false, false)
+            },
+            onItemClick = { category ->
+                openActivity<CategoryDetailsActivity>(
+                    extras = arrayOf(
+                        DATA.CATEGORY_ID to category.id,
+                        DATA.CATEGORY_NAME to category.name
+                    )
+                )
+            }
+        )
         binding.recyclerView.adapter = adapter
 
         binding.switchBar.all.setOnClickListener { viewModel.getData(DATA.TIMESTAMP) }

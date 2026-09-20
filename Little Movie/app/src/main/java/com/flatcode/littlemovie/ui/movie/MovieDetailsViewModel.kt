@@ -54,6 +54,9 @@ class MovieDetailsViewModel @Inject constructor(
     private val _addCommentStatus = MutableStateFlow<Result<Unit>?>(null)
     val addCommentStatus: StateFlow<Result<Unit>?> = _addCommentStatus
 
+    private val _deleteCommentStatus = MutableStateFlow<Result<Unit>?>(null)
+    val deleteCommentStatus: StateFlow<Result<Unit>?> = _deleteCommentStatus
+
     fun loadDetails(movieId: String) {
         val userId = DATA.FirebaseUserUid ?: return
         
@@ -143,5 +146,16 @@ class MovieDetailsViewModel @Inject constructor(
 
     fun resetAddCommentStatus() {
         _addCommentStatus.value = null
+    }
+
+    fun deleteComment(movieId: String, commentId: String) {
+        viewModelScope.launch {
+            val result = movieRepository.deleteComment(movieId, commentId)
+            _deleteCommentStatus.value = result
+        }
+    }
+
+    fun resetDeleteCommentStatus() {
+        _deleteCommentStatus.value = null
     }
 }

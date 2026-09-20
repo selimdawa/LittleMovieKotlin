@@ -9,7 +9,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.ui.movie.CastMovieAddAdapter
-import com.flatcode.littlemovieadmin.ui.movie.CastMovieAddAdapter.Companion.castAddRemove
 import com.flatcode.littlemovieadmin.model.Cast
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA.castMovie
@@ -33,7 +32,7 @@ class CastMovieAddActivity : BaseActivity() {
         binding.toolbar.nameSpace.setText(R.string.add_cast)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
 
-        adapter = CastMovieAddAdapter(this)
+        adapter = CastMovieAddAdapter(castMovie)
         binding.recyclerView.adapter = adapter
 
         observeState()
@@ -66,7 +65,7 @@ class CastMovieAddActivity : BaseActivity() {
 
     override fun onBackPressed() {
         castMovie.clear()
-        castMovie.addAll(castAddRemove as ArrayList<String?>)
+        castMovie.addAll(adapter.selectedIds)
         super.onBackPressed()
     }
 }

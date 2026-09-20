@@ -10,52 +10,21 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovie.databinding.ItemSettingBinding
 import com.flatcode.littlemovie.model.Setting
-import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.dialogAboutApp
 import com.flatcode.littlemovie.utils.dialogLogout
-import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.utils.rateApp
 import com.flatcode.littlemovie.utils.shareApp
-import java.text.MessageFormat
 
-class SettingAdapter(private val context: Context?) :
+class SettingAdapter(private val onItemClick: (Setting) -> Unit) :
     ListAdapter<Setting, SettingAdapter.ViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemSettingBinding.inflate(LayoutInflater.from(context), parent, false)
+        val binding = ItemSettingBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = getItem(position)
-        val id = DATA.EMPTY + item.id
-        val name = DATA.EMPTY + item.name
-        val image = item.image
-        val number = item.number
-        val to = item.c
-
-        holder.binding.name.text = name
-        holder.binding.image.setImageResource(image)
-
-        if (number != 0) {
-            holder.binding.number.visibility = View.VISIBLE
-            holder.binding.number.text = MessageFormat.format("{0}{1}", DATA.EMPTY, number)
-        } else {
-            holder.binding.number.visibility = View.GONE
-        }
-
-        holder.binding.item.setOnClickListener {
-            when (id) {
-                "5" -> context?.dialogAboutApp()
-                "6" -> context?.dialogLogout()
-                "7" -> context?.shareApp()
-                "8" -> context?.rateApp()
-                else -> to?.let {
-                    val intent = Intent(context, it)
-                    context?.startActivity(intent)
-                }
-            }
-        }
+        holder.bind(getItem(position), onItemClick)
     }
 
     object DiffCallback : DiffUtil.ItemCallback<Setting>() {
@@ -66,5 +35,25 @@ class SettingAdapter(private val context: Context?) :
             oldItem.id == newItem.id && oldItem.name == newItem.name && oldItem.number == newItem.number
     }
 
-    inner class ViewHolder(val binding: ItemSettingBinding) : RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(private val binding: ItemSettingBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: Setting, onItemClick: (Setting) -> Unit) {
+            val name = item.name ?: ""
+            val image = item.image
+            val number = item.number
+
+            with(binding) {
+                this.name.text = name
+                this.image.setImageResource(image)
+
+                if (number != 0) {
+                    this.number.visibility = View.VISIBLE
+                    this.number.text = number.toString()
+                } else {
+                    this.number.visibility = View.GONE
+                }
+
+                this.item.setOnClickListener { onItemClick(item) }
+            }
+        }
+    }
 }

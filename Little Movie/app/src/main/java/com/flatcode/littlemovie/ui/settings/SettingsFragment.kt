@@ -7,11 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import android.content.Intent
 import com.flatcode.littlemovie.model.Setting
 import com.flatcode.littlemovie.R
-import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.GlideImage
-import com.flatcode.littlemovie.utils.openActivity
+import com.flatcode.littlemovie.utils.*
 import com.flatcode.littlemovie.databinding.FragmentSettingsBinding
 import com.flatcode.littlemovie.ui.cast.MyCastActivity
 import com.flatcode.littlemovie.ui.category.MyCategoriesActivity
@@ -43,7 +42,18 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setupAdapter() {
-        adapter = SettingAdapter(context)
+        adapter = SettingAdapter { setting ->
+            when (setting.id) {
+                "5" -> context?.dialogAboutApp()
+                "6" -> context?.dialogLogout()
+                "7" -> context?.shareApp()
+                "8" -> context?.rateApp()
+                else -> setting.c?.let {
+                    val intent = Intent(context, it)
+                    context?.startActivity(intent)
+                }
+            }
+        }
         binding.recyclerView.adapter = adapter
     }
 

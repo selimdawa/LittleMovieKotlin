@@ -12,6 +12,9 @@ import com.flatcode.littlemovieadmin.model.EditorsChoice
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.ui.editorschoice.EditorsChoiceViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityEditorsChoiceBinding
+import com.flatcode.littlemovieadmin.utils.DATA
+import com.flatcode.littlemovieadmin.utils.dialogOptionDelete
+import com.flatcode.littlemovieadmin.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -30,7 +33,30 @@ class EditorsChoiceActivity : BaseActivity() {
         binding.toolbar.nameSpace.setText(R.string.editors_choice)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
 
-        adapter = EditorsChoiceAdapter(this)
+        adapter = EditorsChoiceAdapter(
+            onAddClick = { model ->
+                openActivity<EditorsChoiceAddActivity>(
+                    extras = arrayOf(
+                        DATA.EDITORS_CHOICE_ID to model.id.toString(),
+                        DATA.OLD_ID to null
+                    )
+                )
+            },
+            onChangeClick = { model, movieId ->
+                openActivity<EditorsChoiceAddActivity>(
+                    extras = arrayOf(
+                        DATA.EDITORS_CHOICE_ID to model.id.toString(),
+                        DATA.OLD_ID to movieId
+                    )
+                )
+            },
+            onDeleteClick = { movieId, movieName ->
+                dialogOptionDelete(
+                    movieId, movieName, DATA.EDITORS_CHOICE, DATA.EDITORS_CHOICE,
+                    true, DATA.NULL, DATA.NULL, DATA.NULL, false, false,
+                )
+            }
+        )
         binding.recyclerView.adapter = adapter
 
         observeState()

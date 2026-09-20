@@ -1,11 +1,9 @@
 package com.flatcode.littlemovieadmin.ui.editorschoice
 
-import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DiffUtil
@@ -15,45 +13,95 @@ import com.flatcode.littlemovieadmin.databinding.ItemMovieEditorsChoiceBinding
 import com.flatcode.littlemovieadmin.model.EditorsChoice
 import com.flatcode.littlemovieadmin.model.Movie
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.dialogOptionDelete
-import com.flatcode.littlemovieadmin.utils.openActivity
 import com.flatcode.littlemovieadmin.utils.loadGlideImage
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import java.text.MessageFormat
 
-class EditorsChoiceAdapter(private val activity: Activity) :
-    ListAdapter<EditorsChoice, EditorsChoiceAdapter.ViewHolder>(DiffCallback()) {
+class EditorsChoiceAdapter(
+    private val onAddClick: (EditorsChoice) -> Unit,
+    private val onChangeClick: (EditorsChoice, String) -> Unit,
+    private val onDeleteClick: (String, String) -> Unit
+) : ListAdapter<EditorsChoice, EditorsChoiceAdapter.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding =
-            ItemMovieEditorsChoiceBinding.inflate(LayoutInflater.from(activity), parent, false)
-        return ViewHolder(binding)
+        val binding = ItemMovieEditorsChoiceBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false
+        )
+        return ViewHolder(binding, onAddClick, onChangeClick, onDeleteClick)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val model = getItem(position)
-        val id = model.id
-        val editorsChoiceId = DATA.EMPTY + id
-
-        loadMovieDetails(
-            id, editorsChoiceId, holder.binding.name, holder.binding.image, holder.binding.nrLoves,
-            holder.binding.nrViews, holder.binding.remove, holder.binding.change, holder.binding.addCard, holder.binding.detailsCard
-        )
-        holder.binding.numberEditorsChoice.text = MessageFormat.format("{0}{1}", DATA.EMPTY, id)
-
-        holder.binding.add.setOnClickListener {
-            activity.openActivity<EditorsChoiceAddActivity>(
-                extras = arrayOf(
-                    DATA.EDITORS_CHOICE_ID to editorsChoiceId, DATA.OLD_ID to null
-                )
-            )
-        }
+        holder.bind(getItem(position))
     }
 
-    class ViewHolder(val binding: ItemMovieEditorsChoiceBinding) : RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(
+        val binding: ItemMovieEditorsChoiceBinding,
+        private val onAddClick: (EditorsChoice) -> Unit,
+        private val onChangeClick: (EditorsChoice, String) -> Unit,
+        private val onDeleteClick: (String, String) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(model: EditorsChoice) {
+            val id = model.id
+            binding.numberEditorsChoice.text = id.toString()
+
+            loadMovieDetails(model)
+
+            binding.add.setOnClickListener { onAddClick(model) }
+        }
+
+        private fun loadMovieDetails(model: EditorsChoice) {
+            val ref = FirebaseDatabase.getInstance().getReference(DATA.MOVIES)
+            ref.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    var movieFound = false
+                    for (snapshot in dataSnapshot.children) {
+                        val item = snapshot.getValue(Movie::class.java) ?: continue
+                        if (item.editorsChoice == model.id) {
+                            movieFound = true
+                            displayMovieDetails(item, model)
+                            break
+                        }
+                    }
+                    if (!movieFound) {
+                        displayEmpty()
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
+        }
+
+        private fun displayMovieDetails(item: Movie, model: EditorsChoice) {
+            val id = item.id
+            val name = item.name
+            val imageLink = item.image ?: DATA.EMPTY
+            val viewsCount = item.viewsCount
+            val lovesCount = item.lovesCount
+
+            binding.image.loadGlideImage(imageLink, false)
+            binding.name.text = name
+            binding.nrViews.text = viewsCount.toString()
+            binding.nrLoves.text = lovesCount.toString()
+
+            binding.addCard.visibility = View.GONE
+            binding.detailsCard.visibility = View.VISIBLE
+            binding.remove.visibility = View.VISIBLE
+            binding.change.visibility = View.VISIBLE
+
+            binding.remove.setOnClickListener { onDeleteClick(id, name) }
+            binding.change.setOnClickListener { onChangeClick(model, id) }
+        }
+
+        private fun displayEmpty() {
+            binding.addCard.visibility = View.VISIBLE
+            binding.detailsCard.visibility = View.GONE
+            binding.remove.visibility = View.GONE
+            binding.change.visibility = View.GONE
+        }
+    }
 
     class DiffCallback : DiffUtil.ItemCallback<EditorsChoice>() {
         override fun areItemsTheSame(oldItem: EditorsChoice, newItem: EditorsChoice): Boolean =
@@ -61,81 +109,5 @@ class EditorsChoiceAdapter(private val activity: Activity) :
 
         override fun areContentsTheSame(oldItem: EditorsChoice, newItem: EditorsChoice): Boolean =
             oldItem == newItem
-    }
-
-    private fun loadMovieDetails(
-        i: Int,
-        position: String,
-        title: TextView,
-        imageView: ImageView,
-        viewsCount: TextView,
-        lovesCount: TextView,
-        remove: ImageView,
-        change: ImageView,
-        addCard: CardView,
-        detailsCard: CardView,
-    ) {
-        val ref = FirebaseDatabase.getInstance().getReference(DATA.MOVIES)
-        ref.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                for (snapshot in dataSnapshot.children) {
-                    val item = snapshot.getValue(Movie::class.java)!!
-                    if (item.editorsChoice == i) {
-                        val id = DATA.EMPTY + item.id
-                        val name = DATA.EMPTY + item.name
-                        loadData(id)
-                        addCard.visibility = View.GONE
-                        detailsCard.visibility = View.VISIBLE
-                        remove.visibility = View.VISIBLE
-                        change.visibility = View.VISIBLE
-                        remove.setOnClickListener {
-                            activity.dialogOptionDelete(
-                                id, name, DATA.EDITORS_CHOICE, DATA.EDITORS_CHOICE,
-                                true, DATA.NULL, DATA.NULL, DATA.NULL, false, false,
-                            )
-                        }
-                        change.setOnClickListener {
-                            activity.openActivity<EditorsChoiceAddActivity>(
-                                extras = arrayOf(
-                                    DATA.EDITORS_CHOICE_ID to position, DATA.OLD_ID to id
-                                )
-                            )
-                        }
-                    } else {
-                        addCard.visibility = View.VISIBLE
-                        detailsCard.visibility = View.GONE
-                        remove.visibility = View.GONE
-                        change.visibility = View.GONE
-                    }
-                }
-            }
-
-            private fun loadData(id: String) {
-                val ref = FirebaseDatabase.getInstance().getReference(DATA.MOVIES)
-                ref.child(id).addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        //get data
-                        val item = dataSnapshot.getValue(Movie::class.java)!!
-                        val name = DATA.EMPTY + item.name
-                        val imageLink = DATA.EMPTY + item.image
-                        val ViewsCount = DATA.EMPTY + item.viewsCount
-                        val LovesCount = DATA.EMPTY + item.lovesCount
-
-                        imageView.loadGlideImage(imageLink, false)
-                        title.text = name
-                        viewsCount.text = ViewsCount
-                        lovesCount.text = LovesCount
-                        addCard.visibility = View.GONE
-                        detailsCard.visibility = View.VISIBLE
-                        remove.visibility = View.VISIBLE
-                        change.visibility = View.VISIBLE
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {}
-                })
-            }
-
-            override fun onCancelled(error: DatabaseError) {}
-        })
     }
 }

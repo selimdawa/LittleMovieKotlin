@@ -8,7 +8,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.model.Category
+import com.flatcode.littlemovie.ui.category.CategoryDetailsActivity
+import com.flatcode.littlemovie.ui.category.CategoryMainAdapter
 import com.flatcode.littlemovie.utils.DATA
+import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.databinding.FragmentCategoriesBinding
 import kotlinx.coroutines.launch
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,7 +37,11 @@ class CategoriesFragment : Fragment() {
     }
 
     private fun setupAdapter() {
-        adapter = CategoryMainAdapter(context)
+        adapter = CategoryMainAdapter { category ->
+            context?.openActivity<CategoryDetailsActivity>(
+                DATA.CATEGORY_ID to category.id, DATA.CATEGORY_NAME to category.name
+            )
+        }
         binding.recyclerView.adapter = adapter
     }
 

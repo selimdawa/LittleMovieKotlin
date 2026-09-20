@@ -22,60 +22,22 @@ import com.flatcode.littlemovie.utils.isFavorite
 import com.flatcode.littlemovie.utils.isLoves
 import com.flatcode.littlemovie.utils.nrLoves
 import com.flatcode.littlemovie.utils.openActivity
-import java.text.MessageFormat
 
-class MovieAdapter(private val context: Context?, private val animation: Boolean) :
-    ListAdapter<Movie, MovieAdapter.ViewHolder>(DiffCallback), Filterable {
+class MovieAdapter(
+    private val animation: Boolean = false,
+    private val onItemClick: (Movie) -> Unit
+) : ListAdapter<Movie, MovieAdapter.ViewHolder>(DiffCallback), Filterable {
 
     private var fullList: List<Movie> = emptyList()
     private var filter: MovieFilter? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemMovieBinding.inflate(LayoutInflater.from(context), parent, false)
+        val binding = ItemMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = getItem(position)
-        val id = DATA.EMPTY + item.id
-        val name = DATA.EMPTY + item.name
-        val image = DATA.EMPTY + item.image
-        val viewsCount = DATA.EMPTY + item.viewsCount
-        val lovesCount = DATA.EMPTY + item.lovesCount
-        val movieLink = DATA.EMPTY + item.movieLink
-
-        holder.binding.image.GlideImage(false, image)
-
-        if (item.name == DATA.EMPTY) {
-            holder.binding.name.visibility = View.GONE
-        } else {
-            holder.binding.name.visibility = View.VISIBLE
-            holder.binding.name.text = name
-        }
-
-        if (viewsCount == DATA.EMPTY) holder.binding.nrViews.text =
-            MessageFormat.format("{0}{1}", DATA.EMPTY, DATA.ZERO) else holder.binding.nrViews.text =
-            viewsCount
-
-        if (lovesCount == DATA.EMPTY) holder.binding.nrLoves.text =
-            MessageFormat.format("{0}{1}", DATA.EMPTY, DATA.ZERO) else holder.binding.nrLoves.text =
-            lovesCount
-
-        holder.binding.add.isFavorite(id, DATA.FirebaseUserUid)
-        holder.binding.add.setOnClickListener { holder.binding.add.checkFavorite(id) }
-        holder.binding.love.isLoves(id)
-        holder.binding.nrLoves.nrLoves(id)
-        holder.binding.love.setOnClickListener { holder.binding.love.checkLove(id) }
-
-        if (animation) holder.binding.item.animation = AnimationUtils.loadAnimation(
-            context, R.anim.fade_transition_animation
-        )
-
-        holder.binding.item.setOnClickListener {
-            context?.openActivity<MovieDetailsActivity>(
-                DATA.MOVIE_ID to id, DATA.MOVIE_LINK to movieLink
-            )
-        }
+        holder.bind(getItem(position), animation, onItemClick)
     }
 
     fun setFullList(list: List<Movie>) {
@@ -84,10 +46,7 @@ class MovieAdapter(private val context: Context?, private val animation: Boolean
     }
 
     override fun getFilter(): Filter {
-        if (filter == null) {
-            filter = MovieFilter(fullList, this)
-        }
-        return filter!!
+        return filter ?: MovieFilter(fullList, this).also { filter = it }
     }
 
     object DiffCallback : DiffUtil.ItemCallback<Movie>() {
@@ -98,5 +57,41 @@ class MovieAdapter(private val context: Context?, private val animation: Boolean
             oldItem == newItem
     }
 
-    inner class ViewHolder(val binding: ItemMovieBinding) : RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(private val binding: ItemMovieBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: Movie, animation: Boolean, onItemClick: (Movie) -> Unit) {
+            val id = item.id
+            val name = item.name ?: ""
+            val image = item.image ?: ""
+            val viewsCount = item.viewsCount.toString()
+            val lovesCount = item.lovesCount.toString()
+
+            with(binding) {
+                this.image.GlideImage(false, image)
+
+                if (name.isEmpty()) {
+                    this.name.visibility = View.GONE
+                } else {
+                    this.name.visibility = View.VISIBLE
+                    this.name.text = name
+                }
+
+                nrViews.text = viewsCount
+                nrLoves.text = lovesCount
+
+                add.isFavorite(id, DATA.FirebaseUserUid)
+                add.setOnClickListener { add.checkFavorite(id) }
+                love.isLoves(id)
+                nrLoves.nrLoves(id)
+                love.setOnClickListener { love.checkLove(id) }
+
+                if (animation) {
+                    this.item.animation = AnimationUtils.loadAnimation(
+                        root.context, R.anim.fade_transition_animation
+                    )
+                }
+
+                this.item.setOnClickListener { onItemClick(item) }
+            }
+        }
+    }
 }

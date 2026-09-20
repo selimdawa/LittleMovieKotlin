@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.ui.BaseActivity
+import com.flatcode.littlemovieadmin.ui.cast.CastDetailsActivity
 import com.flatcode.littlemovieadmin.ui.movie.CastMovieAdapter
 import com.flatcode.littlemovieadmin.ui.movie.CommentAdapter
 import com.flatcode.littlemovieadmin.model.Cast
@@ -29,6 +30,7 @@ import com.flatcode.littlemovieadmin.ui.movie.MovieDetailsViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityMovieDetailsBinding
 import com.flatcode.littlemovieadmin.databinding.DialogCommentAddBinding
 import com.flatcode.littlemovieadmin.Application
+import com.google.firebase.database.FirebaseDatabase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -75,10 +77,44 @@ class MovieDetailsActivity : BaseActivity() {
             }
         }
 
-        adapterCast = CastMovieAdapter(this)
+        adapterCast = CastMovieAdapter(
+            onItemClick = { cast ->
+                openActivity<CastDetailsActivity>(
+                    extras = arrayOf(
+                        DATA.CAST_ID to cast.id,
+                        DATA.CAST_NAME to cast.name,
+                        DATA.CAST_IMAGE to cast.image,
+                        DATA.CAST_ABOUT to cast.aboutMy
+                    )
+                )
+            }
+        )
         binding.recyclerCast.adapter = adapterCast
         
-        adapterComment = CommentAdapter(this)
+        adapterComment = CommentAdapter(
+            onItemClick = { comment ->
+                if (comment.publisher == DATA.FirebaseUserUid) {
+                    val commentId = comment.id ?: DATA.EMPTY
+                    val movieId = comment.movieId ?: DATA.EMPTY
+                    val builder = AlertDialog.Builder(this)
+                    builder.setTitle("Delete Comment")
+                        .setMessage("Are you sure you want to delete this comment?")
+                        .setPositiveButton("DELETE") { _, _ ->
+                            val ref = FirebaseDatabase.getInstance().getReference(DATA.MOVIES)
+                            ref.child(movieId).child(DATA.COMMENTS).child(commentId).removeValue()
+                                .addOnSuccessListener {
+                                    Toast.makeText(this, "Deleted...", Toast.LENGTH_SHORT).show()
+                                }.addOnFailureListener { e ->
+                                    Toast.makeText(
+                                        this, "Failed to delete due to " + e.message, Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                        }
+                        .setNegativeButton("CANCEL") { dialog, _ -> dialog.dismiss() }
+                        .show()
+                }
+            }
+        )
         binding.recyclerComment.adapter = adapterComment
 
         observeState()

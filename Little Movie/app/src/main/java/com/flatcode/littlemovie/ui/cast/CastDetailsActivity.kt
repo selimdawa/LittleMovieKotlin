@@ -13,10 +13,12 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.ui.movie.MovieAdapter
+import com.flatcode.littlemovie.ui.movie.MovieDetailsActivity
 import com.flatcode.littlemovie.model.Movie
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.VOID
+import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.databinding.ActivityCastDetailsBinding
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -115,7 +117,11 @@ class CastDetailsActivity : AppCompatActivity() {
     }
 
     private fun setupAdapter() {
-        adapter = MovieAdapter(activity, true)
+        adapter = MovieAdapter(true) { movie ->
+            activity.openActivity<MovieDetailsActivity>(
+                DATA.MOVIE_ID to movie.id, DATA.MOVIE_LINK to movie.movieLink
+            )
+        }
         binding!!.recyclerView.adapter = adapter
     }
 

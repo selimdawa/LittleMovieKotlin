@@ -14,35 +14,16 @@ import com.flatcode.littlemovie.utils.GlideBlur
 import com.flatcode.littlemovie.utils.GlideImage
 import com.flatcode.littlemovie.utils.openActivity
 
-class CategoryMainAdapter(private val context: Context?) :
+class CategoryMainAdapter(private val onItemClick: (Category) -> Unit) :
     ListAdapter<Category, CategoryMainAdapter.ViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemCategoryMainBinding.inflate(LayoutInflater.from(context), parent, false)
+        val binding = ItemCategoryMainBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = getItem(position)
-        val id = DATA.EMPTY + item.id
-        val name = DATA.EMPTY + item.name
-        val image = DATA.EMPTY + item.image
-
-        holder.binding.image.GlideImage(false, image)
-        holder.binding.imageBlur.GlideBlur(false, image, 50)
-
-        if (name == DATA.EMPTY) {
-            holder.binding.name.visibility = View.GONE
-        } else {
-            holder.binding.name.visibility = View.VISIBLE
-            holder.binding.name.text = name
-        }
-
-        holder.binding.card.setOnClickListener {
-            context?.openActivity<CategoryDetailsActivity>(
-                DATA.CATEGORY_ID to id, DATA.CATEGORY_NAME to name
-            )
-        }
+        holder.bind(getItem(position), onItemClick)
     }
 
     object DiffCallback : DiffUtil.ItemCallback<Category>() {
@@ -53,5 +34,24 @@ class CategoryMainAdapter(private val context: Context?) :
             oldItem == newItem
     }
 
-    inner class ViewHolder(val binding: ItemCategoryMainBinding) : RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(private val binding: ItemCategoryMainBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: Category, onItemClick: (Category) -> Unit) {
+            val name = item.name ?: ""
+            val image = item.image ?: ""
+
+            with(binding) {
+                this.image.GlideImage(false, image)
+                imageBlur.GlideBlur(false, image, 50)
+
+                if (name.isEmpty()) {
+                    this.name.visibility = View.GONE
+                } else {
+                    this.name.visibility = View.VISIBLE
+                    this.name.text = name
+                }
+
+                card.setOnClickListener { onItemClick(item) }
+            }
+        }
+    }
 }

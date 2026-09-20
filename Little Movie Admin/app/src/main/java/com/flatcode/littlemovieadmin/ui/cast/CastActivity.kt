@@ -16,6 +16,8 @@ import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.ui.cast.CastViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityCastBinding
+import com.flatcode.littlemovieadmin.utils.moreDeleteCast
+import com.flatcode.littlemovieadmin.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -55,7 +57,21 @@ class CastActivity : BaseActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        adapter = CastAdapter(this)
+        adapter = CastAdapter(
+            onItemClick = { cast ->
+                openActivity<CastDetailsActivity>(
+                    extras = arrayOf(
+                        DATA.CAST_ID to cast.id,
+                        DATA.CAST_NAME to cast.name,
+                        DATA.CAST_IMAGE to cast.image,
+                        DATA.CAST_ABOUT to cast.aboutMy
+                    )
+                )
+            },
+            onMoreClick = { cast ->
+                moreDeleteCast(cast, DATA.NULL, DATA.NULL, DATA.NULL, true, false)
+            }
+        )
         binding.recyclerView.adapter = adapter
 
         binding.switchBar.all.setOnClickListener { viewModel.getData(DATA.TIMESTAMP) }

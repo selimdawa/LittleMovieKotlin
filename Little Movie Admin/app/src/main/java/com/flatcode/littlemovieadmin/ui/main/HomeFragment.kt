@@ -1,5 +1,6 @@
 package com.flatcode.littlemovieadmin.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -46,7 +47,14 @@ class HomeFragment : Fragment() {
             )
         }
 
-        adapter = MainAdapter(requireContext())
+        adapter = MainAdapter(
+            onItemClick = { main ->
+                main.c?.let {
+                    val intent = Intent(requireContext(), it)
+                    startActivity(intent)
+                }
+            }
+        )
         binding.recyclerView.adapter = adapter
 
         observeState()

@@ -13,6 +13,8 @@ import com.flatcode.littlemovieadmin.model.User
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.databinding.ActivityUsersBinding
+import com.flatcode.littlemovieadmin.ui.profile.ProfileActivity
+import com.flatcode.littlemovieadmin.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -52,7 +54,11 @@ class UsersActivity : BaseActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        adapter = UserAdapter(this)
+        adapter = UserAdapter(
+            onItemClick = { user ->
+                openActivity<ProfileActivity>(extras = arrayOf(DATA.PROFILE_ID to user.id))
+            }
+        )
         binding.recyclerView.adapter = adapter
 
         binding.switchBar.all.setOnClickListener { viewModel.getData(DATA.TIMESTAMP) }

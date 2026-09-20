@@ -19,6 +19,10 @@ import com.flatcode.littlemovieadmin.utils.loadGlideBlur
 import com.flatcode.littlemovieadmin.utils.loadGlideImage
 import com.flatcode.littlemovieadmin.ui.cast.CastDetailsViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityCastDetailsBinding
+import com.flatcode.littlemovieadmin.ui.movie.MovieDetailsActivity
+import com.flatcode.littlemovieadmin.utils.checkFavorite
+import com.flatcode.littlemovieadmin.utils.moreDeleteMovie
+import com.flatcode.littlemovieadmin.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -70,7 +74,24 @@ class CastDetailsActivity : BaseActivity() {
             dialogAboutArtist(state.castImage, state.castName, state.castAbout)
         }
 
-        adapter = MovieAdapter(this)
+        adapter = MovieAdapter(
+            onItemClick = { movie ->
+                openActivity<MovieDetailsActivity>(
+                    extras = arrayOf(
+                        DATA.MOVIE_ID to movie.id,
+                        DATA.MOVIE_LINK to movie.movieLink
+                    )
+                )
+            },
+            onMoreClick = { movie ->
+                moreDeleteMovie(
+                    movie, DATA.CATEGORIES, movie.categoryId ?: DATA.EMPTY, DATA.MOVIES_COUNT, false, true
+                )
+            },
+            onFavoriteClick = { movie, imageView ->
+                imageView.checkFavorite(movie.id)
+            }
+        )
         binding.recyclerView.adapter = adapter
 
         binding.switchBar.all.setOnClickListener { viewModel.getData(DATA.TIMESTAMP) }

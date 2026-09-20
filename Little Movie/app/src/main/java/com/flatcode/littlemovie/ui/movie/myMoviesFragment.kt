@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.model.Movie
 import com.flatcode.littlemovie.utils.DATA
+import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.databinding.FragmentMyMoviesBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -35,7 +36,11 @@ class myMoviesFragment : Fragment() {
     }
 
     private fun setupAdapter() {
-        adapter = MovieAdapter(context, true)
+        adapter = MovieAdapter(true) { movie ->
+            context?.openActivity<MovieDetailsActivity>(
+                DATA.MOVIE_ID to movie.id, DATA.MOVIE_LINK to movie.movieLink
+            )
+        }
         binding.recyclerView.adapter = adapter
     }
 

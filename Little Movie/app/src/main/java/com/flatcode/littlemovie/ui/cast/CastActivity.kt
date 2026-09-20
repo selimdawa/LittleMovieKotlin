@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.model.Cast
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.utils.DATA
+import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.databinding.ActivityCastBinding
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -67,7 +68,14 @@ class CastActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        adapter = CastAdapter(activity)
+        adapter = CastAdapter { cast ->
+            activity.openActivity<CastDetailsActivity>(
+                DATA.CAST_ID to cast.id,
+                DATA.CAST_NAME to cast.name,
+                DATA.CAST_IMAGE to cast.image,
+                DATA.CAST_ABOUT to cast.aboutMy
+            )
+        }
         binding!!.recyclerView.adapter = adapter
 
         binding!!.switchBar.all.setOnClickListener {

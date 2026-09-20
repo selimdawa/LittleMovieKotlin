@@ -12,62 +12,27 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.flatcode.littlemovieadmin.databinding.ItemCategoryBinding
 import com.flatcode.littlemovieadmin.filter.CategoryFilter
 import com.flatcode.littlemovieadmin.model.Category
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.openActivity
 import com.flatcode.littlemovieadmin.utils.loadGlideImage
-import com.flatcode.littlemovieadmin.utils.moreDeleteCategory
-import com.flatcode.littlemovieadmin.databinding.ItemCategoryBinding
-import java.text.MessageFormat
 
-class CategoryAdapter(private val activity: Activity) :
-    ListAdapter<Category, CategoryAdapter.ViewHolder>(DiffCallback()), Filterable {
+class CategoryAdapter(
+    private val onMoreClick: (Category) -> Unit,
+    private val onItemClick: (Category) -> Unit
+) : ListAdapter<Category, CategoryAdapter.ViewHolder>(DiffCallback()), Filterable {
 
     var filterList: List<Category> = emptyList()
     private var filter: CategoryFilter? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemCategoryBinding.inflate(LayoutInflater.from(activity), parent, false)
-        return ViewHolder(binding)
+        val binding = ItemCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding, onMoreClick, onItemClick)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = getItem(position)
-        val id = DATA.EMPTY + item.id
-        val name = DATA.EMPTY + item.name
-        val image = DATA.EMPTY + item.image
-        val interestedCount = DATA.EMPTY + item.interestedCount
-        val moviesCount = DATA.EMPTY + item.moviesCount
-
-        holder.binding.image.loadGlideImage(image, false)
-
-        if (item.name == DATA.EMPTY) {
-            holder.binding.name.visibility = View.GONE
-        } else {
-            holder.binding.name.visibility = View.VISIBLE
-            holder.binding.name.text = name
-        }
-
-        if (interestedCount == DATA.EMPTY) holder.binding.numberInterested.text = MessageFormat.format(
-            "{0}{1}", DATA.EMPTY, DATA.ZERO
-        ) else holder.binding.numberInterested.text = interestedCount
-
-        if (moviesCount == DATA.EMPTY) holder.binding.numberMovies.text = MessageFormat.format(
-            "{0}{1}", DATA.EMPTY, DATA.ZERO
-        ) else holder.binding.numberMovies.text = moviesCount
-
-        holder.binding.more.setOnClickListener {
-            activity.moreDeleteCategory(item, DATA.NULL, DATA.NULL, DATA.NULL, false, false)
-        }
-
-        holder.binding.item.setOnClickListener {
-            activity.openActivity<CategoryDetailsActivity>(
-                extras = arrayOf(
-                    DATA.CATEGORY_ID to id, DATA.CATEGORY_NAME to name
-                )
-            )
-        }
+        holder.bind(getItem(position))
     }
 
     override fun getFilter(): Filter {
@@ -77,7 +42,34 @@ class CategoryAdapter(private val activity: Activity) :
         return filter!!
     }
 
-    class ViewHolder(val binding: ItemCategoryBinding) : RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(
+        val binding: ItemCategoryBinding,
+        private val onMoreClick: (Category) -> Unit,
+        private val onItemClick: (Category) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(item: Category) {
+            val name = item.name ?: DATA.EMPTY
+            val image = item.image ?: DATA.EMPTY
+            val interestedCount = item.interestedCount
+            val moviesCount = item.moviesCount
+
+            binding.image.loadGlideImage(image, false)
+
+            if (name == DATA.EMPTY) {
+                binding.name.visibility = View.GONE
+            } else {
+                binding.name.visibility = View.VISIBLE
+                binding.name.text = name
+            }
+
+            binding.numberInterested.text = interestedCount.toString()
+            binding.numberMovies.text = moviesCount.toString()
+
+            binding.more.setOnClickListener { onMoreClick(item) }
+            binding.item.setOnClickListener { onItemClick(item) }
+        }
+    }
 
     class DiffCallback : DiffUtil.ItemCallback<Category>() {
         override fun areItemsTheSame(oldItem: Category, newItem: Category): Boolean =

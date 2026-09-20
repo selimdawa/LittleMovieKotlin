@@ -94,7 +94,11 @@ class MyCategoriesActivity : AppCompatActivity() {
     }
 
     private fun setupAdapter() {
-        adapter = CategoryAdapter(activity)
+        adapter = CategoryAdapter { category ->
+            activity.openActivity<CategoryDetailsActivity>(
+                DATA.CATEGORY_ID to category.id, DATA.CATEGORY_NAME to category.name
+            )
+        }
         binding!!.recyclerView.adapter = adapter
     }
 

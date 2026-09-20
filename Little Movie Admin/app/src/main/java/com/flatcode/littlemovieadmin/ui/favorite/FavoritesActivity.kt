@@ -16,6 +16,10 @@ import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.ui.favorite.FavoritesViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityMoviesBinding
+import com.flatcode.littlemovieadmin.ui.movie.MovieDetailsActivity
+import com.flatcode.littlemovieadmin.utils.checkFavorite
+import com.flatcode.littlemovieadmin.utils.moreDeleteMovie
+import com.flatcode.littlemovieadmin.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -55,7 +59,24 @@ class FavoritesActivity : BaseActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        adapter = MovieAdapter(this)
+        adapter = MovieAdapter(
+            onItemClick = { movie ->
+                openActivity<MovieDetailsActivity>(
+                    extras = arrayOf(
+                        DATA.MOVIE_ID to movie.id,
+                        DATA.MOVIE_LINK to movie.movieLink
+                    )
+                )
+            },
+            onMoreClick = { movie ->
+                moreDeleteMovie(
+                    movie, DATA.CATEGORIES, movie.categoryId ?: DATA.EMPTY, DATA.MOVIES_COUNT, false, true
+                )
+            },
+            onFavoriteClick = { movie, imageView ->
+                imageView.checkFavorite(movie.id)
+            }
+        )
         binding.recyclerView.adapter = adapter
 
         binding.switchBar.all.setOnClickListener { viewModel.getData(DATA.TIMESTAMP) }

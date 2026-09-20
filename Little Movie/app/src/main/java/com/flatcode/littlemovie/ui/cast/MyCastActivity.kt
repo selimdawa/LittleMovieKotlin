@@ -94,7 +94,14 @@ class MyCastActivity : AppCompatActivity() {
     }
 
     private fun setupAdapter() {
-        adapter = CastAdapter(activity)
+        adapter = CastAdapter { cast ->
+            activity.openActivity<CastDetailsActivity>(
+                DATA.CAST_ID to cast.id,
+                DATA.CAST_NAME to cast.name,
+                DATA.CAST_IMAGE to cast.image,
+                DATA.CAST_ABOUT to cast.aboutMy
+            )
+        }
         binding!!.recyclerView.adapter = adapter
     }
 

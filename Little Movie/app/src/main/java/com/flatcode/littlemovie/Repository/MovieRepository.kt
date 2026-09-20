@@ -304,6 +304,15 @@ class MovieRepository @Inject constructor(
         }
     }
 
+    suspend fun deleteComment(movieId: String, commentId: String): Result<Unit> {
+        return try {
+            moviesRef.child(movieId).child(DATA.COMMENTS).child(commentId).removeValue().await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     fun getMovieCastIds(movieId: String): Flow<List<String>> = callbackFlow {
         val listener = castMovieRef.child(movieId).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {

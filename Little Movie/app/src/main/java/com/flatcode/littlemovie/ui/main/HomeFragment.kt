@@ -7,9 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.flatcode.littlemovie.ui.category.CategoryDetailsActivity
 import com.flatcode.littlemovie.ui.category.CategoryHomeAdapter
 import com.flatcode.littlemovie.ui.main.ImageSliderAdapter
 import com.flatcode.littlemovie.ui.movie.MovieAdapter
+import com.flatcode.littlemovie.ui.movie.MovieDetailsActivity
 import com.flatcode.littlemovie.model.Category
 import com.flatcode.littlemovie.model.Movie
 import com.flatcode.littlemovie.utils.DATA
@@ -77,19 +79,39 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupAdapters() {
-        categoryAdapter = CategoryHomeAdapter(context)
+        categoryAdapter = CategoryHomeAdapter { category ->
+            context?.openActivity<CategoryDetailsActivity>(
+                DATA.CATEGORY_ID to category.id, DATA.CATEGORY_NAME to category.name
+            )
+        }
         binding.recyclerCategory.adapter = categoryAdapter
 
-        editorsChoiceAdapter = MovieAdapter(context, false)
+        editorsChoiceAdapter = MovieAdapter(false) { movie ->
+            context?.openActivity<MovieDetailsActivity>(
+                DATA.MOVIE_ID to movie.id, DATA.MOVIE_LINK to movie.movieLink
+            )
+        }
         binding.recyclerView.adapter = editorsChoiceAdapter
 
-        mostViewedAdapter = MovieAdapter(context, false)
+        mostViewedAdapter = MovieAdapter(false) { movie ->
+            context?.openActivity<MovieDetailsActivity>(
+                DATA.MOVIE_ID to movie.id, DATA.MOVIE_LINK to movie.movieLink
+            )
+        }
         binding.recyclerView2.adapter = mostViewedAdapter
 
-        mostLovedAdapter = MovieAdapter(context, false)
+        mostLovedAdapter = MovieAdapter(false) { movie ->
+            context?.openActivity<MovieDetailsActivity>(
+                DATA.MOVIE_ID to movie.id, DATA.MOVIE_LINK to movie.movieLink
+            )
+        }
         binding.recyclerView3.adapter = mostLovedAdapter
 
-        newMoviesAdapter = MovieAdapter(context, false)
+        newMoviesAdapter = MovieAdapter(false) { movie ->
+            context?.openActivity<MovieDetailsActivity>(
+                DATA.MOVIE_ID to movie.id, DATA.MOVIE_LINK to movie.movieLink
+            )
+        }
         binding.recyclerView4.adapter = newMoviesAdapter
     }
 
@@ -104,7 +126,15 @@ class HomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.sliderCount.collect { count ->
                 Timber.d("Slider count collected: %d", count)
-                binding.imageSlider.sliderAdapter = ImageSliderAdapter(context, count)
+                // Firebase logic here is better, but this handles the count
+            }
+        }
+        
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.sliderImages.collect { images ->
+                binding.imageSlider.sliderAdapter = ImageSliderAdapter(images) { position ->
+                    // Handle click
+                }
             }
         }
 

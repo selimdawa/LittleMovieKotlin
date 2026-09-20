@@ -16,6 +16,7 @@ import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.ui.editorschoice.EditorsChoiceAddViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityEditorsChoiceAddBinding
+import com.flatcode.littlemovieadmin.utils.addToEditorsChoice
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -26,7 +27,6 @@ class EditorsChoiceAddActivity : BaseActivity() {
 
     private lateinit var binding: ActivityEditorsChoiceAddBinding
     private val viewModel: EditorsChoiceAddViewModel by viewModels()
-    private val list = mutableListOf<Movie?>()
     private lateinit var adapter: EditorsChoiceMovieAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +62,16 @@ class EditorsChoiceAddActivity : BaseActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        adapter = EditorsChoiceMovieAdapter(this, oldId, list as ArrayList<Movie?>, id)
+        adapter = EditorsChoiceMovieAdapter(
+            onAddClick = { movie ->
+                if (oldId != null) {
+                    addToEditorsChoice(this, movie.id, id)
+                    addToEditorsChoice(this, oldId, 0)
+                } else {
+                    addToEditorsChoice(this, movie.id, id)
+                }
+            }
+        )
         binding.recyclerView.adapter = adapter
 
         binding.all.setOnClickListener { viewModel.getData(DATA.TIMESTAMP) }
@@ -81,9 +90,8 @@ class EditorsChoiceAddActivity : BaseActivity() {
                     binding.progress.visibility = if (state.isLoading) View.VISIBLE else View.GONE
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", state.count)
                     
-                    list.clear()
-                    list.addAll(state.movies)
-                    adapter.notifyDataSetChanged()
+                    adapter.filterList = state.movies
+                    adapter.submitList(state.movies)
 
                     if (state.movies.isNotEmpty()) {
                         binding.recyclerView.visibility = View.VISIBLE

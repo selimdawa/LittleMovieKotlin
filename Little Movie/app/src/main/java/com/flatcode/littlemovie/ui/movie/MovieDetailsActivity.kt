@@ -14,6 +14,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
+import com.flatcode.littlemovie.ui.cast.CastDetailsActivity
 import com.flatcode.littlemovie.ui.cast.CastMovieAdapter
 import com.flatcode.littlemovie.model.Cast
 import com.flatcode.littlemovie.model.Comment
@@ -94,11 +95,33 @@ class MovieDetailsActivity : AppCompatActivity() {
     }
 
     private fun setupAdapters() {
-        adapterCast = CastMovieAdapter(activity)
+        adapterCast = CastMovieAdapter { cast ->
+            activity.openActivity<CastDetailsActivity>(
+                DATA.CAST_ID to cast.id,
+                DATA.CAST_NAME to cast.name,
+                DATA.CAST_IMAGE to cast.image,
+                DATA.CAST_ABOUT to cast.aboutMy
+            )
+        }
         binding!!.recyclerCast.adapter = adapterCast
         
-        adapterComment = CommentAdapter(activity)
+        adapterComment = CommentAdapter { comment ->
+            showDeleteCommentDialog(comment)
+        }
         binding!!.recyclerComment.adapter = adapterComment
+    }
+
+    private fun showDeleteCommentDialog(comment: Comment) {
+        AlertDialog.Builder(activity)
+            .setTitle("Delete Comment")
+            .setMessage("Are you sure you want to delete this comment?")
+            .setPositiveButton("DELETE") { _, _ ->
+                val movieId = comment.movieId ?: ""
+                val commentId = comment.id ?: ""
+                viewModel.deleteComment(movieId, commentId)
+            }
+            .setNegativeButton("CANCEL") { dialog, _ -> dialog.dismiss() }
+            .show()
     }
 
     private fun observeViewModel() {
@@ -177,6 +200,19 @@ class MovieDetailsActivity : AppCompatActivity() {
                         Toast.makeText(activity, "Failed to add comment: ${it.exceptionOrNull()?.message}", Toast.LENGTH_SHORT).show()
                     }
                     viewModel.resetAddCommentStatus()
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.deleteCommentStatus.collect { result ->
+                result?.let {
+                    if (it.isSuccess) {
+                        Toast.makeText(activity, "Deleted...", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(activity, "Failed to delete: ${it.exceptionOrNull()?.message}", Toast.LENGTH_SHORT).show()
+                    }
+                    viewModel.resetDeleteCommentStatus()
                 }
             }
         }

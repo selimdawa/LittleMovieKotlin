@@ -21,49 +21,16 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-class CommentAdapter(private val context: Context) :
+class CommentAdapter(private val onDeleteClick: (Comment) -> Unit) :
     ListAdapter<Comment, CommentAdapter.ViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemCommentBinding.inflate(LayoutInflater.from(context), parent, false)
+        val binding = ItemCommentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = getItem(position)
-        val commentId = DATA.EMPTY + item.id
-        val movieId = DATA.EMPTY + item.movieId
-        val comment = DATA.EMPTY + item.comment
-        val publisher = DATA.EMPTY + item.publisher
-        val timestamp = DATA.EMPTY + item.timestamp
-        val date: String = Application.formatTimestamp(timestamp.toLong())
-
-        holder.binding.date.text = date
-        holder.binding.comment.text = comment
-        loadUserDetails(publisher, holder.binding.name, holder.binding.image)
-
-        holder.binding.item.setOnClickListener {
-            if (publisher == DATA.FirebaseUserUid) deleteComment(commentId, movieId)
-        }
-    }
-
-    private fun deleteComment(commentId: String, movieId: String) {
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle("Delete Comment")
-            .setMessage("Are you sure you want to delete this comment?")
-            .setPositiveButton("DELETE") { _: DialogInterface?, _: Int ->
-                val ref = FirebaseDatabase.getInstance().getReference(DATA.MOVIES)
-                ref.child(movieId).child(DATA.COMMENTS).child(commentId).removeValue()
-                    .addOnSuccessListener {
-                        Toast.makeText(context, "Deleted...", Toast.LENGTH_SHORT).show()
-                    }.addOnFailureListener { e: Exception ->
-                        Toast.makeText(
-                            context, "Failed to delete duo to " + e.message, Toast.LENGTH_SHORT
-                        ).show()
-                    }
-            }
-            .setNegativeButton("CANCEL") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
-            .show()
+        holder.bind(getItem(position), onDeleteClick)
     }
 
     object DiffCallback : DiffUtil.ItemCallback<Comment>() {
@@ -74,19 +41,35 @@ class CommentAdapter(private val context: Context) :
             oldItem.id == newItem.id && oldItem.comment == newItem.comment
     }
 
-    inner class ViewHolder(val binding: ItemCommentBinding) : RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(private val binding: ItemCommentBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: Comment, onDeleteClick: (Comment) -> Unit) {
+            val publisher = item.publisher ?: ""
+            val comment = item.comment ?: ""
+            val date: String = Application.formatTimestamp(item.timestamp)
 
-    private fun loadUserDetails(publisher: String, name: TextView, image: ImageView) {
-        val ref = FirebaseDatabase.getInstance().getReference(DATA.USERS)
-        ref.child(publisher).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val username = DATA.EMPTY + snapshot.child(DATA.USER_NAME).value
-                val profileImage = DATA.EMPTY + snapshot.child(DATA.PROFILE_IMAGE).value
-                VOID.GlideImage(true, context, profileImage, image)
-                name.text = username
+            with(binding) {
+                this.date.text = date
+                this.comment.text = comment
+                loadUserDetails(publisher, name, image)
+
+                this.item.setOnClickListener {
+                    if (publisher == DATA.FirebaseUserUid) onDeleteClick(item)
+                }
             }
+        }
 
-            override fun onCancelled(error: DatabaseError) {}
-        })
+        private fun loadUserDetails(publisher: String, name: TextView, image: ImageView) {
+            FirebaseDatabase.getInstance().getReference(DATA.USERS)
+                .child(publisher).addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val username = snapshot.child(DATA.USER_NAME).value?.toString() ?: ""
+                        val profileImage = snapshot.child(DATA.PROFILE_IMAGE).value?.toString() ?: ""
+                        VOID.GlideImage(true, itemView.context, profileImage, image)
+                        name.text = username
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {}
+                })
+        }
     }
 }

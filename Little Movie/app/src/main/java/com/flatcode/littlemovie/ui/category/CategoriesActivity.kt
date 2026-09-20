@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.model.Category
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.utils.DATA
+import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.databinding.ActivityCategoriesBinding
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -67,7 +68,11 @@ class CategoriesActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        adapter = CategoryAdapter(activity)
+        adapter = CategoryAdapter { category ->
+            activity.openActivity<CategoryDetailsActivity>(
+                DATA.CATEGORY_ID to category.id, DATA.CATEGORY_NAME to category.name
+            )
+        }
         binding!!.recyclerView.adapter = adapter
 
         binding!!.switchBar.all.setOnClickListener {
