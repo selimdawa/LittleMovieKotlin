@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -34,7 +33,7 @@
                     android:layout_height="wrap_content"
                     android:background="?mc_tick">
 
-                    <com.smarteist.autoimageslider.SliderView
+                    <io.selimdawa.autoimageslider.SliderView
                         android:id="@+id/imageSlider"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
@@ -80,20 +79,37 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
+                <RelativeLayout
                     android:id="@+id/showMore"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5sp"
                     android:layout_marginBottom="10sp"
-                    android:drawableEnd="@drawable/ic_back_white"
-                    android:drawableTint="?colorError"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="10sp"
-                    android:text="@string/editors_choice"
-                    android:textColor="?colorError"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:paddingHorizontal="10sp">
+
+                    <TextView
+                        android:id="@+id/name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerInParent="true"
+                        android:text="@string/editors_choice"
+                        android:textColor="?colorError"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_toEndOf="@+id/name"
+                        android:contentDescription="@null"
+                        android:paddingEnd="10sp"
+                        android:rotation="180"
+                        android:src="@drawable/ic_back_white"
+                        app:tint="?colorError" />
+
+                </RelativeLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -143,18 +159,35 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
+                <RelativeLayout
                     android:id="@+id/showMore2"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableEnd="@drawable/ic_back_white"
-                    android:drawableTint="?colorError"
-                    android:gravity="center_vertical"
-                    android:padding="10sp"
-                    android:text="@string/most_views"
-                    android:textColor="?colorError"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:padding="10sp">
+
+                    <TextView
+                        android:id="@+id/name2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerInParent="true"
+                        android:text="@string/most_views"
+                        android:textColor="?colorError"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_toEndOf="@+id/mostViews"
+                        android:contentDescription="@null"
+                        android:paddingEnd="10sp"
+                        android:rotation="180"
+                        android:src="@drawable/ic_back_white"
+                        app:tint="?colorError" />
+
+                </RelativeLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -204,18 +237,35 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
+                <RelativeLayout
                     android:id="@+id/showMore3"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableEnd="@drawable/ic_back_white"
-                    android:drawableTint="?colorError"
-                    android:gravity="center_vertical"
-                    android:padding="10sp"
-                    android:text="@string/most_loves"
-                    android:textColor="?colorError"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:padding="10sp">
+
+                    <TextView
+                        android:id="@+id/name3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerInParent="true"
+                        android:text="@string/most_loves"
+                        android:textColor="?colorError"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_toEndOf="@+id/name3"
+                        android:contentDescription="@null"
+                        android:paddingEnd="10sp"
+                        android:rotation="180"
+                        android:src="@drawable/ic_back_white"
+                        app:tint="?colorError" />
+
+                </RelativeLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -265,18 +315,35 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
+                <RelativeLayout
                     android:id="@+id/showMore4"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableEnd="@drawable/ic_back_white"
-                    android:drawableTint="?colorError"
-                    android:gravity="center_vertical"
-                    android:padding="10sp"
-                    android:text="@string/new_movies"
-                    android:textColor="?colorError"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:padding="10sp">
+
+                    <TextView
+                        android:id="@+id/name4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerInParent="true"
+                        android:text="@string/new_movies"
+                        android:textColor="?colorError"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_toEndOf="@+id/name4"
+                        android:contentDescription="@null"
+                        android:paddingEnd="10sp"
+                        android:rotation="180"
+                        android:src="@drawable/ic_back_white"
+                        app:tint="?colorError" />
+
+                </RelativeLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"

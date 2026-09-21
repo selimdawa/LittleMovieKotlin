@@ -7,19 +7,17 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.flatcode.littlemovie.databinding.FragmentHomeBinding
+import com.flatcode.littlemovie.model.Movie
 import com.flatcode.littlemovie.ui.category.CategoryDetailsActivity
 import com.flatcode.littlemovie.ui.category.CategoryHomeAdapter
-import com.flatcode.littlemovie.ui.main.ImageSliderAdapter
 import com.flatcode.littlemovie.ui.movie.MovieAdapter
 import com.flatcode.littlemovie.ui.movie.MovieDetailsActivity
-import com.flatcode.littlemovie.model.Category
-import com.flatcode.littlemovie.model.Movie
+import com.flatcode.littlemovie.ui.movie.ShowMoreActivity
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.openActivity
-import com.flatcode.littlemovie.databinding.FragmentHomeBinding
-import com.flatcode.littlemovie.ui.movie.ShowMoreActivity
-import kotlinx.coroutines.launch
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -51,28 +49,28 @@ class HomeFragment : Fragment() {
         binding.showMore.setOnClickListener {
             context?.openActivity<ShowMoreActivity>(
                 DATA.SHOW_MORE_TYPE to DATA.EDITORS_CHOICE,
-                DATA.SHOW_MORE_NAME to binding.showMore.text.toString(),
+                DATA.SHOW_MORE_NAME to binding.name.text.toString(),
                 DATA.SHOW_MORE_BOOLEAN to (DATA.EMPTY + false)
             )
         }
         binding.showMore2.setOnClickListener {
             context?.openActivity<ShowMoreActivity>(
                 DATA.SHOW_MORE_TYPE to DATA.VIEWS_COUNT,
-                DATA.SHOW_MORE_NAME to binding.showMore2.text.toString(),
+                DATA.SHOW_MORE_NAME to binding.name2.text.toString(),
                 DATA.SHOW_MORE_BOOLEAN to (DATA.EMPTY + true)
             )
         }
         binding.showMore3.setOnClickListener {
             context?.openActivity<ShowMoreActivity>(
                 DATA.SHOW_MORE_TYPE to DATA.LOVES_COUNT,
-                DATA.SHOW_MORE_NAME to binding.showMore3.text.toString(),
+                DATA.SHOW_MORE_NAME to binding.name3.text.toString(),
                 DATA.SHOW_MORE_BOOLEAN to (DATA.EMPTY + true)
             )
         }
         binding.showMore4.setOnClickListener {
             context?.openActivity<ShowMoreActivity>(
                 DATA.SHOW_MORE_TYPE to DATA.TIMESTAMP,
-                DATA.SHOW_MORE_NAME to binding.showMore4.text.toString(),
+                DATA.SHOW_MORE_NAME to binding.name4.text.toString(),
                 DATA.SHOW_MORE_BOOLEAN to (DATA.EMPTY + true)
             )
         }
@@ -129,7 +127,7 @@ class HomeFragment : Fragment() {
                 // Firebase logic here is better, but this handles the count
             }
         }
-        
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.sliderImages.collect { images ->
                 binding.imageSlider.setSliderAdapter(ImageSliderAdapter(images) { position ->
@@ -142,8 +140,7 @@ class HomeFragment : Fragment() {
             viewModel.editorsChoiceMovies.collect { movies ->
                 Timber.d("Editors choice movies collected: %d", movies.size)
                 updateMovieList(
-                    movies, editorsChoiceAdapter,
-                    binding.bar, binding.recyclerView, binding.empty
+                    movies, editorsChoiceAdapter, binding.bar, binding.recyclerView, binding.empty
                 )
             }
         }
@@ -152,8 +149,7 @@ class HomeFragment : Fragment() {
             viewModel.mostViewedMovies.collect { movies ->
                 Timber.d("Most viewed movies collected: %d", movies.size)
                 updateMovieList(
-                    movies, mostViewedAdapter,
-                    binding.bar2, binding.recyclerView2, binding.empty2
+                    movies, mostViewedAdapter, binding.bar2, binding.recyclerView2, binding.empty2
                 )
             }
         }
@@ -162,8 +158,7 @@ class HomeFragment : Fragment() {
             viewModel.mostLovedMovies.collect { movies ->
                 Timber.d("Most loved movies collected: %d", movies.size)
                 updateMovieList(
-                    movies, mostLovedAdapter,
-                    binding.bar3, binding.recyclerView3, binding.empty3
+                    movies, mostLovedAdapter, binding.bar3, binding.recyclerView3, binding.empty3
                 )
             }
         }
@@ -172,16 +167,14 @@ class HomeFragment : Fragment() {
             viewModel.newMovies.collect { movies ->
                 Timber.d("New movies collected: %d", movies.size)
                 updateMovieList(
-                    movies, newMoviesAdapter,
-                    binding.bar4, binding.recyclerView4, binding.empty4
+                    movies, newMoviesAdapter, binding.bar4, binding.recyclerView4, binding.empty4
                 )
             }
         }
     }
 
     private fun updateMovieList(
-        movies: List<Movie>, adapter: MovieAdapter,
-        bar: View, recyclerView: View, empty: View
+        movies: List<Movie>, adapter: MovieAdapter, bar: View, recyclerView: View, empty: View
     ) {
         adapter.submitList(movies)
         bar.visibility = View.GONE

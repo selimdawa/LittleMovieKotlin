@@ -10,34 +10,31 @@
     tools:context="com.flatcode.littlemovie.ui.main.MainActivity"
     tools:ignore="all">
 
-        <include
-            android:id="@+id/toolbar"
-            layout="@layout/toolbar_main"
-            android:visibility="visible" />
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar_main"
+        android:visibility="visible" />
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/nav_host_fragment"
-            android:name="androidx.navigation.fragment.NavHostFragment"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            app:defaultNavHost="true"
-            app:navGraph="@navigation/nav_graph" />
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/nav_graph" />
 
-        <com.nafis.bottomnavigation.NafisBottomNavigation
-            android:id="@+id/bottomNavigation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:mbn_circleColor="?mc_track"
-            app:mbn_backgroundBottomColor="?mc_track"
-            app:mbn_countBackgroundColor="?colorOnBackground"
-            app:mbn_countTextColor="?colorError"
-            app:mbn_defaultIconColor="?colorOnBackground"
-            app:mbn_rippleColor="?colorOnBackground"
-            app:mbn_selectedIconColor="@color/white"
-            app:mbn_shadowColor="@color/shadow_color" />
+    <io.selimdawa.bubblebottom.BubbleBottomNavigation
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:mbn_backgroundBottomColor="?mc_track"
+        app:mbn_circleColor="?mc_track"
+        app:mbn_countBackgroundColor="?colorOnBackground"
+        app:mbn_countTextColor="?colorError"
+        app:mbn_defaultIconColor="?colorOnBackground"
+        app:mbn_rippleColor="?colorOnBackground"
+        app:mbn_selectedIconColor="@color/white"
+        app:mbn_shadowColor="@color/shadow" />
 
-    </LinearLayout>
-
-    <!-- app:mbn_countBackgroundColor="@color/basic2"
-     app:mbn_countTextColor="@color/white" -->
+</LinearLayout>

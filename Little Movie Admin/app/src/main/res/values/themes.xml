@@ -1,6 +1,4 @@
 <resources>
-    <!-- Base application theme. -->
-
     <!--style for ripple library-->
     <style name="RippleStyleWhite">
         <item name="mrl_rippleOverlay">true</item>
@@ -18,5 +16,4 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
-
 </resources>

@@ -7,8 +7,8 @@
 
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.flatcode.littlemovieadmin.Fragment.SplashFragment"
-        android:label="SplashFragment"
+        android:name="com.flatcode.littlemovieadmin.ui.main.SplashFragment"
+        android:label="@string/splash_fragment"
         tools:layout="@layout/fragment_splash">
         <action
             android:id="@+id/action_splashFragment_to_loginFragment"
@@ -24,8 +24,8 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.flatcode.littlemovieadmin.Fragment.LoginFragment"
-        android:label="LoginFragment"
+        android:name="com.flatcode.littlemovieadmin.ui.auth.LoginFragment"
+        android:label="@string/login_fragment"
         tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_loginFragment_to_homeFragment"
@@ -36,8 +36,8 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.flatcode.littlemovieadmin.Fragment.HomeFragment"
-        android:label="HomeFragment"
+        android:name="com.flatcode.littlemovieadmin.ui.main.HomeFragment"
+        android:label="@string/home_fragment"
         tools:layout="@layout/fragment_home" />
 
 </navigation>

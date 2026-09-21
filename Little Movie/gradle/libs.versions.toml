@@ -1,8 +1,7 @@
 [versions]
 agp = "9.4.0"
 androidImageCropper = "4.5.0"
-#noinspection GradleDependency
-autoimageslider = "1.4.0-appcompat"
+autoImageSlider = "1.0.1"
 #noinspection GradleDependency
 exoplayer = "2.19.1"
 firebaseBom = "34.19.0"
@@ -12,8 +11,8 @@ appcompat = "1.8.0"
 material = "1.14.0"
 activity = "1.13.0"
 fragment = "1.9.0"
-materialRipple = "1.0.2"
-nafisbottomnav = "5.0"
+materialRipple = "1.0.1"
+bubbleBottom = "1.0.2"
 googleServices = "4.5.0"
 multicolors = "1.0.10"
 lifecycle = "2.11.0"
@@ -25,12 +24,11 @@ room = "2.8.5"
 cloudinary = "3.1.2"
 ksp = "2.3.11"
 kotlin = "2.4.20"
-circleimageview = "3.1.0"
 
 [libraries]
 android-image-cropper = { module = "com.github.CanHub:Android-Image-Cropper", version.ref = "androidImageCropper" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-autoimageslider = { module = "com.github.smarteist:autoimageslider", version.ref = "autoimageslider" }
+autoimageslider = { module = "io.github.selimdawa:auto-image-slider", version.ref = "autoImageSlider" }
 exoplayer = { module = "com.google.android.exoplayer:exoplayer", version.ref = "exoplayer" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
@@ -38,14 +36,13 @@ firebase-database = { module = "com.google.firebase:firebase-database" }
 cloudinary-android = { module = "com.cloudinary:cloudinary-android", version.ref = "cloudinary" }
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
-circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragment" }
 multicolors = { module = "com.github.selimdawa:MultiColors", version.ref = "multicolors" }
-material-ripple = { module = "com.balysv:material-ripple", version.ref = "materialRipple" }
-nafisbottomnav = { module = "com.github.Foysalofficial:NafisBottomNav", version.ref = "nafisbottomnav" }
+material-ripple = { module = "io.github.selimdawa:material-ripple-effect", version.ref = "materialRipple" }
+bubblebottom = { module = "io.github.selimdawa:bubble-bottom", version.ref = "bubbleBottom" }
 #MVVM
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 #Hilt

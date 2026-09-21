@@ -10,7 +10,7 @@ appcompat = "1.8.0"
 material = "1.14.0"
 fragment = "1.9.0"
 activity = "1.13.0"
-materialRipple = "1.0.2"
+materialRipple = "1.0.1"
 googleServices = "4.5.0"
 multicolors = "1.0.10"
 hilt = "2.60.1"
@@ -38,7 +38,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-activity = { group = "androidx.activity", name = "activity-ktx", version.ref = "activity" }
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragment" }
 multicolors = { module = "com.github.selimdawa:MultiColors", version.ref = "multicolors" }
-material-ripple = { module = "com.balysv:material-ripple", version.ref = "materialRipple" }
+material-ripple = { module = "io.github.selimdawa:material-ripple-effect", version.ref = "materialRipple" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }

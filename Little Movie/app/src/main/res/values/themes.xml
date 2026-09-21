@@ -1,5 +1,4 @@
 <resources>
-    <!-- Base application theme. -->
 
     <style name="Theme.MC.S1" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
@@ -22,5 +21,4 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
-
 </resources>

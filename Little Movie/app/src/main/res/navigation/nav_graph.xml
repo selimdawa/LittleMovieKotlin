@@ -8,24 +8,24 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.flatcode.littlemovie.ui.main.HomeFragment"
-        android:label="HomeFragment"
+        android:label="@string/home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.flatcode.littlemovie.Fragment.SettingsFragment"
-        android:label="SettingsFragment"
+        android:name="com.flatcode.littlemovie.ui.settings.SettingsFragment"
+        android:label="@string/settings"
         tools:layout="@layout/fragment_settings" />
 
     <fragment
         android:id="@+id/myMoviesFragment"
-        android:name="com.flatcode.littlemovie.Fragment.myMoviesFragment"
-        android:label="myMoviesFragment"
+        android:name="com.flatcode.littlemovie.ui.movie.myMoviesFragment"
+        android:label="@string/my_movies"
         tools:layout="@layout/fragment_my_movies" />
 
     <fragment
         android:id="@+id/categoriesFragment"
-        android:name="com.flatcode.littlemovie.Fragment.CategoriesFragment"
-        android:label="CategoriesFragment"
+        android:name="com.flatcode.littlemovie.ui.category.CategoriesFragment"
+        android:label="@string/categories"
         tools:layout="@layout/fragment_categories" />
 </navigation>
