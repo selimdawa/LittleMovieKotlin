@@ -5,13 +5,17 @@ import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -47,6 +51,16 @@ class ProfileEditActivity : AppCompatActivity() {
         }
     }
 
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            launchImagePicker()
+        } else {
+            Toast.makeText(context, "Permission denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -77,22 +91,38 @@ class ProfileEditActivity : AppCompatActivity() {
 
         binding!!.toolbar.nameSpace.setText(R.string.edit_profile)
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
-        binding!!.image.setOnClickListener {
-            cropImage.launch(
-                CropImageContractOptions(
-                    uri = null,
-                    cropImageOptions = CropImageOptions(
-                        minCropResultWidth = DATA.MIX_SQUARE,
-                        minCropResultHeight = DATA.MIX_SQUARE,
-                        aspectRatioX = 1,
-                        aspectRatioY = 1,
-                        fixAspectRatio = true,
-                        cropShape = CropImageView.CropShape.OVAL
-                    )
+        binding!!.image.setOnClickListener { checkPermissionAndPickImage() }
+        binding!!.go.setOnClickListener { validateData() }
+    }
+
+    private fun checkPermissionAndPickImage() {
+        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Manifest.permission.READ_MEDIA_IMAGES
+        } else {
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        }
+
+        if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED) {
+            launchImagePicker()
+        } else {
+            requestPermissionLauncher.launch(permission)
+        }
+    }
+
+    private fun launchImagePicker() {
+        cropImage.launch(
+            CropImageContractOptions(
+                uri = null,
+                cropImageOptions = CropImageOptions(
+                    minCropResultWidth = DATA.MIX_SQUARE,
+                    minCropResultHeight = DATA.MIX_SQUARE,
+                    aspectRatioX = 1,
+                    aspectRatioY = 1,
+                    fixAspectRatio = true,
+                    cropShape = CropImageView.CropShape.OVAL
                 )
             )
-        }
-        binding!!.go.setOnClickListener { validateData() }
+        )
     }
 
     private fun observeViewModel() {

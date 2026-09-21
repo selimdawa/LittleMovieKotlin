@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
@@ -19,6 +20,8 @@ import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.DATA.castMovie
+import com.flatcode.littlemovieadmin.utils.checkStoragePermission
+import com.flatcode.littlemovieadmin.utils.checkVideoPermission
 import com.flatcode.littlemovieadmin.utils.convertDuration
 import com.flatcode.littlemovieadmin.utils.cropVideoSquare
 import com.flatcode.littlemovieadmin.utils.loadGlideBlurUri
@@ -26,6 +29,8 @@ import com.flatcode.littlemovieadmin.utils.openActivity
 import com.flatcode.littlemovieadmin.ui.movie.MovieAddViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityMovieAddBinding
 import com.flatcode.littlemovieadmin.utils.pickImage
+import com.flatcode.littlemovieadmin.utils.requestStoragePermission
+import com.flatcode.littlemovieadmin.utils.requestVideoPermission
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -56,8 +61,16 @@ class MovieAddActivity : BaseActivity() {
         binding.toolbar.nameSpace.setText(R.string.add_new_movie)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
         binding.category.setOnClickListener { categoryPickDialog() }
-        binding.image.setOnClickListener { pickImage(DATA.MIX_VIDEO_X) }
-        binding.chooseMovie.setOnClickListener { openVideoFiles() }
+        binding.image.setOnClickListener {
+            requestStorage(DATA.MIX_VIDEO_X) {
+                pickImage(DATA.MIX_VIDEO_X)
+            }
+        }
+        binding.chooseMovie.setOnClickListener {
+            requestVideo(101) {
+                openVideoFiles()
+            }
+        }
         binding.toolbar.ok.setOnClickListener { validateData() }
 
         observeState()
@@ -139,6 +152,18 @@ class MovieAddActivity : BaseActivity() {
     private fun openVideoFiles() {
         val intent = Intent(Intent.ACTION_GET_CONTENT).apply { type = "video/*" }
         startActivityForResult(intent, 101)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            when (requestCode) {
+                DATA.MIX_VIDEO_X -> pickImage(DATA.MIX_VIDEO_X)
+                101 -> openVideoFiles()
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

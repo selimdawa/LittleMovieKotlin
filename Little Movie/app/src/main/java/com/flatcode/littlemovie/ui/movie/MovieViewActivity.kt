@@ -3,10 +3,13 @@ package com.flatcode.littlemovie.ui.movie
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.Window
 import android.view.WindowManager
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -58,16 +61,29 @@ class MovieViewActivity : AppCompatActivity() {
             VOID.incrementViewCount(id)
         }
         binding!!.playerView.findViewById<ImageView>(R.id.exo_floating_widget).setOnClickListener {
-            exoPlayer!!.playWhenReady = false
-            exoPlayer!!.release()
-            val service = Intent(activity, FloatingWidgetService::class.java)
-            service.putExtra(DATA.MOVIE_LINK, videoUri.toString())
-            service.putExtra(DATA.MOVIE_ID, id)
-            startService(service)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+                val intent = Intent(
+                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:$packageName")
+                )
+                startActivity(intent)
+                Toast.makeText(this, "Please allow drawing over other apps", Toast.LENGTH_SHORT).show()
+            } else {
+                startFloatingService()
+            }
         }
         val trackSelector = DefaultTrackSelector(this, AdaptiveTrackSelection.Factory())
         exoPlayer = ExoPlayer.Builder(this).setTrackSelector(trackSelector).build()
         playVideo()
+    }
+
+    private fun startFloatingService() {
+        exoPlayer!!.playWhenReady = false
+        exoPlayer!!.release()
+        val service = Intent(activity, FloatingWidgetService::class.java)
+        service.putExtra(DATA.MOVIE_LINK, videoUri.toString())
+        service.putExtra(DATA.MOVIE_ID, id)
+        startService(service)
     }
 
     private fun setFullScreen() {

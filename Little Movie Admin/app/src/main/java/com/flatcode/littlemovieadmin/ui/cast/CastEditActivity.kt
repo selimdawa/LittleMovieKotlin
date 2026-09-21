@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
@@ -48,7 +49,11 @@ class CastEditActivity : BaseActivity() {
 
         binding.toolbar.nameSpace.setText(R.string.edit_cast)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.image.setOnClickListener { pickImage(DATA.MIX_SQUARE) }
+        binding.image.setOnClickListener {
+            requestStorage(DATA.MIX_SQUARE) {
+                pickImage(DATA.MIX_SQUARE)
+            }
+        }
         binding.toolbar.ok.setOnClickListener { validateData() }
 
         observeState()
@@ -87,6 +92,17 @@ class CastEditActivity : BaseActivity() {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (requestCode == DATA.MIX_SQUARE) {
+                pickImage(DATA.MIX_SQUARE)
             }
         }
     }

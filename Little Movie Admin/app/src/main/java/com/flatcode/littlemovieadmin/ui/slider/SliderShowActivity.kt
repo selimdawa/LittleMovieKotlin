@@ -3,6 +3,7 @@ package com.flatcode.littlemovieadmin.ui.slider
 import android.Manifest
 import android.app.ProgressDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -60,8 +61,21 @@ class SliderShowActivity : BaseActivity() {
 
         addButtons.forEachIndexed { index, button ->
             button.setOnClickListener {
+                requestStorage(DATA.MIX_SLIDER_X) {
+                    pickImage(DATA.MIX_SLIDER_X)
+                    imageNumber = index + 1
+                }
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (requestCode == DATA.MIX_SLIDER_X) {
                 pickImage(DATA.MIX_SLIDER_X)
-                imageNumber = index + 1
             }
         }
     }

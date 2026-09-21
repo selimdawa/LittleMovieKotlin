@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
@@ -57,7 +58,11 @@ class MovieEditActivity : BaseActivity() {
         binding.toolbar.nameSpace.setText(R.string.edit_movie)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
         binding.category.setOnClickListener { categoryPickDialog() }
-        binding.editImage.setOnClickListener { pickImage(DATA.MIX_VIDEO_X) }
+        binding.editImage.setOnClickListener {
+            requestStorage(DATA.MIX_VIDEO_X) {
+                pickImage(DATA.MIX_VIDEO_X)
+            }
+        }
         binding.toolbar.ok.setOnClickListener { validateData() }
 
         observeState()
@@ -130,6 +135,17 @@ class MovieEditActivity : BaseActivity() {
             .setItems(categoryNames) { _, which ->
                 viewModel.setCategoryId(categories[which].id, categories[which].name)
             }.show()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (requestCode == DATA.MIX_VIDEO_X) {
+                pickImage(DATA.MIX_VIDEO_X)
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

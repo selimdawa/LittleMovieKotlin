@@ -1,11 +1,20 @@
 package com.flatcode.littlemovieadmin.ui
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.flatcode.littlemovieadmin.utils.checkStoragePermission
+import com.flatcode.littlemovieadmin.utils.checkVideoPermission
+import com.flatcode.littlemovieadmin.utils.requestStoragePermission
+import com.flatcode.littlemovieadmin.utils.requestVideoPermission
 
 open class BaseActivity : AppCompatActivity() {
 
@@ -27,6 +36,22 @@ open class BaseActivity : AppCompatActivity() {
                 v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
                 insets
             }
+        }
+    }
+
+    fun requestStorage(requestCode: Int, onGranted: () -> Unit) {
+        if (checkStoragePermission()) {
+            onGranted()
+        } else {
+            requestStoragePermission(requestCode)
+        }
+    }
+
+    fun requestVideo(requestCode: Int, onGranted: () -> Unit) {
+        if (checkVideoPermission()) {
+            onGranted()
+        } else {
+            requestVideoPermission(requestCode)
         }
     }
 }

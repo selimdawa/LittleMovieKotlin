@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
@@ -16,11 +17,13 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA
+import com.flatcode.littlemovieadmin.utils.checkStoragePermission
 import com.flatcode.littlemovieadmin.utils.cropImageSquare
 import com.flatcode.littlemovieadmin.utils.getFileExtension
 import com.flatcode.littlemovieadmin.ui.cast.CastAddViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityCastAddBinding
 import com.flatcode.littlemovieadmin.utils.pickImage
+import com.flatcode.littlemovieadmin.utils.requestStoragePermission
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -44,7 +47,11 @@ class CastAddActivity : BaseActivity() {
 
         binding.toolbar.nameSpace.setText(R.string.add_new_cast)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.image.setOnClickListener { pickImage(DATA.MIX_SQUARE) }
+        binding.image.setOnClickListener {
+            requestStorage(DATA.MIX_SQUARE) {
+                pickImage(DATA.MIX_SQUARE)
+            }
+        }
         binding.toolbar.ok.setOnClickListener { validateData() }
 
         observeState()
@@ -78,6 +85,17 @@ class CastAddActivity : BaseActivity() {
                 viewModel.uiState.collect { state ->
                     if (state.isLoading) progressDialog?.show() else progressDialog?.dismiss()
                 }
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (requestCode == DATA.MIX_SQUARE) {
+                pickImage(DATA.MIX_SQUARE)
             }
         }
     }
