@@ -12,11 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovie.databinding.ItemCategoryBinding
 import com.flatcode.littlemovie.filter.CategoryFilter
 import com.flatcode.littlemovie.model.Category
-import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.GlideImage
-import com.flatcode.littlemovie.utils.checkInterested
-import com.flatcode.littlemovie.utils.isInterested
-import com.flatcode.littlemovie.utils.openActivity
+import com.flatcode.littlemovie.utils.*
 
 class CategoryAdapter(private val onItemClick: (Category) -> Unit) :
     ListAdapter<Category, CategoryAdapter.ViewHolder>(DiffCallback), Filterable {
@@ -59,7 +55,7 @@ class CategoryAdapter(private val onItemClick: (Category) -> Unit) :
             val moviesCount = item.moviesCount.toString()
 
             with(binding) {
-                this.image.GlideImage(false, image)
+                this.image.loadImage(false, image)
 
                 if (name.isEmpty()) {
                     this.name.visibility = View.GONE

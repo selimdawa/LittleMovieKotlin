@@ -1,8 +1,5 @@
 package com.flatcode.littlemovieadmin.ui.cast
 
-import android.Manifest
-import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -10,20 +7,17 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.checkStoragePermission
 import com.flatcode.littlemovieadmin.utils.cropImageSquare
-import com.flatcode.littlemovieadmin.utils.getFileExtension
-import com.flatcode.littlemovieadmin.ui.cast.CastAddViewModel
+import com.flatcode.littlemovieadmin.utils.createProgressDialog
 import com.flatcode.littlemovieadmin.databinding.ActivityCastAddBinding
 import com.flatcode.littlemovieadmin.utils.pickImage
-import com.flatcode.littlemovieadmin.utils.requestStoragePermission
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -33,17 +27,12 @@ class CastAddActivity : BaseActivity() {
     private lateinit var binding: ActivityCastAddBinding
     private val viewModel: CastAddViewModel by viewModels()
     private var imageUri: Uri? = null
-    private var progressDialog: ProgressDialog? = null
+    private var progressDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCastAddBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        progressDialog = ProgressDialog(this).apply {
-            setTitle("Please wait...")
-            setCanceledOnTouchOutside(false)
-        }
 
         binding.toolbar.nameSpace.setText(R.string.add_new_cast)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
@@ -69,7 +58,7 @@ class CastAddActivity : BaseActivity() {
         } else if (uri == null) {
             Toast.makeText(this, "Pick Image...", Toast.LENGTH_SHORT).show()
         } else {
-            progressDialog?.setMessage("Uploading Cast...")
+            progressDialog = createProgressDialog("Uploading Cast...", "Please wait...")
             progressDialog?.show()
             viewModel.uploadCast(name, aboutMy, uri) { success, message ->
                 progressDialog?.dismiss()
@@ -83,7 +72,7 @@ class CastAddActivity : BaseActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
-                    if (state.isLoading) progressDialog?.show() else progressDialog?.dismiss()
+                    // UI handles loading through progressDialog in validateData
                 }
             }
         }

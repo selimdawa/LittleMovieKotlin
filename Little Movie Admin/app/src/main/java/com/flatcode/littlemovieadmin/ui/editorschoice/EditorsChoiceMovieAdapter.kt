@@ -12,7 +12,7 @@ import com.flatcode.littlemovieadmin.databinding.ItemEditorsChoiceBinding
 import com.flatcode.littlemovieadmin.filter.EditorsChoiceFilter
 import com.flatcode.littlemovieadmin.model.Movie
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.loadGlideImage
+import com.flatcode.littlemovieadmin.utils.loadImage
 
 class EditorsChoiceMovieAdapter(
     private val onAddClick: (Movie) -> Unit
@@ -50,7 +50,7 @@ class EditorsChoiceMovieAdapter(
             val nrViews = item.viewsCount
             val nrLoves = item.lovesCount
 
-            binding.image.loadGlideImage(image, false)
+            binding.image.loadImage(image, false)
 
             if (name == DATA.EMPTY) {
                 binding.name.visibility = View.GONE

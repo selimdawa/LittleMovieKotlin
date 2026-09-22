@@ -1,8 +1,5 @@
 package com.flatcode.littlemovieadmin.ui.movie
 
-import android.Manifest
-import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -11,7 +8,6 @@ import android.text.TextUtils
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -21,16 +17,15 @@ import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.DATA.castMovie
 import com.flatcode.littlemovieadmin.utils.convertDuration
 import com.flatcode.littlemovieadmin.utils.cropVideoSquare
-import com.flatcode.littlemovieadmin.utils.loadGlideBlur
-import com.flatcode.littlemovieadmin.utils.loadGlideBlurUri
-import com.flatcode.littlemovieadmin.utils.loadGlideImage
+import com.flatcode.littlemovieadmin.utils.loadBlur
+import com.flatcode.littlemovieadmin.utils.loadBlurUri
+import com.flatcode.littlemovieadmin.utils.loadImage
+import com.flatcode.littlemovieadmin.utils.createProgressDialog
 import com.flatcode.littlemovieadmin.utils.openActivity
-import com.flatcode.littlemovieadmin.ui.movie.MovieEditViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityMovieEditBinding
 import com.flatcode.littlemovieadmin.utils.pickImage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.text.MessageFormat
 
 @AndroidEntryPoint
@@ -39,7 +34,7 @@ class MovieEditActivity : BaseActivity() {
     private lateinit var binding: ActivityMovieEditBinding
     private val viewModel: MovieEditViewModel by viewModels()
     private var imageUri: Uri? = null
-    private var progressDialog: ProgressDialog? = null
+    private var progressDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,11 +44,6 @@ class MovieEditActivity : BaseActivity() {
         val movieId = intent.getStringExtra(DATA.MOVIE_ID) ?: ""
         val categoryId = intent.getStringExtra(DATA.CATEGORY_ID)
         viewModel.init(movieId, categoryId)
-
-        progressDialog = ProgressDialog(this).apply {
-            setTitle("Please wait...")
-            setCanceledOnTouchOutside(false)
-        }
 
         binding.toolbar.nameSpace.setText(R.string.edit_movie)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
@@ -87,7 +77,7 @@ class MovieEditActivity : BaseActivity() {
         } else if (castMovie.isEmpty()) {
             Toast.makeText(this, "Enter Cast...", Toast.LENGTH_SHORT).show()
         } else {
-            progressDialog?.setMessage("Updating Movie...")
+            progressDialog = createProgressDialog("Updating Movie...", "Please wait...")
             progressDialog?.show()
             viewModel.updateMovie(name, description, yearText.toInt(), categoryId, imageUri, castMovie) { success, message ->
                 progressDialog?.dismiss()
@@ -104,8 +94,6 @@ class MovieEditActivity : BaseActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
-                    if (state.isLoading) progressDialog?.show() else progressDialog?.dismiss()
-                    
                     state.movie?.let { movie ->
                         binding.nameEt.setText(movie.name)
                         binding.descriptionEt.setText(movie.description)
@@ -114,8 +102,8 @@ class MovieEditActivity : BaseActivity() {
                         binding.cast.text = movie.castCount.toString()
                         
                         if (imageUri == null) {
-                            binding.image.loadGlideImage(movie.image, true)
-                            binding.imageBlur.loadGlideBlur(movie.image, 50, false)
+                            binding.image.loadImage(movie.image, true)
+                            binding.imageBlur.loadBlur(movie.image, 50, false)
                         }
                     }
                     
@@ -159,7 +147,7 @@ class MovieEditActivity : BaseActivity() {
                 if (resultUri != null) {
                     imageUri = resultUri
                     binding.image.setImageURI(imageUri)
-                    binding.imageBlur.loadGlideBlurUri(imageUri, 50)
+                    binding.imageBlur.loadBlurUri(imageUri, 50)
                 }
             }
         }

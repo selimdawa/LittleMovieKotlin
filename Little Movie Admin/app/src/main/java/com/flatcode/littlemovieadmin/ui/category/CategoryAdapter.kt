@@ -16,7 +16,7 @@ import com.flatcode.littlemovieadmin.databinding.ItemCategoryBinding
 import com.flatcode.littlemovieadmin.filter.CategoryFilter
 import com.flatcode.littlemovieadmin.model.Category
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.loadGlideImage
+import com.flatcode.littlemovieadmin.utils.loadImage
 
 class CategoryAdapter(
     private val onMoreClick: (Category) -> Unit,
@@ -54,7 +54,7 @@ class CategoryAdapter(
             val interestedCount = item.interestedCount
             val moviesCount = item.moviesCount
 
-            binding.image.loadGlideImage(image, false)
+            binding.image.loadImage(image, false)
 
             if (name == DATA.EMPTY) {
                 binding.name.visibility = View.GONE

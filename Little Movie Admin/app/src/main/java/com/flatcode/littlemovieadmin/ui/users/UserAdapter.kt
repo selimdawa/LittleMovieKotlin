@@ -12,7 +12,7 @@ import com.flatcode.littlemovieadmin.databinding.ItemUserBinding
 import com.flatcode.littlemovieadmin.filter.UserFilter
 import com.flatcode.littlemovieadmin.model.User
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.loadGlideImage
+import com.flatcode.littlemovieadmin.utils.loadImage
 
 class UserAdapter(
     private val onItemClick: (User) -> Unit
@@ -46,7 +46,7 @@ class UserAdapter(
             val image = item.profileImage ?: DATA.EMPTY
             val username = item.username ?: DATA.EMPTY
 
-            binding.imageProfile.loadGlideImage(image, true)
+            binding.imageProfile.loadImage(image, true)
 
             if (username == DATA.EMPTY) {
                 binding.username.visibility = View.GONE

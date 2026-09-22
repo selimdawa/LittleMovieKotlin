@@ -16,10 +16,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.databinding.ActivityMainBinding
 import com.flatcode.littlemovie.ui.profile.ProfileActivity
-import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.GlideImage
-import com.flatcode.littlemovie.utils.closeApp
-import com.flatcode.littlemovie.utils.openActivity
+import com.flatcode.littlemovie.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import io.selimdawa.bubblebottom.BubbleBottomNavigation
 import io.selimdawa.bubblebottom.Model
@@ -94,7 +91,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.profileImageUrl.collect { profileImage ->
                 Timber.d("Profile image URL updated: %s", profileImage)
-                binding!!.toolbar.image.GlideImage(true, profileImage)
+                binding!!.toolbar.image.loadImage(true, profileImage)
             }
         }
         viewModel.loadUserInfo()

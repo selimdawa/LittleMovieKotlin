@@ -12,7 +12,7 @@ import com.flatcode.littlemovieadmin.databinding.ItemCastBinding
 import com.flatcode.littlemovieadmin.filter.CastFilter
 import com.flatcode.littlemovieadmin.model.Cast
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.loadGlideImage
+import com.flatcode.littlemovieadmin.utils.loadImage
 
 class CastAdapter(
     private val onItemClick: (Cast) -> Unit,
@@ -50,7 +50,7 @@ class CastAdapter(
             val interestedCount = item.interestedCount
             val moviesCount = item.moviesCount
 
-            binding.image.loadGlideImage(image, true)
+            binding.image.loadImage(image, true)
 
             if (name == DATA.EMPTY) {
                 binding.name.visibility = View.GONE

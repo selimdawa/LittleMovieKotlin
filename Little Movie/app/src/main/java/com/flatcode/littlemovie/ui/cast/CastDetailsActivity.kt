@@ -17,7 +17,7 @@ import com.flatcode.littlemovie.ui.movie.MovieDetailsActivity
 import com.flatcode.littlemovie.model.Movie
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.VOID
+import com.flatcode.littlemovie.utils.*
 import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.databinding.ActivityCastDetailsBinding
 import kotlinx.coroutines.launch
@@ -66,8 +66,8 @@ class CastDetailsActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        VOID.GlideImage(true, activity, castImage, binding!!.image)
-        VOID.GlideBlur(true, activity, castImage, binding!!.imageBlur, 50)
+        binding!!.image.loadImage(true, castImage)
+        binding!!.imageBlur.loadImageBlur(true, castImage, 50)
 
         binding!!.toolbar.nameSpace.setText(R.string.cast_details)
         binding!!.name.text = castName
@@ -95,7 +95,7 @@ class CastDetailsActivity : AppCompatActivity() {
         })
         
         binding!!.go.setOnClickListener {
-            VOID.dialogAboutArtist(activity, castImage, castName, castAbout)
+            activity.dialogAboutArtist(castImage, castName, castAbout)
         }
 
         binding!!.switchBar.all.setOnClickListener {

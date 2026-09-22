@@ -22,7 +22,7 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.VOID
+import com.flatcode.littlemovie.utils.*
 import com.flatcode.littlemovie.databinding.ActivityProfileEditBinding
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
@@ -129,7 +129,7 @@ class ProfileEditActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.user.collect { user ->
                 user?.let {
-                    VOID.GlideImage(true, context, it.profileImage, binding!!.profileImage)
+                    binding!!.profileImage.loadImage(true, it.profileImage)
                     binding!!.nameEt.setText(it.username)
                 }
             }
@@ -168,7 +168,7 @@ class ProfileEditActivity : AppCompatActivity() {
         } else {
             dialog!!.setMessage("Updating profile...")
             dialog!!.show()
-            val extension = imageUri?.let { VOID.getFileExtension(it, context) }
+            val extension = imageUri?.let { it.getFileExtension(context) }
             viewModel.updateProfile(username, imageUri, extension)
         }
     }

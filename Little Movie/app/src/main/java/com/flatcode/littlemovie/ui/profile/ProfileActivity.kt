@@ -11,9 +11,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.R
-import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.GlideImage
-import com.flatcode.littlemovie.utils.openActivity
+import com.flatcode.littlemovie.utils.*
 import com.flatcode.littlemovie.databinding.ActivityProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -63,7 +61,7 @@ class ProfileActivity : AppCompatActivity() {
             viewModel.user.collect { user ->
                 user?.let {
                     binding!!.username.text = it.username
-                    binding!!.profile.GlideImage(true, it.profileImage)
+                    binding!!.profile.loadImage(true, it.profileImage)
                 }
             }
         }

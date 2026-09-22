@@ -9,10 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovie.databinding.ItemCategoryMainBinding
 import com.flatcode.littlemovie.model.Category
-import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.GlideBlur
-import com.flatcode.littlemovie.utils.GlideImage
-import com.flatcode.littlemovie.utils.openActivity
+import com.flatcode.littlemovie.utils.*
 
 class CategoryMainAdapter(private val onItemClick: (Category) -> Unit) :
     ListAdapter<Category, CategoryMainAdapter.ViewHolder>(DiffCallback) {
@@ -40,8 +37,8 @@ class CategoryMainAdapter(private val onItemClick: (Category) -> Unit) :
             val image = item.image ?: ""
 
             with(binding) {
-                this.image.GlideImage(false, image)
-                imageBlur.GlideBlur(false, image, 50)
+                this.image.loadImage(false, image)
+                imageBlur.loadImageBlur(false, image, 50)
 
                 if (name.isEmpty()) {
                     this.name.visibility = View.GONE

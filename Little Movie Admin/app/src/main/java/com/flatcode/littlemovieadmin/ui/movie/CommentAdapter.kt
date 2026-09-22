@@ -11,7 +11,7 @@ import com.flatcode.littlemovieadmin.Application
 import com.flatcode.littlemovieadmin.databinding.ItemCommentBinding
 import com.flatcode.littlemovieadmin.model.Comment
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.loadGlideImage
+import com.flatcode.littlemovieadmin.utils.loadImage
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -58,7 +58,7 @@ class CommentAdapter(
                     val username = DATA.EMPTY + snapshot.child(DATA.USER_NAME).value
                     val profileImage = DATA.EMPTY + snapshot.child(DATA.PROFILE_IMAGE).value
 
-                    image.loadGlideImage(profileImage, true)
+                    image.loadImage(profileImage, true)
                     name.text = username
                 }
 

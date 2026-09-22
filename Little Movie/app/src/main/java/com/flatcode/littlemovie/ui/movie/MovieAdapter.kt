@@ -14,14 +14,7 @@ import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.databinding.ItemMovieBinding
 import com.flatcode.littlemovie.filter.MovieFilter
 import com.flatcode.littlemovie.model.Movie
-import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.GlideImage
-import com.flatcode.littlemovie.utils.checkFavorite
-import com.flatcode.littlemovie.utils.checkLove
-import com.flatcode.littlemovie.utils.isFavorite
-import com.flatcode.littlemovie.utils.isLoves
-import com.flatcode.littlemovie.utils.nrLoves
-import com.flatcode.littlemovie.utils.openActivity
+import com.flatcode.littlemovie.utils.*
 
 class MovieAdapter(
     private val animation: Boolean = false,
@@ -66,7 +59,7 @@ class MovieAdapter(
             val lovesCount = item.lovesCount.toString()
 
             with(binding) {
-                this.image.GlideImage(false, image)
+                this.image.loadImage(false, image)
 
                 if (name.isEmpty()) {
                     this.name.visibility = View.GONE

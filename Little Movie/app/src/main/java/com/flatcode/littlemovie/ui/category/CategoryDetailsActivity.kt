@@ -18,7 +18,7 @@ import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.ui.movie.MovieListViewModel
 import com.flatcode.littlemovie.model.Movie
 import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.VOID
+import com.flatcode.littlemovie.utils.*
 import com.flatcode.littlemovie.databinding.ActivityCategoryDetailsBinding
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -64,9 +64,9 @@ class CategoryDetailsActivity : AppCompatActivity() {
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         binding!!.toolbar.close.setOnClickListener { onBackPressed() }
 
-        VOID.isInterested(binding!!.switchBar.interest, categoryId, DATA.CATEGORIES)
+        binding!!.switchBar.interest.isInterested(categoryId, DATA.CATEGORIES)
         binding!!.switchBar.interest.setOnClickListener {
-            VOID.checkInterested(binding!!.switchBar.interest, DATA.CATEGORIES, categoryId)
+            binding!!.switchBar.interest.checkInterested(DATA.CATEGORIES, categoryId)
         }
         
         binding!!.toolbar.search.setOnClickListener {

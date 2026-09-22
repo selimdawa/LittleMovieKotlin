@@ -1,8 +1,5 @@
 package com.flatcode.littlemovieadmin.ui.movie
 
-import android.Manifest
-import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaMetadataRetriever
@@ -12,27 +9,18 @@ import android.text.TextUtils
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.DATA.castMovie
-import com.flatcode.littlemovieadmin.utils.checkStoragePermission
-import com.flatcode.littlemovieadmin.utils.checkVideoPermission
 import com.flatcode.littlemovieadmin.utils.convertDuration
 import com.flatcode.littlemovieadmin.utils.cropVideoSquare
-import com.flatcode.littlemovieadmin.utils.loadGlideBlurUri
+import com.flatcode.littlemovieadmin.utils.createProgressDialog
+import com.flatcode.littlemovieadmin.utils.loadBlurUri
 import com.flatcode.littlemovieadmin.utils.openActivity
-import com.flatcode.littlemovieadmin.ui.movie.MovieAddViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityMovieAddBinding
 import com.flatcode.littlemovieadmin.utils.pickImage
-import com.flatcode.littlemovieadmin.utils.requestStoragePermission
-import com.flatcode.littlemovieadmin.utils.requestVideoPermission
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.MessageFormat
 
@@ -43,7 +31,7 @@ class MovieAddActivity : BaseActivity() {
     private val viewModel: MovieAddViewModel by viewModels()
     private var imageUri: Uri? = null
     private var videoUri: Uri? = null
-    private var progressDialog: ProgressDialog? = null
+    private var progressDialog: AlertDialog? = null
     private var durations: String? = null
     private var selectedCategoryId: String? = null
     private var selectedCategoryTitle: String? = null
@@ -52,11 +40,6 @@ class MovieAddActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMovieAddBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        progressDialog = ProgressDialog(this).apply {
-            setTitle("Please wait...")
-            setCanceledOnTouchOutside(false)
-        }
 
         binding.toolbar.nameSpace.setText(R.string.add_new_movie)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
@@ -72,8 +55,6 @@ class MovieAddActivity : BaseActivity() {
             }
         }
         binding.toolbar.ok.setOnClickListener { validateData() }
-
-        observeState()
     }
 
     private fun validateData() {
@@ -107,12 +88,12 @@ class MovieAddActivity : BaseActivity() {
         val vUri = videoUri ?: return
         val cId = selectedCategoryId ?: return
 
-        progressDialog?.setMessage("Uploading Movie...")
+        progressDialog = createProgressDialog("Uploading Movie...", "Please wait...")
         progressDialog?.show()
 
         viewModel.uploadMovie(name, description, year, cId, iUri, vUri, durations, castMovie,
             onProgress = { progress ->
-                progressDialog?.setMessage("Uploaded $progress%.....")
+                // Custom handling or update if needed, since it's AlertDialog we just keep it showing
             },
             onResult = { success, message ->
                 progressDialog?.dismiss()
@@ -123,16 +104,6 @@ class MovieAddActivity : BaseActivity() {
                 }
             }
         )
-    }
-
-    private fun observeState() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { state ->
-                    // Categories already loaded in init
-                }
-            }
-        }
     }
 
     private fun categoryPickDialog() {
@@ -191,7 +162,7 @@ class MovieAddActivity : BaseActivity() {
                 if (resultUri != null) {
                     imageUri = resultUri
                     binding.image.setImageURI(imageUri)
-                    binding.image.loadGlideBlurUri(imageUri, 50)
+                    binding.image.loadBlurUri(imageUri, 50)
                 }
             }
         }

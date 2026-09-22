@@ -67,7 +67,7 @@ class SettingsFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.user.collect { user ->
                 user?.let {
-                    binding.toolbar.imageProfile.GlideImage(true, it.profileImage)
+                    binding.toolbar.imageProfile.loadImage(true, it.profileImage)
                     binding.toolbar.username.text = it.username
                     binding.toolbar.email.text = it.email
                 }

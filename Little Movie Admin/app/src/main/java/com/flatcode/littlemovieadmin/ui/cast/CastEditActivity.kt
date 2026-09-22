@@ -1,8 +1,5 @@
 package com.flatcode.littlemovieadmin.ui.cast
 
-import android.Manifest
-import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -10,7 +7,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -18,9 +15,8 @@ import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.cropImageSquare
-import com.flatcode.littlemovieadmin.utils.getFileExtension
-import com.flatcode.littlemovieadmin.utils.loadGlideImage
-import com.flatcode.littlemovieadmin.ui.cast.CastEditViewModel
+import com.flatcode.littlemovieadmin.utils.createProgressDialog
+import com.flatcode.littlemovieadmin.utils.loadImage
 import com.flatcode.littlemovieadmin.databinding.ActivityCastAddBinding
 import com.flatcode.littlemovieadmin.utils.pickImage
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,7 +28,7 @@ class CastEditActivity : BaseActivity() {
     private lateinit var binding: ActivityCastAddBinding
     private val viewModel: CastEditViewModel by viewModels()
     private var imageUri: Uri? = null
-    private var progressDialog: ProgressDialog? = null
+    private var progressDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,11 +37,6 @@ class CastEditActivity : BaseActivity() {
 
         val castId = intent.getStringExtra(DATA.CAST_ID) ?: ""
         viewModel.init(castId)
-
-        progressDialog = ProgressDialog(this).apply {
-            setTitle("Please wait...")
-            setCanceledOnTouchOutside(false)
-        }
 
         binding.toolbar.nameSpace.setText(R.string.edit_cast)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
@@ -68,7 +59,7 @@ class CastEditActivity : BaseActivity() {
         } else if (TextUtils.isEmpty(aboutMy)) {
             Toast.makeText(this, "Enter Description...", Toast.LENGTH_SHORT).show()
         } else {
-            progressDialog?.setMessage("Updating Cast...")
+            progressDialog = createProgressDialog("Updating Cast...", "Please wait...")
             progressDialog?.show()
             viewModel.updateCast(name, aboutMy, imageUri) { success, message ->
                 progressDialog?.dismiss()
@@ -82,13 +73,11 @@ class CastEditActivity : BaseActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
-                    if (state.isLoading) progressDialog?.show() else progressDialog?.dismiss()
-                    
                     state.cast?.let { cast ->
                         binding.nameEt.setText(cast.name)
                         binding.aboutMyEt.setText(cast.aboutMy)
                         if (imageUri == null) {
-                            binding.image.loadGlideImage(cast.image, true)
+                            binding.image.loadImage(cast.image, true)
                         }
                     }
                 }

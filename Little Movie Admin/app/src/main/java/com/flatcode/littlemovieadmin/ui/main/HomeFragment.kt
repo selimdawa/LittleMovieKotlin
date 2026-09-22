@@ -15,7 +15,7 @@ import com.flatcode.littlemovieadmin.model.Main
 import com.flatcode.littlemovieadmin.ui.profile.ProfileActivity
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.openActivity
-import com.flatcode.littlemovieadmin.utils.loadGlideImage
+import com.flatcode.littlemovieadmin.utils.loadImage
 import com.flatcode.littlemovieadmin.ui.main.MainViewModel
 import com.flatcode.littlemovieadmin.databinding.FragmentHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -71,7 +71,7 @@ class HomeFragment : Fragment() {
                         binding.recyclerView.visibility = if (state.items.isNotEmpty()) View.VISIBLE else View.GONE
                         
                         state.userProfileImage?.let {
-                            binding.toolbar.image.loadGlideImage(it, true)
+                            binding.toolbar.image.loadImage(it, true)
                         }
 
                         adapter.submitList(state.items)

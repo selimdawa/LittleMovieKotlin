@@ -16,7 +16,7 @@ import com.flatcode.littlemovieadmin.filter.MovieFilter
 import com.flatcode.littlemovieadmin.model.Movie
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.isFavorite
-import com.flatcode.littlemovieadmin.utils.loadGlideImage
+import com.flatcode.littlemovieadmin.utils.loadImage
 
 class MovieAdapter(
     private val onItemClick: (Movie) -> Unit,
@@ -56,7 +56,7 @@ class MovieAdapter(
             val viewsCount = item.viewsCount
             val lovesCount = item.lovesCount
 
-            binding.image.loadGlideImage(image, false)
+            binding.image.loadImage(image, false)
 
             if (name == DATA.EMPTY) {
                 binding.name.visibility = View.GONE

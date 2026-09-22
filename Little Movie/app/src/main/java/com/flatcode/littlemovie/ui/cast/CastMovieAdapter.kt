@@ -9,9 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovie.databinding.ItemCastMovieBinding
 import com.flatcode.littlemovie.model.Cast
-import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.GlideImage
-import com.flatcode.littlemovie.utils.openActivity
+import com.flatcode.littlemovie.utils.*
 
 class CastMovieAdapter(private val onItemClick: (Cast) -> Unit) :
     ListAdapter<Cast, CastMovieAdapter.ViewHolder>(DiffCallback) {
@@ -39,7 +37,7 @@ class CastMovieAdapter(private val onItemClick: (Cast) -> Unit) :
             val image = item.image ?: ""
 
             with(binding) {
-                this.image.GlideImage(true, image)
+                this.image.loadImage(true, image)
 
                 if (name.isEmpty()) {
                     this.name.visibility = View.GONE

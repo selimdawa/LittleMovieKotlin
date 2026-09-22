@@ -17,7 +17,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.VOID
+import com.flatcode.littlemovie.utils.*
 import com.flatcode.littlemovie.databinding.ActivityMovieViewBinding
 import com.flatcode.littlemovie.service.FloatingWidgetService
 import com.google.android.exoplayer2.ExoPlayer
@@ -58,7 +58,7 @@ class MovieViewActivity : AppCompatActivity() {
             val uriValue = intent.getStringExtra(DATA.MOVIE_LINK)
             videoUri = Uri.parse(uriValue)
             id = intent.getStringExtra(DATA.MOVIE_ID)
-            VOID.incrementViewCount(id)
+            id?.incrementViewCount()
         }
         binding!!.playerView.findViewById<ImageView>(R.id.exo_floating_widget).setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {

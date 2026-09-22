@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.databinding.ItemCastMovieBinding
 import com.flatcode.littlemovieadmin.model.Cast
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.loadGlideImage
+import com.flatcode.littlemovieadmin.utils.loadImage
 
 class CastMovieAdapter(
     private val onItemClick: (Cast) -> Unit
@@ -33,7 +33,7 @@ class CastMovieAdapter(
             val name = item.name ?: DATA.EMPTY
             val image = item.image ?: DATA.EMPTY
 
-            binding.image.loadGlideImage(image, true)
+            binding.image.loadImage(image, true)
 
             if (name == DATA.EMPTY) {
                 binding.name.visibility = View.GONE

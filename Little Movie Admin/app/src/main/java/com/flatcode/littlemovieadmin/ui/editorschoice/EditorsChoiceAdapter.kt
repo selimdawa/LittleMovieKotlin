@@ -13,7 +13,7 @@ import com.flatcode.littlemovieadmin.databinding.ItemMovieEditorsChoiceBinding
 import com.flatcode.littlemovieadmin.model.EditorsChoice
 import com.flatcode.littlemovieadmin.model.Movie
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.loadGlideImage
+import com.flatcode.littlemovieadmin.utils.loadImage
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -81,7 +81,7 @@ class EditorsChoiceAdapter(
             val viewsCount = item.viewsCount
             val lovesCount = item.lovesCount
 
-            binding.image.loadGlideImage(imageLink, false)
+            binding.image.loadImage(imageLink, false)
             binding.name.text = name
             binding.nrViews.text = viewsCount.toString()
             binding.nrLoves.text = lovesCount.toString()

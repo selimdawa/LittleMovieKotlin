@@ -1,7 +1,5 @@
 package com.flatcode.littlemovieadmin.ui.slider
 
-import android.Manifest
-import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -9,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -17,8 +16,8 @@ import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.cropImageSlider
 import com.flatcode.littlemovieadmin.utils.pickImage
-import com.flatcode.littlemovieadmin.utils.getFileExtension
-import com.flatcode.littlemovieadmin.utils.loadGlideImage
+import com.flatcode.littlemovieadmin.utils.createProgressDialog
+import com.flatcode.littlemovieadmin.utils.loadImage
 import com.flatcode.littlemovieadmin.databinding.ActivitySliderShowBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -30,7 +29,7 @@ class SliderShowActivity : BaseActivity() {
     private lateinit var binding: ActivitySliderShowBinding
     private val viewModel: SliderShowViewModel by viewModels()
     private var imageUri: Uri? = null
-    private var progressDialog: ProgressDialog? = null
+    private var progressDialog: AlertDialog? = null
     private var imageNumber = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,11 +39,6 @@ class SliderShowActivity : BaseActivity() {
 
         binding.toolbar.nameSpace.setText(R.string.slider_show)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
-        
-        progressDialog = ProgressDialog(this).apply {
-            setTitle("Please wait...")
-            setCanceledOnTouchOutside(false)
-        }
 
         setupClickListeners()
         observeState()
@@ -109,7 +103,7 @@ class SliderShowActivity : BaseActivity() {
 
                     imageViews.forEachIndexed { index, imageView ->
                         val url = state.images[(index + 1).toString()]
-                        imageView.loadGlideImage(url, false)
+                        imageView.loadImage(url, false)
                     }
                 }
             }
@@ -134,7 +128,7 @@ class SliderShowActivity : BaseActivity() {
 
     private fun uploadImage() {
         val uri = imageUri ?: return
-        progressDialog?.setMessage("Posting photo...")
+        progressDialog = createProgressDialog("Posting photo...", "Please wait...")
         progressDialog?.show()
         
         viewModel.uploadImage(uri, imageNumber.toString()) { success, message ->

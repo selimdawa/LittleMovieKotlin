@@ -15,7 +15,7 @@ import com.flatcode.littlemovie.Application
 import com.flatcode.littlemovie.databinding.ItemCommentBinding
 import com.flatcode.littlemovie.model.Comment
 import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.VOID
+import com.flatcode.littlemovie.utils.*
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -64,7 +64,7 @@ class CommentAdapter(private val onDeleteClick: (Comment) -> Unit) :
                     override fun onDataChange(snapshot: DataSnapshot) {
                         val username = snapshot.child(DATA.USER_NAME).value?.toString() ?: ""
                         val profileImage = snapshot.child(DATA.PROFILE_IMAGE).value?.toString() ?: ""
-                        VOID.GlideImage(true, itemView.context, profileImage, image)
+                        image.loadImage(true, profileImage)
                         name.text = username
                     }
 

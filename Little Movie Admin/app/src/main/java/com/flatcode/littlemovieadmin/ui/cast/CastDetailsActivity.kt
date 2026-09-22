@@ -5,22 +5,19 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.flatcode.littlemovieadmin.R
+import com.flatcode.littlemovieadmin.databinding.ActivityCastDetailsBinding
 import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.ui.movie.MovieAdapter
-import com.flatcode.littlemovieadmin.model.Movie
-import com.flatcode.littlemovieadmin.R
-import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.dialogAboutArtist
-import com.flatcode.littlemovieadmin.utils.loadGlideBlur
-import com.flatcode.littlemovieadmin.utils.loadGlideImage
-import com.flatcode.littlemovieadmin.ui.cast.CastDetailsViewModel
-import com.flatcode.littlemovieadmin.databinding.ActivityCastDetailsBinding
 import com.flatcode.littlemovieadmin.ui.movie.MovieDetailsActivity
+import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.checkFavorite
+import com.flatcode.littlemovieadmin.utils.dialogAboutArtist
+import com.flatcode.littlemovieadmin.utils.loadBlur
+import com.flatcode.littlemovieadmin.utils.loadImage
 import com.flatcode.littlemovieadmin.utils.moreDeleteMovie
 import com.flatcode.littlemovieadmin.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -66,6 +63,7 @@ class CastDetailsActivity : BaseActivity() {
                     Timber.e(e, "Filter error")
                 }
             }
+
             override fun afterTextChanged(s: Editable) {}
         })
 
@@ -85,7 +83,12 @@ class CastDetailsActivity : BaseActivity() {
             },
             onMoreClick = { movie ->
                 moreDeleteMovie(
-                    movie, DATA.CATEGORIES, movie.categoryId ?: DATA.EMPTY, DATA.MOVIES_COUNT, false, true
+                    movie,
+                    DATA.CATEGORIES,
+                    movie.categoryId ?: DATA.EMPTY,
+                    DATA.MOVIES_COUNT,
+                    false,
+                    true
                 )
             },
             onFavoriteClick = { movie, imageView ->
@@ -109,9 +112,9 @@ class CastDetailsActivity : BaseActivity() {
                     binding.progress.visibility = if (state.isLoading) View.VISIBLE else View.GONE
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", state.count)
                     binding.name.text = state.castName
-                    
-                    binding.image.loadGlideImage(state.castImage, true)
-                    binding.imageBlur.loadGlideBlur(state.castImage, 50, true)
+
+                    binding.image.loadImage(state.castImage, true)
+                    binding.imageBlur.loadBlur(state.castImage, 50, true)
 
                     adapter.filterList = state.movies
                     adapter.submitList(state.movies)

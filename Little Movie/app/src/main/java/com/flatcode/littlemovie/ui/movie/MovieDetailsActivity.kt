@@ -14,18 +14,14 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
-import com.flatcode.littlemovie.ui.cast.CastDetailsActivity
-import com.flatcode.littlemovie.ui.cast.CastMovieAdapter
-import com.flatcode.littlemovie.model.Cast
-import com.flatcode.littlemovie.model.Comment
 import com.flatcode.littlemovie.Application
 import com.flatcode.littlemovie.R
-import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.convertDuration
-import com.flatcode.littlemovie.utils.GlideImage
-import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.databinding.ActivityMovieDetailsBinding
 import com.flatcode.littlemovie.databinding.DialogCommentAddBinding
+import com.flatcode.littlemovie.model.Comment
+import com.flatcode.littlemovie.ui.cast.CastDetailsActivity
+import com.flatcode.littlemovie.ui.cast.CastMovieAdapter
+import com.flatcode.littlemovie.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -35,12 +31,12 @@ class MovieDetailsActivity : AppCompatActivity() {
     private var binding: ActivityMovieDetailsBinding? = null
     private val activity: Activity = this@MovieDetailsActivity
     private val viewModel: MovieDetailsViewModel by viewModels()
-    
+
     private var movieId: String? = null
     private var movieLink: String? = null
-    
+
     private var dialog: ProgressDialog? = null
-    
+
     private lateinit var adapterComment: CommentAdapter
     private lateinit var adapterCast: CastMovieAdapter
 
@@ -53,9 +49,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         ViewCompat.setOnApplyWindowInsetsListener(binding!!.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(
-                left = systemBars.left,
-                right = systemBars.right,
-                bottom = systemBars.bottom
+                left = systemBars.left, right = systemBars.right, bottom = systemBars.bottom
             )
             binding!!.toolbar.root.updatePadding(top = systemBars.top)
             insets
@@ -67,14 +61,14 @@ class MovieDetailsActivity : AppCompatActivity() {
         setupUI()
         setupAdapters()
         observeViewModel()
-        
+
         movieId?.let { viewModel.loadDetails(it) }
     }
 
     private fun setupUI() {
         binding!!.toolbar.nameSpace.setText(R.string.details_movie)
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
-        
+
         dialog = ProgressDialog(activity).apply {
             setTitle("Please wait...")
             setCanceledOnTouchOutside(false)
@@ -83,7 +77,9 @@ class MovieDetailsActivity : AppCompatActivity() {
         binding!!.love.setOnClickListener { movieId?.let { viewModel.toggleLove(it) } }
         binding!!.favorite.setOnClickListener { movieId?.let { viewModel.toggleFavorite(it) } }
         binding!!.view.setOnClickListener {
-            activity.openActivity<MovieViewActivity>(DATA.MOVIE_LINK to movieLink, DATA.MOVIE_ID to movieId)
+            activity.openActivity<MovieViewActivity>(
+                DATA.MOVIE_LINK to movieLink, DATA.MOVIE_ID to movieId
+            )
         }
         binding!!.addComment.setOnClickListener {
             if (DATA.FIREBASE_USER == null) {
@@ -104,7 +100,7 @@ class MovieDetailsActivity : AppCompatActivity() {
             )
         }
         binding!!.recyclerCast.adapter = adapterCast
-        
+
         adapterComment = CommentAdapter { comment ->
             showDeleteCommentDialog(comment)
         }
@@ -112,16 +108,13 @@ class MovieDetailsActivity : AppCompatActivity() {
     }
 
     private fun showDeleteCommentDialog(comment: Comment) {
-        AlertDialog.Builder(activity)
-            .setTitle("Delete Comment")
+        AlertDialog.Builder(activity).setTitle("Delete Comment")
             .setMessage("Are you sure you want to delete this comment?")
             .setPositiveButton("DELETE") { _, _ ->
                 val movieId = comment.movieId ?: ""
                 val commentId = comment.id ?: ""
                 viewModel.deleteComment(movieId, commentId)
-            }
-            .setNegativeButton("CANCEL") { dialog, _ -> dialog.dismiss() }
-            .show()
+            }.setNegativeButton("CANCEL") { dialog, _ -> dialog.dismiss() }.show()
     }
 
     private fun observeViewModel() {
@@ -129,8 +122,8 @@ class MovieDetailsActivity : AppCompatActivity() {
             viewModel.movie.collect { movie ->
                 movie?.let {
                     val date: String = Application.formatTimestamp(it.timestamp)
-                    binding!!.image.GlideImage(false, it.image)
-                    binding!!.cover.GlideImage(false, it.image)
+                    binding!!.image.loadImage(false, it.image)
+                    binding!!.cover.loadImage(false, it.image)
                     binding!!.title.text = it.name
                     binding!!.description.text = it.description
                     binding!!.views.text = it.viewsCount.toString()
@@ -163,7 +156,7 @@ class MovieDetailsActivity : AppCompatActivity() {
             viewModel.publisher.collect { user ->
                 user?.let {
                     binding!!.publisherName.text = it.username
-                    binding!!.publisherImage.GlideImage(true, it.profileImage)
+                    binding!!.publisherImage.loadImage(true, it.profileImage)
                 }
             }
         }
@@ -197,7 +190,11 @@ class MovieDetailsActivity : AppCompatActivity() {
                     if (it.isSuccess) {
                         Toast.makeText(activity, "Comment Added...", Toast.LENGTH_SHORT).show()
                     } else {
-                        Toast.makeText(activity, "Failed to add comment: ${it.exceptionOrNull()?.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            activity,
+                            "Failed to add comment: ${it.exceptionOrNull()?.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                     viewModel.resetAddCommentStatus()
                 }
@@ -210,7 +207,11 @@ class MovieDetailsActivity : AppCompatActivity() {
                     if (it.isSuccess) {
                         Toast.makeText(activity, "Deleted...", Toast.LENGTH_SHORT).show()
                     } else {
-                        Toast.makeText(activity, "Failed to delete: ${it.exceptionOrNull()?.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            activity,
+                            "Failed to delete: ${it.exceptionOrNull()?.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                     viewModel.resetDeleteCommentStatus()
                 }

@@ -1,6 +1,5 @@
 package com.flatcode.littlemovie.ui.category
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -8,15 +7,14 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovie.databinding.ItemCategoryHomeBinding
 import com.flatcode.littlemovie.model.Category
-import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.GlideImage
-import com.flatcode.littlemovie.utils.openActivity
+import com.flatcode.littlemovie.utils.loadImage
 
 class CategoryHomeAdapter(private val onItemClick: (Category) -> Unit) :
     ListAdapter<Category, CategoryHomeAdapter.ViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemCategoryHomeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemCategoryHomeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
@@ -32,12 +30,13 @@ class CategoryHomeAdapter(private val onItemClick: (Category) -> Unit) :
             oldItem == newItem
     }
 
-    class ViewHolder(private val binding: ItemCategoryHomeBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: ItemCategoryHomeBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Category, onItemClick: (Category) -> Unit) {
             val image = item.image ?: ""
 
             with(binding) {
-                this.image.GlideImage(false, image)
+                this.image.loadImage(false, image)
                 this.image.setOnClickListener { onItemClick(item) }
             }
         }
