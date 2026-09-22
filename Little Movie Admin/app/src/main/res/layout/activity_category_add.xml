@@ -97,7 +97,7 @@
                                 android:src="@drawable/ic_adds"
                                 android:contentDescription="@null"
                                 app:layout_constraintDimensionRatio="1:1"
-                                app:tint="?mc_tick" />
+                                app:tint="?mc_track" />
 
                         </FrameLayout>
 
