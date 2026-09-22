@@ -58,7 +58,7 @@ class CastDetailsActivity : BaseActivity() {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 try {
-                    adapter.filter.filter(s)
+                    adapter.filter(s.toString())
                 } catch (e: Exception) {
                     Timber.e(e, "Filter error")
                 }
@@ -116,7 +116,7 @@ class CastDetailsActivity : BaseActivity() {
                     binding.image.loadImage(state.castImage, true)
                     binding.imageBlur.loadBlur(state.castImage, 50, true)
 
-                    adapter.filterList = state.movies
+                    adapter.list = state.movies
                     adapter.submitList(state.movies)
 
                     if (state.movies.isNotEmpty()) {

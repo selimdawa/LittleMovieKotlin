@@ -4,15 +4,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import android.widget.Filter
-import android.widget.Filterable
 import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.databinding.ItemMovieBinding
-import com.flatcode.littlemovieadmin.filter.MovieFilter
 import com.flatcode.littlemovieadmin.model.Movie
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.isFavorite
@@ -22,10 +19,18 @@ class MovieAdapter(
     private val onItemClick: (Movie) -> Unit,
     private val onMoreClick: (Movie) -> Unit,
     private val onFavoriteClick: (Movie, ImageView) -> Unit
-) : ListAdapter<Movie, MovieAdapter.ViewHolder>(DiffCallback()), Filterable {
+) : ListAdapter<Movie, MovieAdapter.ViewHolder>(DiffCallback()) {
 
-    var filterList: List<Movie> = emptyList()
-    private var filter: MovieFilter? = null
+    var list: List<Movie> = emptyList()
+
+    fun filter(query: String) {
+        val filteredList = if (query.isEmpty()) {
+            list
+        } else {
+            list.filter { it.name.contains(query, ignoreCase = true) }
+        }
+        submitList(filteredList)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -34,13 +39,6 @@ class MovieAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(getItem(position))
-    }
-
-    override fun getFilter(): Filter {
-        if (filter == null) {
-            filter = MovieFilter(filterList, this)
-        }
-        return filter!!
     }
 
     class ViewHolder(

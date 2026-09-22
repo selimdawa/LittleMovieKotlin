@@ -3,13 +3,10 @@ package com.flatcode.littlemovieadmin.ui.cast
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Filter
-import android.widget.Filterable
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.databinding.ItemCastBinding
-import com.flatcode.littlemovieadmin.filter.CastFilter
 import com.flatcode.littlemovieadmin.model.Cast
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.loadImage
@@ -17,10 +14,22 @@ import com.flatcode.littlemovieadmin.utils.loadImage
 class CastAdapter(
     private val onItemClick: (Cast) -> Unit,
     private val onMoreClick: (Cast) -> Unit
-) : ListAdapter<Cast, CastAdapter.ViewHolder>(DiffCallback()), Filterable {
+) : ListAdapter<Cast, CastAdapter.ViewHolder>(DiffCallback()) {
 
-    var filterList: List<Cast> = emptyList()
-    private var filter: CastFilter? = null
+    var list: List<Cast> = emptyList()
+        set(value) {
+            field = value
+            submitList(value)
+        }
+
+    fun filter(query: String) {
+        val filteredList = if (query.isEmpty()) {
+            list
+        } else {
+            list.filter { it.name?.contains(query, ignoreCase = true) == true }
+        }
+        submitList(filteredList)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemCastBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -29,13 +38,6 @@ class CastAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(getItem(position))
-    }
-
-    override fun getFilter(): Filter {
-        if (filter == null) {
-            filter = CastFilter(filterList, this)
-        }
-        return filter!!
     }
 
     class ViewHolder(

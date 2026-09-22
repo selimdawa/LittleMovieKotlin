@@ -1,24 +1,20 @@
 package com.flatcode.littlemovie.ui.cast
 
-import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Filter
-import android.widget.Filterable
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovie.databinding.ItemCastBinding
-import com.flatcode.littlemovie.filter.CastFilter
 import com.flatcode.littlemovie.model.Cast
 import com.flatcode.littlemovie.utils.*
+import java.util.Locale
 
 class CastAdapter(private val onItemClick: (Cast) -> Unit) :
-    ListAdapter<Cast, CastAdapter.ViewHolder>(DiffCallback), Filterable {
+    ListAdapter<Cast, CastAdapter.ViewHolder>(DiffCallback) {
 
     private var fullList: List<Cast> = emptyList()
-    private var filter: CastFilter? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemCastBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -34,8 +30,16 @@ class CastAdapter(private val onItemClick: (Cast) -> Unit) :
         submitList(list)
     }
 
-    override fun getFilter(): Filter {
-        return filter ?: CastFilter(fullList, this).also { filter = it }
+    fun filter(query: String?) {
+        if (query.isNullOrEmpty()) {
+            submitList(fullList)
+        } else {
+            val q = query.uppercase(Locale.getDefault())
+            val filtered = fullList.filter {
+                it.name?.uppercase(Locale.getDefault())?.contains(q) == true
+            }
+            submitList(filtered)
+        }
     }
 
     object DiffCallback : DiffUtil.ItemCallback<Cast>() {

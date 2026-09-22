@@ -1,28 +1,24 @@
 package com.flatcode.littlemovie.ui.movie
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import android.widget.Filter
-import android.widget.Filterable
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.databinding.ItemMovieBinding
-import com.flatcode.littlemovie.filter.MovieFilter
 import com.flatcode.littlemovie.model.Movie
 import com.flatcode.littlemovie.utils.*
+import java.util.Locale
 
 class MovieAdapter(
     private val animation: Boolean = false,
     private val onItemClick: (Movie) -> Unit
-) : ListAdapter<Movie, MovieAdapter.ViewHolder>(DiffCallback), Filterable {
+) : ListAdapter<Movie, MovieAdapter.ViewHolder>(DiffCallback) {
 
     private var fullList: List<Movie> = emptyList()
-    private var filter: MovieFilter? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -38,8 +34,16 @@ class MovieAdapter(
         submitList(list)
     }
 
-    override fun getFilter(): Filter {
-        return filter ?: MovieFilter(fullList, this).also { filter = it }
+    fun filter(query: String?) {
+        if (query.isNullOrEmpty()) {
+            submitList(fullList)
+        } else {
+            val q = query.uppercase(Locale.getDefault())
+            val filtered = fullList.filter {
+                it.name?.uppercase(Locale.getDefault())?.contains(q) == true
+            }
+            submitList(filtered)
+        }
     }
 
     object DiffCallback : DiffUtil.ItemCallback<Movie>() {

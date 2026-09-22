@@ -66,7 +66,7 @@ class MyCategoriesActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 try {
-                    adapter.filter.filter(s)
+                    adapter.filter(s.toString())
                 } catch (e: Exception) {
                     Timber.e(e, "Error filtering categories")
                 }

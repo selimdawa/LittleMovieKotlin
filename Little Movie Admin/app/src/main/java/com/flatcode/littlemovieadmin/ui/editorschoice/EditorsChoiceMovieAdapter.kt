@@ -3,23 +3,28 @@ package com.flatcode.littlemovieadmin.ui.editorschoice
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Filter
-import android.widget.Filterable
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovieadmin.databinding.ItemEditorsChoiceBinding
-import com.flatcode.littlemovieadmin.filter.EditorsChoiceFilter
 import com.flatcode.littlemovieadmin.model.Movie
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.loadImage
 
 class EditorsChoiceMovieAdapter(
     private val onAddClick: (Movie) -> Unit
-) : ListAdapter<Movie, EditorsChoiceMovieAdapter.ViewHolder>(DiffCallback()), Filterable {
+) : ListAdapter<Movie, EditorsChoiceMovieAdapter.ViewHolder>(DiffCallback()) {
 
-    var filterList: List<Movie> = emptyList()
-    private var filter: EditorsChoiceFilter? = null
+    var list: List<Movie> = emptyList()
+
+    fun filter(query: String) {
+        val filteredList = if (query.isEmpty()) {
+            list
+        } else {
+            list.filter { it.name.contains(query, ignoreCase = true) }
+        }
+        submitList(filteredList)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemEditorsChoiceBinding.inflate(
@@ -30,13 +35,6 @@ class EditorsChoiceMovieAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(getItem(position))
-    }
-
-    override fun getFilter(): Filter {
-        if (filter == null) {
-            filter = EditorsChoiceFilter(filterList, this)
-        }
-        return filter!!
     }
 
     class ViewHolder(

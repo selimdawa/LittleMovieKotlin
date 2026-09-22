@@ -54,7 +54,7 @@ class CategoryDetailsActivity : BaseActivity() {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 try {
-                    adapter.filter.filter(s)
+                    adapter.filter(s.toString())
                 } catch (e: Exception) {
                     Timber.e(e, "Filter error")
                 }
@@ -97,7 +97,7 @@ class CategoryDetailsActivity : BaseActivity() {
                     binding.progress.visibility = if (state.isLoading) View.VISIBLE else View.GONE
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", state.count)
                     
-                    adapter.filterList = state.movies
+                    adapter.list = state.movies
                     adapter.submitList(state.movies)
 
                     if (state.movies.isNotEmpty()) {
