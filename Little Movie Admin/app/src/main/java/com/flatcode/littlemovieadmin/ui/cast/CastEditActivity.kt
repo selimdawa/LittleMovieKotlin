@@ -8,16 +8,17 @@ import android.text.TextUtils
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.IntentCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.R
-import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.cropImageSquare
-import com.flatcode.littlemovieadmin.utils.createProgressDialog
-import com.flatcode.littlemovieadmin.utils.loadImage
 import com.flatcode.littlemovieadmin.databinding.ActivityCastAddBinding
+import com.flatcode.littlemovieadmin.ui.BaseActivity
+import com.flatcode.littlemovieadmin.utils.DATA
+import com.flatcode.littlemovieadmin.utils.createProgressDialog
+import com.flatcode.littlemovieadmin.utils.cropImageSquare
+import com.flatcode.littlemovieadmin.utils.loadImage
 import com.flatcode.littlemovieadmin.utils.pickImage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -39,7 +40,7 @@ class CastEditActivity : BaseActivity() {
         viewModel.init(castId)
 
         binding.toolbar.nameSpace.setText(R.string.edit_cast)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.image.setOnClickListener {
             requestStorage(DATA.MIX_SQUARE) {
                 pickImage(DATA.MIX_SQUARE)
@@ -64,7 +65,7 @@ class CastEditActivity : BaseActivity() {
             viewModel.updateCast(name, aboutMy, imageUri) { success, message ->
                 progressDialog?.dismiss()
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-                if (success) onBackPressed()
+                if (success) onBackPressedDispatcher.onBackPressed()
             }
         }
     }
@@ -77,7 +78,7 @@ class CastEditActivity : BaseActivity() {
                         binding.nameEt.setText(cast.name)
                         binding.aboutMyEt.setText(cast.aboutMy)
                         if (imageUri == null) {
-                            binding.image.loadImage(cast.image, true)
+                            binding.image.loadImage(cast.image, isUser = true)
                         }
                     }
                 }
@@ -103,7 +104,8 @@ class CastEditActivity : BaseActivity() {
             if (uri != null) {
                 cropImageSquare(uri)
             } else {
-                val resultUri = data.getParcelableExtra<Uri>("CROP_RESULT_URI")
+                val resultUri =
+                    IntentCompat.getParcelableExtra(data, "CROP_RESULT_URI", Uri::class.java)
                 if (resultUri != null) {
                     imageUri = resultUri
                     binding.image.setImageURI(imageUri)

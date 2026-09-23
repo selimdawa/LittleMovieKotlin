@@ -27,12 +27,10 @@ class CastViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, currentType = orderBy) }
             try {
                 val castList = repository.getCastList(orderBy)
-                _uiState.update { 
+                _uiState.update {
                     it.copy(
-                        isLoading = false, 
-                        castList = castList,
-                        count = castList.size
-                    ) 
+                        isLoading = false, castList = castList, count = castList.size
+                    )
                 }
             } catch (e: Exception) {
                 Timber.e(e, "Error loading cast")

@@ -12,8 +12,7 @@ import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.loadImage
 
 class CategoryAdapter(
-    private val onMoreClick: (Category) -> Unit,
-    private val onItemClick: (Category) -> Unit
+    private val onMoreClick: (Category) -> Unit, private val onItemClick: (Category) -> Unit
 ) : ListAdapter<Category, CategoryAdapter.ViewHolder>(DiffCallback()) {
 
     var list: List<Category> = emptyList()
@@ -32,7 +31,8 @@ class CategoryAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding, onMoreClick, onItemClick)
     }
 
@@ -52,7 +52,7 @@ class CategoryAdapter(
             val interestedCount = item.interestedCount
             val moviesCount = item.moviesCount
 
-            binding.image.loadImage(image, false)
+            binding.image.loadImage(image, isUser = false)
 
             if (name == DATA.EMPTY) {
                 binding.name.visibility = View.GONE

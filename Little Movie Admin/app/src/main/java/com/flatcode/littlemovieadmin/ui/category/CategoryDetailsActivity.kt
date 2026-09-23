@@ -4,18 +4,16 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.flatcode.littlemovieadmin.databinding.ActivityCategoryDetailsBinding
 import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.ui.movie.MovieAdapter
-import com.flatcode.littlemovieadmin.model.Movie
-import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.ui.category.CategoryDetailsViewModel
-import com.flatcode.littlemovieadmin.databinding.ActivityCategoryDetailsBinding
 import com.flatcode.littlemovieadmin.ui.movie.MovieDetailsActivity
+import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.checkFavorite
 import com.flatcode.littlemovieadmin.utils.moreDeleteMovie
 import com.flatcode.littlemovieadmin.utils.openActivity
@@ -41,8 +39,26 @@ class CategoryDetailsActivity : BaseActivity() {
         viewModel.init(categoryId, categoryName)
 
         binding.toolbar.nameSpace.text = categoryName
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.toolbar.close.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(enabled = true) {
+            override fun handleOnBackPressed() {
+                if (DATA.searchStatus) {
+                    binding.toolbar.toolbar.visibility = View.VISIBLE
+                    binding.toolbar.toolbarSearch.visibility = View.GONE
+                    DATA.searchStatus = false
+                    binding.toolbar.textSearch.setText(DATA.EMPTY)
+                } else if (DATA.isChange) {
+                    onResume()
+                    DATA.isChange = false
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                    isEnabled = true
+                }
+            }
+        })
 
         binding.toolbar.search.setOnClickListener {
             binding.toolbar.toolbar.visibility = View.GONE
@@ -59,27 +75,28 @@ class CategoryDetailsActivity : BaseActivity() {
                     Timber.e(e, "Filter error")
                 }
             }
+
             override fun afterTextChanged(s: Editable) {}
         })
 
-        adapter = MovieAdapter(
-            onItemClick = { movie ->
-                openActivity<MovieDetailsActivity>(
-                    extras = arrayOf(
-                        DATA.MOVIE_ID to movie.id,
-                        DATA.MOVIE_LINK to movie.movieLink
-                    )
+        adapter = MovieAdapter(onItemClick = { movie ->
+            openActivity<MovieDetailsActivity>(
+                extras = arrayOf(
+                    DATA.MOVIE_ID to movie.id, DATA.MOVIE_LINK to movie.movieLink
                 )
-            },
-            onMoreClick = { movie ->
-                moreDeleteMovie(
-                    movie, DATA.CATEGORIES, movie.categoryId ?: DATA.EMPTY, DATA.MOVIES_COUNT, false, true
-                )
-            },
-            onFavoriteClick = { movie, imageView ->
-                imageView.checkFavorite(movie.id)
-            }
-        )
+            )
+        }, onMoreClick = { movie ->
+            moreDeleteMovie(
+                movie,
+                DATA.CATEGORIES,
+                movie.categoryId ?: DATA.EMPTY,
+                DATA.MOVIES_COUNT,
+                cast = false,
+                movie = true
+            )
+        }, onFavoriteClick = { movie, imageView ->
+            imageView.checkFavorite(movie.id)
+        })
         binding.recyclerView.adapter = adapter
 
         binding.switchBar.all.setOnClickListener { viewModel.getData(DATA.TIMESTAMP) }
@@ -96,7 +113,7 @@ class CategoryDetailsActivity : BaseActivity() {
                 viewModel.uiState.collect { state ->
                     binding.progress.visibility = if (state.isLoading) View.VISIBLE else View.GONE
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", state.count)
-                    
+
                     adapter.list = state.movies
                     adapter.submitList(state.movies)
 
@@ -110,18 +127,6 @@ class CategoryDetailsActivity : BaseActivity() {
                 }
             }
         }
-    }
-
-    override fun onBackPressed() {
-        if (DATA.searchStatus) {
-            binding.toolbar.toolbar.visibility = View.VISIBLE
-            binding.toolbar.toolbarSearch.visibility = View.GONE
-            DATA.searchStatus = false
-            binding.toolbar.textSearch.setText(DATA.EMPTY)
-        } else if (DATA.isChange) {
-            onResume()
-            DATA.isChange = false
-        } else super.onBackPressed()
     }
 
     override fun onResume() {

@@ -17,21 +17,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CastDetailsViewModel @Inject constructor(
-    private val castRepo: CastRepository,
-    private val movieRepo: MovieRepository
+    private val castRepo: CastRepository, private val movieRepo: MovieRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CastDetailsUiState())
     val uiState: StateFlow<CastDetailsUiState> = _uiState.asStateFlow()
 
     fun init(castId: String, castName: String?, castImage: String?, castAbout: String?) {
-        _uiState.update { 
+        _uiState.update {
             it.copy(
-                castId = castId, 
-                castName = castName, 
-                castImage = castImage, 
-                castAbout = castAbout
-            ) 
+                castId = castId, castName = castName, castImage = castImage, castAbout = castAbout
+            )
         }
         getData(_uiState.value.currentType)
     }
@@ -48,24 +44,17 @@ class CastDetailsViewModel @Inject constructor(
                 // for (snapshot in dataSnapshot.children) { // snapshot is movieId
                 //    if (snapshot.hasChild(castId)) { ... }
                 // }
-                
-                // Let's implement this in CastRepository if possible or do it here.
-                val movieIds = castRepo.getMovieCastIds(castId) // Wait, this name is confusing in repo.
-                // In CastRepository: getMovieCastIds(movieId) gets cast IDs.
-                // We need something to get movie IDs for a cast ID.
-                
+
                 // Let's use the scan logic but cleaner.
                 val movies = movieRepo.getMovies(orderBy).filter { movie ->
-                    val castIds = castRepo.getMovieCastIds(movie.id ?: "")
+                    val castIds = castRepo.getMovieCastIds(movie.id)
                     castIds.contains(castId)
                 }
-                
-                _uiState.update { 
+
+                _uiState.update {
                     it.copy(
-                        isLoading = false, 
-                        movies = movies,
-                        count = movies.size
-                    ) 
+                        isLoading = false, movies = movies, count = movies.size
+                    )
                 }
             } catch (e: Exception) {
                 Timber.e(e, "Error loading cast details")

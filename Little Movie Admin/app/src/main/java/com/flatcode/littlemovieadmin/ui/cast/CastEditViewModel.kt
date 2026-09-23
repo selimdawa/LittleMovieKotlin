@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,13 +29,15 @@ class CastEditViewModel @Inject constructor(
             try {
                 val cast = repository.getCast(castId)
                 _uiState.update { it.copy(cast = cast) }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 // Handle error
             }
         }
     }
 
-    fun updateCast(name: String, aboutMy: String, imageUri: Uri?, onResult: (Boolean, String?) -> Unit) {
+    fun updateCast(
+        name: String, aboutMy: String, imageUri: Uri?, onResult: (Boolean, String?) -> Unit
+    ) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
@@ -62,7 +63,5 @@ class CastEditViewModel @Inject constructor(
 }
 
 data class CastEditUiState(
-    val castId: String? = null,
-    val cast: Cast? = null,
-    val isLoading: Boolean = false
+    val castId: String? = null, val cast: Cast? = null, val isLoading: Boolean = false
 )

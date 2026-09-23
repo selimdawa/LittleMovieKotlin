@@ -4,18 +4,15 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.flatcode.littlemovieadmin.ui.BaseActivity
-import com.flatcode.littlemovieadmin.ui.cast.CastAdapter
-import com.flatcode.littlemovieadmin.model.Cast
 import com.flatcode.littlemovieadmin.R
-import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.ui.cast.CastViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityCastBinding
+import com.flatcode.littlemovieadmin.ui.BaseActivity
+import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.moreDeleteCast
 import com.flatcode.littlemovieadmin.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,8 +33,26 @@ class CastActivity : BaseActivity() {
         setContentView(binding.root)
 
         binding.toolbar.nameSpace.setText(R.string.cast)
-        binding.toolbar.close.setOnClickListener { onBackPressed() }
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(enabled = true) {
+            override fun handleOnBackPressed() {
+                if (DATA.searchStatus) {
+                    binding.toolbar.toolbar.visibility = View.VISIBLE
+                    binding.toolbar.toolbarSearch.visibility = View.GONE
+                    DATA.searchStatus = false
+                    binding.toolbar.textSearch.setText(DATA.EMPTY)
+                } else if (DATA.isChange) {
+                    onResume()
+                    DATA.isChange = false
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                    isEnabled = true
+                }
+            }
+        })
 
         binding.toolbar.search.setOnClickListener {
             binding.toolbar.toolbar.visibility = View.GONE
@@ -54,24 +69,22 @@ class CastActivity : BaseActivity() {
                     Timber.e(e, "Filter error")
                 }
             }
+
             override fun afterTextChanged(s: Editable) {}
         })
 
-        adapter = CastAdapter(
-            onItemClick = { cast ->
-                openActivity<CastDetailsActivity>(
-                    extras = arrayOf(
-                        DATA.CAST_ID to cast.id,
-                        DATA.CAST_NAME to cast.name,
-                        DATA.CAST_IMAGE to cast.image,
-                        DATA.CAST_ABOUT to cast.aboutMy
-                    )
+        adapter = CastAdapter(onItemClick = { cast ->
+            openActivity<CastDetailsActivity>(
+                extras = arrayOf(
+                    DATA.CAST_ID to cast.id,
+                    DATA.CAST_NAME to cast.name,
+                    DATA.CAST_IMAGE to cast.image,
+                    DATA.CAST_ABOUT to cast.aboutMy
                 )
-            },
-            onMoreClick = { cast ->
-                moreDeleteCast(cast, DATA.NULL, DATA.NULL, DATA.NULL, true, false)
-            }
-        )
+            )
+        }, onMoreClick = { cast ->
+            moreDeleteCast(cast, DATA.NULL, DATA.NULL, DATA.NULL, cast = true, movie = false)
+        })
         binding.recyclerView.adapter = adapter
 
         binding.switchBar.all.setOnClickListener { viewModel.getData(DATA.TIMESTAMP) }
@@ -88,7 +101,7 @@ class CastActivity : BaseActivity() {
                 viewModel.uiState.collect { state ->
                     binding.progress.visibility = if (state.isLoading) View.VISIBLE else View.GONE
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", state.count)
-                    
+
                     adapter.list = state.castList
                     adapter.submitList(state.castList)
 
@@ -102,18 +115,6 @@ class CastActivity : BaseActivity() {
                 }
             }
         }
-    }
-
-    override fun onBackPressed() {
-        if (DATA.searchStatus) {
-            binding.toolbar.toolbar.visibility = View.VISIBLE
-            binding.toolbar.toolbarSearch.visibility = View.GONE
-            DATA.searchStatus = false
-            binding.toolbar.textSearch.setText(DATA.EMPTY)
-        } else if (DATA.isChange) {
-            onResume()
-            DATA.isChange = false
-        } else super.onBackPressed()
     }
 
     override fun onResume() {

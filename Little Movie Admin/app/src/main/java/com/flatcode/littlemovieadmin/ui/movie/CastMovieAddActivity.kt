@@ -2,18 +2,15 @@ package com.flatcode.littlemovieadmin.ui.movie
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.flatcode.littlemovieadmin.ui.BaseActivity
-import com.flatcode.littlemovieadmin.ui.movie.CastMovieAddAdapter
-import com.flatcode.littlemovieadmin.model.Cast
 import com.flatcode.littlemovieadmin.R
-import com.flatcode.littlemovieadmin.utils.DATA.castMovie
-import com.flatcode.littlemovieadmin.ui.movie.CastMovieAddViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityCastMovieBinding
+import com.flatcode.littlemovieadmin.ui.BaseActivity
+import com.flatcode.littlemovieadmin.utils.DATA.castMovie
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -30,7 +27,17 @@ class CastMovieAddActivity : BaseActivity() {
         setContentView(binding.root)
 
         binding.toolbar.nameSpace.setText(R.string.add_cast)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(enabled = true) {
+            override fun handleOnBackPressed() {
+                castMovie.clear()
+                castMovie.addAll(adapter.selectedIds)
+                isEnabled = false
+                onBackPressedDispatcher.onBackPressed()
+                isEnabled = true
+            }
+        })
 
         adapter = CastMovieAddAdapter(castMovie)
         binding.recyclerView.adapter = adapter
@@ -43,7 +50,7 @@ class CastMovieAddActivity : BaseActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     binding.progress.visibility = if (state.isLoading) View.VISIBLE else View.GONE
-                    
+
                     adapter.submitList(state.castList)
 
                     if (state.castList.isNotEmpty()) {
@@ -63,9 +70,4 @@ class CastMovieAddActivity : BaseActivity() {
         viewModel.loadCast()
     }
 
-    override fun onBackPressed() {
-        castMovie.clear()
-        castMovie.addAll(adapter.selectedIds)
-        super.onBackPressed()
-    }
 }

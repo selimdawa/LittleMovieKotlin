@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,7 +26,12 @@ class CastAddViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(CastAddUiState())
     val uiState: StateFlow<CastAddUiState> = _uiState.asStateFlow()
 
-    fun uploadCast(name: String, aboutMy: String, imageUri: Uri, onResult: (Boolean, String?) -> Unit) {
+    fun uploadCast(
+        name: String,
+        aboutMy: String,
+        imageUri: Uri,
+        onResult: (Boolean, String?) -> Unit
+    ) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {

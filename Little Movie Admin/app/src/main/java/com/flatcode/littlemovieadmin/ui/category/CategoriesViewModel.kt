@@ -27,12 +27,10 @@ class CategoriesViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, currentType = orderBy) }
             try {
                 val categories = repository.getCategories(orderBy)
-                _uiState.update { 
+                _uiState.update {
                     it.copy(
-                        isLoading = false, 
-                        categories = categories,
-                        count = categories.size
-                    ) 
+                        isLoading = false, categories = categories, count = categories.size
+                    )
                 }
             } catch (e: Exception) {
                 Timber.e(e, "Error loading categories")

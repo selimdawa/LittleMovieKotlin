@@ -4,18 +4,15 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.flatcode.littlemovieadmin.ui.BaseActivity
-import com.flatcode.littlemovieadmin.ui.category.CategoryAdapter
-import com.flatcode.littlemovieadmin.model.Category
 import com.flatcode.littlemovieadmin.R
-import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.ui.category.CategoriesViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityCategoriesBinding
+import com.flatcode.littlemovieadmin.ui.BaseActivity
+import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.moreDeleteCategory
 import com.flatcode.littlemovieadmin.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,8 +33,26 @@ class CategoriesActivity : BaseActivity() {
         setContentView(binding.root)
 
         binding.toolbar.nameSpace.setText(R.string.categories)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.toolbar.close.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(enabled = true) {
+            override fun handleOnBackPressed() {
+                if (DATA.searchStatus) {
+                    binding.toolbar.toolbar.visibility = View.VISIBLE
+                    binding.toolbar.toolbarSearch.visibility = View.GONE
+                    DATA.searchStatus = false
+                    binding.toolbar.textSearch.setText(DATA.EMPTY)
+                } else if (DATA.isChange) {
+                    onResume()
+                    DATA.isChange = false
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                    isEnabled = true
+                }
+            }
+        })
 
         binding.toolbar.search.setOnClickListener {
             binding.toolbar.toolbar.visibility = View.GONE
@@ -54,12 +69,20 @@ class CategoriesActivity : BaseActivity() {
                     Timber.e(e, "Filter error")
                 }
             }
+
             override fun afterTextChanged(s: Editable) {}
         })
 
         adapter = CategoryAdapter(
             onMoreClick = { category ->
-                moreDeleteCategory(category, DATA.NULL, DATA.NULL, DATA.NULL, false, false)
+                moreDeleteCategory(
+                    category,
+                    DATA.NULL,
+                    DATA.NULL,
+                    DATA.NULL,
+                    cast = false,
+                    movie = false
+                )
             },
             onItemClick = { category ->
                 openActivity<CategoryDetailsActivity>(
@@ -86,7 +109,7 @@ class CategoriesActivity : BaseActivity() {
                 viewModel.uiState.collect { state ->
                     binding.progress.visibility = if (state.isLoading) View.VISIBLE else View.GONE
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", state.count)
-                    
+
                     adapter.list = state.categories
                     adapter.submitList(state.categories)
 
@@ -100,18 +123,6 @@ class CategoriesActivity : BaseActivity() {
                 }
             }
         }
-    }
-
-    override fun onBackPressed() {
-        if (DATA.searchStatus) {
-            binding.toolbar.toolbar.visibility = View.VISIBLE
-            binding.toolbar.toolbarSearch.visibility = View.GONE
-            DATA.searchStatus = false
-            binding.toolbar.textSearch.setText(DATA.EMPTY)
-        } else if (DATA.isChange) {
-            onResume()
-            DATA.isChange = false
-        } else super.onBackPressed()
     }
 
     override fun onResume() {

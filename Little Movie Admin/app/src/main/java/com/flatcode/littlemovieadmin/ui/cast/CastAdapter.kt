@@ -12,8 +12,7 @@ import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.loadImage
 
 class CastAdapter(
-    private val onItemClick: (Cast) -> Unit,
-    private val onMoreClick: (Cast) -> Unit
+    private val onItemClick: (Cast) -> Unit, private val onMoreClick: (Cast) -> Unit
 ) : ListAdapter<Cast, CastAdapter.ViewHolder>(DiffCallback()) {
 
     var list: List<Cast> = emptyList()
@@ -26,7 +25,7 @@ class CastAdapter(
         val filteredList = if (query.isEmpty()) {
             list
         } else {
-            list.filter { it.name?.contains(query, ignoreCase = true) == true }
+            list.filter { it.name.contains(query, ignoreCase = true) }
         }
         submitList(filteredList)
     }
@@ -47,12 +46,12 @@ class CastAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Cast) {
-            val name = item.name ?: DATA.EMPTY
+            val name = item.name
             val image = item.image ?: DATA.EMPTY
             val interestedCount = item.interestedCount
             val moviesCount = item.moviesCount
 
-            binding.image.loadImage(image, true)
+            binding.image.loadImage(image, isUser = true)
 
             if (name == DATA.EMPTY) {
                 binding.name.visibility = View.GONE
@@ -73,7 +72,6 @@ class CastAdapter(
         override fun areItemsTheSame(oldItem: Cast, newItem: Cast): Boolean =
             oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: Cast, newItem: Cast): Boolean =
-            oldItem == newItem
+        override fun areContentsTheSame(oldItem: Cast, newItem: Cast): Boolean = oldItem == newItem
     }
 }

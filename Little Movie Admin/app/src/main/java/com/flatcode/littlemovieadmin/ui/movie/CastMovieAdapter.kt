@@ -30,10 +30,10 @@ class CastMovieAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Cast) {
-            val name = item.name ?: DATA.EMPTY
+            val name = item.name
             val image = item.image ?: DATA.EMPTY
 
-            binding.image.loadImage(image, true)
+            binding.image.loadImage(image, isUser = true)
 
             if (name == DATA.EMPTY) {
                 binding.name.visibility = View.GONE

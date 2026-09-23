@@ -33,12 +33,10 @@ class CategoryDetailsViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, currentType = orderBy) }
             try {
                 val movies = movieRepo.getMovies(orderBy).filter { it.categoryId == categoryId }
-                _uiState.update { 
+                _uiState.update {
                     it.copy(
-                        isLoading = false, 
-                        movies = movies,
-                        count = movies.size
-                    ) 
+                        isLoading = false, movies = movies, count = movies.size
+                    )
                 }
             } catch (e: Exception) {
                 Timber.e(e, "Error loading category movies")

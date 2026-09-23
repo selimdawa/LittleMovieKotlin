@@ -3,7 +3,6 @@ package com.flatcode.littlemovieadmin.ui.movie
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -29,13 +28,14 @@ class CastMovieAddAdapter(
         holder.bind(getItem(position))
     }
 
-    inner class ViewHolder(val binding: ItemCastMovieAddBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding: ItemCastMovieAddBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Cast) {
             val id = item.id
             val name = item.name
             val image = item.image ?: DATA.EMPTY
 
-            binding.image.loadImage(image, true)
+            binding.image.loadImage(image, isUser = true)
 
             if (name.isEmpty()) {
                 binding.name.visibility = View.GONE

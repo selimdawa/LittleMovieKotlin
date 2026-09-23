@@ -15,13 +15,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
 class CategoryAddViewModel @Inject constructor(
-    private val repository: CategoryRepository,
-    private val authRepo: AuthRepository
+    private val repository: CategoryRepository, private val authRepo: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CategoryAddUiState())

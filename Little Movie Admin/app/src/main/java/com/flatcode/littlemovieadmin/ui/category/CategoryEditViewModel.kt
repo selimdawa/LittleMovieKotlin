@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,7 +29,7 @@ class CategoryEditViewModel @Inject constructor(
             try {
                 val category = repository.getCategory(categoryId)
                 _uiState.update { it.copy(category = category) }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 // Handle error
             }
         }
@@ -61,7 +60,5 @@ class CategoryEditViewModel @Inject constructor(
 }
 
 data class CategoryEditUiState(
-    val categoryId: String? = null,
-    val category: Category? = null,
-    val isLoading: Boolean = false
+    val categoryId: String? = null, val category: Category? = null, val isLoading: Boolean = false
 )

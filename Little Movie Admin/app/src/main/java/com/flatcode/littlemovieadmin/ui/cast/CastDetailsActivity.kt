@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -45,8 +46,26 @@ class CastDetailsActivity : BaseActivity() {
         viewModel.init(castId, castName, castImage, castAbout)
 
         binding.toolbar.nameSpace.setText(R.string.cast_details)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.toolbar.close.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(enabled = true) {
+            override fun handleOnBackPressed() {
+                if (DATA.searchStatus) {
+                    binding.toolbar.toolbar.visibility = View.VISIBLE
+                    binding.toolbar.toolbarSearch.visibility = View.GONE
+                    DATA.searchStatus = false
+                    binding.toolbar.textSearch.setText(DATA.EMPTY)
+                } else if (DATA.isChange) {
+                    onResume()
+                    DATA.isChange = false
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                    isEnabled = true
+                }
+            }
+        })
 
         binding.toolbar.search.setOnClickListener {
             binding.toolbar.toolbar.visibility = View.GONE
@@ -72,29 +91,24 @@ class CastDetailsActivity : BaseActivity() {
             dialogAboutArtist(state.castImage, state.castName, state.castAbout)
         }
 
-        adapter = MovieAdapter(
-            onItemClick = { movie ->
-                openActivity<MovieDetailsActivity>(
-                    extras = arrayOf(
-                        DATA.MOVIE_ID to movie.id,
-                        DATA.MOVIE_LINK to movie.movieLink
-                    )
+        adapter = MovieAdapter(onItemClick = { movie ->
+            openActivity<MovieDetailsActivity>(
+                extras = arrayOf(
+                    DATA.MOVIE_ID to movie.id, DATA.MOVIE_LINK to movie.movieLink
                 )
-            },
-            onMoreClick = { movie ->
-                moreDeleteMovie(
-                    movie,
-                    DATA.CATEGORIES,
-                    movie.categoryId ?: DATA.EMPTY,
-                    DATA.MOVIES_COUNT,
-                    false,
-                    true
-                )
-            },
-            onFavoriteClick = { movie, imageView ->
-                imageView.checkFavorite(movie.id)
-            }
-        )
+            )
+        }, onMoreClick = { movie ->
+            moreDeleteMovie(
+                movie,
+                DATA.CATEGORIES,
+                movie.categoryId ?: DATA.EMPTY,
+                DATA.MOVIES_COUNT,
+                cast = false,
+                movie = true
+            )
+        }, onFavoriteClick = { movie, imageView ->
+            imageView.checkFavorite(movie.id)
+        })
         binding.recyclerView.adapter = adapter
 
         binding.switchBar.all.setOnClickListener { viewModel.getData(DATA.TIMESTAMP) }
@@ -113,8 +127,8 @@ class CastDetailsActivity : BaseActivity() {
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", state.count)
                     binding.name.text = state.castName
 
-                    binding.image.loadImage(state.castImage, true)
-                    binding.imageBlur.loadBlur(state.castImage, 50, true)
+                    binding.image.loadImage(state.castImage, isUser = true)
+                    binding.imageBlur.loadBlur(state.castImage, 50, isUser = true)
 
                     adapter.list = state.movies
                     adapter.submitList(state.movies)
@@ -129,18 +143,6 @@ class CastDetailsActivity : BaseActivity() {
                 }
             }
         }
-    }
-
-    override fun onBackPressed() {
-        if (DATA.searchStatus) {
-            binding.toolbar.toolbar.visibility = View.VISIBLE
-            binding.toolbar.toolbarSearch.visibility = View.GONE
-            DATA.searchStatus = false
-            binding.toolbar.textSearch.setText(DATA.EMPTY)
-        } else if (DATA.isChange) {
-            onResume()
-            DATA.isChange = false
-        } else super.onBackPressed()
     }
 
     override fun onResume() {
