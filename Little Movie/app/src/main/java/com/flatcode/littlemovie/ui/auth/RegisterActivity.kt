@@ -1,6 +1,6 @@
 package com.flatcode.littlemovie.ui.auth
 
-import android.app.ProgressDialog
+import com.flatcode.littlemovie.utils.ProgressDialog
 import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils

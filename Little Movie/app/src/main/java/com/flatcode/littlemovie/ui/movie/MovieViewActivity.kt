@@ -10,26 +10,27 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updatePadding
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.*
 import com.flatcode.littlemovie.databinding.ActivityMovieViewBinding
 import com.flatcode.littlemovie.service.FloatingWidgetService
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.util.Util
+import androidx.annotation.OptIn
+import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import dagger.hilt.android.AndroidEntryPoint
 
+@OptIn(UnstableApi::class)
 @AndroidEntryPoint
 class MovieViewActivity : AppCompatActivity() {
 
@@ -72,7 +73,7 @@ class MovieViewActivity : AppCompatActivity() {
                 startFloatingService()
             }
         }
-        val trackSelector = DefaultTrackSelector(this, AdaptiveTrackSelection.Factory())
+        val trackSelector = DefaultTrackSelector(this)
         exoPlayer = ExoPlayer.Builder(this).setTrackSelector(trackSelector).build()
         playVideo()
     }
@@ -96,12 +97,10 @@ class MovieViewActivity : AppCompatActivity() {
 
     private fun playVideo() {
         try {
-            val playerInfo = Util.getUserAgent(this, "MovieAppClient")
-            val dataSourceFactory = DefaultDataSourceFactory(this, playerInfo)
-            val mediaSource: MediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
-                .createMediaSource(MediaItem.fromUri(videoUri!!))
+            val mediaItem = MediaItem.fromUri(videoUri!!)
             binding!!.playerView.player = exoPlayer
-            exoPlayer!!.prepare(mediaSource)
+            exoPlayer!!.setMediaItem(mediaItem)
+            exoPlayer!!.prepare()
             exoPlayer!!.playWhenReady = true
         } catch (e: Exception) {
             e.printStackTrace()

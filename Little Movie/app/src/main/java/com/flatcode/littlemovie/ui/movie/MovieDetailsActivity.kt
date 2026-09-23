@@ -1,7 +1,7 @@
 package com.flatcode.littlemovie.ui.movie
 
 import android.app.Activity
-import android.app.ProgressDialog
+import com.flatcode.littlemovie.utils.ProgressDialog
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater

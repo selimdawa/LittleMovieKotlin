@@ -1,42 +1,42 @@
 package com.flatcode.littlemovieadmin.ui.auth
 
-import android.app.ProgressDialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Patterns
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import com.flatcode.littlemovieadmin.ui.BaseActivity
-
+import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.databinding.ActivityForgetPasswordBinding
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.FirebaseAuth
+import com.flatcode.littlemovieadmin.ui.BaseActivity
+import com.flatcode.littlemovieadmin.utils.createProgressDialog
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class ForgetPasswordActivity : BaseActivity() {
 
-    private var binding: ActivityForgetPasswordBinding? = null
+    private lateinit var binding: ActivityForgetPasswordBinding
     private val context: Context = this@ForgetPasswordActivity
-    private var auth: FirebaseAuth? = null
-    private var dialog: ProgressDialog? = null
+    private val viewModel: ForgetPasswordViewModel by viewModels()
+    private var dialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityForgetPasswordBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding.root)
 
-        auth = FirebaseAuth.getInstance()
-        dialog = ProgressDialog(this)
-        dialog!!.setTitle("Please wait...")
-        dialog!!.setCanceledOnTouchOutside(false)
+        binding.go.setOnClickListener { validateDate() }
+        binding.login.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
-        binding!!.go.setOnClickListener { validateDate() }
-        binding!!.login.setOnClickListener { onBackPressed() }
+        observeState()
     }
 
     private var email = ""
     private fun validateDate() {
-        email = binding!!.emailEt.text.toString().trim { it <= ' ' }
+        email = binding.emailEt.text.toString().trim()
         if (email.isEmpty()) {
             Toast.makeText(context, "Enter email...!", Toast.LENGTH_SHORT).show()
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
@@ -47,17 +47,34 @@ class ForgetPasswordActivity : BaseActivity() {
     }
 
     private fun recoverPassword() {
-        dialog!!.setMessage("Sending password recovery to instructions to $email")
-        dialog!!.show()
-        auth!!.sendPasswordResetEmail(email).addOnCompleteListener { task: Task<Void?>? ->
-            dialog!!.dismiss()
-            Toast.makeText(
-                context, "Instructions to reset password sent to $email", Toast.LENGTH_SHORT
-            ).show()
-        }.addOnFailureListener { e: Exception ->
-            dialog!!.dismiss()
-            Toast.makeText(context, "Failed to send to due to " + e.message, Toast.LENGTH_SHORT)
-                .show()
+        dialog = createProgressDialog(
+            "Sending password recovery instructions to $email",
+            "Please wait..."
+        )
+        dialog?.show()
+        viewModel.recoverPassword(email) { _, message ->
+            dialog?.dismiss()
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun observeState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    if (state.isLoading) {
+                        if (dialog == null) {
+                            dialog = createProgressDialog(
+                                "Sending password recovery instructions to $email",
+                                "Please wait..."
+                            )
+                        }
+                        dialog?.show()
+                    } else {
+                        dialog?.dismiss()
+                    }
+                }
+            }
         }
     }
 }

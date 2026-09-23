@@ -78,7 +78,5 @@
     <string name="close">Close</string>
     <string name="done">Done</string>
     <string name="crop_image">Crop Image</string>
-    <string name="splash_fragment">SplashFragment</string>
-    <string name="login_fragment">LoginFragment</string>
     <string name="home_fragment">HomeFragment</string>
 </resources>

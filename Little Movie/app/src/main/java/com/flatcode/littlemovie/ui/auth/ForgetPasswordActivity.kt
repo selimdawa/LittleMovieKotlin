@@ -1,6 +1,6 @@
 package com.flatcode.littlemovie.ui.auth
 
-import android.app.ProgressDialog
+import com.flatcode.littlemovie.utils.ProgressDialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Patterns
@@ -10,8 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.databinding.ActivityForgetPasswordBinding
+import com.flatcode.littlemovie.utils.openActivity
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 
