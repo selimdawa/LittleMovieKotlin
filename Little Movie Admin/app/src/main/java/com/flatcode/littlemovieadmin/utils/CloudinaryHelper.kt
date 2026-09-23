@@ -11,12 +11,9 @@ import kotlin.coroutines.resumeWithException
 object CloudinaryHelper {
 
     suspend fun uploadFile(
-        uri: Uri,
-        isVideo: Boolean = false,
-        onProgress: ((Int) -> Unit)? = null
+        uri: Uri, isVideo: Boolean = false, onProgress: ((Int) -> Unit)? = null
     ): String = suspendCancellableCoroutine { continuation ->
-        val request = MediaManager.get().upload(uri)
-            .unsigned(DATA.CLOUDINARY_UPLOAD_PRESET)
+        val request = MediaManager.get().upload(uri).unsigned(DATA.CLOUDINARY_UPLOAD_PRESET)
 
         if (isVideo) {
             request.option("resource_type", "video")

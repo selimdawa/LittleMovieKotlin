@@ -17,8 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditorsChoiceAddViewModel @Inject constructor(
-    private val movieRepo: MovieRepository,
-    private val authRepo: AuthRepository
+    private val movieRepo: MovieRepository, private val authRepo: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(EditorsChoiceAddUiState())
@@ -34,12 +33,10 @@ class EditorsChoiceAddViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, currentType = orderBy) }
             try {
                 val movies = movieRepo.getMovies(orderBy).filter { it.editorsChoice == 0 }
-                _uiState.update { 
+                _uiState.update {
                     it.copy(
-                        isLoading = false, 
-                        movies = movies,
-                        count = movies.size
-                    ) 
+                        isLoading = false, movies = movies, count = movies.size
+                    )
                 }
             } catch (e: Exception) {
                 Timber.e(e, "Error loading movies for editors choice")
@@ -54,15 +51,13 @@ class EditorsChoiceAddViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, currentType = orderBy) }
             try {
                 val favoriteIds = movieRepo.getFavoriteMovieIds(uid)
-                val movies = movieRepo.getMovies(orderBy).filter { 
-                    favoriteIds.contains(it.id) && it.editorsChoice == 0 
+                val movies = movieRepo.getMovies(orderBy).filter {
+                    favoriteIds.contains(it.id) && it.editorsChoice == 0
                 }
-                _uiState.update { 
+                _uiState.update {
                     it.copy(
-                        isLoading = false, 
-                        movies = movies,
-                        count = movies.size
-                    ) 
+                        isLoading = false, movies = movies, count = movies.size
+                    )
                 }
             } catch (e: Exception) {
                 Timber.e(e, "Error loading favorites for editors choice")

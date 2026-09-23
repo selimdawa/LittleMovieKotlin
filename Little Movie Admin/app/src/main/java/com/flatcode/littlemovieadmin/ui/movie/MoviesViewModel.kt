@@ -27,12 +27,10 @@ class MoviesViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, currentType = orderBy) }
             try {
                 val movies = repository.getMovies(orderBy)
-                _uiState.update { 
+                _uiState.update {
                     it.copy(
-                        isLoading = false, 
-                        movies = movies,
-                        count = movies.size
-                    ) 
+                        isLoading = false, movies = movies, count = movies.size
+                    )
                 }
             } catch (e: Exception) {
                 Timber.e(e, "Error loading movies")

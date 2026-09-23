@@ -7,6 +7,7 @@
     <string name="forget_password">Forget Password?</string>
     <string name="email_example">abc@example.com</string>
     <string name="do_you_want_to_logout">Do you want to logout?</string>
+    <string name="delete_item_prompt">Do you want to delete %1$s ( %2$s ) ?</string>
     <string name="no">NO</string>
     <string name="yes">YES</string>
     <string name="none_display">There are no items to display</string>
@@ -23,7 +24,7 @@
     <string name="movies">Movies</string>
     <string name="most_loves">Most Loves</string>
     <string name="favorites">Favorites</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="choose_movie">Choose Movie</string>
     <string name="year">Year</string>
     <string name="duration">Duration</string>

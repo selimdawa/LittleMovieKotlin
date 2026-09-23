@@ -7,9 +7,9 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.databinding.ActivityPrivacyPolicyEditBinding
+import com.flatcode.littlemovieadmin.ui.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -25,7 +25,7 @@ class PrivacyPolicyEditActivity : BaseActivity() {
         setContentView(binding.root)
 
         binding.toolbar.nameSpace.setText(R.string.privacy_policy)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.go.setOnClickListener { validateData() }
 
         observeState()
@@ -38,7 +38,7 @@ class PrivacyPolicyEditActivity : BaseActivity() {
         } else {
             viewModel.updatePrivacyPolicy(content) { success, message ->
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-                if (success) onBackPressed()
+                if (success) onBackPressedDispatcher.onBackPressed()
             }
         }
     }

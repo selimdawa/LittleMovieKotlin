@@ -7,18 +7,21 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import com.flatcode.littlemovieadmin.ui.BaseActivity
+import androidx.core.content.IntentCompat
 import com.flatcode.littlemovieadmin.R
+import com.flatcode.littlemovieadmin.databinding.ActivityMovieAddBinding
+import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.DATA.castMovie
 import com.flatcode.littlemovieadmin.utils.convertDuration
-import com.flatcode.littlemovieadmin.utils.cropVideoSquare
 import com.flatcode.littlemovieadmin.utils.createProgressDialog
+import com.flatcode.littlemovieadmin.utils.cropVideoSquare
 import com.flatcode.littlemovieadmin.utils.loadBlurUri
 import com.flatcode.littlemovieadmin.utils.openActivity
-import com.flatcode.littlemovieadmin.databinding.ActivityMovieAddBinding
 import com.flatcode.littlemovieadmin.utils.pickImage
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -36,13 +39,40 @@ class MovieAddActivity : BaseActivity() {
     private var selectedCategoryId: String? = null
     private var selectedCategoryTitle: String? = null
 
+    private val videoPickerLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            if (uri != null) {
+                videoUri = uri
+                val retriever = MediaMetadataRetriever()
+                try {
+                    retriever.setDataSource(this, videoUri)
+                    durations = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                    binding.duration.text = (durations?.toLong() ?: 0L).convertDuration()
+                    binding.choose.setText(R.string.ok)
+                } catch (e: Exception) {
+                    Timber.e(e, "Metadata retrieval failed")
+                } finally {
+                    retriever.release()
+                }
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMovieAddBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.toolbar.nameSpace.setText(R.string.add_new_movie)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(enabled = true) {
+            override fun handleOnBackPressed() {
+                castMovie.clear()
+                isEnabled = false
+                onBackPressedDispatcher.onBackPressed()
+                isEnabled = true
+            }
+        })
         binding.category.setOnClickListener { categoryPickDialog() }
         binding.image.setOnClickListener {
             requestStorage(DATA.MIX_VIDEO_X) {
@@ -91,8 +121,16 @@ class MovieAddActivity : BaseActivity() {
         progressDialog = createProgressDialog("Uploading Movie...", "Please wait...")
         progressDialog?.show()
 
-        viewModel.uploadMovie(name, description, year, cId, iUri, vUri, durations, castMovie,
-            onProgress = { progress ->
+        viewModel.uploadMovie(
+            name,
+            description,
+            year,
+            cId,
+            iUri,
+            vUri,
+            durations,
+            castMovie,
+            onProgress = { _ ->
                 // Custom handling or update if needed, since it's AlertDialog we just keep it showing
             },
             onResult = { success, message ->
@@ -102,8 +140,7 @@ class MovieAddActivity : BaseActivity() {
                     castMovie.clear()
                     finish()
                 }
-            }
-        )
+            })
     }
 
     private fun categoryPickDialog() {
@@ -111,9 +148,7 @@ class MovieAddActivity : BaseActivity() {
         if (categories.isEmpty()) return
 
         val categoryNames = categories.map { it.name }.toTypedArray()
-        AlertDialog.Builder(this)
-            .setTitle("Pick Category")
-            .setItems(categoryNames) { _, which ->
+        AlertDialog.Builder(this).setTitle("Pick Category").setItems(categoryNames) { _, which ->
                 selectedCategoryTitle = categories[which].name
                 selectedCategoryId = categories[which].id
                 binding.category.text = selectedCategoryTitle
@@ -121,8 +156,7 @@ class MovieAddActivity : BaseActivity() {
     }
 
     private fun openVideoFiles() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT).apply { type = "video/*" }
-        startActivityForResult(intent, 101)
+        videoPickerLauncher.launch("video/*")
     }
 
     override fun onRequestPermissionsResult(
@@ -139,26 +173,13 @@ class MovieAddActivity : BaseActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 101 && resultCode == RESULT_OK && data?.data != null) {
-            videoUri = data.data
-            val retriever = MediaMetadataRetriever()
-            try {
-                retriever.setDataSource(this, videoUri)
-                durations = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-                binding.duration.text = (durations?.toLong() ?: 0L).convertDuration()
-                binding.choose.setText(R.string.ok)
-            } catch (e: Exception) {
-                Timber.e(e, "Metadata retrieval failed")
-            } finally {
-                retriever.release()
-            }
-        }
         if (requestCode == DATA.MIX_VIDEO_X && resultCode == RESULT_OK && data != null) {
             val uri = data.data
             if (uri != null) {
                 cropVideoSquare(uri)
             } else {
-                val resultUri = data.getParcelableExtra<Uri>("CROP_RESULT_URI")
+                val resultUri =
+                    IntentCompat.getParcelableExtra(data, "CROP_RESULT_URI", Uri::class.java)
                 if (resultUri != null) {
                     imageUri = resultUri
                     binding.image.setImageURI(imageUri)
@@ -172,11 +193,6 @@ class MovieAddActivity : BaseActivity() {
         super.onResume()
         binding.cast.text = MessageFormat.format("{0}{1}", DATA.EMPTY, castMovie.size)
         binding.cast.setOnClickListener { openActivity<CastMovieAddActivity>() }
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        castMovie.clear()
     }
 
     override fun onDestroy() {

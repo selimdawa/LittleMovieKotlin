@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flatcode.littlemovieadmin.model.Movie
 import com.flatcode.littlemovieadmin.repository.AuthRepository
+import com.flatcode.littlemovieadmin.repository.CastRepository
 import com.flatcode.littlemovieadmin.repository.CategoryRepository
 import com.flatcode.littlemovieadmin.repository.MovieRepository
-import com.flatcode.littlemovieadmin.repository.CastRepository
 import com.flatcode.littlemovieadmin.utils.CloudinaryHelper
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.google.firebase.database.FirebaseDatabase
@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -39,8 +38,8 @@ class MovieAddViewModel @Inject constructor(
     private fun loadCategories() {
         viewModelScope.launch {
             try {
-                val list = categoryRepo.getCategories(DATA.TIMESTAMP).map { 
-                    CategoryInfo(it.id ?: "", it.name ?: "") 
+                val list = categoryRepo.getCategories(DATA.TIMESTAMP).map {
+                    CategoryInfo(it.id, it.name ?: "")
                 }
                 _uiState.update { it.copy(categories = list) }
             } catch (e: Exception) {
@@ -50,15 +49,23 @@ class MovieAddViewModel @Inject constructor(
     }
 
     fun uploadMovie(
-        name: String, description: String, year: Int, categoryId: String,
-        imageUri: Uri, videoUri: Uri, durations: String?, castIds: List<String?>,
-        onProgress: (Int) -> Unit, onResult: (Boolean, String?) -> Unit
+        name: String,
+        description: String,
+        year: Int,
+        categoryId: String,
+        imageUri: Uri,
+        videoUri: Uri,
+        durations: String?,
+        castIds: List<String?>,
+        onProgress: (Int) -> Unit,
+        onResult: (Boolean, String?) -> Unit
     ) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
                 // 1. Upload Video
-                val videoUrl = CloudinaryHelper.uploadFile(videoUri, isVideo = true, onProgress = onProgress)
+                val videoUrl =
+                    CloudinaryHelper.uploadFile(videoUri, isVideo = true, onProgress = onProgress)
 
                 // 2. Upload Image
                 val imageUrl = CloudinaryHelper.uploadFile(imageUri)
@@ -85,12 +92,12 @@ class MovieAddViewModel @Inject constructor(
                 }
 
                 movieRepo.addMovie(movie, id)
-                
+
                 // 4. Update Cast relationships
                 val castUpdates = mutableMapOf<String, Any>()
                 castIds.forEach { castId ->
-                    castId?.let { 
-                        castUpdates[it] = true 
+                    castId?.let {
+                        castUpdates[it] = true
                         // Update cast movie count (could be moved to a repository method that handles batch updates)
                         val cast = castRepo.getCast(it)
                         cast?.let { c ->
@@ -103,7 +110,9 @@ class MovieAddViewModel @Inject constructor(
                 // 5. Update Category movie count
                 val category = categoryRepo.getCategory(categoryId)
                 category?.let { cat ->
-                    categoryRepo.updateCategory(categoryId, mapOf(DATA.MOVIES_COUNT to (cat.moviesCount + 1)))
+                    categoryRepo.updateCategory(
+                        categoryId, mapOf(DATA.MOVIES_COUNT to (cat.moviesCount + 1))
+                    )
                 }
 
                 _uiState.update { it.copy(isLoading = false) }
@@ -118,8 +127,7 @@ class MovieAddViewModel @Inject constructor(
 }
 
 data class MovieAddUiState(
-    val isLoading: Boolean = false,
-    val categories: List<CategoryInfo> = emptyList()
+    val isLoading: Boolean = false, val categories: List<CategoryInfo> = emptyList()
 )
 
 data class CategoryInfo(val id: String, val name: String)

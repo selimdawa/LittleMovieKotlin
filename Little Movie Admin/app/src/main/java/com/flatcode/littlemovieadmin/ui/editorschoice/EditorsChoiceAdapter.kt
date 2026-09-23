@@ -3,9 +3,6 @@ package com.flatcode.littlemovieadmin.ui.editorschoice
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -81,7 +78,7 @@ class EditorsChoiceAdapter(
             val viewsCount = item.viewsCount
             val lovesCount = item.lovesCount
 
-            binding.image.loadImage(imageLink, false)
+            binding.image.loadImage(imageLink, isUser = false)
             binding.name.text = name
             binding.nrViews.text = viewsCount.toString()
             binding.nrLoves.text = lovesCount.toString()

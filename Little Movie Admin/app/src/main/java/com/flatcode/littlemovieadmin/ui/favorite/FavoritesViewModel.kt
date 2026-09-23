@@ -17,8 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
-    private val movieRepo: MovieRepository,
-    private val authRepo: AuthRepository
+    private val movieRepo: MovieRepository, private val authRepo: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FavoritesUiState())
@@ -31,12 +30,10 @@ class FavoritesViewModel @Inject constructor(
             try {
                 val favoriteIds = movieRepo.getFavoriteMovieIds(uid)
                 val movies = movieRepo.getMovies(orderBy).filter { favoriteIds.contains(it.id) }
-                _uiState.update { 
+                _uiState.update {
                     it.copy(
-                        isLoading = false, 
-                        movies = movies,
-                        count = movies.size
-                    ) 
+                        isLoading = false, movies = movies, count = movies.size
+                    )
                 }
             } catch (e: Exception) {
                 Timber.e(e, "Error loading favorites")

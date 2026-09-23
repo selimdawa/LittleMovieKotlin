@@ -69,5 +69,4 @@ class CastMovieAddActivity : BaseActivity() {
         super.onResume()
         viewModel.loadCast()
     }
-
 }

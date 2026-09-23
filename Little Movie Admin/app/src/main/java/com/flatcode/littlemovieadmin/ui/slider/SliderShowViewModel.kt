@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -32,12 +31,12 @@ class SliderShowViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true) }
             try {
                 val images = repository.getSliderImages()
-                _uiState.update { 
-                    it.copy(
-                        isLoading = false, 
+                _uiState.update { state ->
+                    state.copy(
+                        isLoading = false,
                         images = images,
-                        itemCount = images.filter { it.value.isNotEmpty() }.size
-                    ) 
+                        itemCount = images.filter { entry -> entry.value.isNotEmpty() }.size
+                    )
                 }
             } catch (e: Exception) {
                 Timber.e(e, "Error loading slider images")

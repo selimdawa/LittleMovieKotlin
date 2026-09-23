@@ -4,13 +4,11 @@ import android.app.Application
 import android.text.format.DateFormat
 import com.cloudinary.android.MediaManager
 import com.flatcode.littlemovieadmin.utils.DATA
+import dagger.hilt.android.HiltAndroidApp
 import io.selimdawa.multicolors.MultiColorManager
+import timber.log.Timber
 import java.util.Calendar
 import java.util.Locale
-
-import com.flatcode.littlemovieadmin.BuildConfig
-import dagger.hilt.android.HiltAndroidApp
-import timber.log.Timber
 
 @HiltAndroidApp
 class Application : Application() {

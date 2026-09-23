@@ -8,8 +8,6 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
-import android.view.View
-import android.webkit.MimeTypeMap
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
@@ -31,10 +29,10 @@ import com.google.firebase.database.ValueEventListener
 import timber.log.Timber
 import java.io.Serializable
 import java.text.MessageFormat
+import java.util.Locale
 
 inline fun <reified T : Activity> Context.openActivity(
-    clear: Boolean = false,
-    vararg extras: Pair<String, Any?>
+    clear: Boolean = false, vararg extras: Pair<String, Any?>
 ) {
     val intent = Intent(this, T::class.java).apply {
         if (clear) addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -228,7 +226,7 @@ fun Activity.cropImageSlider(uri: Uri) {
 fun Long.convertDuration(): String {
     val minutes = this / 1000 / 60
     val seconds = this / 1000 % 60
-    return String.format("%d:%02d", minutes, seconds)
+    return String.format(Locale.getDefault(), "%d:%02d", minutes, seconds)
 }
 
 fun TextView.loadCategory(categoryId: String?) {

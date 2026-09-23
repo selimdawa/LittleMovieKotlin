@@ -6,12 +6,12 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.R
+import com.flatcode.littlemovieadmin.databinding.ActivityProfileBinding
+import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.loadImage
 import com.flatcode.littlemovieadmin.utils.openActivity
-import com.flatcode.littlemovieadmin.databinding.ActivityProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -29,7 +29,7 @@ class ProfileActivity : BaseActivity() {
         val profileId = intent.getStringExtra(DATA.PROFILE_ID) ?: ""
         viewModel.init(profileId)
 
-        binding.back.setOnClickListener { onBackPressed() }
+        binding.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         observeState()
     }
@@ -40,7 +40,7 @@ class ProfileActivity : BaseActivity() {
                 viewModel.uiState.collect { state ->
                     state.user?.let { user ->
                         binding.username.text = user.username
-                        binding.profile.loadImage(user.profileImage, true)
+                        binding.profile.loadImage(user.profileImage, isUser = true)
                     }
 
                     binding.numberFavorites.text = state.favoritesCount.toString()

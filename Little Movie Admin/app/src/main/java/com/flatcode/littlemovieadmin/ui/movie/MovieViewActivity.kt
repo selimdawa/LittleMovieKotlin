@@ -4,17 +4,19 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.Window
-import android.view.WindowManager
 import android.widget.ImageView
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.core.net.toUri
-import com.flatcode.littlemovieadmin.ui.BaseActivity
-import com.flatcode.littlemovieadmin.R
-import com.flatcode.littlemovieadmin.service.FloatingWidgetService
-import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.databinding.ActivityMovieViewBinding
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
+import com.flatcode.littlemovieadmin.R
+import com.flatcode.littlemovieadmin.databinding.ActivityMovieViewBinding
+import com.flatcode.littlemovieadmin.service.FloatingWidgetService
+import com.flatcode.littlemovieadmin.ui.BaseActivity
+import com.flatcode.littlemovieadmin.utils.DATA
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -47,14 +49,25 @@ class MovieViewActivity : BaseActivity() {
             service.putExtra(DATA.MOVIE_LINK, videoUri.toString())
             startService(service)
         }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(enabled = true) {
+            override fun handleOnBackPressed() {
+                exoPlayer?.release()
+                exoPlayer = null
+                isEnabled = false
+                onBackPressedDispatcher.onBackPressed()
+                isEnabled = true
+            }
+        })
     }
 
     private fun setFullScreen() {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val controller = WindowInsetsControllerCompat(window, window.decorView)
+        controller.hide(WindowInsetsCompat.Type.systemBars())
+        controller.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     }
 
     private fun initializePlayer() {
@@ -80,9 +93,4 @@ class MovieViewActivity : BaseActivity() {
         exoPlayer = null
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        exoPlayer?.release()
-        exoPlayer = null
-    }
 }

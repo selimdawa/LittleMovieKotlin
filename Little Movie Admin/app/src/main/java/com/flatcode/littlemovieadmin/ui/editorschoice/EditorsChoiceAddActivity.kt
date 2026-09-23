@@ -4,18 +4,15 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.flatcode.littlemovieadmin.ui.BaseActivity
-import com.flatcode.littlemovieadmin.ui.editorschoice.EditorsChoiceMovieAdapter
-import com.flatcode.littlemovieadmin.model.Movie
 import com.flatcode.littlemovieadmin.R
-import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.ui.editorschoice.EditorsChoiceAddViewModel
 import com.flatcode.littlemovieadmin.databinding.ActivityEditorsChoiceAddBinding
+import com.flatcode.littlemovieadmin.ui.BaseActivity
+import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.addToEditorsChoice
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -41,8 +38,23 @@ class EditorsChoiceAddActivity : BaseActivity() {
         viewModel.init(editorsChoiceId, oldId)
 
         binding.toolbar.nameSpace.setText(R.string.editors_choice)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.toolbar.close.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(enabled = true) {
+            override fun handleOnBackPressed() {
+                if (DATA.searchStatus) {
+                    binding.toolbar.toolbar.visibility = View.VISIBLE
+                    binding.toolbar.toolbarSearch.visibility = View.GONE
+                    DATA.searchStatus = false
+                    binding.toolbar.textSearch.setText(DATA.EMPTY)
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                    isEnabled = true
+                }
+            }
+        })
 
         binding.toolbar.search.setOnClickListener {
             binding.toolbar.toolbar.visibility = View.GONE
@@ -59,6 +71,7 @@ class EditorsChoiceAddActivity : BaseActivity() {
                     Timber.e(e, "Filter error")
                 }
             }
+
             override fun afterTextChanged(s: Editable) {}
         })
 
@@ -89,7 +102,7 @@ class EditorsChoiceAddActivity : BaseActivity() {
                 viewModel.uiState.collect { state ->
                     binding.progress.visibility = if (state.isLoading) View.VISIBLE else View.GONE
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", state.count)
-                    
+
                     adapter.list = state.movies
                     adapter.submitList(state.movies)
 
@@ -105,12 +118,4 @@ class EditorsChoiceAddActivity : BaseActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        if (DATA.searchStatus) {
-            binding.toolbar.toolbar.visibility = View.VISIBLE
-            binding.toolbar.toolbarSearch.visibility = View.GONE
-            DATA.searchStatus = false
-            binding.toolbar.textSearch.setText(DATA.EMPTY)
-        } else super.onBackPressed()
-    }
 }

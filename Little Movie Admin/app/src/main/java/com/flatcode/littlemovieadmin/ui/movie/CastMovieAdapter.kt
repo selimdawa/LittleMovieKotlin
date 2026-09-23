@@ -16,7 +16,8 @@ class CastMovieAdapter(
 ) : ListAdapter<Cast, CastMovieAdapter.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemCastMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemCastMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding, onItemClick)
     }
 
@@ -25,8 +26,7 @@ class CastMovieAdapter(
     }
 
     class ViewHolder(
-        val binding: ItemCastMovieBinding,
-        private val onItemClick: (Cast) -> Unit
+        val binding: ItemCastMovieBinding, private val onItemClick: (Cast) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Cast) {
@@ -50,7 +50,6 @@ class CastMovieAdapter(
         override fun areItemsTheSame(oldItem: Cast, newItem: Cast): Boolean =
             oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: Cast, newItem: Cast): Boolean =
-            oldItem == newItem
+        override fun areContentsTheSame(oldItem: Cast, newItem: Cast): Boolean = oldItem == newItem
     }
 }

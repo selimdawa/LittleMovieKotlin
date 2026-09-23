@@ -17,8 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UsersViewModel @Inject constructor(
-    private val repository: UserRepository,
-    private val authRepo: AuthRepository
+    private val repository: UserRepository, private val authRepo: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UsersUiState())
@@ -34,7 +33,7 @@ class UsersViewModel @Inject constructor(
                 // but let's assume we use the repository method if we can sort by child.
                 // Firebase .get() doesn't support complex sorting as easily as listeners, 
                 // but we can sort the list here.
-                
+
                 val filteredUsers = allUsers.filter { it.id != myUid }.let { list ->
                     when (orderBy) {
                         DATA.NAME -> list.sortedBy { it.username }
@@ -42,12 +41,10 @@ class UsersViewModel @Inject constructor(
                     }
                 }
 
-                _uiState.update { 
+                _uiState.update {
                     it.copy(
-                        isLoading = false, 
-                        users = filteredUsers,
-                        count = filteredUsers.size
-                    ) 
+                        isLoading = false, users = filteredUsers, count = filteredUsers.size
+                    )
                 }
             } catch (e: Exception) {
                 Timber.e(e, "Error loading users")

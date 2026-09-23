@@ -38,8 +38,7 @@ class EditorsChoiceMovieAdapter(
     }
 
     class ViewHolder(
-        val binding: ItemEditorsChoiceBinding,
-        private val onAddClick: (Movie) -> Unit
+        val binding: ItemEditorsChoiceBinding, private val onAddClick: (Movie) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Movie) {
@@ -48,7 +47,7 @@ class EditorsChoiceMovieAdapter(
             val nrViews = item.viewsCount
             val nrLoves = item.lovesCount
 
-            binding.image.loadImage(image, false)
+            binding.image.loadImage(image, isUser = false)
 
             if (name == DATA.EMPTY) {
                 binding.name.visibility = View.GONE

@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 package com.flatcode.littlemovieadmin.utils
 
 import com.google.firebase.auth.FirebaseAuth
@@ -18,7 +20,6 @@ object DATA {
     var USER_NAME = "username"
     var PROFILE_IMAGE = "profileImage"
     var EMPTY = ""
-    var SPACE = " "
     var TIMESTAMP = "timestamp"
     var ID = "id"
     var IMAGE = "image"
@@ -37,15 +38,12 @@ object DATA {
     var NAME = "name"
     var YEAR = "year"
     var CAST_MOVIE = "CastMovie"
-    var DOT = "."
     var castMovie = ArrayList<String?>()
-    var castMovieOld = ArrayList<String?>()
     var MIX_SQUARE = 500
     var MIX_VIDEO_X = 400
     var MIX_VIDEO_Y = 560
     var MIX_SLIDER_X = 680
     var MIX_SLIDER_Y = 360
-    var ZERO = 0
     var MIN_YEAR = 1940
     var MAX_YEAR = 2022
     var searchStatus = false
@@ -57,22 +55,18 @@ object DATA {
 
     //Shared
     var PROFILE_ID = "profileId"
-    var COLOR_OPTION = "color_option"
     var EDITORS_CHOICE_ID = "editorsChoiceId"
     var CATEGORY_ID = "categoryId"
     var CAST_ID = "castId"
     var CAST_NAME = "castName"
     var CAST_ABOUT = "castAbout"
     var CAST_IMAGE = "castImage"
-    var DURATION = "duration"
     var MOVIE_LINK = "movieLink"
     var OLD_ID = "oldId"
     var CATEGORY_NAME = "categoryName"
     var MOVIE_ID = "movieId"
     var COMMENT = "comment"
     var MOVIE = "Movie"
-    var castList: ArrayList<String>? = null
-    var movieList: ArrayList<String>? = null
 
     //Other
     val AUTH = FirebaseAuth.getInstance()

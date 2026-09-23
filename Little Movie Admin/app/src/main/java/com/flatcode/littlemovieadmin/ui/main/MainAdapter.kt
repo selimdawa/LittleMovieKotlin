@@ -24,8 +24,7 @@ class MainAdapter(
     }
 
     class ViewHolder(
-        val binding: ItemMainBinding,
-        private val onItemClick: (Main) -> Unit
+        val binding: ItemMainBinding, private val onItemClick: (Main) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(model: Main) {
@@ -57,7 +56,6 @@ class MainAdapter(
             oldItem.title == newItem.title
 
         override fun areContentsTheSame(oldItem: Main, newItem: Main): Boolean =
-            oldItem.title == newItem.title && oldItem.image == newItem.image && 
-            oldItem.number == newItem.number
+            oldItem.title == newItem.title && oldItem.image == newItem.image && oldItem.number == newItem.number
     }
 }

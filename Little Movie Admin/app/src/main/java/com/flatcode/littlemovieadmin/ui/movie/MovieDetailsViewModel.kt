@@ -48,14 +48,14 @@ class MovieDetailsViewModel @Inject constructor(
                         _uiState.update { it.copy(publisher = publisher) }
                     }
                 }
-                
+
                 loadComments(movieId)
-                
+
                 val castIds = castRepo.getMovieCastIds(movieId)
                 val allCast = castRepo.getCastList(DATA.TIMESTAMP)
                 val filteredCast = allCast.filter { castIds.contains(it.id) }
                 _uiState.update { it.copy(castList = filteredCast) }
-                
+
             } catch (e: Exception) {
                 Timber.e(e, "Error loading movie details")
             }
@@ -63,10 +63,8 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private suspend fun loadComments(movieId: String) {
-        // Comments are special because they are a sub-node of Movie.
-        // Repository can handle this or we can do it here. 
-        // Let's add a method to MovieRepository for comments.
-        val snapshot = FirebaseDatabase.getInstance().getReference(DATA.MOVIES).child(movieId).child(DATA.COMMENTS).get().await()
+        val snapshot = FirebaseDatabase.getInstance().getReference(DATA.MOVIES).child(movieId)
+            .child(DATA.COMMENTS).get().await()
         val list = snapshot.children.mapNotNull { it.getValue(Comment::class.java) }
         _uiState.update { it.copy(comments = list) }
     }
@@ -75,9 +73,10 @@ class MovieDetailsViewModel @Inject constructor(
         val movieId = _uiState.value.movieId ?: return
         viewModelScope.launch {
             try {
-                val ref = FirebaseDatabase.getInstance().getReference(DATA.MOVIES).child(movieId).child(DATA.COMMENTS)
+                val ref = FirebaseDatabase.getInstance().getReference(DATA.MOVIES).child(movieId)
+                    .child(DATA.COMMENTS)
                 val id = ref.push().key ?: return@launch
-                
+
                 val hashMap = HashMap<String, Any?>().apply {
                     put(DATA.ID, id)
                     put(DATA.MOVIE_ID, movieId)

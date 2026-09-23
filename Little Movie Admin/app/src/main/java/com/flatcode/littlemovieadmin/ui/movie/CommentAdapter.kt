@@ -31,8 +31,7 @@ class CommentAdapter(
     }
 
     class ViewHolder(
-        val binding: ItemCommentBinding,
-        private val onItemClick: (Comment) -> Unit
+        val binding: ItemCommentBinding, private val onItemClick: (Comment) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Comment) {
@@ -72,7 +71,6 @@ class CommentAdapter(
             oldItem.id == newItem.id
 
         override fun areContentsTheSame(oldItem: Comment, newItem: Comment): Boolean =
-            oldItem.id == newItem.id && oldItem.comment == newItem.comment && 
-            oldItem.timestamp == newItem.timestamp
+            oldItem.id == newItem.id && oldItem.comment == newItem.comment && oldItem.timestamp == newItem.timestamp
     }
 }

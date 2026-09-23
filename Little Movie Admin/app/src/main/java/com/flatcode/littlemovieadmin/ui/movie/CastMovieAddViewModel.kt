@@ -36,6 +36,7 @@ class CastMovieAddViewModel @Inject constructor() : ViewModel() {
                 list.reverse()
                 _uiState.update { it.copy(isLoading = false, castList = list) }
             }
+
             override fun onCancelled(error: DatabaseError) {
                 _uiState.update { it.copy(isLoading = false) }
             }
@@ -44,6 +45,5 @@ class CastMovieAddViewModel @Inject constructor() : ViewModel() {
 }
 
 data class CastMovieAddUiState(
-    val castList: List<Cast> = emptyList(),
-    val isLoading: Boolean = false
+    val castList: List<Cast> = emptyList(), val isLoading: Boolean = false
 )

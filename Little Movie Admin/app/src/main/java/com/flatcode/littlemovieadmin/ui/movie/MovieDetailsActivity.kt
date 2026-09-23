@@ -18,9 +18,9 @@ import com.flatcode.littlemovieadmin.ui.cast.CastDetailsActivity
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.checkFavorite
 import com.flatcode.littlemovieadmin.utils.convertDuration
+import com.flatcode.littlemovieadmin.utils.createProgressDialog
 import com.flatcode.littlemovieadmin.utils.isFavorite
 import com.flatcode.littlemovieadmin.utils.loadCategory
-import com.flatcode.littlemovieadmin.utils.createProgressDialog
 import com.flatcode.littlemovieadmin.utils.loadImage
 import com.flatcode.littlemovieadmin.utils.nrLoves
 import com.flatcode.littlemovieadmin.utils.openActivity
@@ -47,7 +47,7 @@ class MovieDetailsActivity : BaseActivity() {
         viewModel.setMovieId(movieId)
 
         binding.toolbar.nameSpace.setText(R.string.details_movie)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         binding.loves.nrLoves(movieId)
         binding.favorite.setOnClickListener { binding.favorite.checkFavorite(movieId) }
@@ -119,15 +119,15 @@ class MovieDetailsActivity : BaseActivity() {
                         binding.year.text = movie.year.toString()
 
                         binding.category.loadCategory(movie.categoryId)
-                        binding.image.loadImage(movie.image, false)
-                        binding.cover.loadImage(movie.image, false)
+                        binding.image.loadImage(movie.image, isUser = false)
+                        binding.cover.loadImage(movie.image, isUser = false)
 
                         binding.favorite.isFavorite(movie.id, DATA.FirebaseUserUid)
                     }
 
                     state.publisher?.let { user ->
                         binding.publisherName.text = user.username
-                        binding.publisherImage.loadImage(user.profileImage, true)
+                        binding.publisherImage.loadImage(user.profileImage, isUser = true)
                     }
 
                     adapterComment.submitList(state.comments)
@@ -151,7 +151,7 @@ class MovieDetailsActivity : BaseActivity() {
                 Toast.makeText(this, "Enter your comment...", Toast.LENGTH_SHORT).show()
             } else {
                 alertDialog.dismiss()
-                viewModel.addComment(comment) { success, message ->
+                viewModel.addComment(comment) { _, message ->
                     progressDialog?.dismiss()
                     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 }

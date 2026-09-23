@@ -1,14 +1,13 @@
 package com.flatcode.littlemovieadmin.utils
 
+import android.app.Activity
+import android.content.Context
+import android.widget.Toast
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import timber.log.Timber
-import android.content.Context
-import android.widget.Toast
-import android.app.Activity
-import androidx.appcompat.app.AlertDialog
 
 fun incrementItemRemoveCount(database: String?, id: String?, childDB: String?) {
     val ref = FirebaseDatabase.getInstance().getReference(database!!)

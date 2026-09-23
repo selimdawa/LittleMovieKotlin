@@ -54,7 +54,7 @@ class MovieAdapter(
             val viewsCount = item.viewsCount
             val lovesCount = item.lovesCount
 
-            binding.image.loadImage(image, false)
+            binding.image.loadImage(image, isUser = false)
 
             if (name == DATA.EMPTY) {
                 binding.name.visibility = View.GONE

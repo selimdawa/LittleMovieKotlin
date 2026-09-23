@@ -1,8 +1,8 @@
 package com.flatcode.littlemovieadmin.ui.profile
 
 import androidx.lifecycle.ViewModel
-import com.flatcode.littlemovieadmin.model.User
 import com.flatcode.littlemovieadmin.model.Category
+import com.flatcode.littlemovieadmin.model.User
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -22,7 +22,11 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
     fun init(profileId: String) {
-        _uiState.update { it.copy(profileId = profileId, isMyProfile = profileId == DATA.FirebaseUserUid) }
+        _uiState.update {
+            it.copy(
+                profileId = profileId, isMyProfile = profileId == DATA.FirebaseUserUid
+            )
+        }
         loadData()
     }
 
@@ -39,18 +43,20 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
                     val user = snapshot.getValue(User::class.java)
                     _uiState.update { it.copy(user = user) }
                 }
+
                 override fun onCancelled(error: DatabaseError) {}
             })
     }
 
     private fun loadCounts(profileId: String) {
         val database = FirebaseDatabase.getInstance()
-        
+
         database.getReference(DATA.FAVORITES).child(profileId)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     _uiState.update { it.copy(favoritesCount = snapshot.childrenCount.toInt()) }
                 }
+
                 override fun onCancelled(error: DatabaseError) {}
             })
 
@@ -58,8 +64,16 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
             loadItemsCount(DATA.CAST) { count -> _uiState.update { it.copy(castCount = count) } }
             loadItemsCount(DATA.CATEGORIES) { count -> _uiState.update { it.copy(categoriesCount = count) } }
         } else {
-            loadInterestedCount(profileId, DATA.CAST) { count -> _uiState.update { it.copy(castCount = count) } }
-            loadInterestedCount(profileId, DATA.CATEGORIES) { count -> _uiState.update { it.copy(categoriesCount = count) } }
+            loadInterestedCount(
+                profileId, DATA.CAST
+            ) { count -> _uiState.update { it.copy(castCount = count) } }
+            loadInterestedCount(profileId, DATA.CATEGORIES) { count ->
+                _uiState.update {
+                    it.copy(
+                        categoriesCount = count
+                    )
+                }
+            }
         }
     }
 
@@ -69,6 +83,7 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     onCount(snapshot.childrenCount.toInt())
                 }
+
                 override fun onCancelled(error: DatabaseError) {}
             })
     }
@@ -85,6 +100,7 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
                     }
                     onCount(i)
                 }
+
                 override fun onCancelled(error: DatabaseError) {}
             })
     }

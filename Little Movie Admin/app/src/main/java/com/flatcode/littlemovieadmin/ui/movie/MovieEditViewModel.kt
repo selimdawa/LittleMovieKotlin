@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -38,8 +37,8 @@ class MovieEditViewModel @Inject constructor(
     private fun loadCategories() {
         viewModelScope.launch {
             try {
-                val list = categoryRepo.getCategories(DATA.TIMESTAMP).map { 
-                    CategoryInfo(it.id ?: "", it.name ?: "") 
+                val list = categoryRepo.getCategories(DATA.TIMESTAMP).map {
+                    CategoryInfo(it.id, it.name ?: "")
                 }
                 _uiState.update { it.copy(categories = list) }
             } catch (e: Exception) {
@@ -58,9 +57,13 @@ class MovieEditViewModel @Inject constructor(
                         val category = categoryRepo.getCategory(catId)
                         _uiState.update { it.copy(selectedCategoryName = category?.name) }
                     }
-                    
+
                     val castIds = castRepo.getMovieCastIds(movieId)
-                    _uiState.update { it.copy(castIds = castIds, originalCastIds = castIds.toList()) }
+                    _uiState.update {
+                        it.copy(
+                            castIds = castIds, originalCastIds = castIds.toList()
+                        )
+                    }
                 }
             } catch (e: Exception) {
                 Timber.e(e, "Error loading movie info")
@@ -69,14 +72,19 @@ class MovieEditViewModel @Inject constructor(
     }
 
     fun updateMovie(
-        name: String, description: String, year: Int, categoryId: String,
-        imageUri: Uri?, castIds: List<String?>, onResult: (Boolean, String?) -> Unit
+        name: String,
+        description: String,
+        year: Int,
+        categoryId: String,
+        imageUri: Uri?,
+        castIds: List<String?>,
+        onResult: (Boolean, String?) -> Unit
     ) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
                 val movieId = _uiState.value.movieId ?: throw Exception("Invalid Movie ID")
-                
+
                 val imageUrl = if (imageUri != null) {
                     CloudinaryHelper.uploadFile(imageUri)
                 } else null
@@ -91,16 +99,25 @@ class MovieEditViewModel @Inject constructor(
                 }
 
                 movieRepo.updateMovie(movieId, updates)
-                
+
                 // Handle category count changes
                 val initialId = _uiState.value.initialCategoryId
                 if (categoryId != initialId) {
                     val newCat = categoryRepo.getCategory(categoryId)
-                    newCat?.let { categoryRepo.updateCategory(categoryId, mapOf(DATA.MOVIES_COUNT to (it.moviesCount + 1))) }
-                    
+                    newCat?.let {
+                        categoryRepo.updateCategory(
+                            categoryId, mapOf(DATA.MOVIES_COUNT to (it.moviesCount + 1))
+                        )
+                    }
+
                     initialId?.let { oldId ->
                         val oldCat = categoryRepo.getCategory(oldId)
-                        oldCat?.let { categoryRepo.updateCategory(oldId, mapOf(DATA.MOVIES_COUNT to (it.moviesCount - 1).coerceAtLeast(0))) }
+                        oldCat?.let {
+                            categoryRepo.updateCategory(
+                                oldId,
+                                mapOf(DATA.MOVIES_COUNT to (it.moviesCount - 1).coerceAtLeast(0))
+                            )
+                        }
                     }
                 }
 
@@ -109,13 +126,22 @@ class MovieEditViewModel @Inject constructor(
                 oldCastIds.forEach { id ->
                     if (!castIds.contains(id)) {
                         val cast = castRepo.getCast(id)
-                        cast?.let { castRepo.updateCast(id, mapOf(DATA.MOVIES_COUNT to (it.moviesCount - 1).coerceAtLeast(0))) }
+                        cast?.let {
+                            castRepo.updateCast(
+                                id,
+                                mapOf(DATA.MOVIES_COUNT to (it.moviesCount - 1).coerceAtLeast(0))
+                            )
+                        }
                     }
                 }
                 castIds.forEach { id ->
                     if (id != null && !oldCastIds.contains(id)) {
                         val cast = castRepo.getCast(id)
-                        cast?.let { castRepo.updateCast(id, mapOf(DATA.MOVIES_COUNT to (it.moviesCount + 1))) }
+                        cast?.let {
+                            castRepo.updateCast(
+                                id, mapOf(DATA.MOVIES_COUNT to (it.moviesCount + 1))
+                            )
+                        }
                     }
                 }
 
@@ -132,7 +158,7 @@ class MovieEditViewModel @Inject constructor(
             }
         }
     }
-    
+
     fun setCategoryId(id: String, name: String) {
         _uiState.update { it.copy(selectedCategoryId = id, selectedCategoryName = name) }
     }

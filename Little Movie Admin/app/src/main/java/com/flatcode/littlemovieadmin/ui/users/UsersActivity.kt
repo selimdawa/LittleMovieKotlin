@@ -4,16 +4,16 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.flatcode.littlemovieadmin.ui.BaseActivity
-import com.flatcode.littlemovieadmin.model.User
 import com.flatcode.littlemovieadmin.R
-import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.databinding.ActivityUsersBinding
+import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.ui.profile.ProfileActivity
+import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -33,8 +33,23 @@ class UsersActivity : BaseActivity() {
         setContentView(binding.root)
 
         binding.toolbar.nameSpace.setText(R.string.users)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.toolbar.close.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(enabled = true) {
+            override fun handleOnBackPressed() {
+                if (DATA.searchStatus) {
+                    binding.toolbar.toolbar.visibility = View.VISIBLE
+                    binding.toolbar.toolbarSearch.visibility = View.GONE
+                    DATA.searchStatus = false
+                    binding.toolbar.textSearch.setText(DATA.EMPTY)
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                    isEnabled = true
+                }
+            }
+        })
 
         binding.toolbar.search.setOnClickListener {
             binding.toolbar.toolbar.visibility = View.GONE
@@ -51,14 +66,14 @@ class UsersActivity : BaseActivity() {
                     Timber.e(e, "Filter error")
                 }
             }
+
             override fun afterTextChanged(s: Editable) {}
         })
 
         adapter = UserAdapter(
             onItemClick = { user ->
                 openActivity<ProfileActivity>(extras = arrayOf(DATA.PROFILE_ID to user.id))
-            }
-        )
+            })
         binding.recyclerView.adapter = adapter
 
         binding.switchBar.all.setOnClickListener { viewModel.getData(DATA.TIMESTAMP) }
@@ -73,7 +88,7 @@ class UsersActivity : BaseActivity() {
                 viewModel.uiState.collect { state ->
                     binding.progress.visibility = if (state.isLoading) View.VISIBLE else View.GONE
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", state.count)
-                    
+
                     adapter.list = state.users
                     adapter.submitList(state.users)
 
@@ -87,15 +102,6 @@ class UsersActivity : BaseActivity() {
                 }
             }
         }
-    }
-
-    override fun onBackPressed() {
-        if (DATA.searchStatus) {
-            binding.toolbar.toolbar.visibility = View.VISIBLE
-            binding.toolbar.toolbarSearch.visibility = View.GONE
-            DATA.searchStatus = false
-            binding.toolbar.textSearch.setText(DATA.EMPTY)
-        } else super.onBackPressed()
     }
 
     override fun onResume() {

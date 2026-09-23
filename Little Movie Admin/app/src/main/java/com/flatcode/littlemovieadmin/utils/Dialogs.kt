@@ -5,7 +5,6 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.view.Gravity
 import android.view.View
 import android.view.Window
@@ -17,6 +16,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AlertDialog
+import androidx.core.graphics.drawable.toDrawable
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.model.Cast
 import com.flatcode.littlemovieadmin.model.Category
@@ -44,13 +44,9 @@ fun Context.createProgressDialog(message: String, title: String? = null): AlertD
     linearLayout.addView(progressBar)
     linearLayout.addView(textView)
 
-    return AlertDialog.Builder(this)
-        .apply {
-            if (title != null) setTitle(title)
-        }
-        .setView(linearLayout)
-        .setCancelable(false)
-        .create()
+    return AlertDialog.Builder(this).apply {
+        if (title != null) setTitle(title)
+    }.setView(linearLayout).setCancelable(false).create()
 }
 
 fun Activity.moreDeleteCategory(
@@ -71,7 +67,7 @@ fun Activity.moreDeleteCategory(
         } else if (which == 1) {
             this.dialogOptionDelete(
                 id, name, DATA.CATEGORY, DATA.CATEGORIES,
-                false, db, idDB, childDB, cast, movie,
+                isEditorsChoice = false, db, idDB, childDB, cast, movie,
             )
         }
     }.show()
@@ -91,7 +87,7 @@ fun Activity.moreDeleteCast(
         } else if (which == 1) {
             this.dialogOptionDelete(
                 id, name, DATA.CAST, DATA.CAST,
-                false, db, idDB, childDB, cast, movie,
+                isEditorsChoice = false, db, idDB, childDB, cast, movie,
             )
         }
     }.show()
@@ -116,7 +112,7 @@ fun Activity.moreDeleteMovie(
         } else if (which == 1) {
             this.dialogOptionDelete(
                 id, name, DATA.MOVIE, DATA.MOVIES,
-                false, db, idDB, childDB, cast, movie,
+                isEditorsChoice = false, db, idDB, childDB, cast, movie,
             )
         }
     }.show()
@@ -131,14 +127,14 @@ fun Activity.dialogOptionDelete(
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
     dialog.setContentView(R.layout.dialog_logout)
     dialog.setCancelable(true)
-    dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    dialog.window!!.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
 
     val lp = WindowManager.LayoutParams()
     lp.copyFrom(dialog.window!!.attributes)
     lp.width = WindowManager.LayoutParams.WRAP_CONTENT
     lp.height = WindowManager.LayoutParams.WRAP_CONTENT
     val title = dialog.findViewById<TextView>(R.id.title)
-    title.text = "Do you want to delete $name ( $type ) ?"
+    title.text = getString(R.string.delete_item_prompt, name, type)
 
     dialog.findViewById<View>(R.id.yes).setOnClickListener {
         if (isEditorsChoice) this.dialogUpdateEditorsChoice(dialog, id) else this.deleteDB(
@@ -179,9 +175,7 @@ fun Activity.deleteDB(
     val reference = FirebaseDatabase.getInstance().getReference(nameDB!!)
     reference.child(id!!).removeValue().addOnSuccessListener {
         if ((db != null) && (idDB != null) && (childDB != null)) incrementItemRemoveCount(
-            db,
-            idDB,
-            childDB
+            db, idDB, childDB
         )
         DATA.isChange = true
         (this as? ComponentActivity)?.onBackPressedDispatcher?.onBackPressed()
@@ -200,7 +194,7 @@ fun Context.dialogAboutArtist(imageDB: String?, nameDB: String?, aboutDB: String
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
     dialog.setContentView(R.layout.dialog_about_artist)
     dialog.setCancelable(true)
-    dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    dialog.window!!.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
     val lp = WindowManager.LayoutParams()
     lp.copyFrom(dialog.window!!.attributes)
     lp.width = WindowManager.LayoutParams.WRAP_CONTENT
@@ -210,7 +204,7 @@ fun Context.dialogAboutArtist(imageDB: String?, nameDB: String?, aboutDB: String
     val name = dialog.findViewById<TextView>(R.id.name)
     val aboutTheArtist = dialog.findViewById<TextView>(R.id.aboutTheArtist)
 
-    image.loadImage(imageDB, false)
+    image.loadImage(imageDB, isUser = false)
     name.text = MessageFormat.format("{0}{1}", DATA.EMPTY, nameDB)
     aboutTheArtist.text = MessageFormat.format("{0}{1}", DATA.EMPTY, aboutDB)
     dialog.show()

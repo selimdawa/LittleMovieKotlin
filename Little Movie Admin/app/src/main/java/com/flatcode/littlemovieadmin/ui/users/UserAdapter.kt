@@ -48,7 +48,7 @@ class UserAdapter(
             val image = item.profileImage ?: DATA.EMPTY
             val username = item.username ?: DATA.EMPTY
 
-            binding.imageProfile.loadImage(image, true)
+            binding.imageProfile.loadImage(image, isUser = true)
 
             if (username == DATA.EMPTY) {
                 binding.username.visibility = View.GONE
@@ -66,7 +66,7 @@ class UserAdapter(
             oldItem.id == newItem.id
 
         override fun areContentsTheSame(oldItem: User, newItem: User): Boolean =
-            oldItem.id == newItem.id && oldItem.username == newItem.username && 
-            oldItem.profileImage == newItem.profileImage
+            oldItem.id == newItem.id && oldItem.username == newItem.username &&
+                    oldItem.profileImage == newItem.profileImage
     }
 }

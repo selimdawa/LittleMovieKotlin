@@ -53,6 +53,5 @@ class PrivacyPolicyViewModel @Inject constructor(
 }
 
 data class PrivacyPolicyUiState(
-    val content: String = "",
-    val isLoading: Boolean = false
+    val content: String = "", val isLoading: Boolean = false
 )
