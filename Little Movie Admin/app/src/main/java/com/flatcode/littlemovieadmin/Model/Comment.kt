@@ -1,21 +1,15 @@
 package com.flatcode.littlemovieadmin.model
 
-class Comment {
-    var id: String? = null
-    var movieId: String? = null
-    var comment: String? = null
-    var publisher: String? = null
-    var timestamp: Long = 0
+import android.os.Parcelable
+import androidx.annotation.Keep
+import kotlinx.parcelize.Parcelize
 
-    constructor()
-
-    constructor(
-        id: String?, movieId: String?, timestamp: Long, comment: String?, publisher: String?
-    ) {
-        this.id = id
-        this.movieId = movieId
-        this.timestamp = timestamp
-        this.comment = comment
-        this.publisher = publisher
-    }
-}
+@Keep
+@Parcelize
+data class Comment(
+    var id: String? = null,
+    var movieId: String? = null,
+    var comment: String? = null,
+    var publisher: String? = null,
+    var timestamp: Long = 0,
+) : Parcelable

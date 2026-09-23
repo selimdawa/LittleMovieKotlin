@@ -32,12 +32,12 @@ class CastRepository @Inject constructor(
                     data.getValue(Cast::class.java)?.let { list.add(it) }
                 }
                 list.reverse()
-                
+
                 // Save to local DB
                 launch {
                     castDao.insertCasts(list)
                 }
-                
+
                 trySend(list)
             }
 
@@ -72,34 +72,40 @@ class CastRepository @Inject constructor(
     }
 
     fun getInterestedCast(userId: String, orderBy: String): Flow<List<Cast>> = callbackFlow {
-        val interestedListener = interestedRef.child(userId).child(DATA.CAST).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val castIds = mutableListOf<String>()
-                for (data in snapshot.children) {
-                    data.key?.let { castIds.add(it) }
-                }
-                
-                castRef.orderByChild(orderBy).addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(castSnapshot: DataSnapshot) {
-                        val list = mutableListOf<Cast>()
-                        for (data in castSnapshot.children) {
-                            val cast = data.getValue(Cast::class.java)
-                            if (cast != null && castIds.contains(cast.id)) {
-                                list.add(cast)
+        val interestedListener = interestedRef.child(userId).child(DATA.CAST)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val castIds = mutableListOf<String>()
+                    for (data in snapshot.children) {
+                        data.key?.let { castIds.add(it) }
+                    }
+
+                    castRef.orderByChild(orderBy)
+                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(castSnapshot: DataSnapshot) {
+                                val list = mutableListOf<Cast>()
+                                for (data in castSnapshot.children) {
+                                    val cast = data.getValue(Cast::class.java)
+                                    if (cast != null && castIds.contains(cast.id)) {
+                                        list.add(cast)
+                                    }
+                                }
+                                list.reverse()
+                                trySend(list)
                             }
-                        }
-                        list.reverse()
-                        trySend(list)
-                    }
-                    override fun onCancelled(error: DatabaseError) {
-                        close(error.toException())
-                    }
-                })
-            }
-            override fun onCancelled(error: DatabaseError) {
-                close(error.toException())
-            }
-        })
-        awaitClose { interestedRef.child(userId).child(DATA.CAST).removeEventListener(interestedListener) }
+
+                            override fun onCancelled(error: DatabaseError) {
+                                close(error.toException())
+                            }
+                        })
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    close(error.toException())
+                }
+            })
+        awaitClose {
+            interestedRef.child(userId).child(DATA.CAST).removeEventListener(interestedListener)
+        }
     }
 }

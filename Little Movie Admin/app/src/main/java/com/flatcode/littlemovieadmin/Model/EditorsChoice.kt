@@ -1,3 +1,11 @@
 package com.flatcode.littlemovieadmin.model
 
-data class EditorsChoice(val id: Int = 0)
+import android.os.Parcelable
+import androidx.annotation.Keep
+import kotlinx.parcelize.Parcelize
+
+@Keep
+@Parcelize
+data class EditorsChoice(
+    var id: Int = 0,
+) : Parcelable

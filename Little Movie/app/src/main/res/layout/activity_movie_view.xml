@@ -6,13 +6,13 @@
     android:layout_height="match_parent"
     tools:ignore="all">
 
-    <com.google.android.exoplayer2.ui.PlayerView
+    <androidx.media3.ui.PlayerView
         android:id="@+id/playerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:controller_layout_id="@layout/exo_playback_control_view"
         app:use_controller="true">
 
-    </com.google.android.exoplayer2.ui.PlayerView>
+    </androidx.media3.ui.PlayerView>
 
 </RelativeLayout>

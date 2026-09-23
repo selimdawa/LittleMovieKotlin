@@ -8,7 +8,7 @@ import javax.inject.Singleton
 
 @Singleton
 class SliderRepository @Inject constructor(
-    private val database: FirebaseDatabase
+    private val database: FirebaseDatabase,
 ) {
     suspend fun getSliderImages(): Map<String, String> {
         val snapshot = database.getReference(DATA.SLIDER_SHOW).get().await()
@@ -20,6 +20,6 @@ class SliderRepository @Inject constructor(
         return images
     }
 
-    suspend fun updateSliderImage(name: String, imageUrl: String) =
+    suspend fun updateSliderImage(name: String, imageUrl: String): Void? =
         database.getReference(DATA.SLIDER_SHOW).updateChildren(mapOf(name to imageUrl)).await()
 }

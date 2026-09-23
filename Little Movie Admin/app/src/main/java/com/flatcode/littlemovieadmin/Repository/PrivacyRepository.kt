@@ -8,11 +8,12 @@ import javax.inject.Singleton
 
 @Singleton
 class PrivacyRepository @Inject constructor(
-    private val database: FirebaseDatabase
+    private val database: FirebaseDatabase,
 ) {
     suspend fun getPrivacyPolicy(): String =
-        database.getReference(DATA.TOOLS).child(DATA.PRIVACY_POLICY).get().await().value?.toString() ?: ""
+        database.getReference(DATA.TOOLS).child(DATA.PRIVACY_POLICY).get().await().value?.toString()
+            ?: ""
 
-    suspend fun updatePrivacyPolicy(content: String) =
+    suspend fun updatePrivacyPolicy(content: String): Void? =
         database.getReference(DATA.TOOLS).child(DATA.PRIVACY_POLICY).setValue(content).await()
 }

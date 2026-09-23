@@ -78,7 +78,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.play.services)
     //Other
     implementation(libs.material.ripple)
-    implementation(libs.exoplayer)
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.ui)
     implementation(libs.timber)
 }
 

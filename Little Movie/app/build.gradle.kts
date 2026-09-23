@@ -15,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId = "com.flatcode.littlemovie"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 37
         versionCode = 9
         versionName = "1.35"
@@ -78,7 +78,10 @@ dependencies {
     //Other
     implementation(libs.material.ripple)                //Ripple Effect
     implementation(libs.bubblebottom)                   //Bottom Navigation
-    implementation(libs.exoplayer)                     //EXO Video Player
+    implementation(libs.media3.exoplayer)               //EXO Video Player (Media3)
+    implementation(libs.media3.ui)
+    implementation(libs.media3.common)
+    implementation(libs.media3.datasource)
     implementation(libs.timber)
 }
 

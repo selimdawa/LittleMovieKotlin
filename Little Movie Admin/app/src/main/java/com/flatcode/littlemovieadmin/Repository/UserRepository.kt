@@ -9,7 +9,7 @@ import javax.inject.Singleton
 
 @Singleton
 class UserRepository @Inject constructor(
-    private val database: FirebaseDatabase
+    private val database: FirebaseDatabase,
 ) {
     suspend fun getUserInfo(uid: String): User? =
         database.getReference(DATA.USERS).child(uid).get().await().getValue(User::class.java)
@@ -19,6 +19,6 @@ class UserRepository @Inject constructor(
         return snapshot.children.mapNotNull { it.getValue(User::class.java) }
     }
 
-    suspend fun updateProfile(uid: String, updates: Map<String, Any>) =
+    suspend fun updateProfile(uid: String, updates: Map<String, Any>): Void? =
         database.getReference(DATA.USERS).child(uid).updateChildren(updates).await()
 }

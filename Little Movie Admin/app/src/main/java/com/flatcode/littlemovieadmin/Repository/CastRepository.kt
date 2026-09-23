@@ -4,21 +4,17 @@ import com.flatcode.littlemovieadmin.db.CastDao
 import com.flatcode.littlemovieadmin.model.Cast
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ServerValue
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class CastRepository @Inject constructor(
-    private val database: FirebaseDatabase,
-    private val castDao: CastDao
+    database: FirebaseDatabase,
+    private val castDao: CastDao,
 ) {
     private val castRef = database.getReference(DATA.CAST)
     private val castMovieRef = database.getReference(DATA.CAST_MOVIE)
-
-    val allCasts: Flow<List<Cast>> = castDao.getAllCasts()
 
     suspend fun getCastList(orderBy: String): List<Cast> {
         return try {
@@ -26,7 +22,7 @@ class CastRepository @Inject constructor(
             val casts = snapshot.children.mapNotNull { it.getValue(Cast::class.java) }.reversed()
             castDao.insertCasts(casts)
             casts
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             emptyList()
         }
     }
@@ -36,7 +32,7 @@ class CastRepository @Inject constructor(
             val cast = castRef.child(castId).get().await().getValue(Cast::class.java)
             cast?.let { castDao.insertCast(it) }
             cast
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             castDao.getCastById(castId)
         }
     }
@@ -57,21 +53,6 @@ class CastRepository @Inject constructor(
         cast?.let { castDao.insertCast(it) }
     }
 
-    suspend fun updateMovieCast(movieId: String, castIds: Map<String, Any>) =
+    suspend fun updateMovieCast(movieId: String, castIds: Map<String, Any>): Void? =
         castMovieRef.child(movieId).setValue(castIds).await()
-
-    suspend fun removeMovieCast(movieId: String, castId: String) =
-        castMovieRef.child(movieId).child(castId).removeValue().await()
-
-    suspend fun incrementCount(castId: String, field: String) {
-        castRef.child(castId).child(field).setValue(ServerValue.increment(1)).await()
-        val cast = getCast(castId)
-        cast?.let { castDao.insertCast(it) }
-    }
-
-    suspend fun decrementCount(castId: String, field: String) {
-        castRef.child(castId).child(field).setValue(ServerValue.increment(-1)).await()
-        val cast = getCast(castId)
-        cast?.let { castDao.insertCast(it) }
-    }
 }

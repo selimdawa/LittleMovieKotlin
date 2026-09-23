@@ -17,16 +17,17 @@ class ToolsRepository @Inject constructor() {
     private val toolsRef = database.getReference(DATA.TOOLS)
 
     fun getPrivacyPolicy(): Flow<String?> = callbackFlow {
-        val listener = toolsRef.child(DATA.PRIVACY_POLICY).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                trySend(snapshot.value?.toString())
-            }
+        val listener =
+            toolsRef.child(DATA.PRIVACY_POLICY).addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    trySend(snapshot.value?.toString())
+                }
 
-            override fun onCancelled(error: DatabaseError) {
-                Timber.e("Error fetching privacy policy: %s", error.message)
-                close(error.toException())
-            }
-        })
+                override fun onCancelled(error: DatabaseError) {
+                    Timber.e("Error fetching privacy policy: %s", error.message)
+                    close(error.toException())
+                }
+            })
         awaitClose { toolsRef.child(DATA.PRIVACY_POLICY).removeEventListener(listener) }
     }
 }

@@ -27,44 +27,45 @@ class MovieRepository @Inject constructor(
     private val favoritesRef = database.getReference(DATA.FAVORITES)
     private val lovesRef = database.getReference(DATA.LOVES)
 
-    fun getMovies(orderBy: String, limit: Int? = null, reverse: Boolean = true): Flow<List<Movie>> = callbackFlow {
-        Timber.d("Fetching movies ordered by %s", orderBy)
-        var query: Query = moviesRef.orderByChild(orderBy)
-        
-        limit?.let { query = query.limitToLast(it) }
+    fun getMovies(orderBy: String, limit: Int? = null, reverse: Boolean = true): Flow<List<Movie>> =
+        callbackFlow {
+            Timber.d("Fetching movies ordered by %s", orderBy)
+            var query: Query = moviesRef.orderByChild(orderBy)
 
-        val listener = query.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val list = mutableListOf<Movie>()
-                for (data in snapshot.children) {
-                    val item = data.getValue(Movie::class.java)
-                    item?.let {
-                        if (orderBy == DATA.EDITORS_CHOICE) {
-                            if (it.editorsChoice > 0) {
+            limit?.let { query = query.limitToLast(it) }
+
+            val listener = query.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val list = mutableListOf<Movie>()
+                    for (data in snapshot.children) {
+                        val item = data.getValue(Movie::class.java)
+                        item?.let {
+                            if (orderBy == DATA.EDITORS_CHOICE) {
+                                if (it.editorsChoice > 0) {
+                                    list.add(it)
+                                }
+                            } else {
                                 list.add(it)
                             }
-                        } else {
-                            list.add(it)
                         }
                     }
+                    if (reverse) {
+                        list.reverse()
+                    }
+                    // Update Local Room Database
+                    launch {
+                        movieDao.insertMovies(list)
+                    }
+                    trySend(list)
                 }
-                if (reverse) {
-                    list.reverse()
-                }
-                // Update Local Room Database
-                launch {
-                    movieDao.insertMovies(list)
-                }
-                trySend(list)
-            }
 
-            override fun onCancelled(error: DatabaseError) {
-                Timber.e("Error fetching movies: %s", error.message)
-                close(error.toException())
-            }
-        })
-        awaitClose { query.removeEventListener(listener) }
-    }
+                override fun onCancelled(error: DatabaseError) {
+                    Timber.e("Error fetching movies: %s", error.message)
+                    close(error.toException())
+                }
+            })
+            awaitClose { query.removeEventListener(listener) }
+        }
 
     fun getMoviesByCategory(categoryId: String, orderBy: String): Flow<List<Movie>> = callbackFlow {
         val query = moviesRef.orderByChild(orderBy)
@@ -82,6 +83,7 @@ class MovieRepository @Inject constructor(
                 list.reverse()
                 trySend(list)
             }
+
             override fun onCancelled(error: DatabaseError) {
                 close(error.toException())
             }
@@ -89,28 +91,30 @@ class MovieRepository @Inject constructor(
         awaitClose { query.removeEventListener(listener) }
     }
 
-    fun getMoviesByCategoryIds(categoryIds: List<String>, orderBy: String): Flow<List<Movie>> = callbackFlow {
-        val query = moviesRef.orderByChild(orderBy)
-        val listener = query.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val list = mutableListOf<Movie>()
-                for (data in snapshot.children) {
-                    val movie = data.getValue(Movie::class.java)
-                    movie?.let {
-                        if (categoryIds.contains(it.categoryId)) {
-                            list.add(it)
+    fun getMoviesByCategoryIds(categoryIds: List<String>, orderBy: String): Flow<List<Movie>> =
+        callbackFlow {
+            val query = moviesRef.orderByChild(orderBy)
+            val listener = query.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val list = mutableListOf<Movie>()
+                    for (data in snapshot.children) {
+                        val movie = data.getValue(Movie::class.java)
+                        movie?.let {
+                            if (categoryIds.contains(it.categoryId)) {
+                                list.add(it)
+                            }
                         }
                     }
+                    list.reverse()
+                    trySend(list)
                 }
-                list.reverse()
-                trySend(list)
-            }
-            override fun onCancelled(error: DatabaseError) {
-                close(error.toException())
-            }
-        })
-        awaitClose { query.removeEventListener(listener) }
-    }
+
+                override fun onCancelled(error: DatabaseError) {
+                    close(error.toException())
+                }
+            })
+            awaitClose { query.removeEventListener(listener) }
+        }
 
     fun getMoviesByCastId(castId: String, orderBy: String): Flow<List<Movie>> = callbackFlow {
         val castMovieListener = castMovieRef.addValueEventListener(object : ValueEventListener {
@@ -121,24 +125,27 @@ class MovieRepository @Inject constructor(
                         movieSnapshot.key?.let { movieIds.add(it) }
                     }
                 }
-                
-                moviesRef.orderByChild(orderBy).addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(movieSnapshot: DataSnapshot) {
-                        val list = mutableListOf<Movie>()
-                        for (data in movieSnapshot.children) {
-                            val movie = data.getValue(Movie::class.java)
-                            if (movie != null && movieIds.contains(movie.id)) {
-                                list.add(movie)
+
+                moviesRef.orderByChild(orderBy)
+                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(movieSnapshot: DataSnapshot) {
+                            val list = mutableListOf<Movie>()
+                            for (data in movieSnapshot.children) {
+                                val movie = data.getValue(Movie::class.java)
+                                if (movie != null && movieIds.contains(movie.id)) {
+                                    list.add(movie)
+                                }
                             }
+                            list.reverse()
+                            trySend(list)
                         }
-                        list.reverse()
-                        trySend(list)
-                    }
-                    override fun onCancelled(error: DatabaseError) {
-                        close(error.toException())
-                    }
-                })
+
+                        override fun onCancelled(error: DatabaseError) {
+                            close(error.toException())
+                        }
+                    })
             }
+
             override fun onCancelled(error: DatabaseError) {
                 close(error.toException())
             }
@@ -147,34 +154,38 @@ class MovieRepository @Inject constructor(
     }
 
     fun getFavoriteMovies(userId: String, orderBy: String): Flow<List<Movie>> = callbackFlow {
-        val favListener = favoritesRef.child(userId).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val movieIds = mutableListOf<String>()
-                for (data in snapshot.children) {
-                    data.key?.let { movieIds.add(it) }
-                }
-                
-                moviesRef.orderByChild(orderBy).addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(movieSnapshot: DataSnapshot) {
-                        val list = mutableListOf<Movie>()
-                        for (data in movieSnapshot.children) {
-                            val movie = data.getValue(Movie::class.java)
-                            if (movie != null && movieIds.contains(movie.id)) {
-                                list.add(movie)
+        val favListener =
+            favoritesRef.child(userId).addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val movieIds = mutableListOf<String>()
+                    for (data in snapshot.children) {
+                        data.key?.let { movieIds.add(it) }
+                    }
+
+                    moviesRef.orderByChild(orderBy)
+                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(movieSnapshot: DataSnapshot) {
+                                val list = mutableListOf<Movie>()
+                                for (data in movieSnapshot.children) {
+                                    val movie = data.getValue(Movie::class.java)
+                                    if (movie != null && movieIds.contains(movie.id)) {
+                                        list.add(movie)
+                                    }
+                                }
+                                list.reverse()
+                                trySend(list)
                             }
-                        }
-                        list.reverse()
-                        trySend(list)
-                    }
-                    override fun onCancelled(error: DatabaseError) {
-                        close(error.toException())
-                    }
-                })
-            }
-            override fun onCancelled(error: DatabaseError) {
-                close(error.toException())
-            }
-        })
+
+                            override fun onCancelled(error: DatabaseError) {
+                                close(error.toException())
+                            }
+                        })
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    close(error.toException())
+                }
+            })
         awaitClose { favoritesRef.child(userId).removeEventListener(favListener) }
     }
 
@@ -183,6 +194,7 @@ class MovieRepository @Inject constructor(
             override fun onDataChange(snapshot: DataSnapshot) {
                 trySend(snapshot.getValue(Movie::class.java))
             }
+
             override fun onCancelled(error: DatabaseError) {
                 close(error.toException())
             }
@@ -191,26 +203,30 @@ class MovieRepository @Inject constructor(
     }
 
     fun isFavorite(movieId: String, userId: String): Flow<Boolean> = callbackFlow {
-        val listener = favoritesRef.child(userId).child(movieId).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                trySend(snapshot.exists())
-            }
-            override fun onCancelled(error: DatabaseError) {
-                close(error.toException())
-            }
-        })
+        val listener = favoritesRef.child(userId).child(movieId)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    trySend(snapshot.exists())
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    close(error.toException())
+                }
+            })
         awaitClose { favoritesRef.child(userId).child(movieId).removeEventListener(listener) }
     }
 
     fun isLoved(movieId: String, userId: String): Flow<Boolean> = callbackFlow {
-        val listener = lovesRef.child(movieId).child(userId).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                trySend(snapshot.exists())
-            }
-            override fun onCancelled(error: DatabaseError) {
-                close(error.toException())
-            }
-        })
+        val listener = lovesRef.child(movieId).child(userId)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    trySend(snapshot.exists())
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    close(error.toException())
+                }
+            })
         awaitClose { lovesRef.child(movieId).child(userId).removeEventListener(listener) }
     }
 
@@ -219,6 +235,7 @@ class MovieRepository @Inject constructor(
             override fun onDataChange(snapshot: DataSnapshot) {
                 trySend(snapshot.childrenCount)
             }
+
             override fun onCancelled(error: DatabaseError) {
                 close(error.toException())
             }
@@ -266,25 +283,28 @@ class MovieRepository @Inject constructor(
         try {
             val snapshot = moviesRef.child(movieId).child(DATA.LOVES_COUNT).get().await()
             val currentLoves = snapshot.getValue(Long::class.java) ?: 0L
-            moviesRef.child(movieId).child(DATA.LOVES_COUNT).setValue(currentLoves + increment).await()
+            moviesRef.child(movieId).child(DATA.LOVES_COUNT).setValue(currentLoves + increment)
+                .await()
         } catch (e: Exception) {
             Timber.e(e, "Error updating loves count")
         }
     }
 
     fun getMovieComments(movieId: String): Flow<List<Comment>> = callbackFlow {
-        val listener = moviesRef.child(movieId).child(DATA.COMMENTS).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val list = mutableListOf<Comment>()
-                for (data in snapshot.children) {
-                    data.getValue(Comment::class.java)?.let { list.add(it) }
+        val listener = moviesRef.child(movieId).child(DATA.COMMENTS)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val list = mutableListOf<Comment>()
+                    for (data in snapshot.children) {
+                        data.getValue(Comment::class.java)?.let { list.add(it) }
+                    }
+                    trySend(list)
                 }
-                trySend(list)
-            }
-            override fun onCancelled(error: DatabaseError) {
-                close(error.toException())
-            }
-        })
+
+                override fun onCancelled(error: DatabaseError) {
+                    close(error.toException())
+                }
+            })
         awaitClose { moviesRef.child(movieId).child(DATA.COMMENTS).removeEventListener(listener) }
     }
 
@@ -314,18 +334,20 @@ class MovieRepository @Inject constructor(
     }
 
     fun getMovieCastIds(movieId: String): Flow<List<String>> = callbackFlow {
-        val listener = castMovieRef.child(movieId).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val list = mutableListOf<String>()
-                for (data in snapshot.children) {
-                    data.key?.let { list.add(it) }
+        val listener =
+            castMovieRef.child(movieId).addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val list = mutableListOf<String>()
+                    for (data in snapshot.children) {
+                        data.key?.let { list.add(it) }
+                    }
+                    trySend(list)
                 }
-                trySend(list)
-            }
-            override fun onCancelled(error: DatabaseError) {
-                close(error.toException())
-            }
-        })
+
+                override fun onCancelled(error: DatabaseError) {
+                    close(error.toException())
+                }
+            })
         awaitClose { castMovieRef.child(movieId).removeEventListener(listener) }
     }
 
@@ -335,6 +357,7 @@ class MovieRepository @Inject constructor(
             override fun onDataChange(snapshot: DataSnapshot) {
                 trySend(snapshot.childrenCount.toInt())
             }
+
             override fun onCancelled(error: DatabaseError) {
                 close(error.toException())
             }
@@ -353,6 +376,7 @@ class MovieRepository @Inject constructor(
                 }
                 trySend(list)
             }
+
             override fun onCancelled(error: DatabaseError) {
                 close(error.toException())
             }

@@ -43,7 +43,7 @@
 
         </LinearLayout>
 
-        <com.google.android.exoplayer2.ui.PlayerView
+        <androidx.media3.ui.PlayerView
             android:id="@+id/playerView"
             android:layout_width="240dp"
             android:layout_height="240dp"

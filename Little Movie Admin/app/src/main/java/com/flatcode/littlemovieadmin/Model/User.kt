@@ -1,24 +1,16 @@
 package com.flatcode.littlemovieadmin.model
 
-class User {
-    var id: String? = null
-    var username: String? = null
-    var profileImage: String? = null
-    var email: String? = null
-    var timestamp: Long = 0
-    var version = 0
+import android.os.Parcelable
+import androidx.annotation.Keep
+import kotlinx.parcelize.Parcelize
 
-    constructor()
-
-    constructor(
-        id: String?, username: String?, profileImage: String?, email: String?, timestamp: Long,
-        version: Int
-    ) {
-        this.id = id
-        this.username = username
-        this.profileImage = profileImage
-        this.email = email
-        this.timestamp = timestamp
-        this.version = version
-    }
-}
+@Keep
+@Parcelize
+data class User(
+    var id: String? = null,
+    var username: String? = null,
+    var profileImage: String? = null,
+    var email: String? = null,
+    var timestamp: Long = 0,
+    var version: Int = 0,
+) : Parcelable

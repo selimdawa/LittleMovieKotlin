@@ -15,7 +15,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class CategoryRepository @Inject constructor(
-    private val categoryDao: CategoryDao
+    private val categoryDao: CategoryDao,
 ) {
 
     private val database = FirebaseDatabase.getInstance()
@@ -23,7 +23,10 @@ class CategoryRepository @Inject constructor(
     private val interestedRef = database.getReference(DATA.INTERESTED)
 
     fun getCategories(publisherId: String? = null): Flow<List<Category>> = callbackFlow {
-        Timber.d("Fetching categories%s", if (publisherId != null) " for publisher: $publisherId" else "")
+        Timber.d(
+            "Fetching categories%s",
+            if (publisherId != null) " for publisher: $publisherId" else "",
+        )
         val query = if (publisherId != null) {
             categoriesRef.orderByChild(DATA.PUBLISHER).equalTo(publisherId)
         } else {
@@ -35,12 +38,12 @@ class CategoryRepository @Inject constructor(
                 for (data in snapshot.children) {
                     data.getValue(Category::class.java)?.let { list.add(it) }
                 }
-                
+
                 // Save to local DB
                 launch {
                     categoryDao.insertCategories(list)
                 }
-                
+
                 trySend(list)
             }
 
@@ -53,59 +56,56 @@ class CategoryRepository @Inject constructor(
     }
 
     fun getCategoryById(categoryId: String): Flow<Category?> = callbackFlow {
-        val listener = categoriesRef.child(categoryId).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                trySend(snapshot.getValue(Category::class.java))
-            }
-            override fun onCancelled(error: DatabaseError) {
-                close(error.toException())
-            }
-        })
+        val listener =
+            categoriesRef.child(categoryId).addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    trySend(snapshot.getValue(Category::class.java))
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    close(error.toException())
+                }
+            })
         awaitClose { categoriesRef.child(categoryId).removeEventListener(listener) }
     }
 
-    fun getCategoriesCount(): Flow<Long> = callbackFlow {
-        val listener = categoriesRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                trySend(snapshot.childrenCount)
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                close(error.toException())
-            }
-        })
-        awaitClose { categoriesRef.removeEventListener(listener) }
-    }
-
-    fun getInterestedCategories(userId: String, orderBy: String): Flow<List<Category>> = callbackFlow {
-        val interestedListener = interestedRef.child(userId).child(DATA.CATEGORIES).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val categoryIds = mutableListOf<String>()
-                for (data in snapshot.children) {
-                    data.key?.let { categoryIds.add(it) }
-                }
-                
-                categoriesRef.orderByChild(orderBy).addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(categorySnapshot: DataSnapshot) {
-                        val list = mutableListOf<Category>()
-                        for (data in categorySnapshot.children) {
-                            val category = data.getValue(Category::class.java)
-                            if (category != null && categoryIds.contains(category.id)) {
-                                list.add(category)
-                            }
+    fun getInterestedCategories(userId: String, orderBy: String): Flow<List<Category>> =
+        callbackFlow {
+            val interestedListener = interestedRef.child(userId).child(DATA.CATEGORIES)
+                .addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val categoryIds = mutableListOf<String>()
+                        for (data in snapshot.children) {
+                            data.key?.let { categoryIds.add(it) }
                         }
-                        list.reverse()
-                        trySend(list)
+
+                        categoriesRef.orderByChild(orderBy)
+                            .addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(categorySnapshot: DataSnapshot) {
+                                    val list = mutableListOf<Category>()
+                                    for (data in categorySnapshot.children) {
+                                        val category = data.getValue(Category::class.java)
+                                        if (category != null && categoryIds.contains(category.id)) {
+                                            list.add(category)
+                                        }
+                                    }
+                                    list.reverse()
+                                    trySend(list)
+                                }
+
+                                override fun onCancelled(error: DatabaseError) {
+                                    close(error.toException())
+                                }
+                            })
                     }
+
                     override fun onCancelled(error: DatabaseError) {
                         close(error.toException())
                     }
                 })
+            awaitClose {
+                interestedRef.child(userId).child(DATA.CATEGORIES)
+                    .removeEventListener(interestedListener)
             }
-            override fun onCancelled(error: DatabaseError) {
-                close(error.toException())
-            }
-        })
-        awaitClose { interestedRef.child(userId).child(DATA.CATEGORIES).removeEventListener(interestedListener) }
-    }
+        }
 }

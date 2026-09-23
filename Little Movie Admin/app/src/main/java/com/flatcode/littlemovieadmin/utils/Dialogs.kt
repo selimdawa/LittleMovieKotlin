@@ -15,6 +15,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AlertDialog
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.model.Cast
@@ -183,7 +184,8 @@ fun Activity.deleteDB(
             childDB
         )
         DATA.isChange = true
-        this.onBackPressed()
+        (this as? ComponentActivity)?.onBackPressedDispatcher?.onBackPressed()
+            ?: @Suppress("DEPRECATION") this.onBackPressed()
         dialog.dismiss()
         Toast.makeText(this, "$name Deleted Successfully...", Toast.LENGTH_SHORT).show()
         dialogDelete.dismiss()

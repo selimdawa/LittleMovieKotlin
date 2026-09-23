@@ -5,8 +5,8 @@ import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
 import com.flatcode.littlemovie.db.UserDao
-import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.model.User
+import com.flatcode.littlemovie.utils.DATA
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -23,7 +23,7 @@ import javax.inject.Inject
 import kotlin.coroutines.resume
 
 class UserRepository @Inject constructor(
-    private val userDao: UserDao
+    private val userDao: UserDao,
 ) {
 
     private val auth = FirebaseAuth.getInstance()
@@ -38,17 +38,20 @@ class UserRepository @Inject constructor(
 
     fun getUserProfileImage(userId: String): Flow<String?> = callbackFlow {
         Timber.d("Fetching profile image for user: %s", userId)
-        val listener = usersRef.child(userId).child(DATA.PROFILE_IMAGE).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                trySend(snapshot.value?.toString())
-            }
+        val listener = usersRef.child(userId).child(DATA.PROFILE_IMAGE)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    trySend(snapshot.value?.toString())
+                }
 
-            override fun onCancelled(error: DatabaseError) {
-                Timber.e("Error fetching profile image: %s", error.message)
-                close(error.toException())
-            }
-        })
-        awaitClose { usersRef.child(userId).child(DATA.PROFILE_IMAGE).removeEventListener(listener) }
+                override fun onCancelled(error: DatabaseError) {
+                    Timber.e("Error fetching profile image: %s", error.message)
+                    close(error.toException())
+                }
+            })
+        awaitClose {
+            usersRef.child(userId).child(DATA.PROFILE_IMAGE).removeEventListener(listener)
+        }
     }
 
     fun getUserInfo(userId: String): Flow<User?> = callbackFlow {
@@ -84,41 +87,47 @@ class UserRepository @Inject constructor(
         }
     }
 
-    suspend fun uploadProfileImage(userId: String, imageUri: Uri, extension: String): Result<String> {
+    suspend fun uploadProfileImage(
+        userId: String, imageUri: Uri, extension: String,
+    ): Result<String> {
         return suspendCancellableCoroutine { continuation ->
-            MediaManager.get().upload(imageUri)
+            val builder = MediaManager.get().upload(imageUri)
                 .option("folder", "Images/Profile")
                 .option("public_id", userId)
                 .option("unsigned", true)
                 .option("upload_preset", DATA.CLOUDINARY_UPLOAD_PRESET)
-                .callback(object : UploadCallback {
-                    override fun onStart(requestId: String) {
-                        Timber.d("Cloudinary upload started: %s", requestId)
-                    }
 
-                    override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {
-                        // Progress can be handled here if needed
-                    }
+            if (extension.isNotBlank()) {
+                builder.option("format", extension)
+            }
 
-                    override fun onSuccess(requestId: String, resultData: Map<*, *>) {
-                        val url = resultData["secure_url"] as? String
-                        if (url != null) {
-                            continuation.resume(Result.success(url))
-                        } else {
-                            continuation.resume(Result.failure(Exception("Failed to get secure URL from Cloudinary")))
-                        }
-                    }
+            builder.callback(object : UploadCallback {
+                override fun onStart(requestId: String) {
+                    Timber.d("Cloudinary upload started: %s", requestId)
+                }
 
-                    override fun onError(requestId: String, error: ErrorInfo) {
-                        Timber.e("Cloudinary upload error: %s", error.description)
-                        continuation.resume(Result.failure(Exception(error.description)))
-                    }
+                override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {
+                    // Progress can be handled here if needed
+                }
 
-                    override fun onReschedule(requestId: String, error: ErrorInfo) {
-                        Timber.w("Cloudinary upload rescheduled: %s", error.description)
+                override fun onSuccess(requestId: String, resultData: Map<*, *>) {
+                    val url = resultData["secure_url"] as? String
+                    if (url != null) {
+                        continuation.resume(Result.success(url))
+                    } else {
+                        continuation.resume(Result.failure(Exception("Failed to get secure URL from Cloudinary")))
                     }
-                })
-                .dispatch()
+                }
+
+                override fun onError(requestId: String, error: ErrorInfo) {
+                    Timber.e("Cloudinary upload error: %s", error.description)
+                    continuation.resume(Result.failure(Exception(error.description)))
+                }
+
+                override fun onReschedule(requestId: String, error: ErrorInfo) {
+                    Timber.w("Cloudinary upload rescheduled: %s", error.description)
+                }
+            }).dispatch()
         }
     }
 
@@ -126,7 +135,7 @@ class UserRepository @Inject constructor(
         return try {
             val authResult = auth.createUserWithEmailAndPassword(email, password).await()
             val userId = authResult.user?.uid ?: throw Exception("Failed to get user UID")
-            
+
             val hashMap = HashMap<String, Any>()
             hashMap[DATA.EMAIL] = email
             hashMap[DATA.ID] = userId
@@ -134,7 +143,7 @@ class UserRepository @Inject constructor(
             hashMap[DATA.TIMESTAMP] = System.currentTimeMillis()
             hashMap[DATA.USER_NAME] = name
             hashMap[DATA.VERSION] = DATA.CURRENT_VERSION
-            
+
             usersRef.child(userId).setValue(hashMap).await()
             Result.success(Unit)
         } catch (e: Exception) {
@@ -143,58 +152,67 @@ class UserRepository @Inject constructor(
     }
 
     fun getInterestedCount(userId: String, type: String): Flow<Int> = callbackFlow {
-        val listener = interestedRef.child(userId).child(type).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                trySend(snapshot.childrenCount.toInt())
-            }
+        val listener = interestedRef.child(userId).child(type)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    trySend(snapshot.childrenCount.toInt())
+                }
 
-            override fun onCancelled(error: DatabaseError) {
-                close(error.toException())
-            }
-        })
+                override fun onCancelled(error: DatabaseError) {
+                    close(error.toException())
+                }
+            })
         awaitClose { interestedRef.child(userId).child(type).removeEventListener(listener) }
     }
 
     fun getFavoritesCount(userId: String): Flow<Int> = callbackFlow {
-        val listener = favoritesRef.child(userId).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                trySend(snapshot.childrenCount.toInt())
-            }
+        val listener =
+            favoritesRef.child(userId).addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    trySend(snapshot.childrenCount.toInt())
+                }
 
-            override fun onCancelled(error: DatabaseError) {
-                close(error.toException())
-            }
-        })
+                override fun onCancelled(error: DatabaseError) {
+                    close(error.toException())
+                }
+            })
         awaitClose { favoritesRef.child(userId).removeEventListener(listener) }
     }
 
     fun getInterestedCategories(userId: String): Flow<List<String>> = callbackFlow {
-        val listener = interestedRef.child(userId).child(DATA.CATEGORIES).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val list = mutableListOf<String>()
-                for (data in snapshot.children) {
-                    data.key?.let { list.add(it) }
+        val listener = interestedRef.child(userId).child(DATA.CATEGORIES)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val list = mutableListOf<String>()
+                    for (data in snapshot.children) {
+                        data.key?.let { list.add(it) }
+                    }
+                    trySend(list)
                 }
-                trySend(list)
-            }
 
-            override fun onCancelled(error: DatabaseError) {
-                close(error.toException())
-            }
-        })
-        awaitClose { interestedRef.child(userId).child(DATA.CATEGORIES).removeEventListener(listener) }
+                override fun onCancelled(error: DatabaseError) {
+                    close(error.toException())
+                }
+            })
+        awaitClose {
+            interestedRef.child(userId).child(DATA.CATEGORIES).removeEventListener(listener)
+        }
     }
 
     fun isInterested(userId: String, type: String, id: String): Flow<Boolean> = callbackFlow {
-        val listener = interestedRef.child(userId).child(type).child(id).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                trySend(snapshot.exists())
-            }
-            override fun onCancelled(error: DatabaseError) {
-                close(error.toException())
-            }
-        })
-        awaitClose { interestedRef.child(userId).child(type).child(id).removeEventListener(listener) }
+        val listener = interestedRef.child(userId).child(type).child(id)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    trySend(snapshot.exists())
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    close(error.toException())
+                }
+            })
+        awaitClose {
+            interestedRef.child(userId).child(type).child(id).removeEventListener(listener)
+        }
     }
 
     suspend fun toggleInterest(userId: String, type: String, id: String, isInterested: Boolean) {

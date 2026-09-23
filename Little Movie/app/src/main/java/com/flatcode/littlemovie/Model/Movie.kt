@@ -3,14 +3,12 @@ package com.flatcode.littlemovie.model
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.flatcode.littlemovie.utils.DATA
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 @Entity(tableName = "movies")
 data class Movie(
-    @PrimaryKey
-    var id: String = "",
+    @PrimaryKey var id: String = "",
     var publisher: String? = null,
     var image: String? = null,
     var categoryId: String? = null,
@@ -23,5 +21,5 @@ data class Movie(
     var castCount: Int = 0,
     var editorsChoice: Int = 0,
     var year: Int = 0,
-    var timestamp: Long = 0
+    var timestamp: Long = 0,
 ) : Parcelable
