@@ -1,19 +1,20 @@
 package com.flatcode.littlemovie.ui.main
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.databinding.ActivitySplashBinding
 import com.flatcode.littlemovie.ui.auth.AuthActivity
+import com.flatcode.littlemovie.utils.openActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
-import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
+@SuppressLint("CustomSplashScreen")
 @AndroidEntryPoint
 class SplashActivity : AppCompatActivity() {
 
@@ -38,12 +39,7 @@ class SplashActivity : AppCompatActivity() {
             }
         }
 
-        val timePerSecond = 2
-        val timeFinal = time_per_millis * timePerSecond
+        val timeFinal = 2000
         viewModel.checkUser(timeFinal.toLong())
-    }
-
-    companion object {
-        const val time_per_millis = 1000
     }
 }

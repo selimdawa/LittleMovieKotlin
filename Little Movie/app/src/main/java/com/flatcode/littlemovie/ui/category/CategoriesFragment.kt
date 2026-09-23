@@ -7,14 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.flatcode.littlemovie.model.Category
-import com.flatcode.littlemovie.ui.category.CategoryDetailsActivity
-import com.flatcode.littlemovie.ui.category.CategoryMainAdapter
+import com.flatcode.littlemovie.databinding.FragmentCategoriesBinding
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.openActivity
-import com.flatcode.littlemovie.databinding.FragmentCategoriesBinding
-import kotlinx.coroutines.launch
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -29,7 +26,7 @@ class CategoriesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCategoriesBinding.inflate(inflater, container, false)
-        
+
         setupAdapter()
         observeViewModel()
 
@@ -50,7 +47,7 @@ class CategoriesFragment : Fragment() {
             viewModel.categoriesList.collect { categories ->
                 Timber.d("Categories collected: %d", categories.size)
                 adapter.submitList(categories)
-                
+
                 binding.bar.visibility = View.GONE
                 if (categories.isNotEmpty()) {
                     binding.recyclerView.visibility = View.VISIBLE
@@ -61,7 +58,7 @@ class CategoriesFragment : Fragment() {
                 }
             }
         }
-        
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.isLoading.collect { isLoading ->
                 binding.bar.visibility = if (isLoading) View.VISIBLE else View.GONE

@@ -130,7 +130,7 @@ class HomeFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.sliderImages.collect { images ->
-                binding.imageSlider.setSliderAdapter(ImageSliderAdapter(images) { position ->
+                binding.imageSlider.setSliderAdapter(ImageSliderAdapter(images) { _ ->
                     // Handle click
                 })
             }

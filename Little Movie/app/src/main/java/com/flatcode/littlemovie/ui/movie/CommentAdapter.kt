@@ -1,13 +1,9 @@
 package com.flatcode.littlemovie.ui.movie
 
-import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -15,7 +11,7 @@ import com.flatcode.littlemovie.Application
 import com.flatcode.littlemovie.databinding.ItemCommentBinding
 import com.flatcode.littlemovie.model.Comment
 import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.*
+import com.flatcode.littlemovie.utils.loadImage
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -41,7 +37,8 @@ class CommentAdapter(private val onDeleteClick: (Comment) -> Unit) :
             oldItem.id == newItem.id && oldItem.comment == newItem.comment
     }
 
-    class ViewHolder(private val binding: ItemCommentBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: ItemCommentBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Comment, onDeleteClick: (Comment) -> Unit) {
             val publisher = item.publisher ?: ""
             val comment = item.comment ?: ""
@@ -59,11 +56,12 @@ class CommentAdapter(private val onDeleteClick: (Comment) -> Unit) :
         }
 
         private fun loadUserDetails(publisher: String, name: TextView, image: ImageView) {
-            FirebaseDatabase.getInstance().getReference(DATA.USERS)
-                .child(publisher).addListenerForSingleValueEvent(object : ValueEventListener {
+            FirebaseDatabase.getInstance().getReference(DATA.USERS).child(publisher)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         val username = snapshot.child(DATA.USER_NAME).value?.toString() ?: ""
-                        val profileImage = snapshot.child(DATA.PROFILE_IMAGE).value?.toString() ?: ""
+                        val profileImage =
+                            snapshot.child(DATA.PROFILE_IMAGE).value?.toString() ?: ""
                         image.loadImage(true, profileImage)
                         name.text = username
                     }

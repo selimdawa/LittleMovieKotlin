@@ -1,10 +1,7 @@
 package com.flatcode.littlemovie.ui.profile
 
 import android.Manifest
-import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -20,14 +17,16 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
-import com.flatcode.littlemovie.R
-import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.*
-import com.flatcode.littlemovie.databinding.ActivityProfileEditBinding
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
+import com.flatcode.littlemovie.R
+import com.flatcode.littlemovie.databinding.ActivityProfileEditBinding
+import com.flatcode.littlemovie.utils.DATA
+import com.flatcode.littlemovie.utils.ProgressDialog
+import com.flatcode.littlemovie.utils.getFileExtension
+import com.flatcode.littlemovie.utils.loadImage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -37,7 +36,7 @@ class ProfileEditActivity : AppCompatActivity() {
     private var binding: ActivityProfileEditBinding? = null
     private val context: Context = this@ProfileEditActivity
     private val viewModel: ProfileEditViewModel by viewModels()
-    
+
     private var imageUri: Uri? = null
     private var dialog: ProgressDialog? = null
 
@@ -70,9 +69,7 @@ class ProfileEditActivity : AppCompatActivity() {
         ViewCompat.setOnApplyWindowInsetsListener(binding!!.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(
-                left = systemBars.left,
-                right = systemBars.right,
-                bottom = systemBars.bottom
+                left = systemBars.left, right = systemBars.right, bottom = systemBars.bottom
             )
             binding!!.toolbar.root.updatePadding(top = systemBars.top)
             insets
@@ -90,7 +87,7 @@ class ProfileEditActivity : AppCompatActivity() {
         }
 
         binding!!.toolbar.nameSpace.setText(R.string.edit_profile)
-        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+        binding!!.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding!!.image.setOnClickListener { checkPermissionAndPickImage() }
         binding!!.go.setOnClickListener { validateData() }
     }
@@ -102,7 +99,10 @@ class ProfileEditActivity : AppCompatActivity() {
             Manifest.permission.READ_EXTERNAL_STORAGE
         }
 
-        if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                context, permission
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             launchImagePicker()
         } else {
             requestPermissionLauncher.launch(permission)
@@ -112,8 +112,7 @@ class ProfileEditActivity : AppCompatActivity() {
     private fun launchImagePicker() {
         cropImage.launch(
             CropImageContractOptions(
-                uri = null,
-                cropImageOptions = CropImageOptions(
+                uri = null, cropImageOptions = CropImageOptions(
                     minCropResultWidth = DATA.MIX_SQUARE,
                     minCropResultHeight = DATA.MIX_SQUARE,
                     aspectRatioX = 1,
@@ -140,7 +139,11 @@ class ProfileEditActivity : AppCompatActivity() {
                 result?.let {
                     if (it.isFailure) {
                         dialog!!.dismiss()
-                        Toast.makeText(context, "Failed to upload image: ${it.exceptionOrNull()?.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            "Failed to upload image: ${it.exceptionOrNull()?.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
@@ -153,7 +156,11 @@ class ProfileEditActivity : AppCompatActivity() {
                     if (it.isSuccess) {
                         Toast.makeText(context, "Profile updated...", Toast.LENGTH_SHORT).show()
                     } else {
-                        Toast.makeText(context, "Failed to update profile: ${it.exceptionOrNull()?.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            "Failed to update profile: ${it.exceptionOrNull()?.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                     viewModel.resetStatus()
                 }
@@ -168,7 +175,7 @@ class ProfileEditActivity : AppCompatActivity() {
         } else {
             dialog!!.setMessage("Updating profile...")
             dialog!!.show()
-            val extension = imageUri?.let { it.getFileExtension(context) }
+            val extension = imageUri?.getFileExtension(context)
             viewModel.updateProfile(username, imageUri, extension)
         }
     }

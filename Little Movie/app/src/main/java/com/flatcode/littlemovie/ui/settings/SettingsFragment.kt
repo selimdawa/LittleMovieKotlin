@@ -1,5 +1,6 @@
 package com.flatcode.littlemovie.ui.settings
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,18 +8,23 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import android.content.Intent
-import com.flatcode.littlemovie.model.Setting
 import com.flatcode.littlemovie.R
-import com.flatcode.littlemovie.utils.*
 import com.flatcode.littlemovie.databinding.FragmentSettingsBinding
+import com.flatcode.littlemovie.model.Setting
 import com.flatcode.littlemovie.ui.cast.MyCastActivity
 import com.flatcode.littlemovie.ui.category.MyCategoriesActivity
 import com.flatcode.littlemovie.ui.profile.FavoritesActivity
 import com.flatcode.littlemovie.ui.profile.ProfileActivity
 import com.flatcode.littlemovie.ui.profile.ProfileEditActivity
-import kotlinx.coroutines.flow.combine
+import com.flatcode.littlemovie.utils.DATA
+import com.flatcode.littlemovie.utils.dialogAboutApp
+import com.flatcode.littlemovie.utils.dialogLogout
+import com.flatcode.littlemovie.utils.loadImage
+import com.flatcode.littlemovie.utils.openActivity
+import com.flatcode.littlemovie.utils.rateApp
+import com.flatcode.littlemovie.utils.shareApp
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -89,15 +95,55 @@ class SettingsFragment : Fragment() {
 
     private fun loadSettings(myCast: Int, myCategories: Int, favorites: Int) {
         val settings = mutableListOf<Setting>()
-        settings.add(Setting("1", "Edit Profile", R.drawable.ic_edit_white, 0, ProfileEditActivity::class.java))
-        settings.add(Setting("2", "My Cast", R.drawable.ic_cast, myCast, MyCastActivity::class.java))
-        settings.add(Setting("3", "My Categories", R.drawable.ic_category_gray, myCategories, MyCategoriesActivity::class.java))
-        settings.add(Setting("4", "Favorites", R.drawable.ic_star_selected, favorites, FavoritesActivity::class.java))
+        settings.add(
+            Setting(
+                "1",
+                "Edit Profile",
+                R.drawable.ic_edit_white,
+                0,
+                ProfileEditActivity::class.java
+            )
+        )
+        settings.add(
+            Setting(
+                "2",
+                "My Cast",
+                R.drawable.ic_cast,
+                myCast,
+                MyCastActivity::class.java
+            )
+        )
+        settings.add(
+            Setting(
+                "3",
+                "My Categories",
+                R.drawable.ic_category_gray,
+                myCategories,
+                MyCategoriesActivity::class.java
+            )
+        )
+        settings.add(
+            Setting(
+                "4",
+                "Favorites",
+                R.drawable.ic_star_selected,
+                favorites,
+                FavoritesActivity::class.java
+            )
+        )
         settings.add(Setting("5", "About App", R.drawable.ic_info, 0, null))
         settings.add(Setting("6", "Logout", R.drawable.ic_logout_white, 0, null))
         settings.add(Setting("7", "Share App", R.drawable.ic_share, 0, null))
         settings.add(Setting("8", "Rate APP", R.drawable.ic_heart_selected, 0, null))
-        settings.add(Setting("9", "Privacy Policy", R.drawable.ic_privacy_policy, 0, PrivacyPolicyActivity::class.java))
+        settings.add(
+            Setting(
+                "9",
+                "Privacy Policy",
+                R.drawable.ic_privacy_policy,
+                0,
+                PrivacyPolicyActivity::class.java
+            )
+        )
         adapter.submitList(settings)
     }
 

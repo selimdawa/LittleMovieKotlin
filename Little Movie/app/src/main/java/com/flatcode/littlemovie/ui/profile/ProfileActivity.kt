@@ -4,15 +4,17 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.R
-import com.flatcode.littlemovie.utils.*
 import com.flatcode.littlemovie.databinding.ActivityProfileBinding
+import com.flatcode.littlemovie.utils.DATA
+import com.flatcode.littlemovie.utils.loadImage
+import com.flatcode.littlemovie.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -53,7 +55,7 @@ class ProfileActivity : AppCompatActivity() {
             binding!!.edit.setImageResource(R.drawable.ic_edit_white)
             binding!!.edit.setOnClickListener { context.openActivity<ProfileEditActivity>() }
         }
-        binding!!.back.setOnClickListener { onBackPressed() }
+        binding!!.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
     }
 
     private fun observeViewModel() {

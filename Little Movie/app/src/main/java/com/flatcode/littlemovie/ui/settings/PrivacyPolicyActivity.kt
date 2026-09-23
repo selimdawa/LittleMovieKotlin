@@ -27,13 +27,15 @@ class PrivacyPolicyActivity : AppCompatActivity() {
 
         ViewCompat.setOnApplyWindowInsetsListener(binding!!.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updatePadding(left = systemBars.left, right = systemBars.right, bottom = systemBars.bottom)
+            v.updatePadding(
+                left = systemBars.left, right = systemBars.right, bottom = systemBars.bottom
+            )
             binding!!.toolbar.root.updatePadding(top = systemBars.top)
             insets
         }
 
         binding!!.toolbar.nameSpace.setText(R.string.privacy_policy)
-        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+        binding!!.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         observeViewModel()
         viewModel.loadPrivacyPolicy()

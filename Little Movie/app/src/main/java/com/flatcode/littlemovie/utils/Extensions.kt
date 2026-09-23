@@ -9,8 +9,10 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.webkit.MimeTypeMap
 import android.widget.ImageView
+import java.util.Locale
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
+import androidx.core.net.toUri
 import coil3.load
 import coil3.request.crossfade
 import coil3.request.placeholder
@@ -87,7 +89,7 @@ fun Context.shareApp() {
 }
 
 fun Context.rateApp() {
-    val uri = Uri.parse("market://details?id=" + this.packageName)
+    val uri = ("market://details?id=" + this.packageName).toUri()
     val goToMarket = Intent(Intent.ACTION_VIEW, uri)
     try {
         this.startActivity(goToMarket)
@@ -95,7 +97,7 @@ fun Context.rateApp() {
         this.startActivity(
             Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse("http://play.google.com/store/apps/details?id=" + this.packageName)
+                ("http://play.google.com/store/apps/details?id=" + this.packageName).toUri()
             )
         )
     }
@@ -109,8 +111,8 @@ fun Uri.getFileExtension(context: Context): String {
 
 fun Long.convertDuration(): String {
     val minutes = this / 1000 / 60
-    val seconds = this / 1000 % 60
-    return String.format("%d:%02d", minutes, seconds)
+    val seconds = (this / 1000) % 60
+    return String.format(Locale.US, "%d:%02d", minutes, seconds)
 }
 
 class SimpleBlurTransformation(private val radius: Float) : Transformation() {

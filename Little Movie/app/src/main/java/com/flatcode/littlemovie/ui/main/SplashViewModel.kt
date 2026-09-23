@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
@@ -21,7 +22,7 @@ class SplashViewModel @Inject constructor(
 
     fun checkUser(delayMillis: Long) {
         viewModelScope.launch {
-            delay(delayMillis)
+            delay(delayMillis.milliseconds)
             val loggedIn = repository.isUserLoggedIn()
             _isLoggedIn.value = loggedIn
             Timber.d("User login status checked: %b", loggedIn)

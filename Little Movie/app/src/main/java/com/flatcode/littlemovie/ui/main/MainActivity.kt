@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -16,7 +17,10 @@ import androidx.navigation.fragment.NavHostFragment
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.databinding.ActivityMainBinding
 import com.flatcode.littlemovie.ui.profile.ProfileActivity
-import com.flatcode.littlemovie.utils.*
+import com.flatcode.littlemovie.utils.DATA
+import com.flatcode.littlemovie.utils.closeApp
+import com.flatcode.littlemovie.utils.loadImage
+import com.flatcode.littlemovie.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import io.selimdawa.bubblebottom.BubbleBottomNavigation
 import io.selimdawa.bubblebottom.Model
@@ -95,11 +99,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
         viewModel.loadUserInfo()
-    }
 
-    override fun onBackPressed() {
-        if (navController?.navigateUp() == false) {
-            context.closeApp(activity)
-        }
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (navController?.navigateUp() == false) {
+                    context.closeApp(activity)
+                }
+            }
+        })
     }
 }

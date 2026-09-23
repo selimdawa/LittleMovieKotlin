@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 package com.flatcode.littlemovie.utils
 
 import com.google.firebase.auth.FirebaseAuth
@@ -17,14 +19,12 @@ object DATA {
     var USER_NAME = "username"
     var PROFILE_IMAGE = "profileImage"
     var EMPTY = ""
-    var SPACE = " "
     var TIMESTAMP = "timestamp"
     var ID = "id"
     var IMAGE = "image"
     var SLIDER_SHOW = "SliderShow"
     var PUBLISHER = "publisher"
     var COMMENTS = "Comments"
-    var NULL = "null"
     var FAVORITES = "Favorites"
     var VIEWS_COUNT = "viewsCount"
     var INTERESTED_COUNT = "interestedCount"
@@ -34,17 +34,13 @@ object DATA {
     var NAME = "name"
     var CAST_MOVIE = "CastMovie"
     var MOVIE_LINK = "movieLink"
-    var DOT = "."
     var CURRENT_VERSION = 1
     var MIX_SQUARE = 500
-    var ZERO = 0
-    var ORDER_MAIN = 2 // Here Max Item Show
     var searchStatus = false
     var isChange = false
 
     //Shared
     var PROFILE_ID = "profileId"
-    var COLOR_OPTION = "color_option"
     var CATEGORY_ID = "categoryId"
     var SHOW_MORE_TYPE = "showMoreType"
     var CATEGORY_NAME = "categoryName"
@@ -60,11 +56,11 @@ object DATA {
     var COMMENT = "comment"
 
     // Cloudinary
-    var CLOUDINARY_CLOUD_NAME = "YOUR_CLOUD_NAME"
-    var CLOUDINARY_UPLOAD_PRESET = "YOUR_UPLOAD_PRESET"
+    var CLOUDINARY_CLOUD_NAME = "j8jsphcf"
+    var CLOUDINARY_UPLOAD_PRESET = "flat_code"
 
     //Other
-    val AUTH = FirebaseAuth.getInstance()
-    val FIREBASE_USER = AUTH.currentUser
-    val FirebaseUserUid = FIREBASE_USER!!.uid
+    val AUTH: FirebaseAuth get() = FirebaseAuth.getInstance()
+    val FIREBASE_USER get() = AUTH.currentUser
+    val FirebaseUserUid: String? get() = FIREBASE_USER?.uid
 }

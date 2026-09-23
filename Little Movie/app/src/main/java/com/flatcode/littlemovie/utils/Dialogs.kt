@@ -5,13 +5,12 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
-import com.flatcode.littlemovie.R
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.net.toUri
 import com.flatcode.littlemovie.databinding.DialogAboutAppBinding
 import com.flatcode.littlemovie.databinding.DialogAboutArtistBinding
 import com.flatcode.littlemovie.databinding.DialogCloseAppBinding
@@ -26,7 +25,7 @@ fun Context.closeApp(a: Activity?) {
     val binding = DialogCloseAppBinding.inflate(LayoutInflater.from(this))
     dialog.setContentView(binding.root)
     dialog.setCancelable(true)
-    dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    dialog.window!!.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
     val lp: WindowManager.LayoutParams = WindowManager.LayoutParams()
     lp.copyFrom(dialog.window!!.attributes)
     lp.width = WindowManager.LayoutParams.WRAP_CONTENT
@@ -43,7 +42,7 @@ fun Context.dialogLogout() {
     val binding = DialogLogoutBinding.inflate(LayoutInflater.from(this))
     dialog.setContentView(binding.root)
     dialog.setCancelable(true)
-    dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    dialog.window!!.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
     val lp: WindowManager.LayoutParams = WindowManager.LayoutParams()
     lp.copyFrom(dialog.window!!.attributes)
     lp.width = WindowManager.LayoutParams.WRAP_CONTENT
@@ -63,7 +62,7 @@ fun Context.dialogAboutApp() {
     val binding = DialogAboutAppBinding.inflate(LayoutInflater.from(this))
     dialog.setContentView(binding.root)
     dialog.setCancelable(true)
-    dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    dialog.window!!.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
     val lp: WindowManager.LayoutParams = WindowManager.LayoutParams()
     lp.copyFrom(dialog.window!!.attributes)
     lp.width = WindowManager.LayoutParams.WRAP_CONTENT
@@ -73,7 +72,7 @@ fun Context.dialogAboutApp() {
             this@dialogAboutApp.startActivity(websiteIntent)
         }
 
-        val websiteIntent: Intent get() = Intent(Intent.ACTION_VIEW, Uri.parse(DATA.WEB_SITE))
+        val websiteIntent: Intent get() = Intent(Intent.ACTION_VIEW, DATA.WEB_SITE.toUri())
     })
     binding.facebook.setOnClickListener(object : View.OnClickListener {
         override fun onClick(v: View) {
@@ -83,11 +82,10 @@ fun Context.dialogAboutApp() {
         val openFacebookIntent: Intent
             get() = try {
                 this@dialogAboutApp.packageManager.getPackageInfo("com.facebook.katana", 0)
-                Intent(Intent.ACTION_VIEW, Uri.parse("fb://profile/" + DATA.FB_ID))
+                Intent(Intent.ACTION_VIEW, ("fb://profile/" + DATA.FB_ID).toUri())
             } catch (_: Exception) {
                 Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("https://www.facebook.com/" + DATA.FB_ID)
+                    Intent.ACTION_VIEW, ("https://www.facebook.com/" + DATA.FB_ID).toUri()
                 )
             }
     })
@@ -101,7 +99,7 @@ fun Context.dialogAboutArtist(imageDB: String?, nameDB: String?, aboutDB: String
     val binding = DialogAboutArtistBinding.inflate(LayoutInflater.from(this))
     dialog.setContentView(binding.root)
     dialog.setCancelable(true)
-    dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    dialog.window!!.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
     val lp: WindowManager.LayoutParams = WindowManager.LayoutParams()
     lp.copyFrom(dialog.window!!.attributes)
     lp.width = WindowManager.LayoutParams.WRAP_CONTENT

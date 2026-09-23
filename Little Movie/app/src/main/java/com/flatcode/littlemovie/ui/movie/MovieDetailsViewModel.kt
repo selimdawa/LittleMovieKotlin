@@ -59,7 +59,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     fun loadDetails(movieId: String) {
         val userId = DATA.FirebaseUserUid ?: return
-        
+
         viewModelScope.launch {
             movieRepository.getMovieById(movieId).collectLatest {
                 _movie.value = it
@@ -101,7 +101,7 @@ class MovieDetailsViewModel @Inject constructor(
                 _lovesCount.value = it
             }
         }
-        
+
         viewModelScope.launch {
             movieRepository.incrementViewCount(movieId)
         }

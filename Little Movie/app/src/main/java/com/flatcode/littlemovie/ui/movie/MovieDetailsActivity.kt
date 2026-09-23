@@ -1,7 +1,6 @@
 package com.flatcode.littlemovie.ui.movie
 
 import android.app.Activity
-import com.flatcode.littlemovie.utils.ProgressDialog
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -21,7 +20,11 @@ import com.flatcode.littlemovie.databinding.DialogCommentAddBinding
 import com.flatcode.littlemovie.model.Comment
 import com.flatcode.littlemovie.ui.cast.CastDetailsActivity
 import com.flatcode.littlemovie.ui.cast.CastMovieAdapter
-import com.flatcode.littlemovie.utils.*
+import com.flatcode.littlemovie.utils.DATA
+import com.flatcode.littlemovie.utils.ProgressDialog
+import com.flatcode.littlemovie.utils.convertDuration
+import com.flatcode.littlemovie.utils.loadImage
+import com.flatcode.littlemovie.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -67,7 +70,7 @@ class MovieDetailsActivity : AppCompatActivity() {
 
     private fun setupUI() {
         binding!!.toolbar.nameSpace.setText(R.string.details_movie)
-        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+        binding!!.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         dialog = ProgressDialog(activity).apply {
             setTitle("Please wait...")

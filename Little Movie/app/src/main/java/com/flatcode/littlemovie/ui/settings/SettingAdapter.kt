@@ -1,7 +1,5 @@
 package com.flatcode.littlemovie.ui.settings
 
-import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,10 +8,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovie.databinding.ItemSettingBinding
 import com.flatcode.littlemovie.model.Setting
-import com.flatcode.littlemovie.utils.dialogAboutApp
-import com.flatcode.littlemovie.utils.dialogLogout
-import com.flatcode.littlemovie.utils.rateApp
-import com.flatcode.littlemovie.utils.shareApp
 
 class SettingAdapter(private val onItemClick: (Setting) -> Unit) :
     ListAdapter<Setting, SettingAdapter.ViewHolder>(DiffCallback) {
@@ -35,7 +29,8 @@ class SettingAdapter(private val onItemClick: (Setting) -> Unit) :
             oldItem.id == newItem.id && oldItem.name == newItem.name && oldItem.number == newItem.number
     }
 
-    class ViewHolder(private val binding: ItemSettingBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: ItemSettingBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Setting, onItemClick: (Setting) -> Unit) {
             val name = item.name ?: ""
             val image = item.image

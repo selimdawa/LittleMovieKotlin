@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/myMoviesFragment"
-        android:name="com.flatcode.littlemovie.ui.movie.myMoviesFragment"
+        android:name="com.flatcode.littlemovie.ui.movie.MyMoviesFragment"
         android:label="@string/my_movies"
         tools:layout="@layout/fragment_my_movies" />
 

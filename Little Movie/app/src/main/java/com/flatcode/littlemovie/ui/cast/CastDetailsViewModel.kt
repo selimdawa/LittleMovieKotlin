@@ -16,8 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CastDetailsViewModel @Inject constructor(
-    private val movieRepository: MovieRepository,
-    private val userRepository: UserRepository
+    private val movieRepository: MovieRepository, private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _movies = MutableStateFlow<List<Movie>>(emptyList())

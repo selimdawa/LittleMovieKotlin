@@ -31,7 +31,7 @@ class SettingsViewModel @Inject constructor(
 
     fun loadData() {
         val userId = DATA.FirebaseUserUid ?: return
-        
+
         viewModelScope.launch {
             repository.getUserInfo(userId).collectLatest {
                 _user.value = it

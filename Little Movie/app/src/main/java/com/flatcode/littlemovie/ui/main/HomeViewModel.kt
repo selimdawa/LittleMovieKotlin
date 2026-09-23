@@ -17,8 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val movieRepository: MovieRepository,
-    private val categoryRepository: CategoryRepository
+    private val movieRepository: MovieRepository, private val categoryRepository: CategoryRepository
 ) : ViewModel() {
 
     private val _categories = MutableStateFlow<List<Category>>(emptyList())

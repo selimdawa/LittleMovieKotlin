@@ -1,6 +1,5 @@
 package com.flatcode.littlemovie.ui.cast
 
-import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,13 +8,14 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovie.databinding.ItemCastMovieBinding
 import com.flatcode.littlemovie.model.Cast
-import com.flatcode.littlemovie.utils.*
+import com.flatcode.littlemovie.utils.loadImage
 
 class CastMovieAdapter(private val onItemClick: (Cast) -> Unit) :
     ListAdapter<Cast, CastMovieAdapter.ViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemCastMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemCastMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
@@ -27,11 +27,11 @@ class CastMovieAdapter(private val onItemClick: (Cast) -> Unit) :
         override fun areItemsTheSame(oldItem: Cast, newItem: Cast): Boolean =
             oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: Cast, newItem: Cast): Boolean =
-            oldItem == newItem
+        override fun areContentsTheSame(oldItem: Cast, newItem: Cast): Boolean = oldItem == newItem
     }
 
-    class ViewHolder(private val binding: ItemCastMovieBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: ItemCastMovieBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Cast, onItemClick: (Cast) -> Unit) {
             val name = item.name ?: ""
             val image = item.image ?: ""

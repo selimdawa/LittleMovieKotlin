@@ -36,7 +36,7 @@ class CategoriesViewModel @Inject constructor(
                 } else {
                     list.reversed()
                 }
-                
+
                 _categoriesList.value = processedList
                 _categoriesCount.value = processedList.size
                 _isLoading.value = false

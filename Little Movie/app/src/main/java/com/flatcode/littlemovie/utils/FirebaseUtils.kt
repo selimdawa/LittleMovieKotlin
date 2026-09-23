@@ -10,9 +10,10 @@ import com.google.firebase.database.ValueEventListener
 import java.text.MessageFormat
 
 fun ImageView.isInterested(id: String?, type: String?) {
+    val userId = DATA.FirebaseUserUid ?: return
+    if (id.isNullOrEmpty() || type.isNullOrEmpty()) return
     val ref = FirebaseDatabase.getInstance().getReference(DATA.INTERESTED)
-    ref.child(DATA.FirebaseUserUid).child(type!!).child(id!!)
-        .addValueEventListener(object : ValueEventListener {
+    ref.child(userId).child(type).child(id).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     this@isInterested.setImageResource(R.drawable.ic_star_selected)
@@ -28,25 +29,27 @@ fun ImageView.isInterested(id: String?, type: String?) {
 }
 
 fun ImageView.checkInterested(type: String?, id: String?) {
+    val userId = DATA.FirebaseUserUid ?: return
+    if (id.isNullOrEmpty() || type.isNullOrEmpty()) return
     if (this.tag == "add") {
-        FirebaseDatabase.getInstance().getReference(DATA.INTERESTED)
-            .child(DATA.FirebaseUserUid).child(type!!).child(id!!).setValue(true)
+        FirebaseDatabase.getInstance().getReference(DATA.INTERESTED).child(userId).child(type)
+            .child(id).setValue(true)
         incrementInterestedCount(id, type, 1)
     } else {
-        FirebaseDatabase.getInstance().getReference(DATA.INTERESTED)
-            .child(DATA.FirebaseUserUid).child(type!!).child(id!!).removeValue()
+        FirebaseDatabase.getInstance().getReference(DATA.INTERESTED).child(userId).child(type)
+            .child(id).removeValue()
         incrementInterestedCount(id, type, -1)
     }
 }
 
-private fun incrementInterestedCount(id: String?, type: String?, increment: Int) {
-    val ref = FirebaseDatabase.getInstance().getReference(type!!).child(id!!)
-        .child(DATA.INTERESTED_COUNT)
+private fun incrementInterestedCount(id: String, type: String, increment: Int) {
+    val ref =
+        FirebaseDatabase.getInstance().getReference(type).child(id).child(DATA.INTERESTED_COUNT)
     ref.addListenerForSingleValueEvent(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             var count = 0
             if (snapshot.exists()) {
-                count = snapshot.value.toString().toInt()
+                count = snapshot.value.toString().toIntOrNull() ?: 0
             }
             ref.setValue(count + increment)
         }
@@ -56,8 +59,9 @@ private fun incrementInterestedCount(id: String?, type: String?, increment: Int)
 }
 
 fun ImageView.isFavorite(id: String?, userId: String?) {
+    if (id.isNullOrEmpty() || userId.isNullOrEmpty()) return
     val ref = FirebaseDatabase.getInstance().getReference(DATA.FAVORITES)
-    ref.child(userId!!).child(id!!).addValueEventListener(object : ValueEventListener {
+    ref.child(userId).child(id).addValueEventListener(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             if (snapshot.exists()) {
                 this@isFavorite.setImageResource(R.drawable.ic_heart_selected)
@@ -73,18 +77,22 @@ fun ImageView.isFavorite(id: String?, userId: String?) {
 }
 
 fun ImageView.checkFavorite(id: String?) {
+    val userId = DATA.FirebaseUserUid ?: return
+    if (id.isNullOrEmpty()) return
     if (this.tag == "add") {
-        FirebaseDatabase.getInstance().getReference(DATA.FAVORITES)
-            .child(DATA.FirebaseUserUid).child(id!!).setValue(true)
+        FirebaseDatabase.getInstance().getReference(DATA.FAVORITES).child(userId).child(id)
+            .setValue(true)
     } else {
-        FirebaseDatabase.getInstance().getReference(DATA.FAVORITES)
-            .child(DATA.FirebaseUserUid).child(id!!).removeValue()
+        FirebaseDatabase.getInstance().getReference(DATA.FAVORITES).child(userId).child(id)
+            .removeValue()
     }
 }
 
 fun ImageView.isLoves(id: String?) {
-    val ref = FirebaseDatabase.getInstance().getReference(DATA.LOVES).child(id!!)
-    ref.child(DATA.FirebaseUserUid).addValueEventListener(object : ValueEventListener {
+    val userId = DATA.FirebaseUserUid ?: return
+    if (id.isNullOrEmpty()) return
+    val ref = FirebaseDatabase.getInstance().getReference(DATA.LOVES).child(id)
+    ref.child(userId).addValueEventListener(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             if (snapshot.exists()) {
                 this@isLoves.setImageResource(R.drawable.ic_heart_selected)
@@ -100,7 +108,8 @@ fun ImageView.isLoves(id: String?) {
 }
 
 fun TextView.nrLoves(id: String?) {
-    val ref = FirebaseDatabase.getInstance().getReference(DATA.LOVES).child(id!!)
+    if (id.isNullOrEmpty()) return
+    val ref = FirebaseDatabase.getInstance().getReference(DATA.LOVES).child(id)
     ref.addValueEventListener(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             this@nrLoves.text = MessageFormat.format("{0}", snapshot.childrenCount)
@@ -111,25 +120,27 @@ fun TextView.nrLoves(id: String?) {
 }
 
 fun ImageView.checkLove(id: String?) {
+    val userId = DATA.FirebaseUserUid ?: return
+    if (id.isNullOrEmpty()) return
     if (this.tag == "add") {
-        FirebaseDatabase.getInstance().getReference(DATA.LOVES).child(id!!)
-            .child(DATA.FirebaseUserUid).setValue(true)
+        FirebaseDatabase.getInstance().getReference(DATA.LOVES).child(id).child(userId)
+            .setValue(true)
         incrementLovesCount(id, 1)
     } else {
-        FirebaseDatabase.getInstance().getReference(DATA.LOVES).child(id!!)
-            .child(DATA.FirebaseUserUid).removeValue()
+        FirebaseDatabase.getInstance().getReference(DATA.LOVES).child(id).child(userId)
+            .removeValue()
         incrementLovesCount(id, -1)
     }
 }
 
-private fun incrementLovesCount(id: String?, increment: Int) {
-    val ref = FirebaseDatabase.getInstance().getReference(DATA.MOVIES).child(id!!)
-        .child(DATA.LOVES_COUNT)
+private fun incrementLovesCount(id: String, increment: Int) {
+    val ref =
+        FirebaseDatabase.getInstance().getReference(DATA.MOVIES).child(id).child(DATA.LOVES_COUNT)
     ref.addListenerForSingleValueEvent(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             var count = 0
             if (snapshot.exists()) {
-                count = snapshot.value.toString().toInt()
+                count = snapshot.value.toString().toIntOrNull() ?: 0
             }
             ref.setValue(count + increment)
         }
@@ -139,13 +150,13 @@ private fun incrementLovesCount(id: String?, increment: Int) {
 }
 
 fun String.incrementViewCount() {
-    val ref = FirebaseDatabase.getInstance().getReference(DATA.MOVIES).child(this)
-        .child(DATA.VIEWS_COUNT)
+    val ref =
+        FirebaseDatabase.getInstance().getReference(DATA.MOVIES).child(this).child(DATA.VIEWS_COUNT)
     ref.addListenerForSingleValueEvent(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             var viewsCount = 0
             if (snapshot.exists()) {
-                viewsCount = snapshot.value.toString().toInt()
+                viewsCount = snapshot.value.toString().toIntOrNull() ?: 0
             }
             ref.setValue(viewsCount + 1)
         }

@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.flatcode.littlemovie.model.Cast
 import com.flatcode.littlemovie.repository.CastRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject

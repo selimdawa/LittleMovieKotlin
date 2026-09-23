@@ -8,7 +8,10 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovie.databinding.ItemCategoryBinding
 import com.flatcode.littlemovie.model.Category
-import com.flatcode.littlemovie.utils.*
+import com.flatcode.littlemovie.utils.DATA
+import com.flatcode.littlemovie.utils.checkInterested
+import com.flatcode.littlemovie.utils.isInterested
+import com.flatcode.littlemovie.utils.loadImage
 import java.util.Locale
 
 class CategoryAdapter(private val onItemClick: (Category) -> Unit) :
@@ -17,7 +20,8 @@ class CategoryAdapter(private val onItemClick: (Category) -> Unit) :
     private var fullList: List<Category> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
@@ -50,7 +54,8 @@ class CategoryAdapter(private val onItemClick: (Category) -> Unit) :
             oldItem == newItem
     }
 
-    class ViewHolder(private val binding: ItemCategoryBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: ItemCategoryBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Category, onItemClick: (Category) -> Unit) {
             val id = item.id
             val name = item.name ?: ""

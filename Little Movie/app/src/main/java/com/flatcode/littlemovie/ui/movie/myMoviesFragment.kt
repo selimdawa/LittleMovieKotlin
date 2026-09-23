@@ -7,15 +7,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.flatcode.littlemovie.model.Movie
+import com.flatcode.littlemovie.databinding.FragmentMyMoviesBinding
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.openActivity
-import com.flatcode.littlemovie.databinding.FragmentMyMoviesBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class myMoviesFragment : Fragment() {
+class MyMoviesFragment : Fragment() {
 
     private var _binding: FragmentMyMoviesBinding? = null
     private val binding get() = _binding!!
@@ -67,7 +66,7 @@ class myMoviesFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.movies.collect { movies ->
                 adapter.submitList(movies)
-                
+
                 binding.progress.visibility = View.GONE
                 if (movies.isNotEmpty()) {
                     binding.recyclerView.visibility = View.VISIBLE
@@ -78,7 +77,7 @@ class myMoviesFragment : Fragment() {
                 }
             }
         }
-        
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.isLoading.collect { isLoading ->
                 binding.progress.visibility = if (isLoading) View.VISIBLE else View.GONE

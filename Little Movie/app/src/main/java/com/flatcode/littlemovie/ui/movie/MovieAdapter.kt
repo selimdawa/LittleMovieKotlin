@@ -10,12 +10,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.databinding.ItemMovieBinding
 import com.flatcode.littlemovie.model.Movie
-import com.flatcode.littlemovie.utils.*
+import com.flatcode.littlemovie.utils.DATA
+import com.flatcode.littlemovie.utils.checkFavorite
+import com.flatcode.littlemovie.utils.checkLove
+import com.flatcode.littlemovie.utils.isFavorite
+import com.flatcode.littlemovie.utils.isLoves
+import com.flatcode.littlemovie.utils.loadImage
+import com.flatcode.littlemovie.utils.nrLoves
 import java.util.Locale
 
 class MovieAdapter(
-    private val animation: Boolean = false,
-    private val onItemClick: (Movie) -> Unit
+    private val animation: Boolean = false, private val onItemClick: (Movie) -> Unit
 ) : ListAdapter<Movie, MovieAdapter.ViewHolder>(DiffCallback) {
 
     private var fullList: List<Movie> = emptyList()
@@ -54,7 +59,8 @@ class MovieAdapter(
             oldItem == newItem
     }
 
-    class ViewHolder(private val binding: ItemMovieBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: ItemMovieBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Movie, animation: Boolean, onItemClick: (Movie) -> Unit) {
             val id = item.id
             val name = item.name ?: ""

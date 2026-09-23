@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -12,17 +13,17 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
+import com.flatcode.littlemovie.databinding.ActivityCategoryDetailsBinding
 import com.flatcode.littlemovie.ui.movie.MovieAdapter
 import com.flatcode.littlemovie.ui.movie.MovieDetailsActivity
-import com.flatcode.littlemovie.utils.openActivity
 import com.flatcode.littlemovie.ui.movie.MovieListViewModel
-import com.flatcode.littlemovie.model.Movie
 import com.flatcode.littlemovie.utils.DATA
-import com.flatcode.littlemovie.utils.*
-import com.flatcode.littlemovie.databinding.ActivityCategoryDetailsBinding
+import com.flatcode.littlemovie.utils.checkInterested
+import com.flatcode.littlemovie.utils.isInterested
+import com.flatcode.littlemovie.utils.openActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import dagger.hilt.android.AndroidEntryPoint
 import java.text.MessageFormat
 
 @AndroidEntryPoint
@@ -31,9 +32,9 @@ class CategoryDetailsActivity : AppCompatActivity() {
     private var binding: ActivityCategoryDetailsBinding? = null
     private val activity: Activity = this@CategoryDetailsActivity
     private val viewModel: MovieListViewModel by viewModels()
-    
+
     private lateinit var adapter: MovieAdapter
-    
+
     private var categoryId: String? = null
     private var categoryName: String? = null
     private var type: String = DATA.TIMESTAMP
@@ -46,7 +47,9 @@ class CategoryDetailsActivity : AppCompatActivity() {
 
         ViewCompat.setOnApplyWindowInsetsListener(binding!!.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updatePadding(left = systemBars.left, right = systemBars.right, bottom = systemBars.bottom)
+            v.updatePadding(
+                left = systemBars.left, right = systemBars.right, bottom = systemBars.bottom
+            )
             binding!!.toolbar.root.updatePadding(top = systemBars.top)
             insets
         }
@@ -61,20 +64,37 @@ class CategoryDetailsActivity : AppCompatActivity() {
 
     private fun setupUI() {
         binding!!.toolbar.nameSpace.text = categoryName
-        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
-        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
+        binding!!.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding!!.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (DATA.searchStatus) {
+                    binding!!.toolbar.toolbar.visibility = View.VISIBLE
+                    binding!!.toolbar.toolbarSearch.visibility = View.GONE
+                    DATA.searchStatus = false
+                    binding!!.toolbar.textSearch.setText(DATA.EMPTY)
+                } else if (DATA.isChange) {
+                    loadData()
+                    DATA.isChange = false
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
 
         binding!!.switchBar.interest.isInterested(categoryId, DATA.CATEGORIES)
         binding!!.switchBar.interest.setOnClickListener {
             binding!!.switchBar.interest.checkInterested(DATA.CATEGORIES, categoryId)
         }
-        
+
         binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
             binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
             DATA.searchStatus = true
         }
-        
+
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -84,6 +104,7 @@ class CategoryDetailsActivity : AppCompatActivity() {
                     Timber.e(e, "Error filtering movies")
                 }
             }
+
             override fun afterTextChanged(s: Editable) {}
         })
 
@@ -118,7 +139,7 @@ class CategoryDetailsActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.movies.collect { movies ->
                 adapter.setFullList(movies)
-                
+
                 binding!!.progress.visibility = View.GONE
                 if (movies.isNotEmpty()) {
                     binding!!.recyclerView.visibility = View.VISIBLE
@@ -147,17 +168,6 @@ class CategoryDetailsActivity : AppCompatActivity() {
         categoryId?.let { viewModel.loadMoviesByCategory(it, type) }
     }
 
-    override fun onBackPressed() {
-        if (DATA.searchStatus) {
-            binding!!.toolbar.toolbar.visibility = View.VISIBLE
-            binding!!.toolbar.toolbarSearch.visibility = View.GONE
-            DATA.searchStatus = false
-            binding!!.toolbar.textSearch.setText(DATA.EMPTY)
-        } else if (DATA.isChange) {
-            loadData()
-            DATA.isChange = false
-        } else super.onBackPressed()
-    }
 
     override fun onResume() {
         super.onResume()

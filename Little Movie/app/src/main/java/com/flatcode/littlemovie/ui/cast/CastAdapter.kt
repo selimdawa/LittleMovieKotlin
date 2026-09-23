@@ -8,7 +8,10 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemovie.databinding.ItemCastBinding
 import com.flatcode.littlemovie.model.Cast
-import com.flatcode.littlemovie.utils.*
+import com.flatcode.littlemovie.utils.DATA
+import com.flatcode.littlemovie.utils.checkInterested
+import com.flatcode.littlemovie.utils.isInterested
+import com.flatcode.littlemovie.utils.loadImage
 import java.util.Locale
 
 class CastAdapter(private val onItemClick: (Cast) -> Unit) :
@@ -46,8 +49,7 @@ class CastAdapter(private val onItemClick: (Cast) -> Unit) :
         override fun areItemsTheSame(oldItem: Cast, newItem: Cast): Boolean =
             oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: Cast, newItem: Cast): Boolean =
-            oldItem == newItem
+        override fun areContentsTheSame(oldItem: Cast, newItem: Cast): Boolean = oldItem == newItem
     }
 
     class ViewHolder(private val binding: ItemCastBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -55,7 +57,6 @@ class CastAdapter(private val onItemClick: (Cast) -> Unit) :
             val id = item.id
             val name = item.name ?: ""
             val image = item.image ?: ""
-            val aboutMy = item.aboutMy ?: ""
             val interestedCount = item.interestedCount.toString()
             val moviesCount = item.moviesCount.toString()
 

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -12,13 +13,12 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
-import com.flatcode.littlemovie.model.Movie
+import com.flatcode.littlemovie.databinding.ActivityShowMoreBinding
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.openActivity
-import com.flatcode.littlemovie.databinding.ActivityShowMoreBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import dagger.hilt.android.AndroidEntryPoint
 import java.text.MessageFormat
 
 @AndroidEntryPoint
@@ -27,9 +27,9 @@ class ShowMoreActivity : AppCompatActivity() {
     private var binding: ActivityShowMoreBinding? = null
     private val activity: Activity = this@ShowMoreActivity
     private val viewModel: MovieListViewModel by viewModels()
-    
+
     private lateinit var adapter: MovieAdapter
-    
+
     private var type: String? = null
     private var name: String? = null
     private var isReverse: String? = null
@@ -42,7 +42,9 @@ class ShowMoreActivity : AppCompatActivity() {
 
         ViewCompat.setOnApplyWindowInsetsListener(binding!!.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updatePadding(left = systemBars.left, right = systemBars.right, bottom = systemBars.bottom)
+            v.updatePadding(
+                left = systemBars.left, right = systemBars.right, bottom = systemBars.bottom
+            )
             binding!!.toolbar.root.updatePadding(top = systemBars.top)
             insets
         }
@@ -58,8 +60,22 @@ class ShowMoreActivity : AppCompatActivity() {
 
     private fun setupUI() {
         binding!!.toolbar.nameSpace.text = name
-        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
-        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
+        binding!!.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding!!.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (DATA.searchStatus) {
+                    binding!!.toolbar.toolbar.visibility = View.VISIBLE
+                    binding!!.toolbar.toolbarSearch.visibility = View.GONE
+                    DATA.searchStatus = false
+                    binding!!.toolbar.textSearch.setText(DATA.EMPTY)
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
 
         binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
@@ -75,6 +91,7 @@ class ShowMoreActivity : AppCompatActivity() {
                     Timber.e(e, "Error filtering movies")
                 }
             }
+
             override fun afterTextChanged(s: Editable) {}
         })
     }
@@ -92,7 +109,7 @@ class ShowMoreActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.movies.collect { movies ->
                 adapter.setFullList(movies)
-                
+
                 binding!!.progress.visibility = View.GONE
                 if (movies.isNotEmpty()) {
                     binding!!.recyclerView.visibility = View.VISIBLE
@@ -115,15 +132,6 @@ class ShowMoreActivity : AppCompatActivity() {
                 binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
             }
         }
-    }
-
-    override fun onBackPressed() {
-        if (DATA.searchStatus) {
-            binding!!.toolbar.toolbar.visibility = View.VISIBLE
-            binding!!.toolbar.toolbarSearch.visibility = View.GONE
-            DATA.searchStatus = false
-            binding!!.toolbar.textSearch.setText(DATA.EMPTY)
-        } else super.onBackPressed()
     }
 
     override fun onResume() {

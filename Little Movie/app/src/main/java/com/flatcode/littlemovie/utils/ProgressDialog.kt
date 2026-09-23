@@ -1,12 +1,14 @@
+@file:Suppress("unused")
+
 package com.flatcode.littlemovie.utils
 
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
+import androidx.core.graphics.drawable.toDrawable
 import com.flatcode.littlemovie.databinding.DialogProgressBinding
 
 class ProgressDialog(context: Context) {
@@ -18,7 +20,7 @@ class ProgressDialog(context: Context) {
     init {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(binding.root)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
     }
 
     fun setTitle(title: CharSequence?): ProgressDialog {

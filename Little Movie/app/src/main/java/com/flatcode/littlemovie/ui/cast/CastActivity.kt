@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -12,14 +13,13 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
-import com.flatcode.littlemovie.model.Cast
 import com.flatcode.littlemovie.R
+import com.flatcode.littlemovie.databinding.ActivityCastBinding
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.openActivity
-import com.flatcode.littlemovie.databinding.ActivityCastBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import dagger.hilt.android.AndroidEntryPoint
 import java.text.MessageFormat
 
 @AndroidEntryPoint
@@ -40,15 +40,34 @@ class CastActivity : AppCompatActivity() {
 
         ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updatePadding(left = systemBars.left, right = systemBars.right, bottom = systemBars.bottom)
+            v.updatePadding(
+                left = systemBars.left, right = systemBars.right, bottom = systemBars.bottom
+            )
             binding!!.toolbar.root.updatePadding(top = systemBars.top)
             insets
         }
 
         binding!!.toolbar.nameSpace.setText(R.string.cast)
-        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
-        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+        binding!!.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding!!.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         type = DATA.TIMESTAMP
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (DATA.searchStatus) {
+                    binding!!.toolbar.toolbar.visibility = View.VISIBLE
+                    binding!!.toolbar.toolbarSearch.visibility = View.GONE
+                    DATA.searchStatus = false
+                    binding!!.toolbar.textSearch.setText(DATA.EMPTY)
+                } else if (DATA.isChange) {
+                    onResume()
+                    DATA.isChange = false
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
 
         binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
@@ -123,18 +142,6 @@ class CastActivity : AppCompatActivity() {
                 binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
             }
         }
-    }
-
-    override fun onBackPressed() {
-        if (DATA.searchStatus) {
-            binding!!.toolbar.toolbar.visibility = View.VISIBLE
-            binding!!.toolbar.toolbarSearch.visibility = View.GONE
-            DATA.searchStatus = false
-            binding!!.toolbar.textSearch.setText(DATA.EMPTY)
-        } else if (DATA.isChange) {
-            onResume()
-            DATA.isChange = false
-        } else super.onBackPressed()
     }
 
     override fun onRestart() {

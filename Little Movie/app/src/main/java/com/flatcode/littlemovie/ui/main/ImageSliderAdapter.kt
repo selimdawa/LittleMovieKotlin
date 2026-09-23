@@ -23,6 +23,5 @@ class ImageSliderAdapter(private val images: List<String>, private val onItemCli
 
     override fun getItemCount(): Int = images.size
 
-    class SliderViewHolder(val binding: ItemSliderBinding) :
-        ViewHolder(binding.root)
+    class SliderViewHolder(val binding: ItemSliderBinding) : ViewHolder(binding.root)
 }
