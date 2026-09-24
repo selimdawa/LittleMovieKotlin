@@ -4,26 +4,24 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
-import android.graphics.Color
 import android.view.Gravity
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
-import android.widget.ImageView
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AlertDialog
-import androidx.core.graphics.drawable.toDrawable
 import com.flatcode.littlemovieadmin.R
+import com.flatcode.littlemovieadmin.databinding.DialogAboutArtistBinding
+import com.flatcode.littlemovieadmin.databinding.DialogLogoutBinding
 import com.flatcode.littlemovieadmin.model.Cast
 import com.flatcode.littlemovieadmin.model.Category
 import com.flatcode.littlemovieadmin.model.Movie
 import com.flatcode.littlemovieadmin.ui.cast.CastEditActivity
 import com.flatcode.littlemovieadmin.ui.category.CategoryEditActivity
 import com.flatcode.littlemovieadmin.ui.movie.MovieEditActivity
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.database.FirebaseDatabase
 import java.text.MessageFormat
 
@@ -123,29 +121,28 @@ fun Activity.dialogOptionDelete(
     isEditorsChoice: Boolean, db: String?, idDB: String?, childDB: String?,
     cast: Boolean?, movie: Boolean?,
 ) {
-    val dialog = Dialog(this)
-    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-    dialog.setContentView(R.layout.dialog_logout)
-    dialog.setCancelable(true)
-    dialog.window!!.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
+    if (isFinishing || isDestroyed) return
 
-    val lp = WindowManager.LayoutParams()
-    lp.copyFrom(dialog.window!!.attributes)
-    lp.width = WindowManager.LayoutParams.WRAP_CONTENT
-    lp.height = WindowManager.LayoutParams.WRAP_CONTENT
-    val title = dialog.findViewById<TextView>(R.id.title)
-    title.text = getString(R.string.delete_item_prompt, name, type)
+    val dialogBinding = DialogLogoutBinding.inflate(layoutInflater)
+    val alertDialog = MaterialAlertDialogBuilder(this).setView(dialogBinding.root).create()
 
-    dialog.findViewById<View>(R.id.yes).setOnClickListener {
-        if (isEditorsChoice) this.dialogUpdateEditorsChoice(dialog, id) else this.deleteDB(
-            dialog, id, name, nameDB, db, idDB, childDB
+    alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+    dialogBinding.title.text = getString(R.string.delete_item_prompt, name, type)
+
+    dialogBinding.yes.setOnClickListener {
+        if (isEditorsChoice) this.dialogUpdateEditorsChoice(alertDialog, id) else this.deleteDB(
+            alertDialog, id, name, nameDB, db, idDB, childDB
         )
         if (cast == true) deleteCastInfo(id!!) else if (movie == true) deleteMovieInfo(id!!)
     }
 
-    dialog.findViewById<View>(R.id.no).setOnClickListener { dialog.dismiss() }
-    dialog.show()
-    dialog.window!!.attributes = lp
+    dialogBinding.no.setOnClickListener { alertDialog.dismiss() }
+
+    alertDialog.show()
+
+    val widthPx = (300 * resources.displayMetrics.density).toInt()
+    alertDialog.window?.setLayout(widthPx, ViewGroup.LayoutParams.WRAP_CONTENT)
 }
 
 fun Context.dialogUpdateEditorsChoice(dialogDelete: Dialog, id: String?) {
@@ -190,23 +187,20 @@ fun Activity.deleteDB(
 }
 
 fun Context.dialogAboutArtist(imageDB: String?, nameDB: String?, aboutDB: String?) {
-    val dialog = Dialog(this)
-    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-    dialog.setContentView(R.layout.dialog_about_artist)
-    dialog.setCancelable(true)
-    dialog.window!!.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
-    val lp = WindowManager.LayoutParams()
-    lp.copyFrom(dialog.window!!.attributes)
-    lp.width = WindowManager.LayoutParams.WRAP_CONTENT
-    lp.height = WindowManager.LayoutParams.WRAP_CONTENT
+    val activity = this as? Activity ?: return
+    if (activity.isFinishing || activity.isDestroyed) return
 
-    val image = dialog.findViewById<ImageView>(R.id.image)
-    val name = dialog.findViewById<TextView>(R.id.name)
-    val aboutTheArtist = dialog.findViewById<TextView>(R.id.aboutTheArtist)
+    val dialogBinding = DialogAboutArtistBinding.inflate(layoutInflater)
+    val alertDialog = MaterialAlertDialogBuilder(this).setView(dialogBinding.root).create()
 
-    image.loadImage(imageDB, isUser = false)
-    name.text = MessageFormat.format("{0}{1}", DATA.EMPTY, nameDB)
-    aboutTheArtist.text = MessageFormat.format("{0}{1}", DATA.EMPTY, aboutDB)
-    dialog.show()
-    dialog.window!!.attributes = lp
+    alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+    dialogBinding.image.loadImage(imageDB, isUser = false)
+    dialogBinding.name.text = MessageFormat.format("{0}{1}", DATA.EMPTY, nameDB)
+    dialogBinding.aboutTheArtist.text = MessageFormat.format("{0}{1}", DATA.EMPTY, aboutDB)
+
+    alertDialog.show()
+
+    val widthPx = (300 * resources.displayMetrics.density).toInt()
+    alertDialog.window?.setLayout(widthPx, ViewGroup.LayoutParams.WRAP_CONTENT)
 }
