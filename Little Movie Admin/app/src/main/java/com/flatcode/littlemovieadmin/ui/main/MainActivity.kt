@@ -1,8 +1,8 @@
 package com.flatcode.littlemovieadmin.ui.main
 
+import com.flatcode.littlemovieadmin.utils.BaseActivity
 import android.os.Bundle
 import com.flatcode.littlemovieadmin.databinding.ActivityMainBinding
-import com.flatcode.littlemovieadmin.ui.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

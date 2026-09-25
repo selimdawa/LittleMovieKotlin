@@ -4,10 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.databinding.ActivitySplashBinding
 import com.flatcode.littlemovie.ui.auth.AuthActivity
+import com.flatcode.littlemovie.utils.BaseActivity
 import com.flatcode.littlemovie.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filterNotNull
@@ -16,7 +16,7 @@ import timber.log.Timber
 
 @SuppressLint("CustomSplashScreen")
 @AndroidEntryPoint
-class SplashActivity : AppCompatActivity() {
+class SplashActivity : BaseActivity() {
 
     private var binding: ActivitySplashBinding? = null
     private val context: Context = this@SplashActivity

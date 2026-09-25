@@ -1,5 +1,6 @@
 package com.flatcode.littlemovieadmin.ui.category
 
+import com.flatcode.littlemovieadmin.utils.BaseActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,7 +12,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.databinding.ActivityCategoriesBinding
-import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.moreDeleteCategory
 import com.flatcode.littlemovieadmin.utils.openActivity

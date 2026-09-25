@@ -5,18 +5,14 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.databinding.ActivityMainBinding
 import com.flatcode.littlemovie.ui.profile.ProfileActivity
+import com.flatcode.littlemovie.utils.BaseActivity
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.closeApp
 import com.flatcode.littlemovie.utils.loadImage
@@ -28,7 +24,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     private var binding: ActivityMainBinding? = null
     private var activity: Activity? = null
@@ -38,20 +34,9 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.container) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updatePadding(
-                left = systemBars.left, right = systemBars.right
-            )
-            binding!!.toolbar.root.updatePadding(top = systemBars.top)
-            binding!!.bottomNavigation.updatePadding(bottom = systemBars.bottom)
-            insets
-        }
 
         bottomNavigation = binding!!.bottomNavigation
 
@@ -103,7 +88,7 @@ class MainActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (navController?.navigateUp() == false) {
-                    context.closeApp(activity)
+                    context.closeApp()
                 }
             }
         })

@@ -1,76 +1,57 @@
-@file:Suppress("unused")
-
 package com.flatcode.littlemovie.utils
 
-import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
-import android.view.Window
+import androidx.appcompat.app.AlertDialog
 import androidx.core.graphics.drawable.toDrawable
 import com.flatcode.littlemovie.databinding.DialogProgressBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class ProgressDialog(context: Context) {
 
-    private val dialog: Dialog = Dialog(context)
     private val binding: DialogProgressBinding =
         DialogProgressBinding.inflate(LayoutInflater.from(context))
 
+    private val dialog: AlertDialog =
+        MaterialAlertDialogBuilder(context).setView(binding.root).setCancelable(false).create()
+
     init {
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(binding.root)
         dialog.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
     }
 
-    fun setTitle(title: CharSequence?): ProgressDialog {
+    fun setTitle(title: CharSequence?) {
         if (!title.isNullOrEmpty()) {
-            binding.textTitle.text = title
-            binding.textTitle.visibility = View.VISIBLE
+            binding.tvTitle.text = title
+            binding.tvTitle.visibility = View.VISIBLE
         } else {
-            binding.textTitle.visibility = View.GONE
+            binding.tvTitle.visibility = View.GONE
         }
-        return this
     }
 
-    fun setMessage(message: CharSequence?): ProgressDialog {
+    fun setMessage(message: CharSequence?) {
         if (!message.isNullOrEmpty()) {
-            binding.textMessage.text = message
-            binding.textMessage.visibility = View.VISIBLE
+            binding.tvMessage.text = message
+            binding.tvMessage.visibility = View.VISIBLE
         } else {
-            binding.textMessage.visibility = View.GONE
+            binding.tvMessage.visibility = View.GONE
         }
-        return this
     }
 
-    fun setCanceledOnTouchOutside(cancel: Boolean): ProgressDialog {
+    fun setCanceledOnTouchOutside(cancel: Boolean) {
         dialog.setCanceledOnTouchOutside(cancel)
-        return this
-    }
-
-    fun setCancelable(cancel: Boolean): ProgressDialog {
-        dialog.setCancelable(cancel)
-        return this
     }
 
     fun show() {
-        try {
-            if (!dialog.isShowing) {
-                dialog.show()
-            }
-        } catch (_: Exception) {
+        if (!dialog.isShowing) {
+            dialog.show()
         }
     }
 
     fun dismiss() {
-        try {
-            if (dialog.isShowing) {
-                dialog.dismiss()
-            }
-        } catch (_: Exception) {
+        if (dialog.isShowing) {
+            dialog.dismiss()
         }
     }
-
-    val isShowing: Boolean
-        get() = dialog.isShowing
 }

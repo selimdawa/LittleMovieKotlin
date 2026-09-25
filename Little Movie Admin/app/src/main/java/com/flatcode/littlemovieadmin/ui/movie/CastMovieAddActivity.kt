@@ -1,5 +1,6 @@
 package com.flatcode.littlemovieadmin.ui.movie
 
+import com.flatcode.littlemovieadmin.utils.BaseActivity
 import android.os.Bundle
 import android.view.View
 import androidx.activity.OnBackPressedCallback
@@ -9,7 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.databinding.ActivityCastMovieBinding
-import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.utils.DATA.castMovie
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

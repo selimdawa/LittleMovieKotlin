@@ -1,5 +1,6 @@
 package com.flatcode.littlemovieadmin.ui.privacypolicy
 
+import com.flatcode.littlemovieadmin.utils.BaseActivity
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
@@ -9,7 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.databinding.ActivityPrivacyPolicyEditBinding
-import com.flatcode.littlemovieadmin.ui.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

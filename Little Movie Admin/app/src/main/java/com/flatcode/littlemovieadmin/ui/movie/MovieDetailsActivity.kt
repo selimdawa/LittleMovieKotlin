@@ -1,5 +1,6 @@
 package com.flatcode.littlemovieadmin.ui.movie
 
+import com.flatcode.littlemovieadmin.utils.BaseActivity
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -13,7 +14,6 @@ import com.flatcode.littlemovieadmin.Application
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.databinding.ActivityMovieDetailsBinding
 import com.flatcode.littlemovieadmin.databinding.DialogCommentAddBinding
-import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.ui.cast.CastDetailsActivity
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.checkFavorite
@@ -139,7 +139,7 @@ class MovieDetailsActivity : BaseActivity() {
 
     private fun addCommentDialog() {
         val commentAddBinding = DialogCommentAddBinding.inflate(LayoutInflater.from(this))
-        val builder = AlertDialog.Builder(this, R.style.CustomDialog)
+        val builder = AlertDialog.Builder(this)
         builder.setView(commentAddBinding.root)
         val alertDialog = builder.create()
         alertDialog.show()

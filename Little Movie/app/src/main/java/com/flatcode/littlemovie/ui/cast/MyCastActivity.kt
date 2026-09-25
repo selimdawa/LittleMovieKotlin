@@ -6,15 +6,11 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.databinding.ActivityMyCastBinding
+import com.flatcode.littlemovie.utils.BaseActivity
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,7 +19,7 @@ import timber.log.Timber
 import java.text.MessageFormat
 
 @AndroidEntryPoint
-class MyCastActivity : AppCompatActivity() {
+class MyCastActivity : BaseActivity() {
 
     private var binding: ActivityMyCastBinding? = null
     private val activity: Activity = this@MyCastActivity
@@ -34,19 +30,9 @@ class MyCastActivity : AppCompatActivity() {
     private var type: String = DATA.TIMESTAMP
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityMyCastBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.root) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updatePadding(
-                left = systemBars.left, right = systemBars.right, bottom = systemBars.bottom
-            )
-            binding!!.toolbar.root.updatePadding(top = systemBars.top)
-            insets
-        }
 
         setupUI()
         setupAdapter()

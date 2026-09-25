@@ -9,15 +9,11 @@ import android.view.Window
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.enableEdgeToEdge
 import androidx.annotation.OptIn
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.core.view.updatePadding
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
@@ -25,13 +21,14 @@ import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.databinding.ActivityMovieViewBinding
 import com.flatcode.littlemovie.service.FloatingWidgetService
+import com.flatcode.littlemovie.utils.BaseActivity
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.incrementViewCount
 import dagger.hilt.android.AndroidEntryPoint
 
 @OptIn(UnstableApi::class)
 @AndroidEntryPoint
-class MovieViewActivity : AppCompatActivity() {
+class MovieViewActivity : BaseActivity() {
 
     private var binding: ActivityMovieViewBinding? = null
     var activity: Activity = this@MovieViewActivity
@@ -40,20 +37,11 @@ class MovieViewActivity : AppCompatActivity() {
     var id: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         setFullScreen()
         super.onCreate(savedInstanceState)
         binding = ActivityMovieViewBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
-
-        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updatePadding(
-                left = systemBars.left, right = systemBars.right, bottom = systemBars.bottom
-            )
-            insets
-        }
 
         val intent = intent
         if (intent != null) {

@@ -10,7 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.databinding.ActivityForgetPasswordBinding
-import com.flatcode.littlemovieadmin.ui.BaseActivity
+import com.flatcode.littlemovieadmin.utils.BaseActivity
 import com.flatcode.littlemovieadmin.utils.createProgressDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

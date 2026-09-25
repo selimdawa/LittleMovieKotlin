@@ -1,5 +1,6 @@
 package com.flatcode.littlemovieadmin.ui.profile
 
+import com.flatcode.littlemovieadmin.utils.BaseActivity
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -8,7 +9,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.databinding.ActivityProfileBinding
-import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.loadImage
 import com.flatcode.littlemovieadmin.utils.openActivity

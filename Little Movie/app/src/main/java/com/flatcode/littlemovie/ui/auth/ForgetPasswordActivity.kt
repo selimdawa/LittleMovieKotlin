@@ -5,18 +5,14 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Patterns
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
 import com.flatcode.littlemovie.databinding.ActivityForgetPasswordBinding
+import com.flatcode.littlemovie.utils.BaseActivity
 import com.flatcode.littlemovie.utils.openActivity
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ForgetPasswordActivity : AppCompatActivity() {
+class ForgetPasswordActivity : BaseActivity() {
 
     private var binding: ActivityForgetPasswordBinding? = null
     private val context: Context = this@ForgetPasswordActivity
@@ -24,22 +20,10 @@ class ForgetPasswordActivity : AppCompatActivity() {
     private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityForgetPasswordBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
-
-        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updatePadding(
-                left = systemBars.left,
-                top = systemBars.top,
-                right = systemBars.right,
-                bottom = systemBars.bottom
-            )
-            insets
-        }
 
         auth = FirebaseAuth.getInstance()
         dialog = ProgressDialog(this)

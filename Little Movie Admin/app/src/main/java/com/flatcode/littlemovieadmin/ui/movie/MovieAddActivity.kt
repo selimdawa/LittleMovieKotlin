@@ -1,5 +1,6 @@
 package com.flatcode.littlemovieadmin.ui.movie
 
+import com.flatcode.littlemovieadmin.utils.BaseActivity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaMetadataRetriever
@@ -14,7 +15,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.IntentCompat
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.databinding.ActivityMovieAddBinding
-import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.DATA.castMovie
 import com.flatcode.littlemovieadmin.utils.convertDuration
@@ -23,6 +23,8 @@ import com.flatcode.littlemovieadmin.utils.cropVideoSquare
 import com.flatcode.littlemovieadmin.utils.loadBlurUri
 import com.flatcode.littlemovieadmin.utils.openActivity
 import com.flatcode.littlemovieadmin.utils.pickImage
+import com.flatcode.littlemovieadmin.utils.requestStorage
+import com.flatcode.littlemovieadmin.utils.requestVideo
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.text.MessageFormat

@@ -8,14 +8,9 @@ import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
@@ -23,6 +18,7 @@ import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.databinding.ActivityProfileEditBinding
+import com.flatcode.littlemovie.utils.BaseActivity
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.ProgressDialog
 import com.flatcode.littlemovie.utils.getFileExtension
@@ -31,7 +27,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class ProfileEditActivity : AppCompatActivity() {
+class ProfileEditActivity : BaseActivity() {
 
     private var binding: ActivityProfileEditBinding? = null
     private val context: Context = this@ProfileEditActivity
@@ -61,19 +57,9 @@ class ProfileEditActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityProfileEditBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.root) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updatePadding(
-                left = systemBars.left, right = systemBars.right, bottom = systemBars.bottom
-            )
-            binding!!.toolbar.root.updatePadding(top = systemBars.top)
-            insets
-        }
 
         setupUI()
         observeViewModel()

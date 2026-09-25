@@ -1,11 +1,11 @@
 package com.flatcode.littlemovieadmin.ui.main
 
+import com.flatcode.littlemovieadmin.utils.BaseActivity
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import com.flatcode.littlemovieadmin.databinding.ActivitySplashBinding
-import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.ui.auth.LoginActivity
 import com.flatcode.littlemovieadmin.utils.openActivity
 import com.google.firebase.auth.FirebaseAuth

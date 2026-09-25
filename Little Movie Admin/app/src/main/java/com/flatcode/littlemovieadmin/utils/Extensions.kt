@@ -180,6 +180,22 @@ fun Activity.requestVideoPermission(requestCode: Int) {
     ActivityCompat.requestPermissions(this, permissions, requestCode)
 }
 
+fun Activity.requestStorage(requestCode: Int, onGranted: () -> Unit) {
+    if (checkStoragePermission()) {
+        onGranted()
+    } else {
+        requestStoragePermission(requestCode)
+    }
+}
+
+fun Activity.requestVideo(requestCode: Int, onGranted: () -> Unit) {
+    if (checkVideoPermission()) {
+        onGranted()
+    } else {
+        requestVideoPermission(requestCode)
+    }
+}
+
 fun Activity.pickImage(requestCode: Int) {
     val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
         type = "image/*"

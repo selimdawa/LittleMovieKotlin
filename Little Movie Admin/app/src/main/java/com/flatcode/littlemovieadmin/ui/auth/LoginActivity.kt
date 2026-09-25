@@ -1,5 +1,6 @@
 package com.flatcode.littlemovieadmin.ui.auth
 
+import com.flatcode.littlemovieadmin.utils.BaseActivity
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Patterns
@@ -10,7 +11,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.databinding.ActivityLoginBinding
-import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.ui.main.MainActivity
 import com.flatcode.littlemovieadmin.utils.createProgressDialog
 import com.flatcode.littlemovieadmin.utils.openActivity

@@ -6,15 +6,11 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.databinding.ActivityCategoriesBinding
+import com.flatcode.littlemovie.utils.BaseActivity
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,7 +19,7 @@ import timber.log.Timber
 import java.text.MessageFormat
 
 @AndroidEntryPoint
-class CategoriesActivity : AppCompatActivity() {
+class CategoriesActivity : BaseActivity() {
 
     private var binding: ActivityCategoriesBinding? = null
     var activity: Activity = this@CategoriesActivity
@@ -32,20 +28,10 @@ class CategoriesActivity : AppCompatActivity() {
     private val viewModel: CategoriesViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityCategoriesBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
-
-        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updatePadding(
-                left = systemBars.left, right = systemBars.right, bottom = systemBars.bottom
-            )
-            binding!!.toolbar.root.updatePadding(top = systemBars.top)
-            insets
-        }
 
         binding!!.toolbar.nameSpace.setText(R.string.categories)
         binding!!.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }

@@ -1,5 +1,6 @@
 package com.flatcode.littlemovieadmin.ui.movie
 
+import com.flatcode.littlemovieadmin.utils.BaseActivity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -15,7 +16,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.databinding.ActivityMovieViewBinding
 import com.flatcode.littlemovieadmin.service.FloatingWidgetService
-import com.flatcode.littlemovieadmin.ui.BaseActivity
 import com.flatcode.littlemovieadmin.utils.DATA
 import dagger.hilt.android.AndroidEntryPoint
 

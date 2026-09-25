@@ -5,13 +5,8 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.Application
 import com.flatcode.littlemovie.R
@@ -20,6 +15,7 @@ import com.flatcode.littlemovie.databinding.DialogCommentAddBinding
 import com.flatcode.littlemovie.model.Comment
 import com.flatcode.littlemovie.ui.cast.CastDetailsActivity
 import com.flatcode.littlemovie.ui.cast.CastMovieAdapter
+import com.flatcode.littlemovie.utils.BaseActivity
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.ProgressDialog
 import com.flatcode.littlemovie.utils.convertDuration
@@ -29,7 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MovieDetailsActivity : AppCompatActivity() {
+class MovieDetailsActivity : BaseActivity() {
 
     private var binding: ActivityMovieDetailsBinding? = null
     private val activity: Activity = this@MovieDetailsActivity
@@ -44,19 +40,9 @@ class MovieDetailsActivity : AppCompatActivity() {
     private lateinit var adapterCast: CastMovieAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityMovieDetailsBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.root) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updatePadding(
-                left = systemBars.left, right = systemBars.right, bottom = systemBars.bottom
-            )
-            binding!!.toolbar.root.updatePadding(top = systemBars.top)
-            insets
-        }
 
         movieId = intent.getStringExtra(DATA.MOVIE_ID)
         movieLink = intent.getStringExtra(DATA.MOVIE_LINK)
@@ -224,7 +210,7 @@ class MovieDetailsActivity : AppCompatActivity() {
 
     private fun addCommentDialog() {
         val commentAddBinding = DialogCommentAddBinding.inflate(LayoutInflater.from(this))
-        val builder = AlertDialog.Builder(this, R.style.CustomDialog)
+        val builder = AlertDialog.Builder(this)
         builder.setView(commentAddBinding.root)
         val alertDialog = builder.create()
         alertDialog.show()

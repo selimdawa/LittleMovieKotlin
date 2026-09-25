@@ -6,17 +6,13 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.databinding.ActivityCastDetailsBinding
 import com.flatcode.littlemovie.ui.movie.MovieAdapter
 import com.flatcode.littlemovie.ui.movie.MovieDetailsActivity
+import com.flatcode.littlemovie.utils.BaseActivity
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.dialogAboutArtist
 import com.flatcode.littlemovie.utils.loadImage
@@ -28,7 +24,7 @@ import timber.log.Timber
 import java.text.MessageFormat
 
 @AndroidEntryPoint
-class CastDetailsActivity : AppCompatActivity() {
+class CastDetailsActivity : BaseActivity() {
 
     private var binding: ActivityCastDetailsBinding? = null
     private val activity: Activity = this@CastDetailsActivity
@@ -43,19 +39,9 @@ class CastDetailsActivity : AppCompatActivity() {
     private var castAbout: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityCastDetailsBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.root) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updatePadding(
-                left = systemBars.left, right = systemBars.right, bottom = systemBars.bottom
-            )
-            binding!!.toolbar.root.updatePadding(top = systemBars.top)
-            insets
-        }
 
         castId = intent.getStringExtra(DATA.CAST_ID)
         castName = intent.getStringExtra(DATA.CAST_NAME)
