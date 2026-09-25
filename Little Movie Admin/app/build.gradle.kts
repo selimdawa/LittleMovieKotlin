@@ -9,9 +9,7 @@ plugins {
 
 android {
     namespace = "com.flatcode.littlemovieadmin"
-    compileSdk {
-        version = release(37)
-    }
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.flatcode.littlemovieadmin"
@@ -67,9 +65,6 @@ dependencies {
     //Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    //Room
-    implementation(libs.androidx.room.runtime)
-    ksp(libs.androidx.room.compiler)
     //Navigation
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
@@ -81,8 +76,4 @@ dependencies {
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.ui)
     implementation(libs.timber)
-}
-
-ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
 }

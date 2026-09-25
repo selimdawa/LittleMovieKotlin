@@ -1,6 +1,5 @@
 package com.flatcode.littlemovieadmin.repository
 
-import com.flatcode.littlemovieadmin.db.CastDao
 import com.flatcode.littlemovieadmin.model.Cast
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.google.firebase.database.FirebaseDatabase
@@ -11,7 +10,6 @@ import javax.inject.Singleton
 @Singleton
 class CastRepository @Inject constructor(
     database: FirebaseDatabase,
-    private val castDao: CastDao,
 ) {
     private val castRef = database.getReference(DATA.CAST)
     private val castMovieRef = database.getReference(DATA.CAST_MOVIE)
@@ -19,9 +17,7 @@ class CastRepository @Inject constructor(
     suspend fun getCastList(orderBy: String): List<Cast> {
         return try {
             val snapshot = castRef.orderByChild(orderBy).get().await()
-            val casts = snapshot.children.mapNotNull { it.getValue(Cast::class.java) }.reversed()
-            castDao.insertCasts(casts)
-            casts
+            snapshot.children.mapNotNull { it.getValue(Cast::class.java) }.reversed()
         } catch (_: Exception) {
             emptyList()
         }
@@ -29,11 +25,9 @@ class CastRepository @Inject constructor(
 
     suspend fun getCast(castId: String): Cast? {
         return try {
-            val cast = castRef.child(castId).get().await().getValue(Cast::class.java)
-            cast?.let { castDao.insertCast(it) }
-            cast
+            castRef.child(castId).get().await().getValue(Cast::class.java)
         } catch (_: Exception) {
-            castDao.getCastById(castId)
+            null
         }
     }
 
@@ -44,13 +38,10 @@ class CastRepository @Inject constructor(
 
     suspend fun addCast(cast: Cast, castId: String) {
         castRef.child(castId).setValue(cast).await()
-        castDao.insertCast(cast)
     }
 
     suspend fun updateCast(castId: String, updates: Map<String, Any?>) {
         castRef.child(castId).updateChildren(updates).await()
-        val cast = getCast(castId)
-        cast?.let { castDao.insertCast(it) }
     }
 
     suspend fun updateMovieCast(movieId: String, castIds: Map<String, Any>): Void? =

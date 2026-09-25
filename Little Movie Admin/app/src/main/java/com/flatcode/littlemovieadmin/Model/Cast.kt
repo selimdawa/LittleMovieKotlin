@@ -2,15 +2,12 @@ package com.flatcode.littlemovieadmin.model
 
 import android.os.Parcelable
 import androidx.annotation.Keep
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
 @Keep
-@Entity(tableName = "casts")
 @Parcelize
 data class Cast(
-    @PrimaryKey var id: String = "",
+    var id: String = "",
     var publisher: String? = null,
     var name: String = "No Name",
     var image: String? = null,

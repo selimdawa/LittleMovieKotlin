@@ -13,7 +13,6 @@ materialRipple = "1.0.1"
 googleServices = "4.5.0"
 multicolors = "1.0.10"
 hilt = "2.60.1"
-room = "2.8.5"
 navigation = "2.10.1"
 coroutines = "1.11.0"
 lifecycle = "2.11.0"
@@ -41,8 +40,6 @@ multicolors = { module = "com.github.selimdawa:MultiColors", version.ref = "mult
 material-ripple = { module = "io.github.selimdawa:material-ripple-effect", version.ref = "materialRipple" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
-androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
-androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation" }
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
