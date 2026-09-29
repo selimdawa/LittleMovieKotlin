@@ -22,6 +22,7 @@ import com.flatcode.littlemovie.utils.BaseActivity
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.ProgressDialog
 import com.flatcode.littlemovie.utils.getFileExtension
+import com.flatcode.littlemovie.utils.isNetworkAvailable
 import com.flatcode.littlemovie.utils.loadImage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -158,6 +159,8 @@ class ProfileEditActivity : BaseActivity() {
         val username = binding!!.nameEt.text.toString().trim()
         if (TextUtils.isEmpty(username)) {
             Toast.makeText(context, "Enter name...", Toast.LENGTH_SHORT).show()
+        } else if (!isNetworkAvailable()) {
+            Toast.makeText(context, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
         } else {
             dialog!!.setMessage("Updating profile...")
             dialog!!.show()

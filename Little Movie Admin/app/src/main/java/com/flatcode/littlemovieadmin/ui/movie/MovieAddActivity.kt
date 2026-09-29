@@ -20,6 +20,7 @@ import com.flatcode.littlemovieadmin.utils.DATA.castMovie
 import com.flatcode.littlemovieadmin.utils.convertDuration
 import com.flatcode.littlemovieadmin.utils.createProgressDialog
 import com.flatcode.littlemovieadmin.utils.cropVideoSquare
+import com.flatcode.littlemovieadmin.utils.isNetworkAvailable
 import com.flatcode.littlemovieadmin.utils.loadBlurUri
 import com.flatcode.littlemovieadmin.utils.openActivity
 import com.flatcode.littlemovieadmin.utils.pickImage
@@ -110,6 +111,8 @@ class MovieAddActivity : BaseActivity() {
             Toast.makeText(this, "Pick Image...", Toast.LENGTH_SHORT).show()
         } else if (videoUri == null) {
             Toast.makeText(this, "Pick Movie...", Toast.LENGTH_SHORT).show()
+        } else if (!isNetworkAvailable()) {
+            Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
         } else {
             uploadMovie(name, description, yearText.toInt())
         }

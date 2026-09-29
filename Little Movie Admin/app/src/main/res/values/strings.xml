@@ -88,4 +88,5 @@
     <string name="favorites_count">Favorites count</string>
     <string name="back">Back</string>
     <string name="zero">0</string>
+    <string name="no_internet_connection">No internet connection</string>
 </resources>

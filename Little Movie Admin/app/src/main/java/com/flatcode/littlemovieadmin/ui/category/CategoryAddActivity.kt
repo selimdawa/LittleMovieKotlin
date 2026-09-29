@@ -18,6 +18,7 @@ import com.flatcode.littlemovieadmin.databinding.ActivityCategoryAddBinding
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.createProgressDialog
 import com.flatcode.littlemovieadmin.utils.cropImageSquare
+import com.flatcode.littlemovieadmin.utils.isNetworkAvailable
 import com.flatcode.littlemovieadmin.utils.pickImage
 import com.flatcode.littlemovieadmin.utils.requestStorage
 import dagger.hilt.android.AndroidEntryPoint
@@ -56,6 +57,8 @@ class CategoryAddActivity : BaseActivity() {
             Toast.makeText(this, "Enter Name...", Toast.LENGTH_SHORT).show()
         } else if (uri == null) {
             Toast.makeText(this, "Pick Image...", Toast.LENGTH_SHORT).show()
+        } else if (!isNetworkAvailable()) {
+            Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
         } else {
             progressDialog = createProgressDialog("Uploading Category...", "Please wait...")
             progressDialog?.show()
