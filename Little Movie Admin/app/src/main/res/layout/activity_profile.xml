@@ -2,10 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="all"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?mc_bg">
+    android:background="?mc_bg"
+    tools:ignore="all">
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll_progress"
@@ -21,21 +21,22 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/profile"
-                android:layout_width="240dp"
-                android:layout_height="240dp"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:background="@color/white"
+                android:contentDescription="@null"
+                android:padding="5dp"
                 android:scaleType="centerCrop"
                 android:src="@color/image_profile"
-                app:strokeColor="@color/white"
-                app:strokeWidth="5dp"
-                android:background="@color/white"
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.App.Circle"
-                tools:ignore="ContentDescription" />
+                app:strokeColor="@color/white"
+                app:strokeWidth="5sp" />
 
             <TextView
                 android:id="@+id/username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="10dp"
+                android:layout_marginVertical="10sp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                 android:textColor="@color/white"
                 android:textSize="32sp"
@@ -51,7 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_gravity="center"
-        android:layout_marginVertical="20dp"
+        android:layout_marginVertical="20sp"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -64,14 +65,13 @@
             android:orientation="horizontal">
 
             <ImageButton
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginHorizontal="10dp"
+                android:layout_width="30sp"
+                android:layout_height="30sp"
+                android:layout_marginHorizontal="10sp"
                 android:background="@drawable/round"
                 android:backgroundTint="@color/white"
                 android:src="@drawable/ic_cast"
-                app:tint="@color/black"
-                tools:ignore="ContentDescription" />
+                app:tint="@color/black" />
 
             <TextView
                 android:id="@+id/numbercast"
@@ -79,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="0"
+                android:text="@string/zero"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -95,14 +95,13 @@
             android:orientation="horizontal">
 
             <ImageButton
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginHorizontal="10dp"
+                android:layout_width="30sp"
+                android:layout_height="30sp"
+                android:layout_marginHorizontal="10sp"
                 android:background="@drawable/round"
                 android:backgroundTint="@color/white"
                 android:src="@drawable/ic_category_gray"
-                app:tint="@color/black"
-                tools:ignore="ContentDescription" />
+                app:tint="@color/black" />
 
             <TextView
                 android:id="@+id/numberCategories"
@@ -110,7 +109,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="0"
+                android:text="@string/zero"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -126,14 +125,13 @@
             android:orientation="horizontal">
 
             <ImageButton
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginHorizontal="10dp"
+                android:layout_width="30sp"
+                android:layout_height="30sp"
+                android:layout_marginHorizontal="10sp"
                 android:background="@drawable/round"
                 android:backgroundTint="@color/white"
                 android:src="@drawable/ic_star_selected"
-                app:tint="@color/black"
-                tools:ignore="ContentDescription" />
+                app:tint="@color/black" />
 
             <TextView
                 android:id="@+id/numberFavorites"
@@ -141,7 +139,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="0"
+                android:text="@string/zero"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -150,43 +148,31 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <ImageView
+        android:id="@+id/edit"
+        android:layout_width="40sp"
+        android:layout_height="40sp"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginVertical="20dp"
-        android:orientation="horizontal">
+        android:layout_margin="20sp"
+        android:background="@drawable/round"
+        android:backgroundTint="@color/white"
+        android:importantForAccessibility="no"
+        android:padding="10sp"
+        android:src="@drawable/ic_edit_white"
+        app:tint="@color/black" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageButton
-                android:id="@+id/edit"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/round"
-                android:backgroundTint="@color/white"
-                android:src="@drawable/ic_books"
-                android:visibility="gone"
-                app:tint="@color/black"
-                tools:ignore="ContentDescription" />
-
-            <Button
-                android:id="@+id/back"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerInParent="true"
-                android:background="@drawable/ic_back_white"
-                android:gravity="center"
-                android:rotation="180"
-                app:tint="@color/white"
-                tools:ignore="ContentDescription" />
-
-        </RelativeLayout>
-
-    </LinearLayout>
+    <Button
+        android:id="@+id/back"
+        android:layout_width="35sp"
+        android:layout_height="35sp"
+        android:layout_alignTop="@id/edit"
+        android:layout_alignBottom="@id/edit"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="20sp"
+        android:background="@drawable/ic_back_white"
+        android:gravity="center"
+        android:rotation="180"
+        app:tint="@color/white" />
 
 </RelativeLayout>

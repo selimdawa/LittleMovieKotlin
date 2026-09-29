@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="all"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:elevation="6dp"
-    app:cardCornerRadius="10dp"
-    app:strokeWidth="0dp">
+    android:elevation="6sp"
+    app:cardCornerRadius="10sp"
+    app:strokeWidth="0dp"
+    tools:ignore="all">
 
     <LinearLayout
         android:id="@+id/item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/dark"
+        android:background="?colorOnBackground"
         android:orientation="vertical">
 
         <LinearLayout
@@ -27,19 +26,19 @@
                 android:id="@+id/close"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+                android:contentDescription="@null"
                 android:padding="7dp"
                 android:src="@drawable/ic_close"
-                app:tint="@color/white"
-                tools:ignore="ContentDescription" />
+                app:tint="?colorError" />
 
             <ImageView
                 android:id="@+id/maximize"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+                android:contentDescription="@null"
                 android:padding="7dp"
                 android:src="@drawable/ic_open"
-                app:tint="@color/white"
-                tools:ignore="ContentDescription" />
+                app:tint="?colorError" />
 
         </LinearLayout>
 

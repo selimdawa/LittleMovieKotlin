@@ -50,10 +50,10 @@ class SettingsFragment : Fragment() {
     private fun setupAdapter() {
         adapter = SettingAdapter { setting ->
             when (setting.id) {
-                "5" -> context?.dialogAboutApp()
-                "6" -> context?.dialogLogout()
-                "7" -> context?.shareApp()
-                "8" -> context?.rateApp()
+                DATA.ABOUT_APP -> context?.dialogAboutApp()
+                DATA.LOGOUT -> context?.dialogLogout()
+                DATA.SHARE_APP -> context?.shareApp()
+                DATA.RATE_APP -> context?.rateApp()
                 else -> setting.c?.let {
                     val intent = Intent(context, it)
                     context?.startActivity(intent)
@@ -97,7 +97,7 @@ class SettingsFragment : Fragment() {
         val settings = mutableListOf<Setting>()
         settings.add(
             Setting(
-                "1",
+                DATA.EDIT_PROFILE,
                 "Edit Profile",
                 R.drawable.ic_edit_white,
                 0,
@@ -106,7 +106,7 @@ class SettingsFragment : Fragment() {
         )
         settings.add(
             Setting(
-                "2",
+                DATA.MY_CAST,
                 "My Cast",
                 R.drawable.ic_cast,
                 myCast,
@@ -115,7 +115,7 @@ class SettingsFragment : Fragment() {
         )
         settings.add(
             Setting(
-                "3",
+                DATA.MY_CATEGORIES,
                 "My Categories",
                 R.drawable.ic_category_gray,
                 myCategories,
@@ -124,20 +124,20 @@ class SettingsFragment : Fragment() {
         )
         settings.add(
             Setting(
-                "4",
+                DATA.FAVORITES_ID,
                 "Favorites",
                 R.drawable.ic_star_selected,
                 favorites,
                 FavoritesActivity::class.java
             )
         )
-        settings.add(Setting("5", "About App", R.drawable.ic_info, 0, null))
-        settings.add(Setting("6", "Logout", R.drawable.ic_logout_white, 0, null))
-        settings.add(Setting("7", "Share App", R.drawable.ic_share, 0, null))
-        settings.add(Setting("8", "Rate APP", R.drawable.ic_heart_selected, 0, null))
+        settings.add(Setting(DATA.ABOUT_APP, "About App", R.drawable.ic_info, 0, null))
+        settings.add(Setting(DATA.LOGOUT, "Logout", R.drawable.ic_logout_white, 0, null))
+        settings.add(Setting(DATA.SHARE_APP, "Share App", R.drawable.ic_share, 0, null))
+        settings.add(Setting(DATA.RATE_APP, "Rate APP", R.drawable.ic_heart_selected, 0, null))
         settings.add(
             Setting(
-                "9",
+                DATA.PRIVACY_POLICY_ID,
                 "Privacy Policy",
                 R.drawable.ic_privacy_policy,
                 0,

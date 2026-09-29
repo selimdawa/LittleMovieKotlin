@@ -88,17 +88,17 @@ fun ImageView.checkFavorite(id: String?) {
     }
 }
 
-fun ImageView.isLoves(id: String?) {
+fun TextView.isLoves(id: String?) {
     val userId = DATA.FirebaseUserUid ?: return
     if (id.isNullOrEmpty()) return
     val ref = FirebaseDatabase.getInstance().getReference(DATA.LOVES).child(id)
     ref.child(userId).addValueEventListener(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             if (snapshot.exists()) {
-                this@isLoves.setImageResource(R.drawable.ic_heart_selected)
+                this@isLoves.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_selected, 0, 0, 0)
                 this@isLoves.tag = "added"
             } else {
-                this@isLoves.setImageResource(R.drawable.ic_heart_unselected)
+                this@isLoves.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_unselected, 0, 0, 0)
                 this@isLoves.tag = "add"
             }
         }
@@ -119,7 +119,7 @@ fun TextView.nrLoves(id: String?) {
     })
 }
 
-fun ImageView.checkLove(id: String?) {
+fun TextView.checkLove(id: String?) {
     val userId = DATA.FirebaseUserUid ?: return
     if (id.isNullOrEmpty()) return
     if (this.tag == "add") {

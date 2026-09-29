@@ -35,7 +35,7 @@ class CastMovieAddAdapter(
             val name = item.name
             val image = item.image ?: DATA.EMPTY
 
-            binding.image.loadImage(image, isUser = true)
+            binding.image.loadImage(image)
 
             if (name.isEmpty()) {
                 binding.name.visibility = View.GONE

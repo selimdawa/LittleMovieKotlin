@@ -78,7 +78,7 @@ class EditorsChoiceAdapter(
             val viewsCount = item.viewsCount
             val lovesCount = item.lovesCount
 
-            binding.image.loadImage(imageLink, isUser = false)
+            binding.image.loadImage(imageLink)
             binding.name.text = name
             binding.nrViews.text = viewsCount.toString()
             binding.nrLoves.text = lovesCount.toString()

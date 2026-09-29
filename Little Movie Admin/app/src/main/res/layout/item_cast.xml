@@ -2,13 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="all"
     android:id="@+id/item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="5dp"
-    android:layout_marginBottom="10dp"
-    android:orientation="vertical">
+    android:layout_marginBottom="10sp"
+    android:orientation="vertical"
+    tools:ignore="all">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card"
@@ -24,20 +24,39 @@
             android:background="?mc_bg"
             android:orientation="vertical">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <ImageView
-                    android:id="@+id/image"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:scaleType="centerCrop"
-                    android:src="@color/image_profile"
-                    app:layout_constraintDimensionRatio="1:1"
-                    tools:ignore="MissingConstraints,ContentDescription" />
+                    android:layout_height="wrap_content">
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <ImageView
+                        android:id="@+id/image"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:contentDescription="@null"
+                        android:scaleType="centerCrop"
+                        android:src="@color/image_profile"
+                        app:layout_constraintDimensionRatio="1:1"
+                        tools:ignore="MissingConstraints" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <ImageView
+                    android:id="@+id/add"
+                    android:layout_width="25sp"
+                    android:layout_height="25sp"
+                    android:layout_gravity="top|end"
+                    android:background="@drawable/button_more"
+                    android:contentDescription="@null"
+                    android:gravity="center"
+                    android:padding="2sp"
+                    android:src="@drawable/ic_star_unselected"
+                    app:tint="@color/dark" />
+
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -49,11 +68,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="5dp">
+                    android:padding="5sp">
 
                     <TextView
                         android:id="@+id/name"
-                        android:layout_width="0dp"
+                        android:layout_width="0sp"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:layout_weight="1"
@@ -82,61 +101,35 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="5dp">
+                    android:padding="5sp">
 
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/numberMovies"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:gravity="center">
+                        android:drawablePadding="10sp"
+                        android:drawableStart="@drawable/ic_movie"
+                        android:gravity="center_vertical"
+                        android:layout_gravity="start"
+                        android:paddingHorizontal="10sp"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:textStyle="normal" />
 
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_movie"
-                            tools:ignore="ContentDescription" />
-
-                        <TextView
-                            android:id="@+id/numberMovies"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:paddingHorizontal="10dp"
-                            android:textColor="@color/white"
-                            android:textSize="14sp"
-                            android:textStyle="normal" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/numberInterested"
                         android:layout_width="0dp"
+                        android:gravity="center_vertical"
+                        android:layout_gravity="start"
                         android:layout_height="match_parent"
-                        android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:gravity="center">
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_heart_selected"
-                            tools:ignore="ContentDescription" />
-
-                        <TextView
-                            android:id="@+id/numberInterested"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:paddingHorizontal="10dp"
-                            android:textColor="@color/white"
-                            android:textSize="14sp"
-                            android:textStyle="normal" />
-
-                    </LinearLayout>
+                        android:drawablePadding="10sp"
+                        android:drawableStart="@drawable/ic_heart_selected"
+                        android:paddingHorizontal="10sp"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:textStyle="normal" />
 
                 </LinearLayout>
 

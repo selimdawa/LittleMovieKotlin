@@ -78,7 +78,7 @@
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             app:reverseLayout="true"
                             app:stackFromEnd="true"
-                            tools:listitem="@layout/item_song" />
+                            tools:listitem="@layout/item_movie" />
 
                     </LinearLayout>
 

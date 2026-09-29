@@ -31,7 +31,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?mc_track">
+                    android:background="@color/image_profile">
 
                     <io.selimdawa.autoimageslider.SliderView
                         android:id="@+id/imageSlider"
@@ -40,17 +40,15 @@
                         app:layout_constraintDimensionRatio="16:9"
                         app:sliderAnimationDuration="600"
                         app:sliderAutoCycleDirection="back_and_forth"
-                        app:sliderAutoCycleEnabled="true"
                         app:sliderIndicatorAnimationDuration="600"
+                        app:sliderIndicatorEnabled="true"
                         app:sliderIndicatorGravity="center_horizontal|bottom"
-                        app:sliderIndicatorMargin="15dp"
                         app:sliderIndicatorOrientation="horizontal"
-                        app:sliderIndicatorPadding="3dp"
-                        app:sliderIndicatorRadius="1.5dp"
+                        app:sliderIndicatorPadding="8dp"
+                        app:sliderIndicatorRadius="3dp"
                         app:sliderIndicatorSelectedColor="?mc_track"
-                        app:sliderIndicatorUnselectedColor="@color/white"
+                        app:sliderIndicatorUnselectedColor="#FFF"
                         app:sliderScrollTimeInSec="3"
-                        app:sliderStartAutoCycle="true"
                         tools:ignore="MissingConstraints" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -180,7 +178,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:layout_toEndOf="@+id/mostViews"
+                        android:layout_toEndOf="@+id/name2"
                         android:contentDescription="@null"
                         android:paddingEnd="10sp"
                         android:rotation="180"

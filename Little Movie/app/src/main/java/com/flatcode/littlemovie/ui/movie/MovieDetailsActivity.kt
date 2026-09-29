@@ -101,7 +101,7 @@ class MovieDetailsActivity : BaseActivity() {
             .setMessage("Are you sure you want to delete this comment?")
             .setPositiveButton("DELETE") { _, _ ->
                 val movieId = comment.movieId ?: ""
-                val commentId = comment.id ?: ""
+                val commentId = comment.id
                 viewModel.deleteComment(movieId, commentId)
             }.setNegativeButton("CANCEL") { dialog, _ -> dialog.dismiss() }.show()
     }

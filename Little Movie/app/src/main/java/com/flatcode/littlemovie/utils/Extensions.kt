@@ -4,8 +4,10 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.ContentResolver
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
+
 import android.net.Uri
 import android.webkit.MimeTypeMap
 import android.widget.ImageView
@@ -15,6 +17,8 @@ import androidx.core.graphics.scale
 import androidx.core.net.toUri
 import coil3.load
 import coil3.request.crossfade
+import coil3.request.error
+import coil3.request.fallback
 import coil3.request.placeholder
 import coil3.request.transformations
 import coil3.size.Size
@@ -39,41 +43,67 @@ inline fun <reified T : Activity> Context.openActivity(
     startActivity(intent)
 }
 
+fun Context.findActivity(): Activity? {
+    var ctx = this
+    while (ctx is ContextWrapper) {
+        if (ctx is Activity) return ctx
+        ctx = ctx.baseContext
+    }
+    return null
+}
+
+fun Context.startCropActivity(
+    uri: Uri, aspectRatioX: Int = 1, aspectRatioY: Int = 1, isOval: Boolean = false
+): Intent {
+    return Intent(this, CropActivity::class.java).apply {
+        putExtra("IMAGE_URI", uri)
+        putExtra("ASPECT_RATIO_X", aspectRatioX)
+        putExtra("ASPECT_RATIO_Y", aspectRatioY)
+        putExtra("IS_OVAL", isOval)
+        putExtra("MIN_WIDTH", DATA.MIX_SQUARE)
+        putExtra("MIN_HEIGHT", DATA.MIX_SQUARE)
+    }
+}
+
 fun ImageView.loadImage(isUser: Boolean, url: String?) {
     try {
-        if (url == DATA.BASIC) {
+        if (url.isNullOrEmpty() || url == DATA.BASIC) {
             if (isUser) {
                 this.setImageResource(R.drawable.basic_user)
             } else {
-                this.setImageResource(R.drawable.basic_music)
+                this.setImageResource(R.color.image_profile)
             }
         } else {
             this.load(url) {
                 placeholder(R.color.image_profile)
+                error(R.color.image_profile)
+                fallback(R.color.image_profile)
                 crossfade(true)
             }
         }
     } catch (_: Exception) {
-        this.setImageResource(R.drawable.basic_music)
+        this.setImageResource(R.color.image_profile)
     }
 }
 
 fun ImageView.loadImageBlur(isUser: Boolean, url: String?, level: Int) {
     try {
-        if (url == DATA.BASIC) {
+        if (url.isNullOrEmpty() || url == DATA.BASIC) {
             if (isUser) {
                 this.setImageResource(R.drawable.basic_user)
             } else {
-                this.setImageResource(R.drawable.basic_music)
+                this.setImageResource(R.color.image_profile)
             }
         } else {
             this.load(url) {
                 placeholder(R.color.image_profile)
+                error(R.color.image_profile)
+                fallback(R.color.image_profile)
                 transformations(SimpleBlurTransformation(level.toFloat()))
             }
         }
     } catch (_: Exception) {
-        this.setImageResource(R.drawable.basic_music)
+        this.setImageResource(R.color.image_profile)
     }
 }
 

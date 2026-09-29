@@ -2,17 +2,16 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="all"
     android:id="@+id/item"
     android:layout_width="match_parent"
     android:layout_height="45dp"
     android:layout_margin="10dp"
     android:visibility="visible"
     app:cardCornerRadius="6dp"
-    app:strokeWidth="0dp">
+    app:strokeWidth="0dp"
+    tools:ignore="all">
 
     <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?mc_bg"
@@ -23,9 +22,9 @@
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_gravity="left"
+            android:contentDescription="@null"
             android:src="@drawable/ic_back_white"
-            android:visibility="visible"
-            tools:ignore="ContentDescription" />
+            android:visibility="visible" />
 
         <LinearLayout
             android:id="@+id/linearNameSpace"
@@ -63,14 +62,13 @@
             android:layout_height="25dp"
             android:layout_gravity="right"
             android:layout_marginRight="15dp"
+            android:contentDescription="@null"
             android:src="@drawable/ic_search"
-            android:visibility="visible"
-            tools:ignore="ContentDescription" />
+            android:visibility="visible" />
 
     </com.google.android.material.appbar.MaterialToolbar>
 
     <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbarSearch"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?mc_bg"
@@ -81,8 +79,8 @@
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_close"
-            tools:ignore="ContentDescription" />
+            android:contentDescription="@null"
+            android:src="@drawable/ic_close" />
 
         <EditText
             android:id="@+id/textSearch"
@@ -90,6 +88,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_marginEnd="40dp"
+            android:autofillHints="name"
             android:background="@android:color/transparent"
             android:gravity="center"
             android:hint="@string/search"

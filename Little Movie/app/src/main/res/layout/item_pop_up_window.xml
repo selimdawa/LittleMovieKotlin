@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -14,7 +13,7 @@
         android:id="@+id/item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/dark"
+        android:background="?colorOnBackground"
         android:orientation="vertical">
 
         <LinearLayout
@@ -30,7 +29,7 @@
                 android:contentDescription="@null"
                 android:padding="7dp"
                 android:src="@drawable/ic_close"
-                app:tint="@color/white" />
+                app:tint="?colorError" />
 
             <ImageView
                 android:id="@+id/maximize"
@@ -39,7 +38,7 @@
                 android:contentDescription="@null"
                 android:padding="7dp"
                 android:src="@drawable/ic_open"
-                app:tint="@color/white" />
+                app:tint="?colorError" />
 
         </LinearLayout>
 

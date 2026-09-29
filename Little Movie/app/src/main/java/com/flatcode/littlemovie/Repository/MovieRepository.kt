@@ -1,7 +1,13 @@
 package com.flatcode.littlemovie.repository
 
+import com.flatcode.littlemovie.db.FavoriteDao
+import com.flatcode.littlemovie.db.InterestedDao
 import com.flatcode.littlemovie.db.MovieDao
+import com.flatcode.littlemovie.model.Cast
+import com.flatcode.littlemovie.model.Category
 import com.flatcode.littlemovie.model.Comment
+import com.flatcode.littlemovie.model.FavoriteEntity
+import com.flatcode.littlemovie.model.InterestedEntity
 import com.flatcode.littlemovie.model.Movie
 import com.flatcode.littlemovie.utils.DATA
 import com.google.firebase.database.DataSnapshot
@@ -9,16 +15,23 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class MovieRepository @Inject constructor(
-    private val movieDao: MovieDao
+    private val movieDao: MovieDao,
+    private val favoriteDao: FavoriteDao,
+    private val interestedDao: InterestedDao
 ) {
 
     private val database = FirebaseDatabase.getInstance()
@@ -27,166 +40,145 @@ class MovieRepository @Inject constructor(
     private val favoritesRef = database.getReference(DATA.FAVORITES)
     private val lovesRef = database.getReference(DATA.LOVES)
 
-    fun getMovies(orderBy: String, limit: Int? = null, reverse: Boolean = true): Flow<List<Movie>> =
-        callbackFlow {
-            Timber.d("Fetching movies ordered by %s", orderBy)
-            var query: Query = moviesRef.orderByChild(orderBy)
-
-            limit?.let { query = query.limitToLast(it) }
-
-            val listener = query.addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val list = mutableListOf<Movie>()
-                    for (data in snapshot.children) {
-                        val item = data.getValue(Movie::class.java)
-                        item?.let {
-                            if (orderBy == DATA.EDITORS_CHOICE) {
-                                if (it.editorsChoice > 0) {
-                                    list.add(it)
-                                }
-                            } else {
-                                list.add(it)
-                            }
-                        }
-                    }
-                    if (reverse) {
-                        list.reverse()
-                    }
-                    // Update Local Room Database
-                    launch {
-                        movieDao.insertMovies(list)
-                    }
-                    trySend(list)
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Timber.e("Error fetching movies: %s", error.message)
-                    close(error.toException())
-                }
-            })
-            awaitClose { query.removeEventListener(listener) }
+    fun getMovies(orderBy: String, limit: Int? = null, reverse: Boolean = true): Flow<List<Movie>> {
+        syncMovies(orderBy, limit)
+        val flow = when (orderBy) {
+            DATA.EDITORS_CHOICE -> movieDao.getEditorsChoiceMovies()
+            DATA.VIEWS_COUNT -> movieDao.getMostViewedMovies(limit ?: 100)
+            DATA.LOVES_COUNT -> movieDao.getMostLovedMovies()
+            else -> movieDao.getLatestMovies(limit ?: 100)
         }
+        return if (reverse) flow else flow.map { it.reversed() }
+    }
 
-    fun getMoviesByCategory(categoryId: String, orderBy: String): Flow<List<Movie>> = callbackFlow {
-        val query = moviesRef.orderByChild(orderBy)
-        val listener = query.addValueEventListener(object : ValueEventListener {
+    fun getMoviesByCategory(categoryId: String, orderBy: String): Flow<List<Movie>> {
+        syncMovies(orderBy, null)
+        return movieDao.getMoviesByCategory(categoryId)
+    }
+
+    fun getMoviesByCastId(castId: String, orderBy: String): Flow<List<Movie>> {
+        syncMovies(orderBy, null)
+        Timber.d("Fetching movies for cast %s with orderBy %s", castId, orderBy)
+        return movieDao.getAllMovies()
+    }
+
+    fun getFavoriteMovies(userId: String, orderBy: String): Flow<List<Movie>> {
+        syncMovies(orderBy, null)
+        syncFavorites(userId)
+        return favoriteDao.getFavoriteMovies(userId)
+    }
+
+    @Suppress("unused")
+    fun getFavoriteCount(userId: String): Flow<Int> {
+        syncFavorites(userId)
+        return favoriteDao.getFavoriteCount(userId)
+    }
+
+    fun getInterestedCategories(userId: String): Flow<List<Category>> {
+        syncInterested(userId, DATA.CATEGORIES)
+        return interestedDao.getInterestedCategories(userId, DATA.CATEGORIES)
+    }
+
+    @Suppress("unused")
+    fun getInterestedCasts(userId: String): Flow<List<Cast>> {
+        syncInterested(userId, DATA.CAST)
+        return interestedDao.getInterestedCasts(userId, DATA.CAST)
+    }
+
+    @Suppress("unused")
+    fun getInterestedCount(userId: String, databaseName: String): Flow<Int> {
+        syncInterested(userId, databaseName)
+        return interestedDao.getInterestedCount(userId, databaseName)
+    }
+
+    suspend fun toggleFavorite(movieId: String, userId: String, isFavorite: Boolean) {
+        try {
+            if (isFavorite) {
+                favoritesRef.child(userId).child(movieId).setValue(true).await()
+                favoriteDao.insertFavorite(FavoriteEntity(userId, movieId))
+            } else {
+                favoritesRef.child(userId).child(movieId).removeValue().await()
+                favoriteDao.deleteFavorite(userId, movieId)
+            }
+        } catch (e: Exception) {
+            if (isFavorite) {
+                favoriteDao.insertFavorite(FavoriteEntity(userId, movieId))
+            } else {
+                favoriteDao.deleteFavorite(userId, movieId)
+            }
+            Timber.e(e, "Error toggling favorite")
+        }
+    }
+
+    @Suppress("unused")
+    suspend fun toggleInterested(userId: String, databaseName: String, itemId: String, isInterested: Boolean) {
+        val ref = database.getReference(DATA.INTERESTED).child(userId).child(databaseName).child(itemId)
+        if (isInterested) {
+            ref.setValue(true)
+            interestedDao.insertInterested(InterestedEntity(userId, databaseName, itemId))
+        } else {
+            ref.removeValue()
+            interestedDao.deleteInterested(userId, databaseName, itemId)
+        }
+    }
+
+    private fun syncMovies(orderBy: String, limit: Int?) {
+        var query: Query = moviesRef.orderByChild(orderBy)
+        limit?.let { query = query.limitToLast(it) }
+
+        query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val list = mutableListOf<Movie>()
                 for (data in snapshot.children) {
-                    val movie = data.getValue(Movie::class.java)
-                    movie?.let {
-                        if (it.categoryId == categoryId) {
-                            list.add(it)
-                        }
-                    }
+                    val item = data.getValue(Movie::class.java) ?: continue
+                    list.add(item)
                 }
-                list.reverse()
-                trySend(list)
+                CoroutineScope(Dispatchers.IO).launch {
+                    movieDao.insertMovies(list)
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                close(error.toException())
+                Timber.e(error.toException(), "syncMovies failed")
             }
         })
-        awaitClose { query.removeEventListener(listener) }
     }
 
-    fun getMoviesByCategoryIds(categoryIds: List<String>, orderBy: String): Flow<List<Movie>> =
-        callbackFlow {
-            val query = moviesRef.orderByChild(orderBy)
-            val listener = query.addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val list = mutableListOf<Movie>()
-                    for (data in snapshot.children) {
-                        val movie = data.getValue(Movie::class.java)
-                        movie?.let {
-                            if (categoryIds.contains(it.categoryId)) {
-                                list.add(it)
-                            }
-                        }
-                    }
-                    list.reverse()
-                    trySend(list)
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    close(error.toException())
-                }
-            })
-            awaitClose { query.removeEventListener(listener) }
-        }
-
-    fun getMoviesByCastId(castId: String, orderBy: String): Flow<List<Movie>> = callbackFlow {
-        val castMovieListener = castMovieRef.addValueEventListener(object : ValueEventListener {
+    private fun syncFavorites(userId: String) {
+        if (userId.isEmpty()) return
+        favoritesRef.child(userId).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val movieIds = mutableListOf<String>()
-                for (movieSnapshot in snapshot.children) {
-                    if (movieSnapshot.hasChild(castId)) {
-                        movieSnapshot.key?.let { movieIds.add(it) }
-                    }
+                val favList = snapshot.children.mapNotNull { it.key }
+                    .map { FavoriteEntity(userId, it) }
+                CoroutineScope(Dispatchers.IO).launch {
+                    favoriteDao.deleteAllFavoritesForUser(userId)
+                    favoriteDao.insertFavorites(favList)
                 }
-
-                moviesRef.orderByChild(orderBy)
-                    .addListenerForSingleValueEvent(object : ValueEventListener {
-                        override fun onDataChange(movieSnapshot: DataSnapshot) {
-                            val list = mutableListOf<Movie>()
-                            for (data in movieSnapshot.children) {
-                                val movie = data.getValue(Movie::class.java)
-                                if (movie != null && movieIds.contains(movie.id)) {
-                                    list.add(movie)
-                                }
-                            }
-                            list.reverse()
-                            trySend(list)
-                        }
-
-                        override fun onCancelled(error: DatabaseError) {
-                            close(error.toException())
-                        }
-                    })
             }
 
             override fun onCancelled(error: DatabaseError) {
-                close(error.toException())
+                Timber.e(error.toException(), "syncFavorites failed")
             }
         })
-        awaitClose { castMovieRef.removeEventListener(castMovieListener) }
     }
 
-    fun getFavoriteMovies(userId: String, orderBy: String): Flow<List<Movie>> = callbackFlow {
-        val favListener =
-            favoritesRef.child(userId).addValueEventListener(object : ValueEventListener {
+    private fun syncInterested(userId: String, databaseName: String) {
+        if (userId.isEmpty()) return
+        database.getReference(DATA.INTERESTED).child(userId).child(databaseName)
+            .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val movieIds = mutableListOf<String>()
-                    for (data in snapshot.children) {
-                        data.key?.let { movieIds.add(it) }
+                    val list = snapshot.children.mapNotNull { it.key }
+                        .map { InterestedEntity(userId, databaseName, it) }
+                    CoroutineScope(Dispatchers.IO).launch {
+                        interestedDao.deleteAllInterestedForUser(userId, databaseName)
+                        interestedDao.insertInterestedList(list)
                     }
-
-                    moviesRef.orderByChild(orderBy)
-                        .addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onDataChange(movieSnapshot: DataSnapshot) {
-                                val list = mutableListOf<Movie>()
-                                for (data in movieSnapshot.children) {
-                                    val movie = data.getValue(Movie::class.java)
-                                    if (movie != null && movieIds.contains(movie.id)) {
-                                        list.add(movie)
-                                    }
-                                }
-                                list.reverse()
-                                trySend(list)
-                            }
-
-                            override fun onCancelled(error: DatabaseError) {
-                                close(error.toException())
-                            }
-                        })
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    close(error.toException())
+                    Timber.e(error.toException(), "syncInterested failed")
                 }
             })
-        awaitClose { favoritesRef.child(userId).removeEventListener(favListener) }
     }
 
     fun getMovieById(movieId: String): Flow<Movie?> = callbackFlow {
@@ -250,18 +242,6 @@ class MovieRepository @Inject constructor(
             moviesRef.child(movieId).child(DATA.VIEWS_COUNT).setValue(currentViews + 1).await()
         } catch (e: Exception) {
             Timber.e(e, "Error incrementing view count")
-        }
-    }
-
-    suspend fun toggleFavorite(movieId: String, userId: String, isFavorite: Boolean) {
-        try {
-            if (isFavorite) {
-                favoritesRef.child(userId).child(movieId).setValue(true).await()
-            } else {
-                favoritesRef.child(userId).child(movieId).removeValue().await()
-            }
-        } catch (e: Exception) {
-            Timber.e(e, "Error toggling favorite")
         }
     }
 
@@ -349,38 +329,5 @@ class MovieRepository @Inject constructor(
                 }
             })
         awaitClose { castMovieRef.child(movieId).removeEventListener(listener) }
-    }
-
-    fun getSliderCount(): Flow<Int> = callbackFlow {
-        val ref = database.getReference(DATA.SLIDER_SHOW)
-        val listener = ref.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                trySend(snapshot.childrenCount.toInt())
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                close(error.toException())
-            }
-        })
-        awaitClose { ref.removeEventListener(listener) }
-    }
-
-    fun getSliderImages(): Flow<List<String>> = callbackFlow {
-        val ref = database.getReference(DATA.SLIDER_SHOW)
-        val listener = ref.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val list = mutableListOf<String>()
-                for (data in snapshot.children) {
-                    val image = data.child(DATA.IMAGE).value?.toString()
-                    image?.let { list.add(it) }
-                }
-                trySend(list)
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                close(error.toException())
-            }
-        })
-        awaitClose { ref.removeEventListener(listener) }
     }
 }

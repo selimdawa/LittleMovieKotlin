@@ -3,10 +3,12 @@ package com.flatcode.littlemovie.ui.profile
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.databinding.ActivityProfileBinding
+import com.flatcode.littlemovie.ui.main.MainActivity
 import com.flatcode.littlemovie.utils.BaseActivity
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.loadImage
@@ -28,6 +30,17 @@ class ProfileActivity : BaseActivity() {
         setContentView(binding!!.root)
 
         profileId = intent.getStringExtra(DATA.PROFILE_ID)
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (isTaskRoot) {
+                    openActivity<MainActivity>(clear = true)
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
 
         setupUI()
         observeViewModel()

@@ -74,10 +74,18 @@
     <string name="eighteen">18</string>
     <string name="nineteen">19</string>
     <string name="twenty">20</string>
+
     <string name="edit">Edit</string>
     <string name="password_hint">********</string>
     <string name="close">Close</string>
     <string name="done">Done</string>
     <string name="crop_image">Crop Image</string>
     <string name="home_fragment">HomeFragment</string>
+
+    <string name="artists_count">Artists count</string>
+    <string name="albums_count">Albums count</string>
+    <string name="categories_count">Categories count</string>
+    <string name="favorites_count">Favorites count</string>
+    <string name="back">Back</string>
+    <string name="zero">0</string>
 </resources>

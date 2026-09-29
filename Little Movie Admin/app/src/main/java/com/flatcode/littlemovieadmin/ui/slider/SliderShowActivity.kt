@@ -152,7 +152,7 @@ class SliderShowActivity : BaseActivity() {
 
                     imageViews.forEachIndexed { index, imageView ->
                         val url = state.images[(index + 1).toString()]
-                        imageView.loadImage(url, isUser = false)
+                        imageView.loadImage(url)
                     }
                 }
             }

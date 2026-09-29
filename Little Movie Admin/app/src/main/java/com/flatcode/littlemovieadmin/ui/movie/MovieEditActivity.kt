@@ -121,8 +121,8 @@ class MovieEditActivity : BaseActivity() {
                         binding.cast.text = movie.castCount.toString()
 
                         if (imageUri == null) {
-                            binding.image.loadImage(movie.image, isUser = true)
-                            binding.imageBlur.loadBlur(movie.image, 50, isUser = false)
+                            binding.image.loadImage(movie.image)
+                            binding.imageBlur.loadBlur(movie.image, 50)
                         }
                     }
 

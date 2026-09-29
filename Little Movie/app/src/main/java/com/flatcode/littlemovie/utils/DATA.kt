@@ -59,6 +59,17 @@ object DATA {
     var CLOUDINARY_CLOUD_NAME = "j8jsphcf"
     var CLOUDINARY_UPLOAD_PRESET = "flat_code"
 
+    //Setting IDs
+    const val EDIT_PROFILE = "editProfile"
+    const val MY_CAST = "myCast"
+    const val MY_CATEGORIES = "myCategories"
+    const val FAVORITES_ID = "favorites"
+    const val ABOUT_APP = "aboutApp"
+    const val LOGOUT = "logout"
+    const val SHARE_APP = "shareApp"
+    const val RATE_APP = "rateApp"
+    const val PRIVACY_POLICY_ID = "privacyPolicy"
+
     //Other
     val AUTH: FirebaseAuth get() = FirebaseAuth.getInstance()
     val FIREBASE_USER get() = AUTH.currentUser

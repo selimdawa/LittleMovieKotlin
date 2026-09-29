@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flatcode.littlemovie.model.Movie
 import com.flatcode.littlemovie.repository.MovieRepository
-import com.flatcode.littlemovie.repository.UserRepository
 import com.flatcode.littlemovie.utils.DATA
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyMoviesViewModel @Inject constructor(
-    private val movieRepository: MovieRepository, private val userRepository: UserRepository
+    private val movieRepository: MovieRepository
 ) : ViewModel() {
 
     private val _movies = MutableStateFlow<List<Movie>>(emptyList())
@@ -29,16 +28,18 @@ class MyMoviesViewModel @Inject constructor(
         val userId = DATA.FirebaseUserUid ?: return
         _isLoading.value = true
         viewModelScope.launch {
-            userRepository.getInterestedCategories(userId).collectLatest { categoryIds ->
+            movieRepository.getInterestedCategories(userId).collectLatest { categories ->
+                val categoryIds = categories.map { it.id }
                 if (categoryIds.isEmpty()) {
                     _movies.value = emptyList()
                     _isLoading.value = false
                     return@collectLatest
                 }
-                movieRepository.getMoviesByCategoryIds(categoryIds, orderBy).collectLatest { list ->
-                    _movies.value = list
+                movieRepository.getMovies(orderBy).collectLatest { allMovies ->
+                    val filtered = allMovies.filter { it.categoryId in categoryIds }
+                    _movies.value = filtered
                     _isLoading.value = false
-                    Timber.d("My Movies updated: %d", list.size)
+                    Timber.d("My Movies updated: %d", filtered.size)
                 }
             }
         }

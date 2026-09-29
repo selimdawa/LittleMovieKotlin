@@ -83,9 +83,9 @@ class MovieAdapter(
 
                 add.isFavorite(id, DATA.FirebaseUserUid)
                 add.setOnClickListener { add.checkFavorite(id) }
-                love.isLoves(id)
+                nrLoves.isLoves(id)
                 nrLoves.nrLoves(id)
-                love.setOnClickListener { love.checkLove(id) }
+                nrLoves.setOnClickListener { nrLoves.checkLove(id) }
 
                 if (animation) {
                     this.item.animation = AnimationUtils.loadAnimation(

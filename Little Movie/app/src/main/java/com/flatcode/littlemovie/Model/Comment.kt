@@ -1,11 +1,14 @@
 package com.flatcode.littlemovie.model
 
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
+@Entity(tableName = "comments")
 data class Comment(
-    var id: String? = null,
+    @PrimaryKey var id: String = "",
     var movieId: String? = null,
     var comment: String? = null,
     var publisher: String? = null,

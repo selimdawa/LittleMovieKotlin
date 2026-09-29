@@ -21,14 +21,16 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/profile"
-                android:layout_width="240dp"
-                android:layout_height="240dp"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:background="@color/white"
+                android:contentDescription="@null"
+                android:padding="5dp"
                 android:scaleType="centerCrop"
                 android:src="@color/image_profile"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.App.Circle"
                 app:strokeColor="@color/white"
-                app:strokeWidth="5sp"
-                android:background="@color/white"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.App.Circle" />
+                app:strokeWidth="5sp" />
 
             <TextView
                 android:id="@+id/username"
@@ -146,41 +148,31 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <ImageView
+        android:id="@+id/edit"
+        android:layout_width="40sp"
+        android:layout_height="40sp"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginHorizontal="20sp"
-        android:layout_marginVertical="20sp"
-        android:orientation="horizontal">
+        android:layout_margin="20sp"
+        android:background="@drawable/round"
+        android:backgroundTint="@color/white"
+        android:importantForAccessibility="no"
+        android:padding="10sp"
+        android:src="@drawable/ic_edit_white"
+        app:tint="@color/black" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageButton
-                android:id="@+id/edit"
-                android:layout_width="50sp"
-                android:layout_height="50sp"
-                android:background="@drawable/round"
-                android:backgroundTint="@color/white"
-                android:src="@drawable/ic_books"
-                android:visibility="gone"
-                app:tint="@color/black" />
-
-            <Button
-                android:id="@+id/back"
-                android:layout_width="35sp"
-                android:layout_height="35sp"
-                android:layout_alignParentRight="true"
-                android:layout_centerInParent="true"
-                android:background="@drawable/ic_back_white"
-                android:gravity="center"
-                android:rotation="180"
-                app:tint="@color/white" />
-
-        </RelativeLayout>
-
-    </LinearLayout>
+    <Button
+        android:id="@+id/back"
+        android:layout_width="35sp"
+        android:layout_height="35sp"
+        android:layout_alignTop="@id/edit"
+        android:layout_alignBottom="@id/edit"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="20sp"
+        android:background="@drawable/ic_back_white"
+        android:gravity="center"
+        android:rotation="180"
+        app:tint="@color/white" />
 
 </RelativeLayout>

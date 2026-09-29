@@ -41,8 +41,8 @@ class CastActivity : BaseActivity() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (DATA.searchStatus) {
-                    binding!!.toolbar.toolbar.visibility = View.VISIBLE
-                    binding!!.toolbar.toolbarSearch.visibility = View.GONE
+                    binding!!.toolbar.root.getChildAt(0).visibility = View.VISIBLE
+                    binding!!.toolbar.root.getChildAt(1).visibility = View.GONE
                     DATA.searchStatus = false
                     binding!!.toolbar.textSearch.setText(DATA.EMPTY)
                 } else if (DATA.isChange) {
@@ -56,8 +56,8 @@ class CastActivity : BaseActivity() {
         })
 
         binding!!.toolbar.search.setOnClickListener {
-            binding!!.toolbar.toolbar.visibility = View.GONE
-            binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
+            binding!!.toolbar.root.getChildAt(0).visibility = View.GONE
+            binding!!.toolbar.root.getChildAt(1).visibility = View.VISIBLE
             DATA.searchStatus = true
         }
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {

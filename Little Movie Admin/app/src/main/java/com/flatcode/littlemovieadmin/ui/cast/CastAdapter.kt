@@ -51,7 +51,7 @@ class CastAdapter(
             val interestedCount = item.interestedCount
             val moviesCount = item.moviesCount
 
-            binding.image.loadImage(image, isUser = true)
+            binding.image.loadImage(image)
 
             if (name == DATA.EMPTY) {
                 binding.name.visibility = View.GONE

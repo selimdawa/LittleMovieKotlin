@@ -2,8 +2,8 @@ package com.flatcode.littlemovie.ui.main
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import coil3.load
 import com.flatcode.littlemovie.databinding.ItemSliderBinding
+import com.flatcode.littlemovie.utils.loadImage
 import io.selimdawa.autoimageslider.adapter.SliderViewAdapter
 
 class ImageSliderAdapter(private val images: List<String>, private val onItemClick: (Int) -> Unit) :
@@ -16,7 +16,7 @@ class ImageSliderAdapter(private val images: List<String>, private val onItemCli
 
     override fun onBind(viewHolder: SliderViewHolder, position: Int) {
         images.getOrNull(position)?.let { url ->
-            viewHolder.binding.imageView.load(url)
+            viewHolder.binding.imageView.loadImage(false, url)
             viewHolder.binding.imageView.setOnClickListener { onItemClick(position) }
         }
     }

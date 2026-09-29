@@ -2,13 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="all"
     android:id="@+id/item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="5dp"
     android:layout_marginBottom="10dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:ignore="all">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card"
@@ -36,10 +36,11 @@
                         android:id="@+id/image"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
+                        android:contentDescription="@null"
                         android:scaleType="centerCrop"
                         android:src="@color/image_profile"
                         app:layout_constraintDimensionRatio="1:1.4"
-                        tools:ignore="MissingConstraints,ContentDescription" />
+                        tools:ignore="MissingConstraints" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -49,11 +50,11 @@
                     android:layout_height="25dp"
                     android:layout_gravity="top|end"
                     android:background="@drawable/button_more"
+                    android:contentDescription="@null"
                     android:gravity="center"
                     android:padding="2dp"
                     android:src="@drawable/ic_star_unselected"
-                    app:tint="@color/dark"
-                    tools:ignore="ContentDescription" />
+                    app:tint="@color/dark" />
 
             </FrameLayout>
 
@@ -102,60 +103,33 @@
                     android:layout_height="wrap_content"
                     android:padding="5dp">
 
-                    <LinearLayout
+                    <TextView
+                        android:gravity="center_vertical"
+                        android:layout_gravity="start"
+                        android:id="@+id/nrViews"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:gravity="center">
+                        android:drawablePadding="10dp"
+                        app:drawableStartCompat="@drawable/ic_view"
+                        android:paddingHorizontal="10dp"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:textStyle="normal" />
 
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_view"
-                            tools:ignore="ContentDescription" />
-
-                        <TextView
-                            android:id="@+id/nrViews"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:paddingHorizontal="10dp"
-                            android:textColor="@color/white"
-                            android:textSize="14sp"
-                            android:textStyle="normal" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
+                    <TextView
+                        android:gravity="center_vertical"
+                        android:layout_gravity="start"
+                        android:id="@+id/nrLoves"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:gravity="center">
-
-                        <ImageView
-                            android:id="@+id/love"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_heart_selected"
-                            tools:ignore="ContentDescription" />
-
-                        <TextView
-                            android:id="@+id/nrLoves"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:paddingHorizontal="10dp"
-                            android:textColor="@color/white"
-                            android:textSize="14sp"
-                            android:textStyle="normal" />
-
-                    </LinearLayout>
+                        android:drawablePadding="10dp"
+                        app:drawableStartCompat="@drawable/ic_heart_unselected"
+                        android:paddingHorizontal="10dp"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:textStyle="normal" />
 
                 </LinearLayout>
 

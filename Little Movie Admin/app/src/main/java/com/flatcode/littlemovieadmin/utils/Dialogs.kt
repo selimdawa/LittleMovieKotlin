@@ -195,7 +195,7 @@ fun Context.dialogAboutArtist(imageDB: String?, nameDB: String?, aboutDB: String
 
     alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-    dialogBinding.image.loadImage(imageDB, isUser = false)
+    dialogBinding.image.loadImage(imageDB)
     dialogBinding.name.text = MessageFormat.format("{0}{1}", DATA.EMPTY, nameDB)
     dialogBinding.aboutTheArtist.text = MessageFormat.format("{0}{1}", DATA.EMPTY, aboutDB)
 

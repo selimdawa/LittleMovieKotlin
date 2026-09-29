@@ -1,7 +1,5 @@
 package com.flatcode.littlemovie.utils
 
-import android.R
-import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -17,13 +15,13 @@ import com.google.firebase.auth.FirebaseAuth
 import java.text.MessageFormat
 
 fun Context.closeApp() {
-    val activity = this as? Activity ?: return
+    val activity = this.findActivity() ?: return
     if (activity.isFinishing || activity.isDestroyed) return
 
     val dialogBinding = DialogCloseAppBinding.inflate(activity.layoutInflater)
     val alertDialog = MaterialAlertDialogBuilder(this).setView(dialogBinding.root).create()
 
-    alertDialog.window?.setBackgroundDrawableResource(R.color.transparent)
+    alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
     dialogBinding.yes.setOnClickListener {
         activity.finish()
@@ -40,13 +38,13 @@ fun Context.closeApp() {
 }
 
 fun Context.dialogLogout() {
-    val activity = this as? Activity ?: return
+    val activity = this.findActivity() ?: return
     if (activity.isFinishing || activity.isDestroyed) return
 
     val dialogBinding = DialogLogoutBinding.inflate(activity.layoutInflater)
     val alertDialog = MaterialAlertDialogBuilder(this).setView(dialogBinding.root).create()
 
-    alertDialog.window?.setBackgroundDrawableResource(R.color.transparent)
+    alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
     dialogBinding.yes.setOnClickListener {
         FirebaseAuth.getInstance().signOut()
@@ -65,13 +63,13 @@ fun Context.dialogLogout() {
 }
 
 fun Context.dialogAboutApp() {
-    val activity = this as? Activity ?: return
+    val activity = this.findActivity() ?: return
     if (activity.isFinishing || activity.isDestroyed) return
 
     val dialogBinding = DialogAboutAppBinding.inflate(activity.layoutInflater)
     val alertDialog = MaterialAlertDialogBuilder(this).setView(dialogBinding.root).create()
 
-    alertDialog.window?.setBackgroundDrawableResource(R.color.transparent)
+    alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
     dialogBinding.website.setOnClickListener {
         val intent = Intent(Intent.ACTION_VIEW, DATA.WEB_SITE.toUri())
@@ -100,13 +98,13 @@ fun Context.dialogAboutApp() {
 }
 
 fun Context.dialogAboutArtist(imageDB: String?, nameDB: String?, aboutDB: String?) {
-    val activity = this as? Activity ?: return
+    val activity = this.findActivity() ?: return
     if (activity.isFinishing || activity.isDestroyed) return
 
     val dialogBinding = DialogAboutArtistBinding.inflate(activity.layoutInflater)
     val alertDialog = MaterialAlertDialogBuilder(this).setView(dialogBinding.root).create()
 
-    alertDialog.window?.setBackgroundDrawableResource(R.color.transparent)
+    alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
     dialogBinding.image.loadImage(false, imageDB)
     dialogBinding.name.text = MessageFormat.format("{0}{1}", DATA.EMPTY, nameDB)

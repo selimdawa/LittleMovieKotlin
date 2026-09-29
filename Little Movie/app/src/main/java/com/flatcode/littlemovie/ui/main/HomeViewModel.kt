@@ -6,6 +6,7 @@ import com.flatcode.littlemovie.model.Category
 import com.flatcode.littlemovie.model.Movie
 import com.flatcode.littlemovie.repository.CategoryRepository
 import com.flatcode.littlemovie.repository.MovieRepository
+import com.flatcode.littlemovie.repository.ToolsRepository
 import com.flatcode.littlemovie.utils.DATA
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +18,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val movieRepository: MovieRepository, private val categoryRepository: CategoryRepository
+    private val movieRepository: MovieRepository,
+    private val categoryRepository: CategoryRepository,
+    private val toolsRepository: ToolsRepository
 ) : ViewModel() {
 
     private val _categories = MutableStateFlow<List<Category>>(emptyList())
@@ -61,15 +64,17 @@ class HomeViewModel @Inject constructor(
 
     private fun loadSliderShow() {
         viewModelScope.launch {
-            movieRepository.getSliderCount().collectLatest { count ->
-                _sliderCount.value = count
-                Timber.d("Slider count updated: %d", count)
-            }
-        }
-        viewModelScope.launch {
-            movieRepository.getSliderImages().collectLatest { list ->
-                _sliderImages.value = list
-                Timber.d("Slider images updated: %d", list.size)
+            toolsRepository.getSliderImages().collectLatest { list ->
+                if (list.isNotEmpty()) {
+                    _sliderImages.value = list
+                    _sliderCount.value = list.size
+                } else {
+                    val fallbackImages = _editorsChoiceMovies.value.mapNotNull { it.image }
+                        .filter { it.isNotEmpty() && it != DATA.BASIC }
+                    _sliderImages.value = fallbackImages
+                    _sliderCount.value = fallbackImages.size
+                }
+                Timber.d("Slider images updated: %d", _sliderImages.value.size)
             }
         }
     }

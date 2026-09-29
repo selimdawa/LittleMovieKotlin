@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item"
-    android:layout_width="125sp"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="5dp"
     android:layout_marginBottom="10sp"
@@ -12,12 +12,13 @@
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/image"
-        android:layout_width="125sp"
-        android:layout_height="125sp"
+        android:layout_width="130sp"
+        android:layout_height="130sp"
+        android:padding="5dp"
         android:src="@color/image_profile"
-        app:strokeColor="?mc_track"
-        app:strokeWidth="1sp"
-        app:shapeAppearanceOverlay="@style/ShapeAppearance.App.Circle" />
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.App.Circle"
+        app:strokeColor="?colorError"
+        app:strokeWidth="1sp" />
 
     <TextView
         android:id="@+id/name"

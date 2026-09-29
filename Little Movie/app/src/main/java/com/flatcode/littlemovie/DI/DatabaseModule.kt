@@ -5,7 +5,12 @@ import androidx.room.Room
 import com.flatcode.littlemovie.db.AppDatabase
 import com.flatcode.littlemovie.db.CastDao
 import com.flatcode.littlemovie.db.CategoryDao
+import com.flatcode.littlemovie.db.CommentDao
+import com.flatcode.littlemovie.db.EditorsChoiceDao
+import com.flatcode.littlemovie.db.FavoriteDao
+import com.flatcode.littlemovie.db.InterestedDao
 import com.flatcode.littlemovie.db.MovieDao
+import com.flatcode.littlemovie.db.SliderDao
 import com.flatcode.littlemovie.db.UserDao
 import dagger.Module
 import dagger.Provides
@@ -37,4 +42,19 @@ object DatabaseModule {
 
     @Provides
     fun provideUserDao(database: AppDatabase): UserDao = database.userDao()
+
+    @Provides
+    fun provideCommentDao(database: AppDatabase): CommentDao = database.commentDao()
+
+    @Provides
+    fun provideEditorsChoiceDao(database: AppDatabase): EditorsChoiceDao = database.editorsChoiceDao()
+
+    @Provides
+    fun provideFavoriteDao(database: AppDatabase): FavoriteDao = database.favoriteDao()
+
+    @Provides
+    fun provideInterestedDao(database: AppDatabase): InterestedDao = database.interestedDao()
+
+    @Provides
+    fun provideSliderDao(database: AppDatabase): SliderDao = database.sliderDao()
 }

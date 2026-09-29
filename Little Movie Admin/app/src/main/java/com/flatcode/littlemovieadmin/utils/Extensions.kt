@@ -49,41 +49,37 @@ inline fun <reified T : Activity> Context.openActivity(
     startActivity(intent)
 }
 
-fun ImageView.loadImage(url: String?, isUser: Boolean = false) {
+fun ImageView.loadImage(url: String?) {
     try {
         if (url == DATA.BASIC || url.isNullOrEmpty()) {
-            if (isUser) this.setImageResource(R.drawable.basic_user) else this.setImageResource(
-                R.drawable.basic_music
-            )
+            this.setImageResource(R.color.image_profile)
         } else {
             this.load(url) {
                 placeholder(R.color.image_profile)
-                error(if (isUser) R.drawable.basic_user else R.drawable.basic_music)
+                error(R.color.image_profile)
                 crossfade(true)
             }
         }
     } catch (e: Exception) {
         Timber.e(e, "Image load error")
-        this.setImageResource(R.drawable.basic_music)
+        this.setImageResource(R.color.image_profile)
     }
 }
 
-fun ImageView.loadBlur(url: String?, level: Int, isUser: Boolean = false) {
+fun ImageView.loadBlur(url: String?, level: Int) {
     try {
         if (url == DATA.BASIC || url.isNullOrEmpty()) {
-            if (isUser) this.setImageResource(R.drawable.basic_user) else this.setImageResource(
-                R.drawable.basic_music
-            )
+            this.setImageResource(R.color.image_profile)
         } else {
             this.load(url) {
                 placeholder(R.color.image_profile)
                 transformations(SimpleBlurTransformation(level.toFloat()))
-                error(if (isUser) R.drawable.basic_user else R.drawable.basic_music)
+                error(R.color.image_profile)
             }
         }
     } catch (e: Exception) {
         Timber.e(e, "Blur load error")
-        this.setImageResource(R.drawable.basic_music)
+        this.setImageResource(R.color.image_profile)
     }
 }
 
@@ -91,8 +87,11 @@ fun ImageView.loadBlurUri(uri: Uri?, level: Int) {
     if (uri != null) {
         this.load(uri) {
             placeholder(R.color.image_profile)
+            error(R.color.image_profile)
             transformations(SimpleBlurTransformation(level.toFloat()))
         }
+    } else {
+        this.setImageResource(R.color.image_profile)
     }
 }
 

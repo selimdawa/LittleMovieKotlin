@@ -74,7 +74,7 @@ class CategoryEditActivity : BaseActivity() {
                     state.category?.let { category ->
                         binding.nameEt.setText(category.name)
                         if (imageUri == null) {
-                            binding.image.loadImage(category.image, isUser = true)
+                            binding.image.loadImage(category.image)
                         }
                     }
                 }
