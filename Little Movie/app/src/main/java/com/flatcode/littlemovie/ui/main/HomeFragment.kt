@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovie.databinding.FragmentHomeBinding
 import com.flatcode.littlemovie.model.Movie
 import com.flatcode.littlemovie.ui.category.CategoryDetailsActivity
@@ -17,6 +19,7 @@ import com.flatcode.littlemovie.ui.movie.ShowMoreActivity
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -115,63 +118,58 @@ class HomeFragment : Fragment() {
 
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.categories.collect { categories ->
-                Timber.d("Categories collected: %d", categories.size)
-                categoryAdapter.submitList(categories)
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.sliderCount.collect { count ->
-                Timber.d("Slider count collected: %d", count)
-                // Firebase logic here is better, but this handles the count
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.sliderImages.collect { images ->
-                if (images.isNotEmpty()) {
-                    binding.imageSlider.setSliderAdapter(ImageSliderAdapter(images) { _ ->
-                        // Handle click
-                    })
-                    binding.imageSlider.startAutoCycle()
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.categories.collectLatest { categories ->
+                        Timber.d("Categories collected: %d", categories.size)
+                        categoryAdapter.submitList(categories)
+                    }
                 }
-            }
-        }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.editorsChoiceMovies.collect { movies ->
-                Timber.d("Editors choice movies collected: %d", movies.size)
-                updateMovieList(
-                    movies, editorsChoiceAdapter, binding.bar, binding.recyclerView, binding.empty
-                )
-            }
-        }
+                launch {
+                    viewModel.sliderImages.collectLatest { images ->
+                        if (images.isNotEmpty()) {
+                            binding.imageSlider.setSliderAdapter(ImageSliderAdapter(images) { _ -> })
+                            binding.imageSlider.startAutoCycle()
+                        }
+                    }
+                }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.mostViewedMovies.collect { movies ->
-                Timber.d("Most viewed movies collected: %d", movies.size)
-                updateMovieList(
-                    movies, mostViewedAdapter, binding.bar2, binding.recyclerView2, binding.empty2
-                )
-            }
-        }
+                launch {
+                    viewModel.editorsChoiceMovies.collectLatest { movies ->
+                        Timber.d("Editors choice movies collected: %d", movies.size)
+                        updateMovieList(
+                            movies, editorsChoiceAdapter, binding.bar, binding.recyclerView, binding.empty
+                        )
+                    }
+                }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.mostLovedMovies.collect { movies ->
-                Timber.d("Most loved movies collected: %d", movies.size)
-                updateMovieList(
-                    movies, mostLovedAdapter, binding.bar3, binding.recyclerView3, binding.empty3
-                )
-            }
-        }
+                launch {
+                    viewModel.mostViewedMovies.collectLatest { movies ->
+                        Timber.d("Most viewed movies collected: %d", movies.size)
+                        updateMovieList(
+                            movies, mostViewedAdapter, binding.bar2, binding.recyclerView2, binding.empty2
+                        )
+                    }
+                }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.newMovies.collect { movies ->
-                Timber.d("New movies collected: %d", movies.size)
-                updateMovieList(
-                    movies, newMoviesAdapter, binding.bar4, binding.recyclerView4, binding.empty4
-                )
+                launch {
+                    viewModel.mostLovedMovies.collectLatest { movies ->
+                        Timber.d("Most loved movies collected: %d", movies.size)
+                        updateMovieList(
+                            movies, mostLovedAdapter, binding.bar3, binding.recyclerView3, binding.empty3
+                        )
+                    }
+                }
+
+                launch {
+                    viewModel.newMovies.collectLatest { movies ->
+                        Timber.d("New movies collected: %d", movies.size)
+                        updateMovieList(
+                            movies, newMoviesAdapter, binding.bar4, binding.recyclerView4, binding.empty4
+                        )
+                    }
+                }
             }
         }
     }

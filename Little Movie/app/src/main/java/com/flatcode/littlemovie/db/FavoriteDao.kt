@@ -17,6 +17,9 @@ interface FavoriteDao {
     @Query("SELECT COUNT(movies.id) FROM movies INNER JOIN favorites ON movies.id = favorites.movieId WHERE favorites.userId = :userId")
     fun getFavoriteCount(userId: String): Flow<Int>
 
+    @Query("SELECT COUNT(*) FROM favorites WHERE userId = :userId")
+    fun getTotalFavoriteCount(userId: String): Flow<Int>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFavorite(favorite: FavoriteEntity)
 

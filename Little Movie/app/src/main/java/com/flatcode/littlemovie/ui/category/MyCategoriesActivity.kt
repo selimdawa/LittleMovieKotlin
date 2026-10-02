@@ -14,6 +14,7 @@ import com.flatcode.littlemovie.utils.BaseActivity
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.MessageFormat
@@ -107,24 +108,25 @@ class MyCategoriesActivity : BaseActivity() {
 
     private fun observeViewModel() {
         lifecycleScope.launch {
-            viewModel.categories.collect { categories ->
+            combine(viewModel.categories, viewModel.isLoading) { categories, isLoading ->
+                Pair(categories, isLoading)
+            }.collect { (categories, isLoading) ->
                 adapter.setFullList(categories)
 
                 binding!!.toolbar.number.text = MessageFormat.format("( {0} )", categories.size)
-                binding!!.progress.visibility = View.GONE
-                if (categories.isNotEmpty()) {
-                    binding!!.recyclerView.visibility = View.VISIBLE
-                    binding!!.emptyText.visibility = View.GONE
-                } else {
-                    binding!!.recyclerView.visibility = View.GONE
-                    binding!!.emptyText.visibility = View.VISIBLE
-                }
-            }
-        }
-
-        lifecycleScope.launch {
-            viewModel.isLoading.collect { isLoading ->
                 binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+                if (isLoading) {
+                    binding!!.emptyText.visibility = View.GONE
+                    binding!!.recyclerView.visibility = if (categories.isNotEmpty()) View.VISIBLE else View.GONE
+                } else {
+                    if (categories.isNotEmpty()) {
+                        binding!!.recyclerView.visibility = View.VISIBLE
+                        binding!!.emptyText.visibility = View.GONE
+                    } else {
+                        binding!!.recyclerView.visibility = View.GONE
+                        binding!!.emptyText.visibility = View.VISIBLE
+                    }
+                }
             }
         }
     }

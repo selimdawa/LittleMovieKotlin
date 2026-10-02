@@ -20,7 +20,7 @@ class CategoriesViewModel @Inject constructor(
     private val _categoriesList = MutableStateFlow<List<Category>>(emptyList())
     val categoriesList: StateFlow<List<Category>> = _categoriesList
 
-    private val _isLoading = MutableStateFlow(false)
+    private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading
 
     private val _categoriesCount = MutableStateFlow(0)

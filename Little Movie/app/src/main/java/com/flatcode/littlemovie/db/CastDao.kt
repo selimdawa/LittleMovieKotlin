@@ -12,6 +12,12 @@ interface CastDao {
     @Query("SELECT * FROM casts ORDER BY name ASC")
     fun getAllCasts(): Flow<List<Cast>>
 
+    @Query("SELECT * FROM casts WHERE id = :id")
+    fun getCastById(id: String): Flow<Cast?>
+
+    @Query("SELECT * FROM casts WHERE id IN (:ids)")
+    fun getCastsByIds(ids: List<String>): Flow<List<Cast>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCasts(casts: List<Cast>)
 

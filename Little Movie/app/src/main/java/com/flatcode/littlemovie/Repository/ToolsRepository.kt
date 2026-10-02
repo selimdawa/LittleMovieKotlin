@@ -11,9 +11,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -29,36 +27,26 @@ class ToolsRepository @Inject constructor(
     private val database = FirebaseDatabase.getInstance()
     private val toolsRef = database.getReference(DATA.TOOLS)
 
-    fun getPrivacyPolicy(): Flow<String?> = callbackFlow {
-        val repositoryScope = CoroutineScope(Dispatchers.IO)
-        val localJob = repositoryScope.launch {
-            settingDao.getSetting(DATA.PRIVACY_POLICY).collect { cached ->
-                if (!cached.isNullOrEmpty()) {
-                    trySend(cached)
-                }
-            }
-        }
+    fun getPrivacyPolicy(): Flow<String?> {
+        syncPrivacyPolicy()
+        return settingDao.getSetting(DATA.PRIVACY_POLICY)
+    }
 
-        val listener =
-            toolsRef.child(DATA.PRIVACY_POLICY).addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val value = snapshot.value?.toString().orEmpty()
-                    if (value.isNotEmpty()) {
-                        trySend(value)
-                        repositoryScope.launch {
-                            settingDao.insertSetting(SettingEntity(DATA.PRIVACY_POLICY, value))
-                        }
+    private fun syncPrivacyPolicy() {
+        toolsRef.child(DATA.PRIVACY_POLICY).addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val value = snapshot.value?.toString().orEmpty()
+                if (value.isNotEmpty()) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        settingDao.insertSetting(SettingEntity(DATA.PRIVACY_POLICY, value))
                     }
                 }
+            }
 
-                override fun onCancelled(error: DatabaseError) {
-                    Timber.e("Error fetching privacy policy: %s", error.message)
-                }
-            })
-        awaitClose {
-            toolsRef.child(DATA.PRIVACY_POLICY).removeEventListener(listener)
-            localJob.cancel()
-        }
+            override fun onCancelled(error: DatabaseError) {
+                Timber.e("Error syncing privacy policy: %s", error.message)
+            }
+        })
     }
 
     fun getSliderImages(): Flow<List<String>> {

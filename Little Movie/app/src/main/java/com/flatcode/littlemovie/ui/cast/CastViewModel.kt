@@ -20,7 +20,7 @@ class CastViewModel @Inject constructor(
     private val _castList = MutableStateFlow<List<Cast>>(emptyList())
     val castList: StateFlow<List<Cast>> = _castList
 
-    private val _isLoading = MutableStateFlow(false)
+    private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading
 
     private val _castCount = MutableStateFlow(0)

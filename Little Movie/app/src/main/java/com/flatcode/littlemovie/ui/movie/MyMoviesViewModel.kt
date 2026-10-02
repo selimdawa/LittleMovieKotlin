@@ -21,7 +21,7 @@ class MyMoviesViewModel @Inject constructor(
     private val _movies = MutableStateFlow<List<Movie>>(emptyList())
     val movies: StateFlow<List<Movie>> = _movies
 
-    private val _isLoading = MutableStateFlow(false)
+    private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading
 
     fun loadMovies(orderBy: String) {
@@ -30,13 +30,12 @@ class MyMoviesViewModel @Inject constructor(
         viewModelScope.launch {
             movieRepository.getInterestedCategories(userId).collectLatest { categories ->
                 val categoryIds = categories.map { it.id }
-                if (categoryIds.isEmpty()) {
-                    _movies.value = emptyList()
-                    _isLoading.value = false
-                    return@collectLatest
-                }
                 movieRepository.getMovies(orderBy).collectLatest { allMovies ->
-                    val filtered = allMovies.filter { it.categoryId in categoryIds }
+                    val filtered = if (categoryIds.isNotEmpty()) {
+                        allMovies.filter { it.categoryId in categoryIds }
+                    } else {
+                        allMovies
+                    }
                     _movies.value = filtered
                     _isLoading.value = false
                     Timber.d("My Movies updated: %d", filtered.size)

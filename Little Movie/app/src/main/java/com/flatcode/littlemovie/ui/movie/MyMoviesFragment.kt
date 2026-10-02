@@ -6,11 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovie.databinding.FragmentMyMoviesBinding
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -64,23 +68,25 @@ class MyMoviesFragment : Fragment() {
 
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.movies.collect { movies ->
-                adapter.submitList(movies)
-
-                binding.progress.visibility = View.GONE
-                if (movies.isNotEmpty()) {
-                    binding.recyclerView.visibility = View.VISIBLE
-                    binding.emptyText.visibility = View.GONE
-                } else {
-                    binding.recyclerView.visibility = View.GONE
-                    binding.emptyText.visibility = View.VISIBLE
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                combine(viewModel.movies, viewModel.isLoading) { movies, isLoading ->
+                    Pair(movies, isLoading)
+                }.collectLatest { (movies, isLoading) ->
+                    adapter.submitList(movies)
+                    binding.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+                    if (isLoading) {
+                        binding.emptyText.visibility = View.GONE
+                        binding.recyclerView.visibility = if (movies.isNotEmpty()) View.VISIBLE else View.GONE
+                    } else {
+                        if (movies.isNotEmpty()) {
+                            binding.recyclerView.visibility = View.VISIBLE
+                            binding.emptyText.visibility = View.GONE
+                        } else {
+                            binding.recyclerView.visibility = View.GONE
+                            binding.emptyText.visibility = View.VISIBLE
+                        }
+                    }
                 }
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.isLoading.collect { isLoading ->
-                binding.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
             }
         }
     }

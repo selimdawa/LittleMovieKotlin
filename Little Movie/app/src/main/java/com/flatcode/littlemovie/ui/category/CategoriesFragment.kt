@@ -11,6 +11,7 @@ import com.flatcode.littlemovie.databinding.FragmentCategoriesBinding
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -44,24 +45,25 @@ class CategoriesFragment : Fragment() {
 
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.categoriesList.collect { categories ->
+            combine(viewModel.categoriesList, viewModel.isLoading) { categories, isLoading ->
+                Pair(categories, isLoading)
+            }.collect { (categories, isLoading) ->
                 Timber.d("Categories collected: %d", categories.size)
                 adapter.submitList(categories)
 
-                binding.bar.visibility = View.GONE
-                if (categories.isNotEmpty()) {
-                    binding.recyclerView.visibility = View.VISIBLE
-                    binding.emptyText.visibility = View.GONE
-                } else {
-                    binding.recyclerView.visibility = View.GONE
-                    binding.emptyText.visibility = View.VISIBLE
-                }
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.isLoading.collect { isLoading ->
                 binding.bar.visibility = if (isLoading) View.VISIBLE else View.GONE
+                if (isLoading) {
+                    binding.emptyText.visibility = View.GONE
+                    binding.recyclerView.visibility = if (categories.isNotEmpty()) View.VISIBLE else View.GONE
+                } else {
+                    if (categories.isNotEmpty()) {
+                        binding.recyclerView.visibility = View.VISIBLE
+                        binding.emptyText.visibility = View.GONE
+                    } else {
+                        binding.recyclerView.visibility = View.GONE
+                        binding.emptyText.visibility = View.VISIBLE
+                    }
+                }
             }
         }
     }

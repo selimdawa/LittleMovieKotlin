@@ -14,6 +14,7 @@ import com.flatcode.littlemovie.utils.BaseActivity
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.MessageFormat
@@ -105,14 +106,22 @@ class CastActivity : BaseActivity() {
 
     private fun observeViewModel() {
         lifecycleScope.launch {
-            viewModel.castList.collect { castItems ->
+            combine(viewModel.castList, viewModel.isLoading) { castItems, isLoading ->
+                Pair(castItems, isLoading)
+            }.collect { (castItems, isLoading) ->
                 adapter!!.setFullList(castItems)
-                if (castItems.isNotEmpty()) {
-                    binding!!.recyclerView.visibility = View.VISIBLE
+                binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+                if (isLoading) {
                     binding!!.emptyText.visibility = View.GONE
+                    binding!!.recyclerView.visibility = if (castItems.isNotEmpty()) View.VISIBLE else View.GONE
                 } else {
-                    binding!!.recyclerView.visibility = View.GONE
-                    binding!!.emptyText.visibility = View.VISIBLE
+                    if (castItems.isNotEmpty()) {
+                        binding!!.recyclerView.visibility = View.VISIBLE
+                        binding!!.emptyText.visibility = View.GONE
+                    } else {
+                        binding!!.recyclerView.visibility = View.GONE
+                        binding!!.emptyText.visibility = View.VISIBLE
+                    }
                 }
             }
         }
@@ -120,12 +129,6 @@ class CastActivity : BaseActivity() {
         lifecycleScope.launch {
             viewModel.castCount.collect { count ->
                 binding!!.toolbar.number.text = MessageFormat.format("( {0} )", count)
-            }
-        }
-
-        lifecycleScope.launch {
-            viewModel.isLoading.collect { isLoading ->
-                binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
             }
         }
     }

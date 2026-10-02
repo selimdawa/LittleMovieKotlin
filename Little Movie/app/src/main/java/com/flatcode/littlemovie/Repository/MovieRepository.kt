@@ -1,5 +1,6 @@
 package com.flatcode.littlemovie.repository
 
+import com.flatcode.littlemovie.db.CommentDao
 import com.flatcode.littlemovie.db.FavoriteDao
 import com.flatcode.littlemovie.db.InterestedDao
 import com.flatcode.littlemovie.db.MovieDao
@@ -31,7 +32,8 @@ import javax.inject.Singleton
 class MovieRepository @Inject constructor(
     private val movieDao: MovieDao,
     private val favoriteDao: FavoriteDao,
-    private val interestedDao: InterestedDao
+    private val interestedDao: InterestedDao,
+    private val commentDao: CommentDao,
 ) {
 
     private val database = FirebaseDatabase.getInstance()
@@ -134,6 +136,9 @@ class MovieRepository @Inject constructor(
                     list.add(item)
                 }
                 CoroutineScope(Dispatchers.IO).launch {
+                    if (limit == null) {
+                        movieDao.deleteAllMovies()
+                    }
                     movieDao.insertMovies(list)
                 }
             }
@@ -157,7 +162,7 @@ class MovieRepository @Inject constructor(
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Timber.e(error.toException(), "syncFavorites failed")
+                Timber.e("Error syncing favorites: %s", error.message)
             }
         })
     }
@@ -176,22 +181,30 @@ class MovieRepository @Inject constructor(
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Timber.e(error.toException(), "syncInterested failed")
+                    Timber.e("Error syncing interested: %s", error.message)
                 }
             })
     }
 
-    fun getMovieById(movieId: String): Flow<Movie?> = callbackFlow {
-        val listener = moviesRef.child(movieId).addValueEventListener(object : ValueEventListener {
+    fun getMovieById(movieId: String): Flow<Movie?> {
+        syncMovieById(movieId)
+        return movieDao.getMovieById(movieId)
+    }
+
+    private fun syncMovieById(movieId: String) {
+        moviesRef.child(movieId).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                trySend(snapshot.getValue(Movie::class.java))
+                snapshot.getValue(Movie::class.java)?.let { movie ->
+                    CoroutineScope(Dispatchers.IO).launch {
+                        movieDao.insertMovie(movie)
+                    }
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                close(error.toException())
+                Timber.e("Error syncing movie %s: %s", movieId, error.message)
             }
         })
-        awaitClose { moviesRef.child(movieId).removeEventListener(listener) }
     }
 
     fun isFavorite(movieId: String, userId: String): Flow<Boolean> = callbackFlow {
@@ -270,34 +283,50 @@ class MovieRepository @Inject constructor(
         }
     }
 
-    fun getMovieComments(movieId: String): Flow<List<Comment>> = callbackFlow {
-        val listener = moviesRef.child(movieId).child(DATA.COMMENTS)
+    fun getMovieComments(movieId: String): Flow<List<Comment>> {
+        syncComments(movieId)
+        return commentDao.getCommentsByMovie(movieId)
+    }
+
+    private fun syncComments(movieId: String) {
+        moviesRef.child(movieId).child(DATA.COMMENTS)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val list = mutableListOf<Comment>()
                     for (data in snapshot.children) {
                         data.getValue(Comment::class.java)?.let { list.add(it) }
                     }
-                    trySend(list)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        commentDao.insertComments(list)
+                    }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    close(error.toException())
+                    Timber.e("Error syncing comments for movie %s: %s", movieId, error.message)
                 }
             })
-        awaitClose { moviesRef.child(movieId).child(DATA.COMMENTS).removeEventListener(listener) }
     }
 
     suspend fun addComment(movieId: String, commentText: String): Result<Unit> {
         return try {
             val id = moviesRef.push().key ?: throw Exception("Failed to get push key")
+            val timestamp = System.currentTimeMillis()
+            val publisher = DATA.FirebaseUserUid ?: ""
+            val comment = Comment(
+                id = id,
+                movieId = movieId,
+                publisher = publisher,
+                comment = commentText,
+                timestamp = timestamp
+            )
             val hashMap = HashMap<String, Any?>()
             hashMap[DATA.ID] = id
             hashMap[DATA.MOVIE_ID] = movieId
-            hashMap[DATA.TIMESTAMP] = System.currentTimeMillis()
+            hashMap[DATA.TIMESTAMP] = timestamp
             hashMap[DATA.COMMENT] = commentText
-            hashMap[DATA.PUBLISHER] = DATA.FirebaseUserUid
+            hashMap[DATA.PUBLISHER] = publisher
             moviesRef.child(movieId).child(DATA.COMMENTS).child(id).setValue(hashMap).await()
+            commentDao.insertComment(comment)
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -307,6 +336,7 @@ class MovieRepository @Inject constructor(
     suspend fun deleteComment(movieId: String, commentId: String): Result<Unit> {
         return try {
             moviesRef.child(movieId).child(DATA.COMMENTS).child(commentId).removeValue().await()
+            commentDao.deleteCommentById(commentId)
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)

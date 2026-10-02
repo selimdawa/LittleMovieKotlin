@@ -18,6 +18,7 @@ import com.flatcode.littlemovie.utils.checkInterested
 import com.flatcode.littlemovie.utils.isInterested
 import com.flatcode.littlemovie.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.MessageFormat
@@ -123,16 +124,23 @@ class CategoryDetailsActivity : BaseActivity() {
 
     private fun observeViewModel() {
         lifecycleScope.launch {
-            viewModel.movies.collect { movies ->
+            combine(viewModel.movies, viewModel.isLoading) { movies, isLoading ->
+                Pair(movies, isLoading)
+            }.collect { (movies, isLoading) ->
                 adapter.setFullList(movies)
 
-                binding!!.progress.visibility = View.GONE
-                if (movies.isNotEmpty()) {
-                    binding!!.recyclerView.visibility = View.VISIBLE
+                binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+                if (isLoading) {
                     binding!!.emptyText.visibility = View.GONE
+                    binding!!.recyclerView.visibility = if (movies.isNotEmpty()) View.VISIBLE else View.GONE
                 } else {
-                    binding!!.recyclerView.visibility = View.GONE
-                    binding!!.emptyText.visibility = View.VISIBLE
+                    if (movies.isNotEmpty()) {
+                        binding!!.recyclerView.visibility = View.VISIBLE
+                        binding!!.emptyText.visibility = View.GONE
+                    } else {
+                        binding!!.recyclerView.visibility = View.GONE
+                        binding!!.emptyText.visibility = View.VISIBLE
+                    }
                 }
             }
         }
@@ -140,12 +148,6 @@ class CategoryDetailsActivity : BaseActivity() {
         lifecycleScope.launch {
             viewModel.moviesCount.collect { count ->
                 binding!!.toolbar.number.text = MessageFormat.format("( {0} )", count)
-            }
-        }
-
-        lifecycleScope.launch {
-            viewModel.isLoading.collect { isLoading ->
-                binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
             }
         }
     }

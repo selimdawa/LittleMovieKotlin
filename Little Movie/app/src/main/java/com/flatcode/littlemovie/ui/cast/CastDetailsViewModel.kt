@@ -25,7 +25,7 @@ class CastDetailsViewModel @Inject constructor(
     private val _isInterested = MutableStateFlow(false)
     val isInterested: StateFlow<Boolean> = _isInterested
 
-    private val _isLoading = MutableStateFlow(false)
+    private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading
 
     fun loadMovies(castId: String, orderBy: String) {

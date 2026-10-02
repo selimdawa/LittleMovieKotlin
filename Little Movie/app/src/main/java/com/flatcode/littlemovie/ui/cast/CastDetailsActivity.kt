@@ -5,6 +5,9 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -19,6 +22,7 @@ import com.flatcode.littlemovie.utils.loadImage
 import com.flatcode.littlemovie.utils.loadImageBlur
 import com.flatcode.littlemovie.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.MessageFormat
@@ -37,6 +41,18 @@ class CastDetailsActivity : BaseActivity() {
     private var castName: String? = null
     private var castImage: String? = null
     private var castAbout: String? = null
+
+    private val nameTextView: TextView?
+        get() {
+            val constraint = binding?.layoutImageProfile?.getChildAt(0) as? ViewGroup
+            return constraint?.getChildAt(3) as? TextView
+        }
+
+    private val goImageView: ImageView?
+        get() {
+            val constraint = binding?.layoutImageProfile?.getChildAt(0) as? ViewGroup
+            return constraint?.getChildAt(4) as? ImageView
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +76,7 @@ class CastDetailsActivity : BaseActivity() {
         binding!!.imageBlur.loadImageBlur(true, castImage, 50)
 
         binding!!.toolbar.nameSpace.setText(R.string.cast_details)
-        binding!!.name.text = castName
+        nameTextView?.text = castName
         binding!!.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding!!.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
@@ -102,7 +118,7 @@ class CastDetailsActivity : BaseActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        binding!!.go.setOnClickListener {
+        goImageView?.setOnClickListener {
             activity.dialogAboutArtist(castImage, castName, castAbout)
         }
 
@@ -135,17 +151,25 @@ class CastDetailsActivity : BaseActivity() {
 
     private fun observeViewModel() {
         lifecycleScope.launch {
-            viewModel.movies.collect { movies ->
+            combine(viewModel.movies, viewModel.isLoading) { movies, isLoading ->
+                Pair(movies, isLoading)
+            }.collect { (movies, isLoading) ->
                 adapter.setFullList(movies)
 
                 binding!!.toolbar.number.text = MessageFormat.format("( {0} )", movies.size)
-                binding!!.progress.visibility = View.GONE
-                if (movies.isNotEmpty()) {
-                    binding!!.recyclerView.visibility = View.VISIBLE
+                binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+
+                if (isLoading) {
                     binding!!.emptyText.visibility = View.GONE
+                    binding!!.recyclerView.visibility = if (movies.isNotEmpty()) View.VISIBLE else View.GONE
                 } else {
-                    binding!!.recyclerView.visibility = View.GONE
-                    binding!!.emptyText.visibility = View.VISIBLE
+                    if (movies.isNotEmpty()) {
+                        binding!!.recyclerView.visibility = View.VISIBLE
+                        binding!!.emptyText.visibility = View.GONE
+                    } else {
+                        binding!!.recyclerView.visibility = View.GONE
+                        binding!!.emptyText.visibility = View.VISIBLE
+                    }
                 }
             }
         }
@@ -157,12 +181,6 @@ class CastDetailsActivity : BaseActivity() {
                 } else {
                     binding!!.add.setImageResource(R.drawable.ic_star_unselected)
                 }
-            }
-        }
-
-        lifecycleScope.launch {
-            viewModel.isLoading.collect { isLoading ->
-                binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
             }
         }
     }

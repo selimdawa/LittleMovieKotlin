@@ -4,7 +4,11 @@ import android.net.Uri
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
+import com.flatcode.littlemovie.db.FavoriteDao
+import com.flatcode.littlemovie.db.InterestedDao
 import com.flatcode.littlemovie.db.UserDao
+import com.flatcode.littlemovie.model.FavoriteEntity
+import com.flatcode.littlemovie.model.InterestedEntity
 import com.flatcode.littlemovie.model.User
 import com.flatcode.littlemovie.utils.DATA
 import com.google.firebase.auth.FirebaseAuth
@@ -12,6 +16,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -20,10 +26,14 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.coroutines.resume
 
+@Singleton
 class UserRepository @Inject constructor(
     private val userDao: UserDao,
+    private val favoriteDao: FavoriteDao,
+    private val interestedDao: InterestedDao,
 ) {
 
     private val auth = FirebaseAuth.getInstance()
@@ -54,23 +64,26 @@ class UserRepository @Inject constructor(
         }
     }
 
-    fun getUserInfo(userId: String): Flow<User?> = callbackFlow {
-        val listener = usersRef.child(userId).addValueEventListener(object : ValueEventListener {
+    fun getUserInfo(userId: String): Flow<User?> {
+        syncUser(userId)
+        return userDao.getUserById(userId)
+    }
+
+    private fun syncUser(userId: String) {
+        if (userId.isEmpty()) return
+        usersRef.child(userId).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val user = snapshot.getValue(User::class.java)
-                user?.let {
-                    launch {
-                        userDao.insertUser(it)
+                snapshot.getValue(User::class.java)?.let { user ->
+                    CoroutineScope(Dispatchers.IO).launch {
+                        userDao.insertUser(user)
                     }
                 }
-                trySend(user)
             }
 
             override fun onCancelled(error: DatabaseError) {
-                close(error.toException())
+                Timber.e("Error syncing user info: %s", error.message)
             }
         })
-        awaitClose { usersRef.child(userId).removeEventListener(listener) }
     }
 
     suspend fun updateProfile(userId: String, username: String, imageUrl: String?): Result<Unit> {
@@ -143,32 +156,51 @@ class UserRepository @Inject constructor(
         }
     }
 
-    fun getInterestedCount(userId: String, type: String): Flow<Int> = callbackFlow {
-        val listener = interestedRef.child(userId).child(type)
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    trySend(snapshot.childrenCount.toInt())
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    close(error.toException())
-                }
-            })
-        awaitClose { interestedRef.child(userId).child(type).removeEventListener(listener) }
+    fun getInterestedCount(userId: String, type: String): Flow<Int> {
+        syncInterested(userId, type)
+        return interestedDao.getInterestedCount(userId, type)
     }
 
-    fun getFavoritesCount(userId: String): Flow<Int> = callbackFlow {
-        val listener =
-            favoritesRef.child(userId).addValueEventListener(object : ValueEventListener {
+    fun getFavoritesCount(userId: String): Flow<Int> {
+        syncFavorites(userId)
+        return favoriteDao.getTotalFavoriteCount(userId)
+    }
+
+    private fun syncInterested(userId: String, type: String) {
+        if (userId.isEmpty()) return
+        interestedRef.child(userId).child(type)
+            .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    trySend(snapshot.childrenCount.toInt())
+                    val list = snapshot.children.mapNotNull { it.key }
+                        .map { InterestedEntity(userId, type, it) }
+                    CoroutineScope(Dispatchers.IO).launch {
+                        interestedDao.deleteAllInterestedForUser(userId, type)
+                        interestedDao.insertInterestedList(list)
+                    }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    close(error.toException())
+                    Timber.e("Error syncing interested count for %s: %s", type, error.message)
                 }
             })
-        awaitClose { favoritesRef.child(userId).removeEventListener(listener) }
+    }
+
+    private fun syncFavorites(userId: String) {
+        if (userId.isEmpty()) return
+        favoritesRef.child(userId).addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val favList = snapshot.children.mapNotNull { it.key }
+                    .map { FavoriteEntity(userId, it) }
+                CoroutineScope(Dispatchers.IO).launch {
+                    favoriteDao.deleteAllFavoritesForUser(userId)
+                    favoriteDao.insertFavorites(favList)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Timber.e("Error syncing favorites for user %s: %s", userId, error.message)
+            }
+        })
     }
 
     fun getInterestedCategories(userId: String): Flow<List<String>> = callbackFlow {
@@ -212,9 +244,11 @@ class UserRepository @Inject constructor(
             if (isInterested) {
                 incrementInterestedCount(id, type, 1)
                 interestedRef.child(userId).child(type).child(id).setValue(true).await()
+                interestedDao.insertInterested(InterestedEntity(userId, type, id))
             } else {
                 incrementInterestedCount(id, type, -1)
                 interestedRef.child(userId).child(type).child(id).removeValue().await()
+                interestedDao.deleteInterested(userId, type, id)
             }
         } catch (e: Exception) {
             Timber.e(e, "Error toggling interest")
