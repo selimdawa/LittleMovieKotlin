@@ -3,6 +3,7 @@
 package com.flatcode.littlemovieadmin.utils
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 
 object DATA {
     //Database
@@ -69,7 +70,7 @@ object DATA {
     var MOVIE = "Movie"
 
     //Other
-    val AUTH = FirebaseAuth.getInstance()
-    val FIREBASE_USER = AUTH.currentUser
-    val FirebaseUserUid = FIREBASE_USER!!.uid
+    val AUTH: FirebaseAuth get() = FirebaseAuth.getInstance()
+    val FIREBASE_USER: FirebaseUser? get() = AUTH.currentUser
+    val FirebaseUserUid: String get() = FIREBASE_USER?.uid ?: ""
 }

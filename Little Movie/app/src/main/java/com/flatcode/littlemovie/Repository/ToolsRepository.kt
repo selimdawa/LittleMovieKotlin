@@ -1,6 +1,8 @@
 package com.flatcode.littlemovie.repository
 
+import com.flatcode.littlemovie.db.SettingDao
 import com.flatcode.littlemovie.db.SliderDao
+import com.flatcode.littlemovie.model.SettingEntity
 import com.flatcode.littlemovie.model.SliderEntity
 import com.flatcode.littlemovie.utils.DATA
 import com.google.firebase.database.DataSnapshot
@@ -20,25 +22,43 @@ import javax.inject.Singleton
 
 @Singleton
 class ToolsRepository @Inject constructor(
-    private val sliderDao: SliderDao
+    private val sliderDao: SliderDao,
+    private val settingDao: SettingDao
 ) {
 
     private val database = FirebaseDatabase.getInstance()
     private val toolsRef = database.getReference(DATA.TOOLS)
 
     fun getPrivacyPolicy(): Flow<String?> = callbackFlow {
+        val repositoryScope = CoroutineScope(Dispatchers.IO)
+        val localJob = repositoryScope.launch {
+            settingDao.getSetting(DATA.PRIVACY_POLICY).collect { cached ->
+                if (!cached.isNullOrEmpty()) {
+                    trySend(cached)
+                }
+            }
+        }
+
         val listener =
             toolsRef.child(DATA.PRIVACY_POLICY).addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    trySend(snapshot.value?.toString())
+                    val value = snapshot.value?.toString().orEmpty()
+                    if (value.isNotEmpty()) {
+                        trySend(value)
+                        repositoryScope.launch {
+                            settingDao.insertSetting(SettingEntity(DATA.PRIVACY_POLICY, value))
+                        }
+                    }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
                     Timber.e("Error fetching privacy policy: %s", error.message)
-                    close(error.toException())
                 }
             })
-        awaitClose { toolsRef.child(DATA.PRIVACY_POLICY).removeEventListener(listener) }
+        awaitClose {
+            toolsRef.child(DATA.PRIVACY_POLICY).removeEventListener(listener)
+            localJob.cancel()
+        }
     }
 
     fun getSliderImages(): Flow<List<String>> {

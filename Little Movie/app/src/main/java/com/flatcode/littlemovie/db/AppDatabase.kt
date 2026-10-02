@@ -1,5 +1,6 @@
 package com.flatcode.littlemovie.db
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.flatcode.littlemovie.model.Cast
@@ -9,15 +10,14 @@ import com.flatcode.littlemovie.model.EditorsChoice
 import com.flatcode.littlemovie.model.FavoriteEntity
 import com.flatcode.littlemovie.model.InterestedEntity
 import com.flatcode.littlemovie.model.Movie
+import com.flatcode.littlemovie.model.SettingEntity
 import com.flatcode.littlemovie.model.SliderEntity
 import com.flatcode.littlemovie.model.User
 
 @Database(
-    entities = [
-        Movie::class, Category::class, Cast::class, User::class, Comment::class, EditorsChoice::class,
-        FavoriteEntity::class, InterestedEntity::class, SliderEntity::class
-    ],
+    entities = [Movie::class, Category::class, Cast::class, User::class, Comment::class, EditorsChoice::class, FavoriteEntity::class, InterestedEntity::class, SliderEntity::class, SettingEntity::class],
     version = 2,
+    autoMigrations = [AutoMigration(from = 1, to = 2)],
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -30,4 +30,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun favoriteDao(): FavoriteDao
     abstract fun interestedDao(): InterestedDao
     abstract fun sliderDao(): SliderDao
+    abstract fun settingDao(): SettingDao
 }

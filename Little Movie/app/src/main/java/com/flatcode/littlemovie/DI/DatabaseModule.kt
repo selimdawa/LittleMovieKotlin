@@ -10,6 +10,7 @@ import com.flatcode.littlemovie.db.EditorsChoiceDao
 import com.flatcode.littlemovie.db.FavoriteDao
 import com.flatcode.littlemovie.db.InterestedDao
 import com.flatcode.littlemovie.db.MovieDao
+import com.flatcode.littlemovie.db.SettingDao
 import com.flatcode.littlemovie.db.SliderDao
 import com.flatcode.littlemovie.db.UserDao
 import dagger.Module
@@ -28,7 +29,7 @@ object DatabaseModule {
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase {
         return Room.databaseBuilder(
             context, AppDatabase::class.java, "little_movie_db"
-        ).fallbackToDestructiveMigration().build()
+        ).build()
     }
 
     @Provides
@@ -47,7 +48,8 @@ object DatabaseModule {
     fun provideCommentDao(database: AppDatabase): CommentDao = database.commentDao()
 
     @Provides
-    fun provideEditorsChoiceDao(database: AppDatabase): EditorsChoiceDao = database.editorsChoiceDao()
+    fun provideEditorsChoiceDao(database: AppDatabase): EditorsChoiceDao =
+        database.editorsChoiceDao()
 
     @Provides
     fun provideFavoriteDao(database: AppDatabase): FavoriteDao = database.favoriteDao()
@@ -57,4 +59,7 @@ object DatabaseModule {
 
     @Provides
     fun provideSliderDao(database: AppDatabase): SliderDao = database.sliderDao()
+
+    @Provides
+    fun provideSettingDao(database: AppDatabase): SettingDao = database.settingDao()
 }
