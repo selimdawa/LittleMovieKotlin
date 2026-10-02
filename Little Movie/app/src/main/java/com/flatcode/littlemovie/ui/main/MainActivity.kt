@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.flatcode.littlemovie.R
@@ -18,79 +20,74 @@ import com.flatcode.littlemovie.utils.closeApp
 import com.flatcode.littlemovie.utils.loadImage
 import com.flatcode.littlemovie.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
-import io.selimdawa.bubblebottom.BubbleBottomNavigation
 import io.selimdawa.bubblebottom.Model
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity() {
 
-    private var binding: ActivityMainBinding? = null
+    private var _binding: ActivityMainBinding? = null
+    private val binding get() = _binding!!
+
     private var activity: Activity? = null
     private val context: Context = also { activity = it }
-    private var bottomNavigation: BubbleBottomNavigation? = null
-    private var navController: NavController? = null
+
+    private lateinit var navController: NavController
     private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding!!.root)
+        _binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        bottomNavigation = binding!!.bottomNavigation
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (navController.navigateUp().not()) {
+                    context.closeApp()
+                }
+            }
+        })
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
-        bottomNavigation!!.add(Model(0, R.drawable.ic_settings))
-        bottomNavigation!!.add(Model(1, R.drawable.ic_home))
-        bottomNavigation!!.add(Model(2, R.drawable.ic_books))
-        bottomNavigation!!.add(Model(3, R.drawable.ic_group))
-
-        bottomNavigation!!.setOnClickMenuListener { model ->
-            when (model.id) {
-                0 -> {
-                    binding!!.toolbar.card.visibility = View.GONE
-                    navController?.navigate(R.id.settingsFragment)
-                }
-
-                1 -> {
-                    binding!!.toolbar.card.visibility = View.VISIBLE
-                    navController?.navigate(R.id.homeFragment)
-                }
-
-                2 -> {
-                    binding!!.toolbar.card.visibility = View.GONE
-                    navController?.navigate(R.id.myMoviesFragment)
-                }
-
-                3 -> {
-                    binding!!.toolbar.card.visibility = View.GONE
-                    navController?.navigate(R.id.categoriesFragment)
-                }
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            _binding?.toolbar?.card?.visibility = if (destination.id == R.id.homeFragment) {
+                View.VISIBLE
+            } else {
+                View.GONE
             }
         }
 
-        binding!!.toolbar.image.setOnClickListener {
+        binding.bottomNavigation.apply {
+            add(Model(R.id.settingsFragment, R.drawable.ic_settings))
+            add(Model(R.id.homeFragment, R.drawable.ic_home))
+            add(Model(R.id.myMoviesFragment, R.drawable.ic_books))
+            add(Model(R.id.categoriesFragment, R.drawable.ic_group))
+
+            setOnShowListener { item -> navController.navigate(item.id) }
+            show(R.id.homeFragment, true)
+        }
+
+        binding.toolbar.image.setOnClickListener {
             context.openActivity<ProfileActivity>(DATA.PROFILE_ID to DATA.FirebaseUserUid)
         }
 
         lifecycleScope.launch {
-            viewModel.profileImageUrl.collect { profileImage ->
-                Timber.d("Profile image URL updated: %s", profileImage)
-                binding!!.toolbar.image.loadImage(true, profileImage)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.profileImageUrl.collectLatest { profileImage ->
+                    binding.toolbar.image.loadImage(true, profileImage)
+                }
             }
         }
         viewModel.loadUserInfo()
+    }
 
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (navController?.navigateUp() == false) {
-                    context.closeApp()
-                }
-            }
-        })
+    override fun onDestroy() {
+        super.onDestroy()
+        activity = null
+        _binding = null
     }
 }

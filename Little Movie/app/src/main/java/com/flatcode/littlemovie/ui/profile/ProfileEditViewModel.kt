@@ -36,11 +36,11 @@ class ProfileEditViewModel @Inject constructor(
         }
     }
 
-    fun updateProfile(username: String, imageUri: Uri?, extension: String?) {
+    fun updateProfile(username: String, imageUri: Uri?) {
         val userId = DATA.FirebaseUserUid ?: return
         viewModelScope.launch {
-            if (imageUri != null && extension != null) {
-                val uploadResult = repository.uploadProfileImage(userId, imageUri, extension)
+            if (imageUri != null) {
+                val uploadResult = repository.uploadProfileImage(userId, imageUri)
                 _imageUploadStatus.value = uploadResult
                 if (uploadResult.isSuccess) {
                     val imageUrl = uploadResult.getOrNull()

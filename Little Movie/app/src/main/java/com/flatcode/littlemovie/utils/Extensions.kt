@@ -2,14 +2,11 @@ package com.flatcode.littlemovie.utils
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
-import android.content.ContentResolver
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
-
 import android.net.Uri
-import android.webkit.MimeTypeMap
 import android.widget.ImageView
 import java.util.Locale
 import androidx.core.graphics.createBitmap
@@ -141,11 +138,6 @@ fun Context.rateApp() {
     }
 }
 
-fun Uri.getFileExtension(context: Context): String {
-    val cR: ContentResolver = context.contentResolver
-    val mime: MimeTypeMap = MimeTypeMap.getSingleton()
-    return mime.getExtensionFromMimeType(cR.getType(this))!!
-}
 
 fun Long.convertDuration(): String {
     val minutes = this / 1000 / 60

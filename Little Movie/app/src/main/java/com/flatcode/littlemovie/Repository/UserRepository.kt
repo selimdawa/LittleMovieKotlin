@@ -88,46 +88,38 @@ class UserRepository @Inject constructor(
     }
 
     suspend fun uploadProfileImage(
-        userId: String, imageUri: Uri, extension: String,
+        userId: String, imageUri: Uri,
     ): Result<String> {
         return suspendCancellableCoroutine { continuation ->
-            val builder = MediaManager.get().upload(imageUri)
+            val publicId = "${userId}_${System.currentTimeMillis()}"
+            MediaManager.get().upload(imageUri)
+                .option("public_id", publicId)
                 .option("folder", "Images/Profile")
-                .option("public_id", userId)
-                .option("unsigned", true)
-                .option("upload_preset", DATA.CLOUDINARY_UPLOAD_PRESET)
-
-            if (extension.isNotBlank()) {
-                builder.option("format", extension)
-            }
-
-            builder.callback(object : UploadCallback {
-                override fun onStart(requestId: String) {
-                    Timber.d("Cloudinary upload started: %s", requestId)
-                }
-
-                override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {
-                    // Progress can be handled here if needed
-                }
-
-                override fun onSuccess(requestId: String, resultData: Map<*, *>) {
-                    val url = resultData["secure_url"] as? String
-                    if (url != null) {
-                        continuation.resume(Result.success(url))
-                    } else {
-                        continuation.resume(Result.failure(Exception("Failed to get secure URL from Cloudinary")))
+                .unsigned(DATA.CLOUDINARY_UPLOAD_PRESET)
+                .callback(object : UploadCallback {
+                    override fun onStart(requestId: String?) {
+                        Timber.d("Cloudinary upload started: %s", requestId)
                     }
-                }
 
-                override fun onError(requestId: String, error: ErrorInfo) {
-                    Timber.e("Cloudinary upload error: %s", error.description)
-                    continuation.resume(Result.failure(Exception(error.description)))
-                }
+                    override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {}
 
-                override fun onReschedule(requestId: String, error: ErrorInfo) {
-                    Timber.w("Cloudinary upload rescheduled: %s", error.description)
-                }
-            }).dispatch()
+                    override fun onSuccess(requestId: String?, resultData: Map<*, *>?) {
+                        val url = resultData?.get("secure_url") as? String
+                        if (url != null) {
+                            continuation.resume(Result.success(url))
+                        } else {
+                            continuation.resume(Result.failure(Exception("Failed to get secure URL from Cloudinary")))
+                        }
+                    }
+
+                    override fun onError(requestId: String?, error: ErrorInfo?) {
+                        val description = error?.description ?: "Unknown error"
+                        Timber.e("Cloudinary upload error: %s", description)
+                        continuation.resume(Result.failure(Exception(description)))
+                    }
+
+                    override fun onReschedule(requestId: String?, error: ErrorInfo?) {}
+                }).dispatch()
         }
     }
 
