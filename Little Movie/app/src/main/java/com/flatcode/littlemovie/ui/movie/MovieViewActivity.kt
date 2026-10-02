@@ -70,8 +70,7 @@ class MovieViewActivity : BaseActivity() {
             override fun handleOnBackPressed() {
                 exoPlayer?.playWhenReady = false
                 exoPlayer?.release()
-                isEnabled = false
-                onBackPressedDispatcher.onBackPressed()
+                finish()
             }
         })
     }

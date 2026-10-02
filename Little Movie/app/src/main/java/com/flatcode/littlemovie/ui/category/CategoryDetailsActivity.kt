@@ -65,8 +65,7 @@ class CategoryDetailsActivity : BaseActivity() {
                     loadData()
                     DATA.isChange = false
                 } else {
-                    isEnabled = false
-                    onBackPressedDispatcher.onBackPressed()
+                    finish()
                 }
             }
         })

@@ -75,35 +75,6 @@
                             app:layout_constraintDimensionRatio="2:1"
                             tools:ignore="MissingConstraints" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="20sp"
-                            android:gravity="center"
-                            android:textColor="@color/white"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            app:layout_constraintBottom_toBottomOf="@+id/imageBlur"
-                            app:layout_constraintEnd_toStartOf="@+id/go"
-                            app:layout_constraintHorizontal_chainStyle="packed"
-                            app:layout_constraintStart_toStartOf="parent" />
-
-                        <ImageView
-                            android:layout_width="25sp"
-                            android:layout_height="25sp"
-                            android:background="@drawable/button2"
-                            android:backgroundTint="@color/white"
-                            android:contentDescription="@null"
-                            android:gravity="center"
-                            android:padding="2sp"
-                            android:rotation="180"
-                            android:src="@drawable/ic_back_white"
-                            app:layout_constraintBottom_toBottomOf="@+id/name"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/name"
-                            app:layout_constraintTop_toTopOf="@+id/name"
-                            app:tint="@color/dark" />
-
                         <ImageView
                             android:id="@+id/add"
                             android:layout_width="25sp"

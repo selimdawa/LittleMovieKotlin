@@ -15,13 +15,17 @@ fun ImageView.isInterested(id: String?, type: String?) {
     val ref = FirebaseDatabase.getInstance().getReference(DATA.INTERESTED)
     ref.child(userId).child(type).child(id).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                if (snapshot.exists()) {
-                    this@isInterested.setImageResource(R.drawable.ic_star_selected)
-                    this@isInterested.tag = "added"
-                } else {
-                    this@isInterested.setImageResource(R.drawable.ic_star_unselected)
-                    this@isInterested.tag = "add"
-                }
+                val act = this@isInterested.context.findActivity()
+                if (act != null && (act.isFinishing || act.isDestroyed)) return
+                try {
+                    if (snapshot.exists()) {
+                        this@isInterested.setImageResource(R.drawable.ic_star_selected)
+                        this@isInterested.tag = "added"
+                    } else {
+                        this@isInterested.setImageResource(R.drawable.ic_star_unselected)
+                        this@isInterested.tag = "add"
+                    }
+                } catch (_: Throwable) {}
             }
 
             override fun onCancelled(error: DatabaseError) {}
@@ -63,13 +67,17 @@ fun ImageView.isFavorite(id: String?, userId: String?) {
     val ref = FirebaseDatabase.getInstance().getReference(DATA.FAVORITES)
     ref.child(userId).child(id).addValueEventListener(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
-            if (snapshot.exists()) {
-                this@isFavorite.setImageResource(R.drawable.ic_heart_selected)
-                this@isFavorite.tag = "added"
-            } else {
-                this@isFavorite.setImageResource(R.drawable.ic_heart_unselected)
-                this@isFavorite.tag = "add"
-            }
+            val act = this@isFavorite.context.findActivity()
+            if (act != null && (act.isFinishing || act.isDestroyed)) return
+            try {
+                if (snapshot.exists()) {
+                    this@isFavorite.setImageResource(R.drawable.ic_heart_selected)
+                    this@isFavorite.tag = "added"
+                } else {
+                    this@isFavorite.setImageResource(R.drawable.ic_heart_unselected)
+                    this@isFavorite.tag = "add"
+                }
+            } catch (_: Throwable) {}
         }
 
         override fun onCancelled(error: DatabaseError) {}
@@ -94,13 +102,17 @@ fun TextView.isLoves(id: String?) {
     val ref = FirebaseDatabase.getInstance().getReference(DATA.LOVES).child(id)
     ref.child(userId).addValueEventListener(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
-            if (snapshot.exists()) {
-                this@isLoves.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_selected, 0, 0, 0)
-                this@isLoves.tag = "added"
-            } else {
-                this@isLoves.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_unselected, 0, 0, 0)
-                this@isLoves.tag = "add"
-            }
+            val act = this@isLoves.context.findActivity()
+            if (act != null && (act.isFinishing || act.isDestroyed)) return
+            try {
+                if (snapshot.exists()) {
+                    this@isLoves.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_selected, 0, 0, 0)
+                    this@isLoves.tag = "added"
+                } else {
+                    this@isLoves.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_unselected, 0, 0, 0)
+                    this@isLoves.tag = "add"
+                }
+            } catch (_: Throwable) {}
         }
 
         override fun onCancelled(error: DatabaseError) {}
@@ -112,7 +124,11 @@ fun TextView.nrLoves(id: String?) {
     val ref = FirebaseDatabase.getInstance().getReference(DATA.LOVES).child(id)
     ref.addValueEventListener(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
-            this@nrLoves.text = MessageFormat.format("{0}", snapshot.childrenCount)
+            val act = this@nrLoves.context.findActivity()
+            if (act != null && (act.isFinishing || act.isDestroyed)) return
+            try {
+                this@nrLoves.text = MessageFormat.format("{0}", snapshot.childrenCount)
+            } catch (_: Throwable) {}
         }
 
         override fun onCancelled(error: DatabaseError) {}

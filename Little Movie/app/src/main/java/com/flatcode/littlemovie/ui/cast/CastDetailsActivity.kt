@@ -42,17 +42,18 @@ class CastDetailsActivity : BaseActivity() {
     private var castImage: String? = null
     private var castAbout: String? = null
 
+    private val profileConstraint: ViewGroup?
+        get() = binding?.layoutImageProfile?.getChildAt(0) as? ViewGroup
+
+    private val profileLinearLayout: ViewGroup?
+        get() = (profileConstraint?.getChildAt(4) as? ViewGroup)
+            ?: (profileConstraint?.getChildAt(3) as? ViewGroup)
+
     private val nameTextView: TextView?
-        get() {
-            val constraint = binding?.layoutImageProfile?.getChildAt(0) as? ViewGroup
-            return constraint?.getChildAt(3) as? TextView
-        }
+        get() = profileLinearLayout?.getChildAt(0) as? TextView
 
     private val goImageView: ImageView?
-        get() {
-            val constraint = binding?.layoutImageProfile?.getChildAt(0) as? ViewGroup
-            return constraint?.getChildAt(4) as? ImageView
-        }
+        get() = profileLinearLayout?.getChildAt(1) as? ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,8 +92,7 @@ class CastDetailsActivity : BaseActivity() {
                     loadData()
                     DATA.isChange = false
                 } else {
-                    isEnabled = false
-                    onBackPressedDispatcher.onBackPressed()
+                    finish()
                 }
             }
         })
@@ -118,9 +118,12 @@ class CastDetailsActivity : BaseActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        goImageView?.setOnClickListener {
+        val openArtistDialog = View.OnClickListener {
             activity.dialogAboutArtist(castImage, castName, castAbout)
         }
+        goImageView?.setOnClickListener(openArtistDialog)
+        nameTextView?.setOnClickListener(openArtistDialog)
+        profileLinearLayout?.setOnClickListener(openArtistDialog)
 
         binding!!.switchBar.all.setOnClickListener {
             type = DATA.TIMESTAMP

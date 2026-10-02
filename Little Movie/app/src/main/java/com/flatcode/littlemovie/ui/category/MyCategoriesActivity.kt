@@ -53,8 +53,7 @@ class MyCategoriesActivity : BaseActivity() {
                     DATA.searchStatus = false
                     binding!!.toolbar.textSearch.setText(DATA.EMPTY)
                 } else {
-                    isEnabled = false
-                    onBackPressedDispatcher.onBackPressed()
+                    finish()
                 }
             }
         })

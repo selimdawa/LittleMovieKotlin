@@ -7,7 +7,7 @@
     android:background="?colorOnBackground"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".Activity.MovieDetailsActivity"
+    tools:context=".ui.movie.MovieDetailsActivity"
     tools:ignore="all">
 
     <include

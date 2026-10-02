@@ -36,8 +36,7 @@ class ProfileActivity : BaseActivity() {
                 if (isTaskRoot) {
                     openActivity<MainActivity>(clear = true)
                 } else {
-                    isEnabled = false
-                    onBackPressedDispatcher.onBackPressed()
+                    finish()
                 }
             }
         })

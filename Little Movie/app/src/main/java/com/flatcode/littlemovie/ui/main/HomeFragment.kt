@@ -20,6 +20,7 @@ import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -136,37 +137,45 @@ class HomeFragment : Fragment() {
                 }
 
                 launch {
-                    viewModel.editorsChoiceMovies.collectLatest { movies ->
+                    combine(viewModel.editorsChoiceMovies, viewModel.isLoading) { movies, isLoading ->
+                        Pair(movies, isLoading)
+                    }.collectLatest { (movies, isLoading) ->
                         Timber.d("Editors choice movies collected: %d", movies.size)
                         updateMovieList(
-                            movies, editorsChoiceAdapter, binding.bar, binding.recyclerView, binding.empty
+                            movies, editorsChoiceAdapter, binding.bar, binding.recyclerView, binding.empty, isLoading
                         )
                     }
                 }
 
                 launch {
-                    viewModel.mostViewedMovies.collectLatest { movies ->
+                    combine(viewModel.mostViewedMovies, viewModel.isLoading) { movies, isLoading ->
+                        Pair(movies, isLoading)
+                    }.collectLatest { (movies, isLoading) ->
                         Timber.d("Most viewed movies collected: %d", movies.size)
                         updateMovieList(
-                            movies, mostViewedAdapter, binding.bar2, binding.recyclerView2, binding.empty2
+                            movies, mostViewedAdapter, binding.bar2, binding.recyclerView2, binding.empty2, isLoading
                         )
                     }
                 }
 
                 launch {
-                    viewModel.mostLovedMovies.collectLatest { movies ->
+                    combine(viewModel.mostLovedMovies, viewModel.isLoading) { movies, isLoading ->
+                        Pair(movies, isLoading)
+                    }.collectLatest { (movies, isLoading) ->
                         Timber.d("Most loved movies collected: %d", movies.size)
                         updateMovieList(
-                            movies, mostLovedAdapter, binding.bar3, binding.recyclerView3, binding.empty3
+                            movies, mostLovedAdapter, binding.bar3, binding.recyclerView3, binding.empty3, isLoading
                         )
                     }
                 }
 
                 launch {
-                    viewModel.newMovies.collectLatest { movies ->
+                    combine(viewModel.newMovies, viewModel.isLoading) { movies, isLoading ->
+                        Pair(movies, isLoading)
+                    }.collectLatest { (movies, isLoading) ->
                         Timber.d("New movies collected: %d", movies.size)
                         updateMovieList(
-                            movies, newMoviesAdapter, binding.bar4, binding.recyclerView4, binding.empty4
+                            movies, newMoviesAdapter, binding.bar4, binding.recyclerView4, binding.empty4, isLoading
                         )
                     }
                 }
@@ -175,16 +184,22 @@ class HomeFragment : Fragment() {
     }
 
     private fun updateMovieList(
-        movies: List<Movie>, adapter: MovieAdapter, bar: View, recyclerView: View, empty: View
+        movies: List<Movie>, adapter: MovieAdapter, bar: View, recyclerView: View, empty: View, isLoading: Boolean
     ) {
         adapter.submitList(movies)
-        bar.visibility = View.GONE
-        if (movies.isNotEmpty()) {
-            recyclerView.visibility = View.VISIBLE
+        if (isLoading) {
+            bar.visibility = View.VISIBLE
             empty.visibility = View.GONE
+            recyclerView.visibility = if (movies.isNotEmpty()) View.VISIBLE else View.GONE
         } else {
-            recyclerView.visibility = View.GONE
-            empty.visibility = View.VISIBLE
+            bar.visibility = View.GONE
+            if (movies.isNotEmpty()) {
+                recyclerView.visibility = View.VISIBLE
+                empty.visibility = View.GONE
+            } else {
+                recyclerView.visibility = View.GONE
+                empty.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -194,6 +209,7 @@ class HomeFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        _binding?.imageSlider?.stopAutoCycle()
         super.onDestroyView()
         _binding = null
     }

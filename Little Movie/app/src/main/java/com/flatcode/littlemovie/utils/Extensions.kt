@@ -8,7 +8,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.widget.ImageView
-import java.util.Locale
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
 import androidx.core.net.toUri
@@ -21,6 +20,7 @@ import coil3.request.transformations
 import coil3.size.Size
 import coil3.transform.Transformation
 import com.flatcode.littlemovie.R
+import java.util.Locale
 
 inline fun <reified T : Activity> Context.openActivity(
     vararg extras: Pair<String, Any?>,
@@ -72,6 +72,10 @@ fun Context.startCropActivity(
 
 fun ImageView.loadImage(isUser: Boolean, url: String?) {
     try {
+        val activity = this.context.findActivity()
+        if (activity != null && (activity.isFinishing || activity.isDestroyed)) {
+            return
+        }
         if (url.isNullOrEmpty() || url == DATA.BASIC) {
             if (isUser) {
                 this.setImageResource(R.drawable.basic_user)
@@ -86,13 +90,19 @@ fun ImageView.loadImage(isUser: Boolean, url: String?) {
                 crossfade(true)
             }
         }
-    } catch (_: Exception) {
-        this.setImageResource(R.color.image_profile)
+    } catch (_: Throwable) {
+        try {
+            this.setImageResource(R.color.image_profile)
+        } catch (_: Throwable) {}
     }
 }
 
 fun ImageView.loadImageBlur(isUser: Boolean, url: String?, level: Int) {
     try {
+        val activity = this.context.findActivity()
+        if (activity != null && (activity.isFinishing || activity.isDestroyed)) {
+            return
+        }
         if (url.isNullOrEmpty() || url == DATA.BASIC) {
             if (isUser) {
                 this.setImageResource(R.drawable.basic_user)
@@ -107,8 +117,10 @@ fun ImageView.loadImageBlur(isUser: Boolean, url: String?, level: Int) {
                 transformations(SimpleBlurTransformation(level.toFloat()))
             }
         }
-    } catch (_: Exception) {
-        this.setImageResource(R.color.image_profile)
+    } catch (_: Throwable) {
+        try {
+            this.setImageResource(R.color.image_profile)
+        } catch (_: Throwable) {}
     }
 }
 
@@ -150,51 +162,58 @@ class SimpleBlurTransformation(private val radius: Float) : Transformation() {
 
     override suspend fun transform(input: Bitmap, size: Size): Bitmap {
         if (input.isRecycled) return input
-        val scaleFactor = 6
-        val w = (input.width / scaleFactor).coerceAtLeast(1)
-        val h = (input.height / scaleFactor).coerceAtLeast(1)
-        val small = input.scale(w, h, true)
-        val r = (radius / scaleFactor).toInt().coerceAtLeast(1)
-        val pix = IntArray(w * h)
-        small.getPixels(pix, 0, w, 0, 0, w, h)
-        val blurred = IntArray(w * h)
-        for (y in 0 until h) for (x in 0 until w) {
-            var rs = 0L
-            var gs = 0L
-            var bs = 0L
-            var c = 0
-            for (i in -r..r) {
-                val xi = (x + i).coerceIn(0, w - 1)
-                val p = pix[y * w + xi]
-                rs += (p shr 16) and 0xff
-                gs += (p shr 8) and 0xff
-                bs += p and 0xff
-                c++
+        return try {
+            val scaleFactor = 6
+            val w = (input.width / scaleFactor).coerceAtLeast(1)
+            val h = (input.height / scaleFactor).coerceAtLeast(1)
+            val small = input.scale(w, h, true)
+            if (input.isRecycled || small.isRecycled) return input
+            val r = (radius / scaleFactor).toInt().coerceAtLeast(1)
+            val pix = IntArray(w * h)
+            small.getPixels(pix, 0, w, 0, 0, w, h)
+            val blurred = IntArray(w * h)
+            for (y in 0 until h) for (x in 0 until w) {
+                var rs = 0L
+                var gs = 0L
+                var bs = 0L
+                var c = 0
+                for (i in -r..r) {
+                    val xi = (x + i).coerceIn(0, w - 1)
+                    val p = pix[y * w + xi]
+                    rs += (p shr 16) and 0xff
+                    gs += (p shr 8) and 0xff
+                    bs += p and 0xff
+                    c++
+                }
+                blurred[y * w + x] =
+                    (0xff shl 24) or ((rs / c).toInt() shl 16) or ((gs / c).toInt() shl 8) or (bs / c).toInt()
             }
-            blurred[y * w + x] =
-                (0xff shl 24) or ((rs / c).toInt() shl 16) or ((gs / c).toInt() shl 8) or (bs / c).toInt()
-        }
-        for (x in 0 until w) for (y in 0 until h) {
-            var rs = 0L
-            var gs = 0L
-            var bs = 0L
-            var c = 0
-            for (i in -r..r) {
-                val yi = (y + i).coerceIn(0, h - 1)
-                val p = blurred[yi * w + x]
-                rs += (p shr 16) and 0xff
-                gs += (p shr 8) and 0xff
-                bs += p and 0xff
-                c++
+            for (x in 0 until w) for (y in 0 until h) {
+                var rs = 0L
+                var gs = 0L
+                var bs = 0L
+                var c = 0
+                for (i in -r..r) {
+                    val yi = (y + i).coerceIn(0, h - 1)
+                    val p = blurred[yi * w + x]
+                    rs += (p shr 16) and 0xff
+                    gs += (p shr 8) and 0xff
+                    bs += p and 0xff
+                    c++
+                }
+                pix[y * w + x] =
+                    (0xff shl 24) or ((rs / c).toInt() shl 16) or ((gs / c).toInt() shl 8) or (bs / c).toInt()
             }
-            pix[y * w + x] =
-                (0xff shl 24) or ((rs / c).toInt() shl 16) or ((gs / c).toInt() shl 8) or (bs / c).toInt()
+            val output = createBitmap(w, h, Bitmap.Config.ARGB_8888)
+            output.setPixels(pix, 0, w, 0, 0, w, h)
+            val finalOutput = output.scale(input.width, input.height, true)
+            if (output != finalOutput) output.recycle()
+            if (small != input) small.recycle()
+            finalOutput
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
+        } catch (_: Throwable) {
+            input
         }
-        val output = createBitmap(w, h, Bitmap.Config.ARGB_8888)
-        output.setPixels(pix, 0, w, 0, 0, w, h)
-        val finalOutput = output.scale(input.width, input.height, true)
-        if (output != finalOutput) output.recycle()
-        if (small != input) small.recycle()
-        return finalOutput
     }
 }

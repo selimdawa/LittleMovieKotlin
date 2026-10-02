@@ -44,7 +44,11 @@ class HomeViewModel @Inject constructor(
     private val _sliderImages = MutableStateFlow<List<String>>(emptyList())
     val sliderImages: StateFlow<List<String>> = _sliderImages
 
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
     fun loadData() {
+        _isLoading.value = true
         loadCategories()
         loadSliderShow()
         loadMovies(DATA.EDITORS_CHOICE, _editorsChoiceMovies)
@@ -83,6 +87,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             movieRepository.getMovies(orderBy).collectLatest { list ->
                 stateFlow.value = list
+                _isLoading.value = false
                 Timber.d("Movies updated for %s: %d", orderBy, list.size)
             }
         }
