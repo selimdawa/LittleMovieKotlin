@@ -92,68 +92,81 @@ class SliderShowActivity : BaseActivity() {
     }
 
     private fun observeState() {
+        val linearLayouts = listOf(
+            binding.linearOne,
+            binding.linearTwo,
+            binding.linearThree,
+            binding.linearFour,
+            binding.linearFive,
+            binding.linearSix,
+            binding.linearSeven,
+            binding.linearEight,
+            binding.linearNine,
+            binding.linearTeen,
+            binding.linearEleven,
+            binding.linearTwelfth,
+            binding.linearThirteen,
+            binding.linearFourteenth,
+            binding.linearFifteenth,
+            binding.linearSixteen,
+            binding.linearSeventeen,
+            binding.linearEighteen,
+            binding.linearNineteen,
+            binding.linearTwenty
+        )
+
+        val imageViews = listOf(
+            binding.imageOne,
+            binding.imageTwo,
+            binding.imageThree,
+            binding.imageFour,
+            binding.imageFive,
+            binding.imageSix,
+            binding.imageSeven,
+            binding.imageEight,
+            binding.imageNine,
+            binding.imageTeen,
+            binding.imageEleven,
+            binding.imageTwelfth,
+            binding.imageThirteen,
+            binding.imageFourteenth,
+            binding.imageFifteenth,
+            binding.imageSixteen,
+            binding.imageSeventeen,
+            binding.imageEighteen,
+            binding.imageNineteen,
+            binding.imageTwenty
+        )
+
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { state ->
-                    binding.bar.visibility = if (state.isLoading) View.VISIBLE else View.GONE
+                viewModel.itemCount.collect { itemCount ->
                     binding.toolbar.nameSpace.text =
-                        MessageFormat.format("Slider Show ( {0} )", state.itemCount)
-
-                    val linearLayouts = listOf(
-                        binding.linearOne,
-                        binding.linearTwo,
-                        binding.linearThree,
-                        binding.linearFour,
-                        binding.linearFive,
-                        binding.linearSix,
-                        binding.linearSeven,
-                        binding.linearEight,
-                        binding.linearNine,
-                        binding.linearTeen,
-                        binding.linearEleven,
-                        binding.linearTwelfth,
-                        binding.linearThirteen,
-                        binding.linearFourteenth,
-                        binding.linearFifteenth,
-                        binding.linearSixteen,
-                        binding.linearSeventeen,
-                        binding.linearEighteen,
-                        binding.linearNineteen,
-                        binding.linearTwenty
-                    )
-
-                    val imageViews = listOf(
-                        binding.imageOne,
-                        binding.imageTwo,
-                        binding.imageThree,
-                        binding.imageFour,
-                        binding.imageFive,
-                        binding.imageSix,
-                        binding.imageSeven,
-                        binding.imageEight,
-                        binding.imageNine,
-                        binding.imageTeen,
-                        binding.imageEleven,
-                        binding.imageTwelfth,
-                        binding.imageThirteen,
-                        binding.imageFourteenth,
-                        binding.imageFifteenth,
-                        binding.imageSixteen,
-                        binding.imageSeventeen,
-                        binding.imageEighteen,
-                        binding.imageNineteen,
-                        binding.imageTwenty
-                    )
+                        MessageFormat.format("Slider Show ( {0} )", itemCount)
 
                     linearLayouts.forEachIndexed { index, linearLayout ->
                         linearLayout.visibility =
-                            if (state.itemCount >= index) View.VISIBLE else View.GONE
+                            if (itemCount >= index) View.VISIBLE else View.GONE
                     }
+                }
+            }
+        }
 
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.images.collect { images ->
                     imageViews.forEachIndexed { index, imageView ->
-                        val url = state.images[(index + 1).toString()]
+                        val url = images[(index + 1).toString()]
                         imageView.loadImage(url)
                     }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isLoading.collect { isLoading ->
+                    binding.bar.visibility = if (isLoading) View.VISIBLE else View.GONE
                 }
             }
         }
@@ -185,10 +198,5 @@ class SliderShowActivity : BaseActivity() {
             progressDialog?.dismiss()
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.loadSliderShow()
     }
 }

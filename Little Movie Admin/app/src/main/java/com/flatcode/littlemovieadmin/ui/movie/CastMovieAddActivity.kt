@@ -12,6 +12,7 @@ import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.databinding.ActivityCastMovieBinding
 import com.flatcode.littlemovieadmin.utils.DATA.castMovie
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -48,25 +49,27 @@ class CastMovieAddActivity : BaseActivity() {
     private fun observeState() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { state ->
-                    binding.progress.visibility = if (state.isLoading) View.VISIBLE else View.GONE
+                combine(viewModel.castList, viewModel.isLoading) { list, isLoading ->
+                    Pair(list, isLoading)
+                }.collect { (list, isLoading) ->
+                    adapter.submitList(list)
 
-                    adapter.submitList(state.castList)
+                    binding.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
 
-                    if (state.castList.isNotEmpty()) {
-                        binding.recyclerView.visibility = View.VISIBLE
+                    if (isLoading) {
                         binding.emptyText.visibility = View.GONE
-                    } else if (!state.isLoading) {
-                        binding.recyclerView.visibility = View.GONE
-                        binding.emptyText.visibility = View.VISIBLE
+                        binding.recyclerView.visibility = if (list.isNotEmpty()) View.VISIBLE else View.GONE
+                    } else {
+                        if (list.isNotEmpty()) {
+                            binding.recyclerView.visibility = View.VISIBLE
+                            binding.emptyText.visibility = View.GONE
+                        } else {
+                            binding.recyclerView.visibility = View.GONE
+                            binding.emptyText.visibility = View.VISIBLE
+                        }
                     }
                 }
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.loadCast()
     }
 }

@@ -2,13 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="all"
     android:id="@+id/item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="5dp"
     android:layout_marginBottom="10dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:ignore="all">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -22,13 +22,14 @@
                 android:id="@+id/image"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:padding="2dp"
                 android:scaleType="centerCrop"
                 android:src="@color/image_profile"
+                app:layout_constraintDimensionRatio="1:1"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.App.Circle"
                 app:strokeColor="@color/white"
                 app:strokeWidth="2dp"
-                app:layout_constraintDimensionRatio="1:1"
-                tools:ignore="MissingConstraints,ContentDescription"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.App.Circle" />
+                tools:ignore="MissingConstraints,ContentDescription" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

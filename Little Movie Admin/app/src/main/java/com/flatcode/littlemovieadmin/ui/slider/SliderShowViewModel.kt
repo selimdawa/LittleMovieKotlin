@@ -7,9 +7,12 @@ import com.flatcode.littlemovieadmin.repository.SliderRepository
 import com.flatcode.littlemovieadmin.utils.CloudinaryHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -19,8 +22,15 @@ class SliderShowViewModel @Inject constructor(
     private val repository: SliderRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(SliderShowUiState())
-    val uiState: StateFlow<SliderShowUiState> = _uiState.asStateFlow()
+    private val _images = MutableStateFlow<Map<String, String>>(emptyMap())
+    val images: StateFlow<Map<String, String>> = _images.asStateFlow()
+
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    val itemCount: StateFlow<Int> = _images.map { map ->
+        map.filter { it.value.isNotEmpty() }.size
+    }.stateIn(viewModelScope, SharingStarted.Lazily, 0)
 
     init {
         loadSliderShow()
@@ -28,19 +38,9 @@ class SliderShowViewModel @Inject constructor(
 
     fun loadSliderShow() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            try {
-                val images = repository.getSliderImages()
-                _uiState.update { state ->
-                    state.copy(
-                        isLoading = false,
-                        images = images,
-                        itemCount = images.filter { entry -> entry.value.isNotEmpty() }.size
-                    )
-                }
-            } catch (e: Exception) {
-                Timber.e(e, "Error loading slider images")
-                _uiState.update { it.copy(isLoading = false) }
+            repository.getSliderImages().collectLatest { map ->
+                _images.value = map
+                _isLoading.value = false
             }
         }
     }
@@ -50,17 +50,11 @@ class SliderShowViewModel @Inject constructor(
             try {
                 val url = CloudinaryHelper.uploadFile(imageUri)
                 repository.updateSliderImage(name, url)
-                loadSliderShow()
                 onResult(true, "The photo has been posted")
             } catch (e: Exception) {
+                Timber.e(e, "Error uploading slider image")
                 onResult(false, e.message)
             }
         }
     }
 }
-
-data class SliderShowUiState(
-    val isLoading: Boolean = false,
-    val images: Map<String, String> = emptyMap(),
-    val itemCount: Int = 0
-)

@@ -15,6 +15,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -38,8 +39,8 @@ class MovieAddViewModel @Inject constructor(
     private fun loadCategories() {
         viewModelScope.launch {
             try {
-                val list = categoryRepo.getCategories(DATA.TIMESTAMP).map {
-                    CategoryInfo(it.id, it.name ?: "")
+                val list = categoryRepo.getCategories(DATA.TIMESTAMP).first().map { cat ->
+                    CategoryInfo(cat.id, cat.name ?: "")
                 }
                 _uiState.update { it.copy(categories = list) }
             } catch (e: Exception) {
@@ -98,7 +99,6 @@ class MovieAddViewModel @Inject constructor(
                 castIds.forEach { castId ->
                     castId?.let {
                         castUpdates[it] = true
-                        // Update cast movie count (could be moved to a repository method that handles batch updates)
                         val cast = castRepo.getCast(it)
                         cast?.let { c ->
                             castRepo.updateCast(it, mapOf(DATA.MOVIES_COUNT to (c.moviesCount + 1)))
@@ -129,5 +129,3 @@ class MovieAddViewModel @Inject constructor(
 data class MovieAddUiState(
     val isLoading: Boolean = false, val categories: List<CategoryInfo> = emptyList()
 )
-
-data class CategoryInfo(val id: String, val name: String)

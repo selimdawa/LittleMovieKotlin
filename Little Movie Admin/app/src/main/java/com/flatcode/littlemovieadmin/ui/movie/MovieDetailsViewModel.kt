@@ -15,6 +15,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -52,7 +53,7 @@ class MovieDetailsViewModel @Inject constructor(
                 loadComments(movieId)
 
                 val castIds = castRepo.getMovieCastIds(movieId)
-                val allCast = castRepo.getCastList(DATA.TIMESTAMP)
+                val allCast = castRepo.getCastList(DATA.TIMESTAMP).first()
                 val filteredCast = allCast.filter { castIds.contains(it.id) }
                 _uiState.update { it.copy(castList = filteredCast) }
 

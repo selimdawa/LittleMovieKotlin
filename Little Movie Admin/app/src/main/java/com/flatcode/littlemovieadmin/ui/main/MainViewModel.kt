@@ -26,6 +26,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -41,7 +42,7 @@ class MainViewModel @Inject constructor(
     private val sliderRepo: SliderRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(MainUiState())
+    private val _uiState = MutableStateFlow(MainUiState(isLoading = true))
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
     init {
@@ -50,24 +51,21 @@ class MainViewModel @Inject constructor(
 
     fun refresh() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            _uiState.update { it.copy(isLoading = it.items.isEmpty()) }
             try {
                 val uid = authRepo.getCurrentUserUid() ?: return@launch
                 val user = userRepo.getUserInfo(uid)
 
-                // Fetching all counts in parallel could be better, but let's do sequential for now or use async
-                // For simplicity and to avoid too many listeners, repositories use .get().await()
-
-                val users = userRepo.getAllUsers().count { it.id != uid }
-                val movies = movieRepo.getMovies(DATA.TIMESTAMP)
+                val users = userRepo.getAllUsers().first().count { it.id != uid }
+                val movies = movieRepo.getMovies(DATA.TIMESTAMP).first()
                 val moviesCount = movies.size
                 val editorsChoiceCount =
                     movies.count { it.editorsChoice != 0 && it.publisher == uid }
 
                 val categoriesCount =
-                    categoryRepo.getCategories(DATA.TIMESTAMP).count { it.publisher == uid }
-                val sliderCount = sliderRepo.getSliderImages().filter { it.value.isNotEmpty() }.size
-                val castCount = castRepo.getCastList(DATA.TIMESTAMP).size
+                    categoryRepo.getCategories(DATA.TIMESTAMP).first().count { it.publisher == uid }
+                val sliderCount = sliderRepo.getSliderImages().first().filter { it.value.isNotEmpty() }.size
+                val castCount = castRepo.getCastList(DATA.TIMESTAMP).first().size
                 val favoritesCount = movieRepo.getFavoriteMovieIds(uid).size
 
                 val list = mutableListOf<Main>().apply {

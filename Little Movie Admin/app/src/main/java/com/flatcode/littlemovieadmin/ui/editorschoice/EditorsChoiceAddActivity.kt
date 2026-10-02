@@ -15,8 +15,8 @@ import com.flatcode.littlemovieadmin.databinding.ActivityEditorsChoiceAddBinding
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.addToEditorsChoice
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.text.MessageFormat
 
 @AndroidEntryPoint
@@ -48,6 +48,7 @@ class EditorsChoiceAddActivity : BaseActivity() {
                     binding.toolbar.root.getChildAt(1).visibility = View.GONE
                     DATA.searchStatus = false
                     binding.toolbar.textSearch.setText(DATA.EMPTY)
+                    viewModel.setSearchQuery("")
                 } else {
                     isEnabled = false
                     onBackPressedDispatcher.onBackPressed()
@@ -65,11 +66,7 @@ class EditorsChoiceAddActivity : BaseActivity() {
         binding.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                try {
-                    adapter.filter(s.toString())
-                } catch (e: Exception) {
-                    Timber.e(e, "Filter error")
-                }
+                viewModel.setSearchQuery(s.toString())
             }
 
             override fun afterTextChanged(s: Editable) {}
@@ -99,23 +96,28 @@ class EditorsChoiceAddActivity : BaseActivity() {
     private fun observeState() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { state ->
-                    binding.progress.visibility = if (state.isLoading) View.VISIBLE else View.GONE
-                    binding.toolbar.number.text = MessageFormat.format("( {0} )", state.count)
+                combine(viewModel.movies, viewModel.isLoading) { list, isLoading ->
+                    Pair(list, isLoading)
+                }.collect { (list, isLoading) ->
+                    binding.toolbar.number.text = MessageFormat.format("( {0} )", list.size)
+                    adapter.submitList(list)
 
-                    adapter.list = state.movies
-                    adapter.submitList(state.movies)
+                    binding.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
 
-                    if (state.movies.isNotEmpty()) {
-                        binding.recyclerView.visibility = View.VISIBLE
+                    if (isLoading) {
                         binding.emptyText.visibility = View.GONE
-                    } else if (!state.isLoading) {
-                        binding.recyclerView.visibility = View.GONE
-                        binding.emptyText.visibility = View.VISIBLE
+                        binding.recyclerView.visibility = if (list.isNotEmpty()) View.VISIBLE else View.GONE
+                    } else {
+                        if (list.isNotEmpty()) {
+                            binding.recyclerView.visibility = View.VISIBLE
+                            binding.emptyText.visibility = View.GONE
+                        } else {
+                            binding.recyclerView.visibility = View.GONE
+                            binding.emptyText.visibility = View.VISIBLE
+                        }
                     }
                 }
             }
         }
     }
-
 }

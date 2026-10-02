@@ -8,55 +8,68 @@ import com.flatcode.littlemovieadmin.repository.UserRepository
 import com.flatcode.littlemovieadmin.utils.DATA
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class UsersViewModel @Inject constructor(
-    private val repository: UserRepository, private val authRepo: AuthRepository
+    private val repository: UserRepository,
+    private val authRepo: AuthRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(UsersUiState())
-    val uiState: StateFlow<UsersUiState> = _uiState.asStateFlow()
+    private val _users = MutableStateFlow<List<User>>(emptyList())
+    private val _searchQuery = MutableStateFlow("")
 
-    fun getData(orderBy: String) {
+    val users: StateFlow<List<User>> = combine(_users, _searchQuery) { list, query ->
+        if (query.isEmpty()) {
+            list
+        } else {
+            list.filter {
+                it.username?.contains(query, ignoreCase = true) == true
+            }
+        }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    private val _orderBy = MutableStateFlow(DATA.TIMESTAMP)
+    val orderBy: StateFlow<String> = _orderBy.asStateFlow()
+
+    init {
+        fetchData()
+    }
+
+    private fun fetchData() {
+        val myUid = authRepo.getCurrentUserUid()
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, currentType = orderBy) }
-            try {
-                val myUid = authRepo.getCurrentUserUid()
-                val allUsers = repository.getAllUsers()
-                // Filtering and sorting manually because database query for 'orderBy' is limited
-                // but let's assume we use the repository method if we can sort by child.
-                // Firebase .get() doesn't support complex sorting as easily as listeners, 
-                // but we can sort the list here.
-
-                val filteredUsers = allUsers.filter { it.id != myUid }.let { list ->
-                    when (orderBy) {
-                        DATA.NAME -> list.sortedBy { it.username }
-                        else -> list.sortedByDescending { it.timestamp }
+            _orderBy.collectLatest { order ->
+                _isLoading.value = true
+                repository.getAllUsers().collectLatest { rawList ->
+                    val filtered = rawList.filter { it.id != myUid }.let { list ->
+                        when (order) {
+                            DATA.NAME -> list.sortedBy { it.username }
+                            else -> list.sortedByDescending { it.timestamp }
+                        }
                     }
+                    _users.value = filtered
+                    _isLoading.value = false
                 }
-
-                _uiState.update {
-                    it.copy(
-                        isLoading = false, users = filteredUsers, count = filteredUsers.size
-                    )
-                }
-            } catch (e: Exception) {
-                Timber.e(e, "Error loading users")
-                _uiState.update { it.copy(isLoading = false) }
             }
         }
     }
-}
 
-data class UsersUiState(
-    val isLoading: Boolean = false,
-    val users: List<User> = emptyList(),
-    val count: Int = 0,
-    val currentType: String = DATA.TIMESTAMP
-)
+    fun getData(orderBy: String) {
+        _orderBy.value = orderBy
+    }
+
+    fun setSearchQuery(query: String) {
+        _searchQuery.value = query
+    }
+}

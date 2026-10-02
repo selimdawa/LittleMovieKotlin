@@ -5,6 +5,9 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
@@ -32,6 +35,20 @@ class CastDetailsActivity : BaseActivity() {
     private lateinit var binding: ActivityCastDetailsBinding
     private val viewModel: CastDetailsViewModel by viewModels()
     private lateinit var adapter: MovieAdapter
+
+    private val nameTextView: TextView?
+        get() {
+            val constraint = binding.layoutImageProfile.getChildAt(0) as? ViewGroup
+            val nameGoLayout = constraint?.getChildAt(3) as? ViewGroup
+            return nameGoLayout?.getChildAt(0) as? TextView
+        }
+
+    private val goImageView: ImageView?
+        get() {
+            val constraint = binding.layoutImageProfile.getChildAt(0) as? ViewGroup
+            val nameGoLayout = constraint?.getChildAt(3) as? ViewGroup
+            return nameGoLayout?.getChildAt(1) as? ImageView
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,7 +103,7 @@ class CastDetailsActivity : BaseActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        binding.go.setOnClickListener {
+        goImageView?.setOnClickListener {
             val state = viewModel.uiState.value
             dialogAboutArtist(state.castImage, state.castName, state.castAbout)
         }
@@ -125,7 +142,7 @@ class CastDetailsActivity : BaseActivity() {
                 viewModel.uiState.collect { state ->
                     binding.progress.visibility = if (state.isLoading) View.VISIBLE else View.GONE
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", state.count)
-                    binding.name.text = state.castName
+                    nameTextView?.text = state.castName
 
                     binding.image.loadImage(state.castImage)
                     binding.imageBlur.loadBlur(state.castImage, 50)
@@ -133,20 +150,20 @@ class CastDetailsActivity : BaseActivity() {
                     adapter.list = state.movies
                     adapter.submitList(state.movies)
 
-                    if (state.movies.isNotEmpty()) {
-                        binding.recyclerView.visibility = View.VISIBLE
+                    if (state.isLoading) {
                         binding.emptyText.visibility = View.GONE
-                    } else if (!state.isLoading) {
-                        binding.recyclerView.visibility = View.GONE
-                        binding.emptyText.visibility = View.VISIBLE
+                        binding.recyclerView.visibility = if (state.movies.isNotEmpty()) View.VISIBLE else View.GONE
+                    } else {
+                        if (state.movies.isNotEmpty()) {
+                            binding.recyclerView.visibility = View.VISIBLE
+                            binding.emptyText.visibility = View.GONE
+                        } else {
+                            binding.recyclerView.visibility = View.GONE
+                            binding.emptyText.visibility = View.VISIBLE
+                        }
                     }
                 }
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.getData(viewModel.uiState.value.currentType)
     }
 }

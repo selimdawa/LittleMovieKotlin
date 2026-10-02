@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -37,16 +38,7 @@ class CastDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, currentType = orderBy) }
             try {
-                // To find movies for a cast, we can either:
-                // 1. Scan all CAST_MOVIE entries (inefficient but works with existing schema)
-                // 2. Have a list of movie IDs in the CAST object (missing in schema)
-                // Existing logic:
-                // for (snapshot in dataSnapshot.children) { // snapshot is movieId
-                //    if (snapshot.hasChild(castId)) { ... }
-                // }
-
-                // Let's use the scan logic but cleaner.
-                val movies = movieRepo.getMovies(orderBy).filter { movie ->
+                val movies = movieRepo.getMovies(orderBy).first().filter { movie ->
                     val castIds = castRepo.getMovieCastIds(movie.id)
                     castIds.contains(castId)
                 }

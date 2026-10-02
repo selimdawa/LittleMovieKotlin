@@ -13,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -37,8 +38,8 @@ class MovieEditViewModel @Inject constructor(
     private fun loadCategories() {
         viewModelScope.launch {
             try {
-                val list = categoryRepo.getCategories(DATA.TIMESTAMP).map {
-                    CategoryInfo(it.id, it.name ?: "")
+                val list = categoryRepo.getCategories(DATA.TIMESTAMP).first().map { cat ->
+                    CategoryInfo(cat.id, cat.name ?: "")
                 }
                 _uiState.update { it.copy(categories = list) }
             } catch (e: Exception) {

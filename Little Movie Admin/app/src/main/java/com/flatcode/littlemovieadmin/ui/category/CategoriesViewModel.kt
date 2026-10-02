@@ -7,11 +7,13 @@ import com.flatcode.littlemovieadmin.repository.CategoryRepository
 import com.flatcode.littlemovieadmin.utils.DATA
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,30 +21,46 @@ class CategoriesViewModel @Inject constructor(
     private val repository: CategoryRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(CategoriesUiState())
-    val uiState: StateFlow<CategoriesUiState> = _uiState.asStateFlow()
+    private val _categories = MutableStateFlow<List<Category>>(emptyList())
+    private val _searchQuery = MutableStateFlow("")
 
-    fun getData(orderBy: String) {
+    val categories: StateFlow<List<Category>> = combine(_categories, _searchQuery) { list, query ->
+        if (query.isEmpty()) {
+            list
+        } else {
+            list.filter {
+                it.name?.contains(query, ignoreCase = true) == true
+            }
+        }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    private val _orderBy = MutableStateFlow(DATA.TIMESTAMP)
+    val orderBy: StateFlow<String> = _orderBy.asStateFlow()
+
+    init {
+        fetchData()
+    }
+
+    private fun fetchData() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, currentType = orderBy) }
-            try {
-                val categories = repository.getCategories(orderBy)
-                _uiState.update {
-                    it.copy(
-                        isLoading = false, categories = categories, count = categories.size
-                    )
+            _orderBy.collectLatest { order ->
+                _isLoading.value = true
+                repository.getCategories(order).collectLatest { list ->
+                    _categories.value = list
+                    _isLoading.value = false
                 }
-            } catch (e: Exception) {
-                Timber.e(e, "Error loading categories")
-                _uiState.update { it.copy(isLoading = false) }
             }
         }
     }
-}
 
-data class CategoriesUiState(
-    val isLoading: Boolean = false,
-    val categories: List<Category> = emptyList(),
-    val count: Int = 0,
-    val currentType: String = DATA.TIMESTAMP
-)
+    fun getData(orderBy: String) {
+        _orderBy.value = orderBy
+    }
+
+    fun setSearchQuery(query: String) {
+        _searchQuery.value = query
+    }
+}

@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -32,7 +33,7 @@ class CategoryDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, currentType = orderBy) }
             try {
-                val movies = movieRepo.getMovies(orderBy).filter { it.categoryId == categoryId }
+                val movies = movieRepo.getMovies(orderBy).first().filter { it.categoryId == categoryId }
                 _uiState.update {
                     it.copy(
                         isLoading = false, movies = movies, count = movies.size

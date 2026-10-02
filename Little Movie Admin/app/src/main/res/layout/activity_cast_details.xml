@@ -85,7 +85,6 @@
                             app:layout_constraintBottom_toBottomOf="@+id/imageBlur">
 
                             <TextView
-                                android:id="@+id/name"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -96,7 +95,6 @@
                                 android:textStyle="bold" />
 
                             <ImageView
-                                android:id="@+id/go"
                                 android:layout_width="25dp"
                                 android:layout_height="25dp"
                                 android:layout_gravity="top"

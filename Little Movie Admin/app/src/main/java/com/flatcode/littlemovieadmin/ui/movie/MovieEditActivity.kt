@@ -14,6 +14,10 @@ import androidx.core.content.IntentCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import coil3.load
+import coil3.request.crossfade
+import coil3.request.error
+import coil3.request.placeholder
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.databinding.ActivityMovieEditBinding
 import com.flatcode.littlemovieadmin.utils.DATA
@@ -38,6 +42,7 @@ class MovieEditActivity : BaseActivity() {
     private val viewModel: MovieEditViewModel by viewModels()
     private var imageUri: Uri? = null
     private var progressDialog: AlertDialog? = null
+    private var isCastInitialized = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,16 +119,35 @@ class MovieEditActivity : BaseActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     state.movie?.let { movie ->
-                        binding.nameEt.setText(movie.name)
-                        binding.descriptionEt.setText(movie.description)
-                        binding.yearEt.setText(movie.year.toString())
+                        if (binding.nameEt.text.isNullOrEmpty()) {
+                            binding.nameEt.setText(movie.name)
+                        }
+                        if (binding.descriptionEt.text.isNullOrEmpty()) {
+                            binding.descriptionEt.setText(movie.description)
+                        }
+                        if (binding.yearEt.text.isNullOrEmpty()) {
+                            binding.yearEt.setText(movie.year.toString())
+                        }
                         binding.duration.text = (movie.duration?.toLong() ?: 0L).convertDuration()
-                        binding.cast.text = movie.castCount.toString()
 
                         if (imageUri == null) {
                             binding.image.loadImage(movie.image)
                             binding.imageBlur.loadBlur(movie.image, 50)
+                        } else {
+                            binding.image.load(imageUri) {
+                                placeholder(R.color.image_profile)
+                                error(R.color.image_profile)
+                                crossfade(true)
+                            }
+                            binding.imageBlur.loadBlurUri(imageUri, 50)
                         }
+                    }
+
+                    if (!isCastInitialized && state.castIds.isNotEmpty()) {
+                        castMovie.clear()
+                        castMovie.addAll(state.castIds)
+                        isCastInitialized = true
+                        binding.cast.text = MessageFormat.format("{0}{1}", DATA.EMPTY, castMovie.size)
                     }
 
                     binding.category.text = state.selectedCategoryName
@@ -166,7 +190,11 @@ class MovieEditActivity : BaseActivity() {
                     IntentCompat.getParcelableExtra(data, "CROP_RESULT_URI", Uri::class.java)
                 if (resultUri != null) {
                     imageUri = resultUri
-                    binding.image.setImageURI(imageUri)
+                    binding.image.load(imageUri) {
+                        placeholder(R.color.image_profile)
+                        error(R.color.image_profile)
+                        crossfade(true)
+                    }
                     binding.imageBlur.loadBlurUri(imageUri, 50)
                 }
             }

@@ -117,20 +117,20 @@ class CategoryDetailsActivity : BaseActivity() {
                     adapter.list = state.movies
                     adapter.submitList(state.movies)
 
-                    if (state.movies.isNotEmpty()) {
-                        binding.recyclerView.visibility = View.VISIBLE
+                    if (state.isLoading) {
                         binding.emptyText.visibility = View.GONE
-                    } else if (!state.isLoading) {
-                        binding.recyclerView.visibility = View.GONE
-                        binding.emptyText.visibility = View.VISIBLE
+                        binding.recyclerView.visibility = if (state.movies.isNotEmpty()) View.VISIBLE else View.GONE
+                    } else {
+                        if (state.movies.isNotEmpty()) {
+                            binding.recyclerView.visibility = View.VISIBLE
+                            binding.emptyText.visibility = View.GONE
+                        } else {
+                            binding.recyclerView.visibility = View.GONE
+                            binding.emptyText.visibility = View.VISIBLE
+                        }
                     }
                 }
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.getData(viewModel.uiState.value.currentType)
     }
 }
