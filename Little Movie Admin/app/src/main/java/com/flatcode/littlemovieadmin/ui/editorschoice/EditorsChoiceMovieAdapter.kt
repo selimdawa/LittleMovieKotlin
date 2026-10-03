@@ -47,7 +47,7 @@ class EditorsChoiceMovieAdapter(
             val nrViews = item.viewsCount
             val nrLoves = item.lovesCount
 
-            binding.image.loadImage(image)
+            binding.image.loadImage(true,image)
 
             if (name == DATA.EMPTY) {
                 binding.name.visibility = View.GONE

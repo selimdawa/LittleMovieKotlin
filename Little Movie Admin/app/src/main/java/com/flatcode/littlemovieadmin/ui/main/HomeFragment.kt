@@ -68,7 +68,7 @@ class HomeFragment : Fragment() {
                             if (state.items.isNotEmpty()) View.VISIBLE else View.GONE
 
                         state.userProfileImage?.let {
-                            binding.toolbar.image.loadImage(it)
+                            binding.toolbar.image.loadImage(true,it)
                         }
 
                         adapter.submitList(state.items)

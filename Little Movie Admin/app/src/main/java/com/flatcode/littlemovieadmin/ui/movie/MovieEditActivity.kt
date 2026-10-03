@@ -131,8 +131,8 @@ class MovieEditActivity : BaseActivity() {
                         binding.duration.text = (movie.duration?.toLong() ?: 0L).convertDuration()
 
                         if (imageUri == null) {
-                            binding.image.loadImage(movie.image)
-                            binding.imageBlur.loadBlur(movie.image, 50)
+                            binding.image.loadImage(false,movie.image)
+                            binding.imageBlur.loadBlur(false,movie.image, 50)
                         } else {
                             binding.image.load(imageUri) {
                                 placeholder(R.color.image_profile)

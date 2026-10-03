@@ -71,7 +71,7 @@ class ProfileEditActivity : BaseActivity() {
                     state.user?.let { user ->
                         binding.nameEt.setText(user.username)
                         if (imageUri == null) {
-                            binding.profileImage.loadImage(user.profileImage)
+                            binding.profileImage.loadImage(true,user.profileImage)
                         }
                     }
                 }

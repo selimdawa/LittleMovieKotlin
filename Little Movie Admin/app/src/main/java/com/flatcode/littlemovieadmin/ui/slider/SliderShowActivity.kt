@@ -157,7 +157,7 @@ class SliderShowActivity : BaseActivity() {
                 viewModel.images.collect { images ->
                     imageViews.forEachIndexed { index, imageView ->
                         val url = images[(index + 1).toString()]
-                        imageView.loadImage(url)
+                        imageView.loadImage(false,url)
                     }
                 }
             }

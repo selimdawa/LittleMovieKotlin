@@ -40,7 +40,7 @@ class ProfileActivity : BaseActivity() {
                 viewModel.uiState.collect { state ->
                     state.user?.let { user ->
                         binding.username.text = user.username
-                        binding.profile.loadImage(user.profileImage)
+                        binding.profile.loadImage(true,user.profileImage)
                     }
 
                     binding.numberFavorites.text = state.favoritesCount.toString()

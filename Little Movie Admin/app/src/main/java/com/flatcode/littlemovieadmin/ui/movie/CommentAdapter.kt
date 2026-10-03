@@ -57,7 +57,7 @@ class CommentAdapter(
                     val username = DATA.EMPTY + snapshot.child(DATA.USER_NAME).value
                     val profileImage = DATA.EMPTY + snapshot.child(DATA.PROFILE_IMAGE).value
 
-                    image.loadImage(profileImage)
+                    image.loadImage(true,profileImage)
                     name.text = username
                 }
 

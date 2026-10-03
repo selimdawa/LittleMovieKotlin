@@ -52,7 +52,7 @@ class CategoryAdapter(
             val interestedCount = item.interestedCount
             val moviesCount = item.moviesCount
 
-            binding.image.loadImage(image)
+            binding.image.loadImage(false,image)
 
             if (name == DATA.EMPTY) {
                 binding.name.visibility = View.GONE

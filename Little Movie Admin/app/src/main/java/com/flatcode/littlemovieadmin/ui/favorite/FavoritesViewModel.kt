@@ -31,7 +31,7 @@ class FavoritesViewModel @Inject constructor(
             list
         } else {
             list.filter {
-                it.name?.contains(query, ignoreCase = true) == true
+                it.name.contains(query, ignoreCase = true)
             }
         }
     }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())

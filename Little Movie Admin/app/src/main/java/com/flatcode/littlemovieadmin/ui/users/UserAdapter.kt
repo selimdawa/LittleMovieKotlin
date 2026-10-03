@@ -48,7 +48,7 @@ class UserAdapter(
             val image = item.profileImage ?: DATA.EMPTY
             val username = item.username ?: DATA.EMPTY
 
-            binding.imageProfile.loadImage(image)
+            binding.imageProfile.loadImage(true,image)
 
             if (username == DATA.EMPTY) {
                 binding.username.visibility = View.GONE

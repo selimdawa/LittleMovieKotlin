@@ -79,7 +79,7 @@ class CastEditActivity : BaseActivity() {
                         binding.nameEt.setText(cast.name)
                         binding.aboutMyEt.setText(cast.aboutMy)
                         if (imageUri == null) {
-                            binding.image.loadImage(cast.image)
+                            binding.image.loadImage(true,cast.image)
                         }
                     }
                 }

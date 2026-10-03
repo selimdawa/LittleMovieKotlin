@@ -119,15 +119,15 @@ class MovieDetailsActivity : BaseActivity() {
                         binding.year.text = movie.year.toString()
 
                         binding.category.loadCategory(movie.categoryId)
-                        binding.image.loadImage(movie.image)
-                        binding.cover.loadImage(movie.image)
+                        binding.image.loadImage(false,movie.image)
+                        binding.cover.loadImage(false,movie.image)
 
                         binding.favorite.isFavorite(movie.id, DATA.FirebaseUserUid)
                     }
 
                     state.publisher?.let { user ->
                         binding.publisherName.text = user.username
-                        binding.publisherImage.loadImage(user.profileImage)
+                        binding.publisherImage.loadImage(false,user.profileImage)
                     }
 
                     adapterComment.submitList(state.comments)

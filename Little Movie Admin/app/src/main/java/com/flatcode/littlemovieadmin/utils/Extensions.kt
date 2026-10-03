@@ -17,6 +17,7 @@ import androidx.core.graphics.scale
 import coil3.load
 import coil3.request.crossfade
 import coil3.request.error
+import coil3.request.fallback
 import coil3.request.placeholder
 import coil3.request.transformations
 import coil3.size.Size
@@ -26,7 +27,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import timber.log.Timber
 import java.io.Serializable
 import java.text.MessageFormat
 import java.util.Locale
@@ -51,43 +51,46 @@ inline fun <reified T : Activity> Context.openActivity(
 
 fun Context.isNetworkAvailable(): Boolean {
     val connectivityManager =
-        getSystemService(Context.CONNECTIVITY_SERVICE) as? android.net.ConnectivityManager ?: return false
+        getSystemService(Context.CONNECTIVITY_SERVICE) as? android.net.ConnectivityManager
+            ?: return false
     val network = connectivityManager.activeNetwork ?: return false
     val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
     return capabilities.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET)
 }
 
-fun ImageView.loadImage(url: String?) {
+fun ImageView.loadImage(isUser: Boolean, url: String?) {
+    val defaultRes = if (isUser) R.drawable.basic_user else R.color.image_profile
     try {
-        if (url == DATA.BASIC || url.isNullOrEmpty()) {
-            this.setImageResource(R.color.image_profile)
+        if (url.isNullOrBlank() || url == DATA.BASIC || url == "null") {
+            this.setImageResource(defaultRes)
         } else {
             this.load(url) {
                 placeholder(R.color.image_profile)
-                error(R.color.image_profile)
+                error(defaultRes)
+                fallback(defaultRes)
                 crossfade(true)
             }
         }
-    } catch (e: Exception) {
-        Timber.e(e, "Image load error")
-        this.setImageResource(R.color.image_profile)
+    } catch (_: Exception) {
+        this.setImageResource(defaultRes)
     }
 }
 
-fun ImageView.loadBlur(url: String?, level: Int) {
+fun ImageView.loadBlur(isUser: Boolean, url: String?, level: Int) {
+    val defaultRes = if (isUser) R.drawable.basic_user else R.color.image_profile
     try {
-        if (url == DATA.BASIC || url.isNullOrEmpty()) {
-            this.setImageResource(R.color.image_profile)
+        if (url.isNullOrBlank() || url == DATA.BASIC || url == "null") {
+            this.setImageResource(defaultRes)
         } else {
             this.load(url) {
                 placeholder(R.color.image_profile)
+                error(defaultRes)
+                fallback(defaultRes)
                 transformations(SimpleBlurTransformation(level.toFloat()))
-                error(R.color.image_profile)
             }
         }
-    } catch (e: Exception) {
-        Timber.e(e, "Blur load error")
-        this.setImageResource(R.color.image_profile)
+    } catch (_: Exception) {
+        this.setImageResource(defaultRes)
     }
 }
 

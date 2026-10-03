@@ -144,8 +144,8 @@ class CastDetailsActivity : BaseActivity() {
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", state.count)
                     nameTextView?.text = state.castName
 
-                    binding.image.loadImage(state.castImage)
-                    binding.imageBlur.loadBlur(state.castImage, 50)
+                    binding.image.loadImage(true,state.castImage)
+                    binding.imageBlur.loadBlur(true,state.castImage, 50)
 
                     adapter.list = state.movies
                     adapter.submitList(state.movies)
