@@ -4,6 +4,7 @@ import android.app.Application
 import android.text.format.DateFormat
 import com.cloudinary.android.MediaManager
 import com.flatcode.littlemovie.utils.DATA
+import com.google.firebase.database.FirebaseDatabase
 import dagger.hilt.android.HiltAndroidApp
 import io.selimdawa.multicolors.MultiColorManager
 import timber.log.Timber
@@ -27,6 +28,12 @@ class Application : Application() {
             MediaManager.init(this, config)
         } catch (e: Exception) {
             Timber.e(e, "Cloudinary initialization failed")
+        }
+
+        try {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+        } catch (e: Exception) {
+            Timber.e(e, "Firebase persistence initialization failed")
         }
     }
 

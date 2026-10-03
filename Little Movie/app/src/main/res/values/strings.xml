@@ -16,6 +16,7 @@
     <string name="about_app">The application was designed by "Flat Code"</string>
     <string name="none_display">There are no items to display</string>
     <string name="privacy_policy">Privacy Policy</string>
+    <string name="default_privacy_policy">Welcome to Little Movie!\n\nYour privacy is important to us. Little Movie is committed to respecting and protecting your privacy while browsing and exploring movies.\n\n• Data Privacy: We do not collect or sell your personal information.\n• Storage: Your favorite movies, categories, and preferences are stored locally on your device.\n• Services: Content links and media details adhere to standard privacy and data protection guidelines.\n\nThank you for choosing Little Movie!</string>
     <string name="all">All</string>
     <string name="username">Username</string>
     <string name="search">Search</string>

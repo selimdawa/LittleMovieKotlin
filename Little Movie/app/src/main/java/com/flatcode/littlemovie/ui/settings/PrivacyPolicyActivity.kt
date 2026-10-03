@@ -30,7 +30,11 @@ class PrivacyPolicyActivity : BaseActivity() {
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.privacyPolicy.collect { policy ->
-                binding!!.text.text = policy
+                if (!policy.isNullOrEmpty()) {
+                    binding!!.text.text = policy
+                } else {
+                    binding!!.text.text = getString(R.string.default_privacy_policy)
+                }
             }
         }
     }
