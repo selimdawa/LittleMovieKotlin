@@ -132,8 +132,6 @@
             android:name=".ui.movie.CastMovieAddActivity"
             android:screenOrientation="portrait" />
 
-        <service android:name=".service.FloatingWidgetService" />
-
         <activity
             android:name=".utils.CropActivity"
             android:screenOrientation="portrait"

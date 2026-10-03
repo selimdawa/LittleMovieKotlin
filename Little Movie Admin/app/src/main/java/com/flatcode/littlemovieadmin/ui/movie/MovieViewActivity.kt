@@ -1,11 +1,8 @@
 package com.flatcode.littlemovieadmin.ui.movie
 
-import com.flatcode.littlemovieadmin.utils.BaseActivity
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.Window
-import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
@@ -13,9 +10,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
-import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.databinding.ActivityMovieViewBinding
-import com.flatcode.littlemovieadmin.service.FloatingWidgetService
+import com.flatcode.littlemovieadmin.utils.BaseActivity
 import com.flatcode.littlemovieadmin.utils.DATA
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -38,17 +34,6 @@ class MovieViewActivity : BaseActivity() {
         }
 
         initializePlayer()
-
-        // Access view from sub-layout
-        binding.playerView.findViewById<ImageView>(R.id.exo_floating_widget)?.setOnClickListener {
-            exoPlayer?.let {
-                it.playWhenReady = false
-                it.release()
-            }
-            val service = Intent(this, FloatingWidgetService::class.java)
-            service.putExtra(DATA.MOVIE_LINK, videoUri.toString())
-            startService(service)
-        }
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(enabled = true) {
             override fun handleOnBackPressed() {

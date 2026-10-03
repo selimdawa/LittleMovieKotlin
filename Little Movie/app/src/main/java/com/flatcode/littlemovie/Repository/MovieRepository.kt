@@ -136,9 +136,6 @@ class MovieRepository @Inject constructor(
                     list.add(item)
                 }
                 CoroutineScope(Dispatchers.IO).launch {
-                    if (limit == null) {
-                        movieDao.deleteAllMovies()
-                    }
                     movieDao.insertMovies(list)
                 }
             }
@@ -347,11 +344,17 @@ class MovieRepository @Inject constructor(
         val listener =
             castMovieRef.child(movieId).addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val list = mutableListOf<String>()
+                    val castIdSet = mutableSetOf<String>()
                     for (data in snapshot.children) {
-                        data.key?.let { list.add(it) }
+                        data.key?.let { if (it.isNotEmpty()) castIdSet.add(it) }
+                        val castIdVal = data.child("castId").value?.toString()
+                            ?: data.child("id").value?.toString()
+                            ?: (data.value as? String)
+                        if (!castIdVal.isNullOrEmpty() && castIdVal != "null") {
+                            castIdSet.add(castIdVal)
+                        }
                     }
-                    trySend(list)
+                    trySend(castIdSet.toList())
                 }
 
                 override fun onCancelled(error: DatabaseError) {

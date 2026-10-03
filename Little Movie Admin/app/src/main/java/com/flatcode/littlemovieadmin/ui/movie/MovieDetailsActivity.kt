@@ -4,6 +4,9 @@ import com.flatcode.littlemovieadmin.utils.BaseActivity
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -142,7 +145,20 @@ class MovieDetailsActivity : BaseActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setView(commentAddBinding.root)
         val alertDialog = builder.create()
+
+        alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        alertDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+
         alertDialog.show()
+
+        val widthPx = (320 * resources.displayMetrics.density).toInt()
+        alertDialog.window?.setLayout(widthPx, ViewGroup.LayoutParams.WRAP_CONTENT)
+
+        commentAddBinding.comment.requestFocus()
+        commentAddBinding.comment.postDelayed({
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.showSoftInput(commentAddBinding.comment, 0)
+        }, 200)
 
         commentAddBinding.back.setOnClickListener { alertDialog.dismiss() }
         commentAddBinding.submit.setOnClickListener {

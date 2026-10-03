@@ -1,13 +1,9 @@
 package com.flatcode.littlemovie.ui.movie
 
 import android.app.Activity
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings
 import android.view.Window
-import android.widget.ImageView
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.OptIn
 import androidx.core.net.toUri
@@ -18,9 +14,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
-import com.flatcode.littlemovie.R
 import com.flatcode.littlemovie.databinding.ActivityMovieViewBinding
-import com.flatcode.littlemovie.service.FloatingWidgetService
 import com.flatcode.littlemovie.utils.BaseActivity
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.incrementViewCount
@@ -50,38 +44,22 @@ class MovieViewActivity : BaseActivity() {
             id = intent.getStringExtra(DATA.MOVIE_ID)
             id?.incrementViewCount()
         }
-        binding!!.playerView.findViewById<ImageView>(R.id.exo_floating_widget).setOnClickListener {
-            if (!Settings.canDrawOverlays(this)) {
-                val intent = Intent(
-                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION, "package:$packageName".toUri()
-                )
-                startActivity(intent)
-                Toast.makeText(this, "Please allow drawing over other apps", Toast.LENGTH_SHORT)
-                    .show()
-            } else {
-                startFloatingService()
-            }
-        }
         val trackSelector = DefaultTrackSelector(this)
         exoPlayer = ExoPlayer.Builder(this).setTrackSelector(trackSelector).build()
         playVideo()
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                exoPlayer?.playWhenReady = false
-                exoPlayer?.release()
+                try {
+                    exoPlayer?.playWhenReady = false
+                    exoPlayer?.release()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                exoPlayer = null
                 finish()
             }
         })
-    }
-
-    private fun startFloatingService() {
-        exoPlayer!!.playWhenReady = false
-        exoPlayer!!.release()
-        val service = Intent(activity, FloatingWidgetService::class.java)
-        service.putExtra(DATA.MOVIE_LINK, videoUri.toString())
-        service.putExtra(DATA.MOVIE_ID, id)
-        startService(service)
     }
 
     private fun setFullScreen() {
@@ -94,11 +72,12 @@ class MovieViewActivity : BaseActivity() {
 
     private fun playVideo() {
         try {
-            val mediaItem = MediaItem.fromUri(videoUri!!)
+            val uri = videoUri ?: return
+            val mediaItem = MediaItem.fromUri(uri)
             binding!!.playerView.player = exoPlayer
-            exoPlayer!!.setMediaItem(mediaItem)
-            exoPlayer!!.prepare()
-            exoPlayer!!.playWhenReady = true
+            exoPlayer?.setMediaItem(mediaItem)
+            exoPlayer?.prepare()
+            exoPlayer?.playWhenReady = true
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -106,8 +85,17 @@ class MovieViewActivity : BaseActivity() {
 
     override fun onPause() {
         super.onPause()
-        exoPlayer!!.playWhenReady = false
+        exoPlayer?.playWhenReady = false
     }
 
-
+    override fun onDestroy() {
+        super.onDestroy()
+        try {
+            exoPlayer?.playWhenReady = false
+            exoPlayer?.release()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        exoPlayer = null
+    }
 }

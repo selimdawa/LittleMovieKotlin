@@ -13,9 +13,12 @@ import com.flatcode.littlemovie.repository.MovieRepository
 import com.flatcode.littlemovie.repository.UserRepository
 import com.flatcode.littlemovie.utils.DATA
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -74,13 +77,16 @@ class MovieDetailsViewModel @Inject constructor(
             }
         }
 
+        @OptIn(ExperimentalCoroutinesApi::class)
         viewModelScope.launch {
-            movieRepository.getMovieCastIds(movieId).collectLatest { castIds ->
+            movieRepository.getMovieCastIds(movieId).flatMapLatest { castIds ->
                 if (castIds.isNotEmpty()) {
-                    castRepository.getCastByIds(castIds).collectLatest {
-                        _cast.value = it
-                    }
+                    castRepository.getCastByIds(castIds)
+                } else {
+                    flowOf(emptyList())
                 }
+            }.collect { castMembers ->
+                _cast.value = castMembers
             }
         }
 

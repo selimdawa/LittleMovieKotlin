@@ -52,7 +52,6 @@ class CastRepository @Inject constructor(
                     data.getValue(Cast::class.java)?.let { list.add(it) }
                 }
                 CoroutineScope(Dispatchers.IO).launch {
-                    castDao.deleteAllCasts()
                     castDao.insertCasts(list)
                 }
             }

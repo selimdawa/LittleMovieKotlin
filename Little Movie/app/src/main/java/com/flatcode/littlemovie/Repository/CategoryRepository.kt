@@ -60,9 +60,6 @@ class CategoryRepository @Inject constructor(
                     data.getValue(Category::class.java)?.let { list.add(it) }
                 }
                 CoroutineScope(Dispatchers.IO).launch {
-                    if (publisherId == null) {
-                        categoryDao.deleteAllCategories()
-                    }
                     categoryDao.insertCategories(list)
                 }
             }

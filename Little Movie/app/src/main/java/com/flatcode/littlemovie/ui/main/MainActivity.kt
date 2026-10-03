@@ -43,7 +43,10 @@ class MainActivity : BaseActivity() {
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (navController.navigateUp().not()) {
+                if (navController.currentDestination?.id != R.id.homeFragment) {
+                    binding.bottomNavigation.show(R.id.homeFragment, false)
+                    navController.navigate(R.id.homeFragment)
+                } else {
                     context.closeApp()
                 }
             }
@@ -67,8 +70,12 @@ class MainActivity : BaseActivity() {
             add(Model(R.id.myMoviesFragment, R.drawable.ic_books))
             add(Model(R.id.categoriesFragment, R.drawable.ic_group))
 
-            setOnShowListener { item -> navController.navigate(item.id) }
-            show(R.id.homeFragment, true)
+            setOnShowListener { item ->
+                if (navController.currentDestination?.id != item.id) {
+                    navController.navigate(item.id)
+                }
+            }
+            show(R.id.homeFragment, false)
         }
 
         binding.toolbar.image.setOnClickListener {
