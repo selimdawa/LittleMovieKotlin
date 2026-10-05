@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.IntentCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -16,7 +15,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.databinding.ActivitySliderShowBinding
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.createProgressDialog
+import com.flatcode.littlemovieadmin.utils.ProgressDialog
 import com.flatcode.littlemovieadmin.utils.cropImageSlider
 import com.flatcode.littlemovieadmin.utils.loadImage
 import com.flatcode.littlemovieadmin.utils.pickImage
@@ -31,13 +30,18 @@ class SliderShowActivity : BaseActivity() {
     private lateinit var binding: ActivitySliderShowBinding
     private val viewModel: SliderShowViewModel by viewModels()
     private var imageUri: Uri? = null
-    private var progressDialog: AlertDialog? = null
+    private var dialog: ProgressDialog? = null
     private var imageNumber = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySliderShowBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        dialog = ProgressDialog(this).apply {
+            setTitle("Please wait...")
+            setCanceledOnTouchOutside(false)
+        }
 
         binding.toolbar.nameSpace.setText(R.string.slider_show)
         binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
@@ -157,7 +161,7 @@ class SliderShowActivity : BaseActivity() {
                 viewModel.images.collect { images ->
                     imageViews.forEachIndexed { index, imageView ->
                         val url = images[(index + 1).toString()]
-                        imageView.loadImage(false,url)
+                        imageView.loadImage(false, url)
                     }
                 }
             }
@@ -191,11 +195,11 @@ class SliderShowActivity : BaseActivity() {
 
     private fun uploadImage() {
         val uri = imageUri ?: return
-        progressDialog = createProgressDialog("Posting photo...", "Please wait...")
-        progressDialog?.show()
+        dialog?.setMessage("Posting photo...")
+        dialog?.show()
 
         viewModel.uploadImage(uri, imageNumber.toString()) { _, message ->
-            progressDialog?.dismiss()
+            dialog?.dismiss()
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }
     }

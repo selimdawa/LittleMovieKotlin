@@ -21,12 +21,12 @@ import com.flatcode.littlemovieadmin.ui.cast.CastDetailsActivity
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.checkFavorite
 import com.flatcode.littlemovieadmin.utils.convertDuration
-import com.flatcode.littlemovieadmin.utils.createProgressDialog
 import com.flatcode.littlemovieadmin.utils.isFavorite
 import com.flatcode.littlemovieadmin.utils.loadCategory
 import com.flatcode.littlemovieadmin.utils.loadImage
 import com.flatcode.littlemovieadmin.utils.nrLoves
 import com.flatcode.littlemovieadmin.utils.openActivity
+import com.flatcode.littlemovieadmin.utils.ProgressDialog
 import com.google.firebase.database.FirebaseDatabase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -36,7 +36,7 @@ class MovieDetailsActivity : BaseActivity() {
 
     private lateinit var binding: ActivityMovieDetailsBinding
     private val viewModel: MovieDetailsViewModel by viewModels()
-    private var progressDialog: AlertDialog? = null
+    private var dialog: ProgressDialog? = null
 
     private lateinit var adapterComment: CommentAdapter
     private lateinit var adapterCast: CastMovieAdapter
@@ -45,6 +45,11 @@ class MovieDetailsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMovieDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        dialog = ProgressDialog(this).apply {
+            setTitle("Please wait...")
+            setCanceledOnTouchOutside(false)
+        }
 
         val movieId = intent.getStringExtra(DATA.MOVIE_ID) ?: ""
         viewModel.setMovieId(movieId)
@@ -122,15 +127,15 @@ class MovieDetailsActivity : BaseActivity() {
                         binding.year.text = movie.year.toString()
 
                         binding.category.loadCategory(movie.categoryId)
-                        binding.image.loadImage(false,movie.image)
-                        binding.cover.loadImage(false,movie.image)
+                        binding.image.loadImage(false, movie.image)
+                        binding.cover.loadImage(false, movie.image)
 
                         binding.favorite.isFavorite(movie.id, DATA.FirebaseUserUid)
                     }
 
                     state.publisher?.let { user ->
                         binding.publisherName.text = user.username
-                        binding.publisherImage.loadImage(false,user.profileImage)
+                        binding.publisherImage.loadImage(false, user.profileImage)
                     }
 
                     adapterComment.submitList(state.comments)
@@ -167,12 +172,12 @@ class MovieDetailsActivity : BaseActivity() {
                 Toast.makeText(this, "Enter your comment...", Toast.LENGTH_SHORT).show()
             } else {
                 alertDialog.dismiss()
+                dialog?.setMessage("Adding comment...")
+                dialog?.show()
                 viewModel.addComment(comment) { _, message ->
-                    progressDialog?.dismiss()
+                    dialog?.dismiss()
                     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 }
-                progressDialog = createProgressDialog("Adding comment...", "Please wait...")
-                progressDialog?.show()
             }
         }
     }

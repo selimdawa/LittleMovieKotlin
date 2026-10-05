@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.IntentCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -16,7 +15,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.databinding.ActivityCastAddBinding
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.createProgressDialog
+import com.flatcode.littlemovieadmin.utils.ProgressDialog
 import com.flatcode.littlemovieadmin.utils.cropImageSquare
 import com.flatcode.littlemovieadmin.utils.pickImage
 import com.flatcode.littlemovieadmin.utils.requestStorage
@@ -29,12 +28,17 @@ class CastAddActivity : BaseActivity() {
     private lateinit var binding: ActivityCastAddBinding
     private val viewModel: CastAddViewModel by viewModels()
     private var imageUri: Uri? = null
-    private var progressDialog: AlertDialog? = null
+    private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCastAddBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        dialog = ProgressDialog(this).apply {
+            setTitle("Please wait...")
+            setCanceledOnTouchOutside(false)
+        }
 
         binding.toolbar.nameSpace.setText(R.string.add_new_cast)
         binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
@@ -60,10 +64,10 @@ class CastAddActivity : BaseActivity() {
         } else if (uri == null) {
             Toast.makeText(this, "Pick Image...", Toast.LENGTH_SHORT).show()
         } else {
-            progressDialog = createProgressDialog("Uploading Cast...", "Please wait...")
-            progressDialog?.show()
+            dialog?.setMessage("Uploading Cast...")
+            dialog?.show()
             viewModel.uploadCast(name, aboutMy, uri) { success, message ->
-                progressDialog?.dismiss()
+                dialog?.dismiss()
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 if (success) finish()
             }
@@ -98,7 +102,8 @@ class CastAddActivity : BaseActivity() {
             if (uri != null) {
                 cropImageSquare(uri)
             } else {
-                val resultUri = IntentCompat.getParcelableExtra(data, "CROP_RESULT_URI", Uri::class.java)
+                val resultUri =
+                    IntentCompat.getParcelableExtra(data, "CROP_RESULT_URI", Uri::class.java)
                 if (resultUri != null) {
                     imageUri = resultUri
                     binding.image.setImageURI(imageUri)

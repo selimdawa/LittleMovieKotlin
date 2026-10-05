@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.IntentCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -16,7 +15,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.databinding.ActivityProfileEditBinding
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.createProgressDialog
+import com.flatcode.littlemovieadmin.utils.ProgressDialog
 import com.flatcode.littlemovieadmin.utils.cropImageSquare
 import com.flatcode.littlemovieadmin.utils.loadImage
 import com.flatcode.littlemovieadmin.utils.pickImage
@@ -30,12 +29,17 @@ class ProfileEditActivity : BaseActivity() {
     private lateinit var binding: ActivityProfileEditBinding
     private val viewModel: ProfileEditViewModel by viewModels()
     private var imageUri: Uri? = null
-    private var progressDialog: AlertDialog? = null
+    private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        dialog = ProgressDialog(this).apply {
+            setTitle("Please wait...")
+            setCanceledOnTouchOutside(false)
+        }
 
         binding.toolbar.nameSpace.setText(R.string.edit_profile)
         binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
@@ -54,10 +58,10 @@ class ProfileEditActivity : BaseActivity() {
         if (TextUtils.isEmpty(username)) {
             Toast.makeText(this, "Enter name...", Toast.LENGTH_SHORT).show()
         } else {
-            progressDialog = createProgressDialog("Updating profile...", "Please wait...")
-            progressDialog?.show()
+            dialog?.setMessage("Updating profile...")
+            dialog?.show()
             viewModel.updateProfile(username, imageUri) { success, message ->
-                progressDialog?.dismiss()
+                dialog?.dismiss()
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 if (success) onBackPressedDispatcher.onBackPressed()
             }
@@ -71,7 +75,7 @@ class ProfileEditActivity : BaseActivity() {
                     state.user?.let { user ->
                         binding.nameEt.setText(user.username)
                         if (imageUri == null) {
-                            binding.profileImage.loadImage(true,user.profileImage)
+                            binding.profileImage.loadImage(true, user.profileImage)
                         }
                     }
                 }

@@ -25,28 +25,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.database.FirebaseDatabase
 import java.text.MessageFormat
 
-fun Context.createProgressDialog(message: String, title: String? = null): AlertDialog {
-    val linearLayout = LinearLayout(this).apply {
-        orientation = LinearLayout.HORIZONTAL
-        setPadding(50, 50, 50, 50)
-        gravity = Gravity.CENTER_VERTICAL
-    }
-    val progressBar = ProgressBar(this).apply {
-        isIndeterminate = true
-        setPadding(0, 0, 30, 0)
-    }
-    val textView = TextView(this).apply {
-        text = message
-        textSize = 16f
-    }
-    linearLayout.addView(progressBar)
-    linearLayout.addView(textView)
-
-    return AlertDialog.Builder(this).apply {
-        if (title != null) setTitle(title)
-    }.setView(linearLayout).setCancelable(false).create()
-}
-
 fun Activity.moreDeleteCategory(
     item: Category?,
     db: String?,
@@ -146,8 +124,12 @@ fun Activity.dialogOptionDelete(
 }
 
 fun Context.dialogUpdateEditorsChoice(dialogDelete: Dialog, id: String?) {
-    val dialog = createProgressDialog("Updating Editors Choice...")
-    dialog.show()
+    val dialog = ProgressDialog(this).apply {
+        setTitle("Please wait...")
+        setMessage("Updating Editors Choice...")
+        setCanceledOnTouchOutside(false)
+        show()
+    }
     val hashMap = HashMap<String, Any>()
     hashMap[DATA.EDITORS_CHOICE] = 0
 
@@ -167,16 +149,19 @@ fun Activity.deleteDB(
     dialogDelete: Dialog, id: String?, name: String, nameDB: String?,
     db: String?, idDB: String?, childDB: String?,
 ) {
-    val dialog = createProgressDialog("Deleting $name ...", "Please wait")
-    dialog.show()
+    val dialog = ProgressDialog(this).apply {
+        setTitle("Please wait...")
+        setMessage("Deleting $name ...")
+        setCanceledOnTouchOutside(false)
+        show()
+    }
     val reference = FirebaseDatabase.getInstance().getReference(nameDB!!)
     reference.child(id!!).removeValue().addOnSuccessListener {
         if ((db != null) && (idDB != null) && (childDB != null)) incrementItemRemoveCount(
             db, idDB, childDB
         )
         DATA.isChange = true
-        (this as? ComponentActivity)?.onBackPressedDispatcher?.onBackPressed()
-            ?: @Suppress("DEPRECATION") this.onBackPressed()
+        (this as? ComponentActivity)?.onBackPressedDispatcher?.onBackPressed() ?: finish()
         dialog.dismiss()
         Toast.makeText(this, "$name Deleted Successfully...", Toast.LENGTH_SHORT).show()
         dialogDelete.dismiss()
@@ -195,7 +180,7 @@ fun Context.dialogAboutArtist(imageDB: String?, nameDB: String?, aboutDB: String
 
     alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-    dialogBinding.image.loadImage(true,imageDB)
+    dialogBinding.image.loadImage(true, imageDB)
     dialogBinding.name.text = MessageFormat.format("{0}{1}", DATA.EMPTY, nameDB)
     dialogBinding.aboutTheArtist.text = MessageFormat.format("{0}{1}", DATA.EMPTY, aboutDB)
 

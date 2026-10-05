@@ -22,8 +22,8 @@ import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.databinding.ActivityMovieEditBinding
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.DATA.castMovie
+import com.flatcode.littlemovieadmin.utils.ProgressDialog
 import com.flatcode.littlemovieadmin.utils.convertDuration
-import com.flatcode.littlemovieadmin.utils.createProgressDialog
 import com.flatcode.littlemovieadmin.utils.cropVideoSquare
 import com.flatcode.littlemovieadmin.utils.loadBlur
 import com.flatcode.littlemovieadmin.utils.loadBlurUri
@@ -41,13 +41,18 @@ class MovieEditActivity : BaseActivity() {
     private lateinit var binding: ActivityMovieEditBinding
     private val viewModel: MovieEditViewModel by viewModels()
     private var imageUri: Uri? = null
-    private var progressDialog: AlertDialog? = null
+    private var dialog: ProgressDialog? = null
     private var isCastInitialized = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMovieEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        dialog = ProgressDialog(this).apply {
+            setTitle("Please wait...")
+            setCanceledOnTouchOutside(false)
+        }
 
         val movieId = intent.getStringExtra(DATA.MOVIE_ID) ?: ""
         val categoryId = intent.getStringExtra(DATA.CATEGORY_ID)
@@ -94,17 +99,12 @@ class MovieEditActivity : BaseActivity() {
         } else if (castMovie.isEmpty()) {
             Toast.makeText(this, "Enter Cast...", Toast.LENGTH_SHORT).show()
         } else {
-            progressDialog = createProgressDialog("Updating Movie...", "Please wait...")
-            progressDialog?.show()
+            dialog?.setMessage("Updating Movie...")
+            dialog?.show()
             viewModel.updateMovie(
-                name,
-                description,
-                yearText.toInt(),
-                categoryId,
-                imageUri,
-                castMovie
+                name, description, yearText.toInt(), categoryId, imageUri, castMovie
             ) { success, message ->
-                progressDialog?.dismiss()
+                dialog?.dismiss()
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 if (success) {
                     castMovie.clear()
@@ -131,8 +131,8 @@ class MovieEditActivity : BaseActivity() {
                         binding.duration.text = (movie.duration?.toLong() ?: 0L).convertDuration()
 
                         if (imageUri == null) {
-                            binding.image.loadImage(false,movie.image)
-                            binding.imageBlur.loadBlur(false,movie.image, 50)
+                            binding.image.loadImage(false, movie.image)
+                            binding.imageBlur.loadBlur(false, movie.image, 50)
                         } else {
                             binding.image.load(imageUri) {
                                 placeholder(R.color.image_profile)
@@ -147,7 +147,8 @@ class MovieEditActivity : BaseActivity() {
                         castMovie.clear()
                         castMovie.addAll(state.castIds)
                         isCastInitialized = true
-                        binding.cast.text = MessageFormat.format("{0}{1}", DATA.EMPTY, castMovie.size)
+                        binding.cast.text =
+                            MessageFormat.format("{0}{1}", DATA.EMPTY, castMovie.size)
                     }
 
                     binding.category.text = state.selectedCategoryName
@@ -161,9 +162,7 @@ class MovieEditActivity : BaseActivity() {
         if (categories.isEmpty()) return
 
         val categoryNames = categories.map { it.name }.toTypedArray()
-        AlertDialog.Builder(this)
-            .setTitle("Pick Category")
-            .setItems(categoryNames) { _, which ->
+        AlertDialog.Builder(this).setTitle("Pick Category").setItems(categoryNames) { _, which ->
                 viewModel.setCategoryId(categories[which].id, categories[which].name)
             }.show()
     }

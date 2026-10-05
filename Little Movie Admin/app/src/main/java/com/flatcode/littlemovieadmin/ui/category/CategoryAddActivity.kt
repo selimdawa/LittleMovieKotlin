@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.IntentCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -16,7 +15,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.databinding.ActivityCategoryAddBinding
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.createProgressDialog
+import com.flatcode.littlemovieadmin.utils.ProgressDialog
 import com.flatcode.littlemovieadmin.utils.cropImageSquare
 import com.flatcode.littlemovieadmin.utils.isNetworkAvailable
 import com.flatcode.littlemovieadmin.utils.pickImage
@@ -30,12 +29,17 @@ class CategoryAddActivity : BaseActivity() {
     private lateinit var binding: ActivityCategoryAddBinding
     private val viewModel: CategoryAddViewModel by viewModels()
     private var imageUri: Uri? = null
-    private var progressDialog: AlertDialog? = null
+    private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCategoryAddBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        dialog = ProgressDialog(this).apply {
+            setTitle("Please wait...")
+            setCanceledOnTouchOutside(false)
+        }
 
         binding.toolbar.nameSpace.setText(R.string.add_new_category)
         binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
@@ -58,12 +62,13 @@ class CategoryAddActivity : BaseActivity() {
         } else if (uri == null) {
             Toast.makeText(this, "Pick Image...", Toast.LENGTH_SHORT).show()
         } else if (!isNetworkAvailable()) {
-            Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
+                .show()
         } else {
-            progressDialog = createProgressDialog("Uploading Category...", "Please wait...")
-            progressDialog?.show()
+            dialog?.setMessage("Uploading Category...")
+            dialog?.show()
             viewModel.uploadCategory(name, uri) { success, message ->
-                progressDialog?.dismiss()
+                dialog?.dismiss()
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 if (success) finish()
             }

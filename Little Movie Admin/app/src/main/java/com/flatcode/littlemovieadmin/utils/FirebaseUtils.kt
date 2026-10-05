@@ -56,8 +56,12 @@ fun deleteCastInfo(id: String) {
 }
 
 fun Context.addToEditorsChoice(activity: Activity, id: String?, number: Int) {
-    val dialog = createProgressDialog("Updating Editors Choice...")
-    dialog.show()
+    val dialog = ProgressDialog(this).apply {
+        setTitle("Please wait...")
+        setMessage("Updating Editors Choice...")
+        setCanceledOnTouchOutside(false)
+        show()
+    }
     val hashMap = HashMap<String, Any>()
     hashMap[DATA.EDITORS_CHOICE] = number
     val reference = FirebaseDatabase.getInstance().getReference(DATA.MOVIES)

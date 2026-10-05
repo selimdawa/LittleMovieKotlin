@@ -17,8 +17,8 @@ import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.databinding.ActivityMovieAddBinding
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.DATA.castMovie
+import com.flatcode.littlemovieadmin.utils.ProgressDialog
 import com.flatcode.littlemovieadmin.utils.convertDuration
-import com.flatcode.littlemovieadmin.utils.createProgressDialog
 import com.flatcode.littlemovieadmin.utils.cropVideoSquare
 import com.flatcode.littlemovieadmin.utils.isNetworkAvailable
 import com.flatcode.littlemovieadmin.utils.loadBlurUri
@@ -37,7 +37,7 @@ class MovieAddActivity : BaseActivity() {
     private val viewModel: MovieAddViewModel by viewModels()
     private var imageUri: Uri? = null
     private var videoUri: Uri? = null
-    private var progressDialog: AlertDialog? = null
+    private var dialog: ProgressDialog? = null
     private var durations: String? = null
     private var selectedCategoryId: String? = null
     private var selectedCategoryTitle: String? = null
@@ -49,7 +49,8 @@ class MovieAddActivity : BaseActivity() {
                 val retriever = MediaMetadataRetriever()
                 try {
                     retriever.setDataSource(this, videoUri)
-                    durations = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                    durations =
+                        retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
                     binding.duration.text = (durations?.toLong() ?: 0L).convertDuration()
                     binding.choose.setText(R.string.ok)
                 } catch (e: Exception) {
@@ -64,6 +65,11 @@ class MovieAddActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMovieAddBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        dialog = ProgressDialog(this).apply {
+            setTitle("Please wait...")
+            setCanceledOnTouchOutside(false)
+        }
 
         binding.toolbar.nameSpace.setText(R.string.add_new_movie)
         binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
@@ -112,7 +118,8 @@ class MovieAddActivity : BaseActivity() {
         } else if (videoUri == null) {
             Toast.makeText(this, "Pick Movie...", Toast.LENGTH_SHORT).show()
         } else if (!isNetworkAvailable()) {
-            Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
+                .show()
         } else {
             uploadMovie(name, description, yearText.toInt())
         }
@@ -123,8 +130,8 @@ class MovieAddActivity : BaseActivity() {
         val vUri = videoUri ?: return
         val cId = selectedCategoryId ?: return
 
-        progressDialog = createProgressDialog("Uploading Movie...", "Please wait...")
-        progressDialog?.show()
+        dialog?.setMessage("Uploading Movie...")
+        dialog?.show()
 
         viewModel.uploadMovie(
             name,
@@ -135,11 +142,11 @@ class MovieAddActivity : BaseActivity() {
             vUri,
             durations,
             castMovie,
-            onProgress = { _ ->
-                // Custom handling or update if needed, since it's AlertDialog we just keep it showing
+            onProgress = { progress ->
+                dialog?.setMessage("Uploading Movie ($progress%)...")
             },
             onResult = { success, message ->
-                progressDialog?.dismiss()
+                dialog?.dismiss()
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 if (success) {
                     castMovie.clear()
@@ -154,10 +161,10 @@ class MovieAddActivity : BaseActivity() {
 
         val categoryNames = categories.map { it.name }.toTypedArray()
         AlertDialog.Builder(this).setTitle("Pick Category").setItems(categoryNames) { _, which ->
-                selectedCategoryTitle = categories[which].name
-                selectedCategoryId = categories[which].id
-                binding.category.text = selectedCategoryTitle
-            }.show()
+            selectedCategoryTitle = categories[which].name
+            selectedCategoryId = categories[which].id
+            binding.category.text = selectedCategoryTitle
+        }.show()
     }
 
     private fun openVideoFiles() {

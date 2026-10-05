@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.IntentCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -16,7 +15,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.databinding.ActivityCastAddBinding
 import com.flatcode.littlemovieadmin.utils.DATA
-import com.flatcode.littlemovieadmin.utils.createProgressDialog
+import com.flatcode.littlemovieadmin.utils.ProgressDialog
 import com.flatcode.littlemovieadmin.utils.cropImageSquare
 import com.flatcode.littlemovieadmin.utils.loadImage
 import com.flatcode.littlemovieadmin.utils.pickImage
@@ -30,12 +29,17 @@ class CastEditActivity : BaseActivity() {
     private lateinit var binding: ActivityCastAddBinding
     private val viewModel: CastEditViewModel by viewModels()
     private var imageUri: Uri? = null
-    private var progressDialog: AlertDialog? = null
+    private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCastAddBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        dialog = ProgressDialog(this).apply {
+            setTitle("Please wait...")
+            setCanceledOnTouchOutside(false)
+        }
 
         val castId = intent.getStringExtra(DATA.CAST_ID) ?: ""
         viewModel.init(castId)
@@ -61,10 +65,10 @@ class CastEditActivity : BaseActivity() {
         } else if (TextUtils.isEmpty(aboutMy)) {
             Toast.makeText(this, "Enter Description...", Toast.LENGTH_SHORT).show()
         } else {
-            progressDialog = createProgressDialog("Updating Cast...", "Please wait...")
-            progressDialog?.show()
+            dialog?.setMessage("Updating Cast...")
+            dialog?.show()
             viewModel.updateCast(name, aboutMy, imageUri) { success, message ->
-                progressDialog?.dismiss()
+                dialog?.dismiss()
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 if (success) onBackPressedDispatcher.onBackPressed()
             }
@@ -79,7 +83,7 @@ class CastEditActivity : BaseActivity() {
                         binding.nameEt.setText(cast.name)
                         binding.aboutMyEt.setText(cast.aboutMy)
                         if (imageUri == null) {
-                            binding.image.loadImage(true,cast.image)
+                            binding.image.loadImage(true, cast.image)
                         }
                     }
                 }
