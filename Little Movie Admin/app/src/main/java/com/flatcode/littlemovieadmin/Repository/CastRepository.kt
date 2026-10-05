@@ -36,7 +36,7 @@ class CastRepository @Inject constructor(
 
             override fun onCancelled(error: DatabaseError) {
                 Timber.e(error.toException(), "Error getting cast list")
-                close(error.toException())
+                trySend(emptyList())
             }
         }
         castRef.addValueEventListener(listener)

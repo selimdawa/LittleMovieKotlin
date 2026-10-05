@@ -16,7 +16,7 @@ import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.databinding.ActivitySliderShowBinding
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.ProgressDialog
-import com.flatcode.littlemovieadmin.utils.cropImageSlider
+import com.flatcode.littlemovieadmin.utils.cropImage
 import com.flatcode.littlemovieadmin.utils.loadImage
 import com.flatcode.littlemovieadmin.utils.pickImage
 import com.flatcode.littlemovieadmin.utils.requestStorage
@@ -181,7 +181,15 @@ class SliderShowActivity : BaseActivity() {
         if (requestCode == DATA.MIX_SLIDER_X && resultCode == RESULT_OK && data != null) {
             val uri = data.data
             if (uri != null) {
-                cropImageSlider(uri)
+                cropImage(
+                    uri = uri,
+                    aspectRatioX = 16,
+                    aspectRatioY = 9,
+                    isOval = true,
+                    minWidth = DATA.MIX_SLIDER_X,
+                    minHeight = DATA.MIX_SLIDER_Y,
+                    requestCode = DATA.MIX_SLIDER_X
+                )
             } else {
                 val resultUri =
                     IntentCompat.getParcelableExtra(data, "CROP_RESULT_URI", Uri::class.java)

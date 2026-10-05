@@ -58,13 +58,35 @@ fun Context.isNetworkAvailable(): Boolean {
     return capabilities.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET)
 }
 
-fun ImageView.loadImage(isUser: Boolean, url: String?) {
+fun Activity.cropImage(
+    uri: Uri,
+    aspectRatioX: Int = 1,
+    aspectRatioY: Int = 1,
+    isOval: Boolean = false,
+    minWidth: Int = DATA.MIX_SQUARE,
+    minHeight: Int = DATA.MIX_SQUARE,
+    requestCode: Int = DATA.MIX_SQUARE
+) {
+    val intent = Intent(this, CropActivity::class.java).apply {
+        putExtra("IMAGE_URI", uri)
+        putExtra("ASPECT_RATIO_X", aspectRatioX)
+        putExtra("ASPECT_RATIO_Y", aspectRatioY)
+        putExtra("IS_OVAL", isOval)
+        putExtra("MIN_WIDTH", minWidth)
+        putExtra("MIN_HEIGHT", minHeight)
+    }
+    startActivityForResult(intent, requestCode)
+}
+
+fun ImageView.loadImage(isUser: Boolean, data: Any? = null, url: Any? = null) {
+    val imageSource = data ?: url
     val defaultRes = if (isUser) R.drawable.basic_user else R.color.image_profile
     try {
-        if (url.isNullOrBlank() || url == DATA.BASIC || url == "null") {
+        val str = imageSource?.toString()
+        if (imageSource == null || str.isNullOrBlank() || str == DATA.BASIC || str == "null") {
             this.setImageResource(defaultRes)
         } else {
-            this.load(url) {
+            this.load(imageSource) {
                 placeholder(R.color.image_profile)
                 error(defaultRes)
                 fallback(defaultRes)
@@ -211,42 +233,6 @@ fun Activity.pickImage(requestCode: Int) {
         type = "image/*"
     }
     startActivityForResult(Intent.createChooser(intent, "Select Picture"), requestCode)
-}
-
-fun Activity.cropImageSquare(uri: Uri) {
-    val intent = Intent(this, CropActivity::class.java).apply {
-        putExtra("IMAGE_URI", uri)
-        putExtra("ASPECT_RATIO_X", 1)
-        putExtra("ASPECT_RATIO_Y", 1)
-        putExtra("IS_OVAL", true)
-        putExtra("MIN_WIDTH", DATA.MIX_SQUARE)
-        putExtra("MIN_HEIGHT", DATA.MIX_SQUARE)
-    }
-    startActivityForResult(intent, DATA.MIX_SQUARE)
-}
-
-fun Activity.cropVideoSquare(uri: Uri) {
-    val intent = Intent(this, CropActivity::class.java).apply {
-        putExtra("IMAGE_URI", uri)
-        putExtra("ASPECT_RATIO_X", 10)
-        putExtra("ASPECT_RATIO_Y", 14)
-        putExtra("IS_OVAL", true)
-        putExtra("MIN_WIDTH", DATA.MIX_VIDEO_X)
-        putExtra("MIN_HEIGHT", DATA.MIX_VIDEO_Y)
-    }
-    startActivityForResult(intent, DATA.MIX_VIDEO_X)
-}
-
-fun Activity.cropImageSlider(uri: Uri) {
-    val intent = Intent(this, CropActivity::class.java).apply {
-        putExtra("IMAGE_URI", uri)
-        putExtra("ASPECT_RATIO_X", 16)
-        putExtra("ASPECT_RATIO_Y", 9)
-        putExtra("IS_OVAL", true)
-        putExtra("MIN_WIDTH", DATA.MIX_SLIDER_X)
-        putExtra("MIN_HEIGHT", DATA.MIX_SLIDER_Y)
-    }
-    startActivityForResult(intent, DATA.MIX_SLIDER_X)
 }
 
 fun Long.convertDuration(): String {

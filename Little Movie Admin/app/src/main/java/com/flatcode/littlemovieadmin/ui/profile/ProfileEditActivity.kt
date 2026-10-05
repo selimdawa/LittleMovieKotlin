@@ -16,7 +16,7 @@ import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.databinding.ActivityProfileEditBinding
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.ProgressDialog
-import com.flatcode.littlemovieadmin.utils.cropImageSquare
+import com.flatcode.littlemovieadmin.utils.cropImage
 import com.flatcode.littlemovieadmin.utils.loadImage
 import com.flatcode.littlemovieadmin.utils.pickImage
 import com.flatcode.littlemovieadmin.utils.requestStorage
@@ -99,7 +99,15 @@ class ProfileEditActivity : BaseActivity() {
         if (requestCode == DATA.MIX_SQUARE && resultCode == RESULT_OK && data != null) {
             val uri = data.data
             if (uri != null) {
-                cropImageSquare(uri)
+                cropImage(
+                    uri = uri,
+                    aspectRatioX = 1,
+                    aspectRatioY = 1,
+                    isOval = true,
+                    minWidth = DATA.MIX_SQUARE,
+                    minHeight = DATA.MIX_SQUARE,
+                    requestCode = DATA.MIX_SQUARE
+                )
             } else {
                 val resultUri =
                     IntentCompat.getParcelableExtra(data, "CROP_RESULT_URI", Uri::class.java)

@@ -35,7 +35,7 @@ class CategoryRepository @Inject constructor(
 
             override fun onCancelled(error: DatabaseError) {
                 Timber.e(error.toException(), "Error getting categories")
-                close(error.toException())
+                trySend(emptyList())
             }
         }
         categoriesRef.addValueEventListener(listener)

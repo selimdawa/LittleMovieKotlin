@@ -31,7 +31,7 @@ class SliderRepository @Inject constructor(
 
             override fun onCancelled(error: DatabaseError) {
                 Timber.e(error.toException(), "Error getting slider images")
-                close(error.toException())
+                trySend(emptyMap())
             }
         }
         ref.addValueEventListener(listener)

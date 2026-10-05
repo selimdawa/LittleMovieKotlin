@@ -19,7 +19,7 @@ import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.DATA.castMovie
 import com.flatcode.littlemovieadmin.utils.ProgressDialog
 import com.flatcode.littlemovieadmin.utils.convertDuration
-import com.flatcode.littlemovieadmin.utils.cropVideoSquare
+import com.flatcode.littlemovieadmin.utils.cropImage
 import com.flatcode.littlemovieadmin.utils.isNetworkAvailable
 import com.flatcode.littlemovieadmin.utils.loadBlurUri
 import com.flatcode.littlemovieadmin.utils.openActivity
@@ -188,7 +188,15 @@ class MovieAddActivity : BaseActivity() {
         if (requestCode == DATA.MIX_VIDEO_X && resultCode == RESULT_OK && data != null) {
             val uri = data.data
             if (uri != null) {
-                cropVideoSquare(uri)
+                cropImage(
+                    uri = uri,
+                    aspectRatioX = 10,
+                    aspectRatioY = 14,
+                    isOval = true,
+                    minWidth = DATA.MIX_VIDEO_X,
+                    minHeight = DATA.MIX_VIDEO_Y,
+                    requestCode = DATA.MIX_VIDEO_X
+                )
             } else {
                 val resultUri =
                     IntentCompat.getParcelableExtra(data, "CROP_RESULT_URI", Uri::class.java)

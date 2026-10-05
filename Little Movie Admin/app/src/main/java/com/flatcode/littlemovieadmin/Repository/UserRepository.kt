@@ -35,7 +35,7 @@ class UserRepository @Inject constructor(
 
             override fun onCancelled(error: DatabaseError) {
                 Timber.e(error.toException(), "Error getting all users")
-                close(error.toException())
+                trySend(emptyList())
             }
         }
         ref.addValueEventListener(listener)

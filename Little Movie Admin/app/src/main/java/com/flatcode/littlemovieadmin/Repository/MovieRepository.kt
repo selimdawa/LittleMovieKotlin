@@ -35,7 +35,7 @@ class MovieRepository @Inject constructor(
 
             override fun onCancelled(error: DatabaseError) {
                 Timber.e(error.toException(), "Error getting movies")
-                close(error.toException())
+                trySend(emptyList())
             }
         }
         moviesRef.addValueEventListener(listener)
@@ -49,8 +49,9 @@ class MovieRepository @Inject constructor(
                 val favIds = favSnapshot.children.mapNotNull { it.key }
                 moviesRef.addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(moviesSnapshot: DataSnapshot) {
-                        val list = moviesSnapshot.children.mapNotNull { it.getValue(Movie::class.java) }
-                            .filter { favIds.contains(it.id) }
+                        val list =
+                            moviesSnapshot.children.mapNotNull { it.getValue(Movie::class.java) }
+                                .filter { favIds.contains(it.id) }
                         val sorted = when (orderBy) {
                             DATA.NAME -> list.sortedBy { it.name }
                             DATA.VIEWS_COUNT -> list.sortedByDescending { it.viewsCount }
@@ -62,14 +63,14 @@ class MovieRepository @Inject constructor(
 
                     override fun onCancelled(error: DatabaseError) {
                         Timber.e(error.toException(), "Error getting favorite movies")
-                        close(error.toException())
+                        trySend(emptyList())
                     }
                 })
             }
 
             override fun onCancelled(error: DatabaseError) {
                 Timber.e(error.toException(), "Error getting favorites list")
-                close(error.toException())
+                trySend(emptyList())
             }
         }
         favoritesRef.addValueEventListener(listener)

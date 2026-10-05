@@ -1,6 +1,5 @@
 package com.flatcode.littlemovieadmin.ui.cast
 
-import com.flatcode.littlemovieadmin.utils.BaseActivity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -14,9 +13,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.databinding.ActivityCastAddBinding
+import com.flatcode.littlemovieadmin.utils.BaseActivity
 import com.flatcode.littlemovieadmin.utils.DATA
 import com.flatcode.littlemovieadmin.utils.ProgressDialog
-import com.flatcode.littlemovieadmin.utils.cropImageSquare
+import com.flatcode.littlemovieadmin.utils.cropImage
 import com.flatcode.littlemovieadmin.utils.pickImage
 import com.flatcode.littlemovieadmin.utils.requestStorage
 import dagger.hilt.android.AndroidEntryPoint
@@ -100,7 +100,15 @@ class CastAddActivity : BaseActivity() {
         if (requestCode == DATA.MIX_SQUARE && resultCode == RESULT_OK && data != null) {
             val uri = data.data
             if (uri != null) {
-                cropImageSquare(uri)
+                cropImage(
+                    uri = uri,
+                    aspectRatioX = 1,
+                    aspectRatioY = 1,
+                    isOval = true,
+                    minWidth = DATA.MIX_SQUARE,
+                    minHeight = DATA.MIX_SQUARE,
+                    requestCode = DATA.MIX_SQUARE
+                )
             } else {
                 val resultUri =
                     IntentCompat.getParcelableExtra(data, "CROP_RESULT_URI", Uri::class.java)
