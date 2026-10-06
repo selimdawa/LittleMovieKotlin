@@ -120,7 +120,6 @@ app/src/main/java/com/flatcode/littlemovie/
 ├── di/                 # Dependency Injection (Hilt modules)
 ├── model/              # Data Entities & Models
 ├── repository/         # Repository Pattern Implementation
-├── service/            # Background Services
 ├── ui/                 # Presentation Layer
 │   ├── auth/           # Authentication (Login, Register)
 │   ├── cast/           # Cast Profiles & Details
@@ -135,11 +134,9 @@ app/src/main/java/com/flatcode/littlemovie/
 #### Admin App
 ```text
 app/src/main/java/com/flatcode/littlemovieadmin/
-├── db/                 # Room Database Configuration & DAOs
 ├── di/                 # Dependency Injection (Hilt modules)
 ├── model/              # Data Entities & Models
 ├── repository/         # Repository Pattern Implementation
-├── service/            # Background Services
 ├── ui/                 # Admin Presentation Layer
 │   ├── auth/           # Admin Authentication
 │   ├── cast/           # Cast Management

@@ -32,7 +32,7 @@ import java.text.MessageFormat
 import java.util.Locale
 
 inline fun <reified T : Activity> Context.openActivity(
-    clear: Boolean = false, vararg extras: Pair<String, Any?>
+    vararg extras: Pair<String, Any?>, clear: Boolean = false
 ) {
     val intent = Intent(this, T::class.java).apply {
         if (clear) addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
