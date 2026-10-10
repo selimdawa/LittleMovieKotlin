@@ -17,8 +17,8 @@ android {
         applicationId = "com.flatcode.littlemovie"
         minSdk = 26
         targetSdk = 37
-        versionCode = 9
-        versionName = "1.35"
+        versionCode = 10
+        versionName = "1.36"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
