@@ -128,10 +128,14 @@ class HomeFragment : Fragment() {
                 }
 
                 launch {
-                    viewModel.sliderImages.collectLatest { images ->
-                        if (images.isNotEmpty()) {
-                            binding.imageSlider.setSliderAdapter(ImageSliderAdapter(images) { _ -> })
-                            binding.imageSlider.startAutoCycle()
+                    viewModel.sliderImages.collect { list ->
+                        if (list.isNotEmpty()) {
+                            try {
+                                _binding?.imageSlider?.setSliderAdapter(ImageSliderAdapter(list))
+                                _binding?.imageSlider?.startAutoCycle()
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
                         }
                     }
                 }

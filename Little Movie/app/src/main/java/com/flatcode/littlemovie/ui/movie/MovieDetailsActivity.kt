@@ -22,6 +22,7 @@ import com.flatcode.littlemovie.utils.BaseActivity
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.ProgressDialog
 import com.flatcode.littlemovie.utils.convertDuration
+import com.flatcode.littlemovie.utils.dialogDeleteComment
 import com.flatcode.littlemovie.utils.loadImage
 import com.flatcode.littlemovie.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -100,13 +101,13 @@ class MovieDetailsActivity : BaseActivity() {
     }
 
     private fun showDeleteCommentDialog(comment: Comment) {
-        AlertDialog.Builder(activity).setTitle("Delete Comment")
-            .setMessage("Are you sure you want to delete this comment?")
-            .setPositiveButton("DELETE") { _, _ ->
-                val movieId = comment.movieId ?: ""
-                val commentId = comment.id
-                viewModel.deleteComment(movieId, commentId)
-            }.setNegativeButton("CANCEL") { dialog, _ -> dialog.dismiss() }.show()
+        dialogDeleteComment {
+            val movieId = comment.movieId ?: ""
+            val commentId = comment.id
+            dialog!!.setMessage(getString(R.string.deleting_comment))
+            dialog!!.show()
+            viewModel.deleteComment(movieId, commentId)
+        }
     }
 
     private fun observeViewModel() {
@@ -197,6 +198,7 @@ class MovieDetailsActivity : BaseActivity() {
         lifecycleScope.launch {
             viewModel.deleteCommentStatus.collect { result ->
                 result?.let {
+                    dialog!!.dismiss()
                     if (it.isSuccess) {
                         Toast.makeText(activity, "Deleted...", Toast.LENGTH_SHORT).show()
                     } else {

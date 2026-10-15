@@ -91,22 +91,23 @@ class MovieDetailsActivity : BaseActivity() {
                 if (comment.publisher == DATA.FirebaseUserUid) {
                     val commentId = comment.id ?: DATA.EMPTY
                     val movieId = comment.movieId ?: DATA.EMPTY
-                    val builder = AlertDialog.Builder(this)
-                    builder.setTitle("Delete Comment")
-                        .setMessage("Are you sure you want to delete this comment?")
-                        .setPositiveButton("DELETE") { _, _ ->
-                            val ref = FirebaseDatabase.getInstance().getReference(DATA.MOVIES)
-                            ref.child(movieId).child(DATA.COMMENTS).child(commentId).removeValue()
-                                .addOnSuccessListener {
-                                    Toast.makeText(this, "Deleted...", Toast.LENGTH_SHORT).show()
-                                }.addOnFailureListener { e ->
-                                    Toast.makeText(
-                                        this,
-                                        "Failed to delete due to " + e.message,
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                        }.setNegativeButton("CANCEL") { dialog, _ -> dialog.dismiss() }.show()
+                    dialogDeleteComment {
+                        dialog?.setMessage(getString(R.string.deleting_comment))
+                        dialog?.show()
+                        val ref = FirebaseDatabase.getInstance().getReference(DATA.MOVIES)
+                        ref.child(movieId).child(DATA.COMMENTS).child(commentId).removeValue()
+                            .addOnSuccessListener {
+                                dialog?.dismiss()
+                                Toast.makeText(this, "Deleted...", Toast.LENGTH_SHORT).show()
+                            }.addOnFailureListener { e ->
+                                dialog?.dismiss()
+                                Toast.makeText(
+                                    this,
+                                    "Failed to delete due to " + e.message,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                    }
                 }
             })
         binding.recyclerComment.adapter = adapterComment

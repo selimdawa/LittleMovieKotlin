@@ -6,8 +6,10 @@ import com.flatcode.littlemovie.databinding.ItemSliderBinding
 import com.flatcode.littlemovie.utils.loadImage
 import io.selimdawa.autoimageslider.adapter.SliderViewAdapter
 
-class ImageSliderAdapter(private val images: List<String>, private val onItemClick: (Int) -> Unit) :
-    SliderViewAdapter<ImageSliderAdapter.SliderViewHolder>() {
+class ImageSliderAdapter(
+    private val images: List<String>,
+    private val onItemClick: (Int) -> Unit = {}
+) : SliderViewAdapter<ImageSliderAdapter.SliderViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SliderViewHolder {
         val binding = ItemSliderBinding.inflate(LayoutInflater.from(parent.context), parent, false)

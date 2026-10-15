@@ -10,6 +10,7 @@ import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AlertDialog
 import com.flatcode.littlemovieadmin.R
 import com.flatcode.littlemovieadmin.databinding.DialogAboutArtistBinding
+import com.flatcode.littlemovieadmin.databinding.DialogCommentDeleteBinding
 import com.flatcode.littlemovieadmin.databinding.DialogLogoutBinding
 import com.flatcode.littlemovieadmin.model.Cast
 import com.flatcode.littlemovieadmin.model.Category
@@ -179,6 +180,30 @@ fun Context.dialogAboutArtist(imageDB: String?, nameDB: String?, aboutDB: String
     dialogBinding.image.loadImage(true, imageDB)
     dialogBinding.name.text = MessageFormat.format("{0}{1}", DATA.EMPTY, nameDB)
     dialogBinding.aboutTheArtist.text = MessageFormat.format("{0}{1}", DATA.EMPTY, aboutDB)
+
+    alertDialog.show()
+
+    val widthPx = (300 * resources.displayMetrics.density).toInt()
+    alertDialog.window?.setLayout(widthPx, ViewGroup.LayoutParams.WRAP_CONTENT)
+}
+
+fun Context.dialogDeleteComment(onYesClick: () -> Unit) {
+    val activity = this as? Activity ?: return
+    if (activity.isFinishing || activity.isDestroyed) return
+
+    val dialogBinding = DialogCommentDeleteBinding.inflate(activity.layoutInflater)
+    val alertDialog = MaterialAlertDialogBuilder(this).setView(dialogBinding.root).create()
+
+    alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+    dialogBinding.yes.setOnClickListener {
+        onYesClick()
+        alertDialog.dismiss()
+    }
+
+    dialogBinding.no.setOnClickListener {
+        alertDialog.dismiss()
+    }
 
     alertDialog.show()
 
