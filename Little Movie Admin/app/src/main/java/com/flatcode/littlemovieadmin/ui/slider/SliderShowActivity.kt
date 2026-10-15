@@ -170,7 +170,7 @@ class SliderShowActivity : BaseActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.isLoading.collect { isLoading ->
-                    binding.bar.visibility = if (isLoading) View.VISIBLE else View.GONE
+                    binding.bar.visibility = if (isLoading && (adapter?.itemCount ?: 0) == 0) View.VISIBLE else View.GONE
                 }
             }
         }

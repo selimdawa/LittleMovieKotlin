@@ -128,7 +128,7 @@ class CategoryDetailsActivity : BaseActivity() {
             }.collect { (movies, isLoading) ->
                 adapter.setFullList(movies)
 
-                binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+                binding!!.progress.visibility = if (isLoading && movies.isEmpty()) View.VISIBLE else View.GONE
                 if (isLoading) {
                     binding!!.emptyText.visibility = View.GONE
                     binding!!.recyclerView.visibility = if (movies.isNotEmpty()) View.VISIBLE else View.GONE

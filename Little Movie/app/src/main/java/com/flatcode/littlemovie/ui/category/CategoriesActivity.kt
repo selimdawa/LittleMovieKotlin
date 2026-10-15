@@ -106,7 +106,7 @@ class CategoriesActivity : BaseActivity() {
                 Pair(categories, isLoading)
             }.collect { (categories, isLoading) ->
                 adapter!!.setFullList(categories)
-                binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+                binding!!.progress.visibility = if (isLoading && categories.isEmpty()) View.VISIBLE else View.GONE
                 if (isLoading) {
                     binding!!.emptyText.visibility = View.GONE
                     binding!!.recyclerView.visibility = if (categories.isNotEmpty()) View.VISIBLE else View.GONE

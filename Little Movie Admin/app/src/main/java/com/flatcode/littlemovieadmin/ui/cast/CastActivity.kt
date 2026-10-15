@@ -98,7 +98,7 @@ class CastActivity : BaseActivity() {
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", list.size)
                     adapter.submitList(list)
 
-                    binding.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+                    binding.progress.visibility = if (isLoading && list.isEmpty()) View.VISIBLE else View.GONE
 
                     if (isLoading) {
                         binding.emptyText.visibility = View.GONE

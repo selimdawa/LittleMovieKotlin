@@ -51,7 +51,7 @@ class CategoriesFragment : Fragment() {
                 Timber.d("Categories collected: %d", categories.size)
                 adapter.submitList(categories)
 
-                binding.bar.visibility = if (isLoading) View.VISIBLE else View.GONE
+                binding.bar.visibility = if (isLoading && categories.isEmpty()) View.VISIBLE else View.GONE
                 if (isLoading) {
                     binding.emptyText.visibility = View.GONE
                     binding.recyclerView.visibility = if (categories.isNotEmpty()) View.VISIBLE else View.GONE

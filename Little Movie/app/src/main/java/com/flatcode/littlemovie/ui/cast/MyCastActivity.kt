@@ -116,7 +116,7 @@ class MyCastActivity : BaseActivity() {
                 adapter.setFullList(castItems)
 
                 binding!!.toolbar.number.text = MessageFormat.format("( {0} )", castItems.size)
-                binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+                binding!!.progress.visibility = if (isLoading && castItems.isEmpty()) View.VISIBLE else View.GONE
                 if (isLoading) {
                     binding!!.emptyText.visibility = View.GONE
                     binding!!.recyclerView.visibility = if (castItems.isNotEmpty()) View.VISIBLE else View.GONE

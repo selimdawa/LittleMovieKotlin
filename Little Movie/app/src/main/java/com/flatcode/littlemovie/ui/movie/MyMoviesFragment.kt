@@ -13,8 +13,8 @@ import com.flatcode.littlemovie.databinding.FragmentMyMoviesBinding
 import com.flatcode.littlemovie.utils.DATA
 import com.flatcode.littlemovie.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -73,7 +73,7 @@ class MyMoviesFragment : Fragment() {
                     Pair(movies, isLoading)
                 }.collectLatest { (movies, isLoading) ->
                     adapter.submitList(movies)
-                    binding.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+                    binding.progress.visibility = if (isLoading && movies.isEmpty()) View.VISIBLE else View.GONE
                     if (isLoading) {
                         binding.emptyText.visibility = View.GONE
                         binding.recyclerView.visibility = if (movies.isNotEmpty()) View.VISIBLE else View.GONE

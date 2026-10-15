@@ -121,7 +121,7 @@
                         android:layout_gravity="center"
                         android:layout_margin="50dp"
                         android:indeterminateDrawable="@drawable/progress_bar_2"
-                        android:visibility="visible" />
+                        android:visibility="gone" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerView"
@@ -199,7 +199,7 @@
                         android:layout_gravity="center"
                         android:layout_margin="50dp"
                         android:indeterminateDrawable="@drawable/progress_bar_2"
-                        android:visibility="visible" />
+                        android:visibility="gone" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerView2"
@@ -277,7 +277,7 @@
                         android:layout_gravity="center"
                         android:layout_margin="50dp"
                         android:indeterminateDrawable="@drawable/progress_bar_2"
-                        android:visibility="visible" />
+                        android:visibility="gone" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerView3"
@@ -355,7 +355,7 @@
                         android:layout_gravity="center"
                         android:layout_margin="50dp"
                         android:indeterminateDrawable="@drawable/progress_bar_2"
-                        android:visibility="visible" />
+                        android:visibility="gone" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerView4"

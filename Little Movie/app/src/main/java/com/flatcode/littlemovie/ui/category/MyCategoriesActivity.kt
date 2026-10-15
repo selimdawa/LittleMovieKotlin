@@ -113,7 +113,7 @@ class MyCategoriesActivity : BaseActivity() {
                 adapter.setFullList(categories)
 
                 binding!!.toolbar.number.text = MessageFormat.format("( {0} )", categories.size)
-                binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+                binding!!.progress.visibility = if (isLoading && categories.isEmpty()) View.VISIBLE else View.GONE
                 if (isLoading) {
                     binding!!.emptyText.visibility = View.GONE
                     binding!!.recyclerView.visibility = if (categories.isNotEmpty()) View.VISIBLE else View.GONE

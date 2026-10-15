@@ -111,7 +111,7 @@ class CategoryDetailsActivity : BaseActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
-                    binding.progress.visibility = if (state.isLoading) View.VISIBLE else View.GONE
+                    binding.progress.visibility = if (state.isLoading && state.movies.isEmpty()) View.VISIBLE else View.GONE
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", state.count)
 
                     adapter.list = state.movies

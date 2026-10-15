@@ -191,10 +191,10 @@ class HomeFragment : Fragment() {
         movies: List<Movie>, adapter: MovieAdapter, bar: View, recyclerView: View, empty: View, isLoading: Boolean
     ) {
         adapter.submitList(movies)
-        if (isLoading) {
+        if (isLoading && movies.isEmpty()) {
             bar.visibility = View.VISIBLE
             empty.visibility = View.GONE
-            recyclerView.visibility = if (movies.isNotEmpty()) View.VISIBLE else View.GONE
+            recyclerView.visibility = View.GONE
         } else {
             bar.visibility = View.GONE
             if (movies.isNotEmpty()) {

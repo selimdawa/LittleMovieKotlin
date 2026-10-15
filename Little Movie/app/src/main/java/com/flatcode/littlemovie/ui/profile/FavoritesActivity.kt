@@ -114,7 +114,7 @@ class FavoritesActivity : BaseActivity() {
                 adapter.setFullList(movies)
 
                 binding!!.toolbar.number.text = MessageFormat.format("( {0} )", movies.size)
-                binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+                binding!!.progress.visibility = if (isLoading && movies.isEmpty()) View.VISIBLE else View.GONE
                 if (isLoading) {
                     binding!!.emptyText.visibility = View.GONE
                     binding!!.recyclerView.visibility = if (movies.isNotEmpty()) View.VISIBLE else View.GONE
