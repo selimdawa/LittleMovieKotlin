@@ -24,6 +24,7 @@ class MovieAdapter(
 ) : ListAdapter<Movie, MovieAdapter.ViewHolder>(DiffCallback) {
 
     private var fullList: List<Movie> = emptyList()
+    private var currentQuery: String = ""
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -36,14 +37,15 @@ class MovieAdapter(
 
     fun setFullList(list: List<Movie>) {
         fullList = list
-        submitList(list)
+        filter(currentQuery)
     }
 
     fun filter(query: String?) {
-        if (query.isNullOrEmpty()) {
+        currentQuery = query ?: ""
+        if (currentQuery.isEmpty()) {
             submitList(fullList)
         } else {
-            val q = query.uppercase(Locale.getDefault())
+            val q = currentQuery.uppercase(Locale.getDefault())
             val filtered = fullList.filter {
                 it.name?.uppercase(Locale.getDefault())?.contains(q) == true
             }

@@ -18,6 +18,7 @@ class CastAdapter(private val onItemClick: (Cast) -> Unit) :
     ListAdapter<Cast, CastAdapter.ViewHolder>(DiffCallback) {
 
     private var fullList: List<Cast> = emptyList()
+    private var currentQuery: String = ""
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemCastBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -30,14 +31,15 @@ class CastAdapter(private val onItemClick: (Cast) -> Unit) :
 
     fun setFullList(list: List<Cast>) {
         fullList = list
-        submitList(list)
+        filter(currentQuery)
     }
 
     fun filter(query: String?) {
-        if (query.isNullOrEmpty()) {
+        currentQuery = query ?: ""
+        if (currentQuery.isEmpty()) {
             submitList(fullList)
         } else {
-            val q = query.uppercase(Locale.getDefault())
+            val q = currentQuery.uppercase(Locale.getDefault())
             val filtered = fullList.filter {
                 it.name?.uppercase(Locale.getDefault())?.contains(q) == true
             }

@@ -82,19 +82,19 @@ class CategoriesActivity : BaseActivity() {
 
         binding!!.switchBar.all.setOnClickListener {
             type = DATA.TIMESTAMP
-            viewModel.getData(type)
+            viewModel.setType(DATA.TIMESTAMP)
         }
         binding!!.switchBar.mostMovies.setOnClickListener {
             type = DATA.MOVIES_COUNT
-            viewModel.getData(type)
+            viewModel.setType(DATA.MOVIES_COUNT)
         }
         binding!!.switchBar.mostInterested.setOnClickListener {
             type = DATA.INTERESTED_COUNT
-            viewModel.getData(type)
+            viewModel.setType(DATA.INTERESTED_COUNT)
         }
         binding!!.switchBar.name.setOnClickListener {
             type = DATA.NAME
-            viewModel.getData(type)
+            viewModel.setType(DATA.NAME)
         }
 
         observeViewModel()
