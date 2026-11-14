@@ -1,5 +1,5 @@
 [versions]
-agp = "9.5.0"
+agp = "9.5.1"
 androidImageCropper = "4.5.0"
 media3 = "1.11.1"
 firebaseBom = "35.1.0"
